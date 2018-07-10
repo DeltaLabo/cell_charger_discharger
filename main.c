@@ -11,6 +11,7 @@
 
 char const              next_cell_str_main[] = "---------->NEXT_CELL<----------";
 uint16_t                counting = 0;
+uint8_t                 PWM = 0;
 
 void main(void)
 {
@@ -29,6 +30,8 @@ void main(void)
 
     TRISBbits.TRISB0 = 0;               //Set RB0 as output. led
     ANSELBbits.ANSB0 = 0;               //Digital
+    TRISB1 = 1;     //Set RB1 as input
+    WPUB1 = 0;      //Disable pull up
     
     while(1)
 	{        
@@ -36,14 +39,21 @@ void main(void)
         {
             TMR0IF = 0;
             counting++;
-            if (counting > 976){
+            if (counting > 20){
                 if (LATB0){
                 RB0 = 0;
                 }else RB0 = 1; 
                 counting = 0;
                 UART_send_string("LED ON/OFF");
                 LINEBREAK;
+                if (PWM >= 255){
+                    PWM = 0;
+                }else PWM ++;
+                PSMC1DCL = PWM;     
+                PSMC1CONbits.PSMC1LD = 1; //Load Buffer
             }
+            
+            
         }     
 //        if(TMR0IF)
 //		{

@@ -46,7 +46,7 @@ char const              T_str[] = "T";
 void Initialize_Hardware()
 {
 	CLRWDT();
-	TMR0IF = 0;                          //Clear timer 0
+	TMR0IF = 0;                        //Clear timer 0
 	ad_res = 0;                        //Clear ADC result variable
 	cmode = 1;                         //Start in CC mode
 	iref = 0;                  
@@ -56,18 +56,20 @@ void Initialize_Hardware()
 
 void Init_Registers()
 {
-    //-----------------------SYSTEM CLOCK--------------------------------------- 
+    //-----------------------GENERAL-------------------------------------------
+    nWPUEN = 0;           //Allow change of individual WPU
+    //-----------------------SYSTEM CLOCK--------------------------------------
     //PLL is always enabled because of configuration bits.
     OSCCONbits.IRCF = 0b1111;           //Set clock to 32MHz (with PLL)
     OSCCONbits.SCS = 0b00;              //Clear to use the result of IRCF
     OSCCONbits.SPLLEN = 1;              //Enable PLL, it gives a problem if is done in the CONFWords
     //System clock set as 32MHz
-    //--------------------OUPUTS FOR RELAYS-------------------------------------
-    TRISAbits.TRISA0 = 0;               //Set RA0 as output. C/D relay
-    ANSELAbits.ANSA0 = 0;               //Digital
-    TRISAbits.TRISA1 = 0;               //Set RA3 as output.ON/OFF relay
-    ANSELAbits.ANSA1 = 0;               //Digital   
-//    //----------------OUTPUTS FOR CELL SWITCHER---------------------------------
+    //--------------------OUPUTS FOR RELAYS------------------------------------
+    TRISA0 = 0;                         //Set RA0 as output. C/D relay
+    ANSA0 = 0;                          //Digital
+    TRISA1 = 0;                         //Set RA3 as output.ON/OFF relay
+    ANSA1 = 0;                          //Digital   
+//    //----------------OUTPUTS FOR CELL SWITCHER------------------------------
 //    TRISAbits.TRISA7 = 0;               //Set RA7 as output. Cell #1
 //    ANSELAbits.ANSA7 = 0;               //Digital
 //    TRISAbits.TRISA6 = 0;               //Set RA6 as output. Cell #2
@@ -76,32 +78,57 @@ void Init_Registers()
 //    ANSELCbits.ANSC0 = 0;               //Digital   //DOES NOT EXIST
 //    TRISCbits.TRISC1 = 0;               //Set RC1 as output. Cell #4
 //    ANSELCbits.ANSC1 = 0;               //Digital   //DOES NOT EXIST
-    //-----------TIMER0 FOR CONTROL AND MEASURING LOOP--------------------------
+    //-----------TIMER0 FOR CONTROL AND MEASURING LOOP-------------------------
     TMR0IE = 0;                         //Disable timer interruptions
     TMR0CS = 0;                         //Timer set to internal instruction cycle
     OPTION_REGbits.PS = 0b100;          //Prescaler set to 32
     OPTION_REGbits.PSA = 0;             //Prescaler activated
     TMR0IF = 0;                         //Clear timer flag
-    //Timer set to 32/4/64/256 = 976.56Hz
+    //Timer set to 32/4/32/256 = 976.56Hz
+    
+    //---------------------PSMC/PWM SETTING------------------------------------
+    //TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3.
+    //WPUA4 = 0;                          //Disable WPU for RA4.  
+
+    TRISB1 = 1;                         //Set as input
+    WPUB1 = 0;                          //Disable weak pull up
+    
+    PSMC1CON = 0x00;                    //Clear configuration to start 
+    PSMC1MDL = 0x00;                    //No modulation
+    PSMC1CLK = 0x01;                    //Driven by 64MHz system clock
+    //PSMC1CLKbits.P1CSRC = 0b01;         //Driven by 64MHz system clock
+    //PSMC1CLKbits.P1CPRE = 0b00;         //No prescaler (64MHz)
+    //Period
+    PSMC1PRH = 0x00;                    //No HB
+    PSMC1PRL = 0xFF;                    //255 + 1 clock cycles for period that is 4us (250KHz)
+    //This set the PWM with 8 bit of resolution
+    //Duty cycle
+    PSMC1DCH = 0x00;                    //Duty cycle starts in 0   
+    PSMC1DCL = 0x00;                    //Duty cycle starts in 0   
+    //Phase or rising event
+    PSMC1PHH = 0x00;                    //Rising event starts from the beginning
+    PSMC1PHL = 0x00;                    //Rising event starts from the beginning
+
+    
+    PSMC1STR0bits.P1STRA = 1;           //Single PWM activated in PSMC1A (RCO))
+    PSMC1POLbits.P1POLA = 0;            //Active high
+    PSMC1OENbits.P1OEA = 1;             //PSMC1A activated in PSMC1A (RC0)
+    
+    PSMC1PRSbits.P1PRST = 1;            //Period event occurs when PSMC1TMR = PSMC1PR
+    PSMC1PHSbits.P1PHST = 1;            //Rising edge event occurs when PSMC1TMR = PSMC1PH
+    PSMC1DCSbits.P1DCST = 1;            //Falling edge event occurs when PSMC1TMR = PSMC1DC
     
     
-      //OLD
-//    // T0OUTPS 1:1; T0EN disabled; T016BIT 8-bit; 
-//    // T0CON0 = 0x00;
-//    // FOSC/4 , NOT SYNC, 1:4096
-//    // T0CON1 = 0x59; 
-//    T0CON0bits.T0EN = 0;                // Turn off the timer module
-//    T0CON0bits.T016BIT = 0;             // 8 bit timer
-//    T0CON0bits.T0OUTPS = 0b0000;        // Use 1:1 postscaler
-//    T0CON1bits.T0CS = 0b010;            // FOSC/4 as clock source
-//    T0CON1bits.T0ASYNC = 1;             // Input of TMR0 is syncronized with Fosc/4
-//    T0CON1bits.T0CKPS = 0b0101;         // Prescaler as 1:16  ///I just changed to 1:32 (0b0101)  //Now to 1:64 (0b0110) // Now to 1:128 (0b0111)
-//    PIR0bits.TMR0IF = 0;                // Clear interrupt flag before enable the interrupt
-//    //PIE0bits.TMR0IE = 1;                // Enable automatic interrupt //THIS GAVE ERROR WITH THE OTHER INTERRUPT
-//    // This gives a TIMER of 16Mhz/4/32/256, aprox 976.56Hz/2
-//    //TURN IT ON
-//    T0CON0bits.T0EN = 1;
-//    //T0CON0 = 0x80;
+    //PSMC1SYNCbits.P1POFST = 1;          //Sync_out source is phase
+    //PSMC1MDLbits.P1MDLEN = 0;           //Module is always active
+    //P1ASDEN = 0;                        //Auto shut down is disabled
+    PSMC1CON = 0x80;                    //Enable|Load Buffer|Dead band disabled|Single PWM
+    //PSMC1TIE = 1;                       //Enable interrupts for Time Based 
+    TRISC0 = 0;                         //Set RC0 as output
+    
+    //P1SYNC0 = 0;                        //Sync with period event
+    //P1SYNC1 = 0;                        //Sync with period event
+    //P1SSYNC = 1;                        //PWM outputs updated on period boundary
     
 //    //TIMER2 (FOR PWM)
 //    T2CLKCONbits.CS = 0b0001;           //TIMER2 is driven by FOSC/4 (4Mhz). This instruction is also required for correct operation of PWM.
