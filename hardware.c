@@ -8,27 +8,7 @@
 #include "hardware.h"
 #include "state_machine.h"
 
-unsigned int            ad_res;
-unsigned int            v;                  //ADDED
-unsigned int            i;                  //ADDED
-unsigned int            t;                  //ADDED
-unsigned int            count;              //ADDED
-unsigned short long     iprom;
-unsigned short long     vprom;
-unsigned short long     tprom;
-unsigned int            vref;
-unsigned int            iref;
-unsigned char           cmode;
-unsigned char           cc_cv;
-unsigned int            second;
-unsigned char           esc;                    //Escape character
-int                     pp;
-int                     pi;
-float                   kp;
-float                   ki;
-unsigned long           inc;
-unsigned char           spb;
-unsigned int            log_on; 
+//unsigned int            ad_res;
 char const              comma_str[] = ",";
 char const              in_arr_str[] = "->";
 char const              end_arr_str[] = "<-";
@@ -65,10 +45,10 @@ void Init_Registers()
     OSCCONbits.SPLLEN = 1;              //Enable PLL, it gives a problem if is done in the CONFWords
     //System clock set as 32MHz
     //--------------------OUPUTS FOR RELAYS------------------------------------
-    TRISA0 = 0;                         //Set RA0 as output. C/D relay
-    ANSA0 = 0;                          //Digital
-    TRISA1 = 0;                         //Set RA3 as output.ON/OFF relay
-    ANSA1 = 0;                          //Digital   
+    //TRISA0 = 0;                         //Set RA0 as output. C/D relay
+    //ANSA0 = 0;                          //Digital
+    //TRISA1 = 0;                         //Set RA3 as output.ON/OFF relay
+    //ANSA1 = 0;                          //Digital   
 //    //----------------OUTPUTS FOR CELL SWITCHER------------------------------
 //    TRISAbits.TRISA7 = 0;               //Set RA7 as output. Cell #1
 //    ANSELAbits.ANSA7 = 0;               //Digital
@@ -81,10 +61,10 @@ void Init_Registers()
     //-----------TIMER0 FOR CONTROL AND MEASURING LOOP-------------------------
     TMR0IE = 0;                         //Disable timer interruptions
     TMR0CS = 0;                         //Timer set to internal instruction cycle
-    OPTION_REGbits.PS = 0b100;          //Prescaler set to 32
+    OPTION_REGbits.PS = 0b101;          //Prescaler set to 64 //32 is 100
     OPTION_REGbits.PSA = 0;             //Prescaler activated
     TMR0IF = 0;                         //Clear timer flag
-    //Timer set to 32/4/32/256 = 976.56Hz
+    //Timer set to 32/4/64/256 = 976.56Hz/2
     
     //---------------------PSMC/PWM SETTING------------------------------------
     //TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3.
@@ -108,7 +88,6 @@ void Init_Registers()
     //Phase or rising event
     PSMC1PHH = 0x00;                    //Rising event starts from the beginning
     PSMC1PHL = 0x00;                    //Rising event starts from the beginning
-
     
     PSMC1STR0bits.P1STRA = 1;           //Single PWM activated in PSMC1A (RCO))
     PSMC1POLbits.P1POLA = 0;            //Active high
@@ -118,111 +97,29 @@ void Init_Registers()
     PSMC1PHSbits.P1PHST = 1;            //Rising edge event occurs when PSMC1TMR = PSMC1PH
     PSMC1DCSbits.P1DCST = 1;            //Falling edge event occurs when PSMC1TMR = PSMC1DC
     
-    
-    //PSMC1SYNCbits.P1POFST = 1;          //Sync_out source is phase
-    //PSMC1MDLbits.P1MDLEN = 0;           //Module is always active
-    //P1ASDEN = 0;                        //Auto shut down is disabled
     PSMC1CON = 0x80;                    //Enable|Load Buffer|Dead band disabled|Single PWM
     //PSMC1TIE = 1;                       //Enable interrupts for Time Based 
     TRISC0 = 0;                         //Set RC0 as output
     
-    //P1SYNC0 = 0;                        //Sync with period event
-    //P1SYNC1 = 0;                        //Sync with period event
-    //P1SSYNC = 1;                        //PWM outputs updated on period boundary
+    //---------------------ADC SETTINGS----------------------------------------
+    //INTERRUPTS 
+    //PIE1bits.ADIE = 1;                  //Activate interrupts
+    //INTCONbits.PEIE =1;                 //Pehierals interrupts
     
-//    //TIMER2 (FOR PWM)
-//    T2CLKCONbits.CS = 0b0001;           //TIMER2 is driven by FOSC/4 (4Mhz). This instruction is also required for correct operation of PWM.
-//    T2CONbits.TMR2ON = 1;               //TIMER2 is ON
-//    T2CONbits.CKPS = 0b010;             //1:4 Prescaler
-//    T2CONbits.OUTPS = 0b0000;           //1:1 Postcaler (Postscaler has no effect in PWM operation)
-//    T2HLTbits.PSYNC = 1;                //TIMER2 Presclaler is sinchronized with FOSC/4
-//    T2HLTbits.MODE =  0b000;            //TIMER2 mode is Free run
-//    PR2 = 1;                            //TIMER2 output is divided again by 2. This makes TIMER2 output overflow at FOSC/32 or 500Khz
-//    
-//    //PWM 
-//    CCP5CONbits.EN = 1;                 //Enable CCP5 module
-//    CCP5CONbits.MODE = 0b1111;          //PWM MODE
-//    CCPTMRS1bits.C5TSEL = 0b01;         //PWM5 based on TMR2
-//    CCP5CONbits.FMT = 0;                //Right aligned
-//    PIR4bits.TMR2IF = 0;                //Clear the flag (I'm not sure if this is needed)
-//    CCPR5L = 0b00000001;                //Lest significant eight bits     
-//    CCPR5H = 0b00000000;                //Most significant eight bits (only two <7:6> matter)
-//    //PWM DC = 1/8. PWM period = 2 microseconds
-//    
-//    //LOGIC CELL CONFIGURATION FOR CONVERTING PWM IN CLOCK
-//    CLC1CON = 0x80;                     //ON, AND-OR
-//    CLC1GLS0 = 0x02;                    //PWM SEL
-//    CLC1GLS1 = 0x08;                    //FOSC SEL    
-//    CLC1GLS2 = 0x08;                    //FOSC SEL
-//    CLC1GLS3 = 0x10;                    //NCO OUT SEL
-//    CLC1POL = 0x00;                     //INVERTED OUTPUT POLARITY
-//    CLC1SEL0 = 0x17;                    //PWM IN
-//    CLC1SEL1 = 0x04;                    //FOSC IN
-//    CLC1SEL2 = 0x1A;                    //NCO OUT IN
-//    CLC1SEL3 = 0x00;                    //LOGIC ZERO
-//    
-//    //NCO DRIVEN BY LOGIC CELL CLOCK
-//    NCO1CONbits.N1EN = 1;               //Turn on the NCO1
-//    NCO1CONbits.N1POL = 0;              //Polarity is not inverted
-//    //This bit is going to be changed inside the main program when DC>50%
-//    NCO1CONbits.N1PFM = 1;              //Activate Pulse Frequency mode
-//    TRISAbits.TRISA4 = 1;               //NCO output in RA4, not set yet as output, wait for it... 
-//    NCO1CLKbits.N1PWS = 0b001;          //NCO1 output is active for 1 input clock period
-//    NCO1CLKbits.N1CKS = 0b010;          //Clock source is LC1 Out
-//    
-//    //NCO OUTPUT
-//    RA4PPS = 0x19;                      //NCO in RA4 selected as PPS output pin
-//    //TRISAbits.TRISA4 = 0;             //Enable RA4 output PIN----THIS IS TURNED ON WITH START_CONVERTER()
-//    
-//    //******ADC******
-//    //REFERENCE FOR ADC
-//    FVRCONbits.FVREN = 1;               //Fixed Voltage Reference is enabled
-//    //FVRCONbits.CDAFVR = 0b11;         //Comparator set to 4.096V
-//    FVRCONbits.ADFVR = 0b11;            //ADC set to 4.096V
-//    //INTERRUPTS 
-//    //PIE1bits.ADIE = 1;                  //Activate interrupts
-//    //INTCONbits.PEIE =1;                 //Pehierals interrupts
-//    
-//    //ADC INPUTS//check this after final design
-//    TRISCbits.TRISC4 = 1;               //RC4, voltage sensing input    
-//    ANSELCbits.ANSC4 = 1;               //RC4 analog      
-//    WPUCbits.WPUC4 = 0;                 //Weak pull up Deactivated
-//    TRISCbits.TRISC5 = 1;               //RC5, current sensing input
-//    ANSELCbits.ANSC5 = 1;               //RC5 analog
-//    WPUCbits.WPUC5 = 0;                 //Weak pull up Deactivated
-//    TRISCbits.TRISC3 = 1;               //RC3, temperature sensing input
-//    ANSELCbits.ANSC3 = 1;               //RC3 analog
-//    WPUCbits.WPUC3 = 0;                 //Weak pull up Deactivated
-//    
-//    //PROVISIONAL CURRENT CHANNEL
-//    TRISCbits.TRISC2 = 1;               //RC2, current sensing input
-//    ANSELCbits.ANSC2 = 1;               //RC2 analog
-//    WPUCbits.WPUC2 = 0;                 //Weak pull up Deactivated
-//    
-//    //CHANGE TO USE FRC
-//    //OSCENbits.ADOEN = 1;                //Activate FRC
-//    //ADCON0bits.ADCS = 1;                //Clock supplied by FRC
-//    //ADC INITIALIZATI0
-//    ADCON0bits.ADCS = 0;                //Clock supplied by FOSC, divided according to ADCLK register
-//    ADCLKbits.ADCCS = 0b111111;         //Clock set as FOSC/16 THAT 1us. 0b000101
-//    ADREFbits.ADNREF = 0;               //Negative reference as Vss
-//    ADREFbits.ADPREF = 0b11;            //Positive reference as FVR_buffer
-//    ADCON0bits.ADFRM0 = 1;              //8 MSB are in ADRESH ///CALCULATION ALWAYS RIGHT SHIFT THE DATA
-//    //this is not here
-//    ADPREbits.ADPRE = 0;                //0 clock cycles of precharge
-//    ADACQbits.ADACQ = 0;
-//    //ADCON1bits.ADDSEN = 1;            //THIS IS NOT NEEDED
-//    //some clock cycles of adquisition
-//    //NUEVO
-//    //ADCON1bits.ADPPOL = 1;            //Polarity 
-//    ADCON2bits.ADMD = 3;                //Burst average (3) Low pass filter mode (4)
-//    ADCON2bits.ADCRS = 1;               //For 8 samples this is 3
-//    ADRPT = 2;                          //8 samples
-//    //ADCAPbits.ADCAP = 0b1111;         //31pF of extra capacitance THIS DOES NOT HELP
-//    ADCON3bits.ADTMD = 0b111;           //SET ADTIF At the end of calculation
-//    PIR1bits.ADTIF = 0;                 //Clear the flag before start
-//    ADCON0bits.ADON = 1;                //Turn on the ADC
-
+    //ADC INPUTS//check this after final design
+    TRISA0 = 1;                         //RA0, current sensing input    
+    ANSA0 = 1;                          //RA0 analog      
+    WPUA0 = 0;                          //Weak pull up Deactivated
+    TRISB5 = 1;                         //RB5, voltage sensing input
+    ANSB5 = 1;                          //RB5 analog
+    WPUB5 = 0;                          //Weak pull up Deactivated
+    
+    ADCON0bits.ADRMD = 0;               //12 bits result
+    ADCON1bits.ADCS = 0b110;            //Clock selected as FOSC/64
+    ADCON1bits.ADNREF = 0;              //Connected to Vss
+    ADCON1bits.ADPREF = 0b01;           //Connected to Vref+
+    ADCON1bits.ADFM = 0;                //Sign and Magnitud result
+    ADCON0bits.ADON = 1;                //Turn on the ADC
 }
 
 void pid(unsigned int feedback, unsigned int setpoint)
@@ -247,20 +144,19 @@ int		ipid;
 	if(ipid > ERR_MAX) ipid = ERR_MAX;
 	if(ipid < ERR_MIN) ipid = ERR_MIN;
                  
-	inc += ipid; //This is the point in which a mix the PWM with the PID
+	dc += ipid; //This is the point in which a mix the PWM with the PID
 
-    set_NCO();
+    set_DC();
 }
 
-//void set_NCO()
-//{
-//    if(inc < INC_MIN) inc = INC_MIN;                //Respect the limits of the increment
-//    if(inc > INC_MAX) inc = INC_MAX;
-//
-//    NCO1INCU = (inc >> 16) & 0xFF;                  //INIT_INCU; //8 bit register MSB
-//    NCO1INCH = (inc >> 8) & 0xFF;                   //INIT_INCH; //8 bit register 
-//    NCO1INCL = inc & 0xFF;                          //INIT_INCL; //8 bit register LSB
-//}
+void set_DC()
+{
+    if(dc < DC_MIN) dc = DC_MIN;                //Respect the limits of the increment
+    if(dc > DC_MAX) dc = DC_MAX;
+    
+    PSMC1DCL = dc;     
+    PSMC1CONbits.PSMC1LD = 1; //Load Buffer
+}
 
 void cc_cv_mode()
 {
@@ -317,7 +213,7 @@ void log_control()
                 /*UART_send_string(comma_str);
                 UART_send_string("Inc");
                 display_value(inc);*/
-                UART_send_string(end_arr_str);
+                UART_send_string(&end_arr_str);
             }
             count = COUNTER;
             iprom = 0;
@@ -326,42 +222,36 @@ void log_control()
         }
 }
 //THIS ADC IS WORKING NOW
-//void read_ADC()
-//{
-//    unsigned long opr;
-//    AD_SET_CHAN(V_CHAN);
-//    AD_CONVERT();
-//    AD_RESULT();
-//    opr = 4UL * 1051UL * ad_res;
-//    v = opr / 1000UL + 0UL;    //0 as offset   
-//    AD_SET_CHAN(I_CHAN);
-//    AD_CONVERT();
-//    AD_RESULT();
-//    opr = 4UL * ad_res;    
-//    if(opr > 2500UL)
-//    {
-//        opr = opr - 2500UL;
-//    }
-//    else if(i == 2500UL)
-//    {
-//        opr = 0UL;
-//    }
-//    else if(i < 2500UL)
-//    {
-//        opr = 2500UL - opr;
-//    }
-//    //i=i/0.4;       //A mOhms resistor
-//    //i = (200/37) * i; //Hall effect sensor  37/200=0.185
-//    opr = 25UL * opr;
-//    i = opr / 10UL; //HALL EFFECT ACS723LL    
-//    AD_SET_CHAN(T_CHAN);
-//    AD_CONVERT();
-//    AD_RESULT();
-//    opr = 4000UL * ad_res;
-//    opr = 1866300UL - opr;
-//    t = opr / 1169UL;
-//    opr = 0UL;     
-//}
+void read_ADC()
+{
+    unsigned long opr;
+    AD_SET_CHAN(V_CHAN);
+    AD_CONVERT();
+    AD_RESULT();
+    opr = 1.28296 * ad_res;   //1051/1000
+    v = opr;    //0 as offset   
+    AD_SET_CHAN(I_CHAN);
+    AD_CONVERT();
+    AD_RESULT();
+    opr = 1.2207 * ad_res;    
+    if(opr > 2500UL)
+    {
+        opr = opr - 2500UL;
+    }
+    else if(i == 2500UL)
+    {
+        opr = 0UL;
+    }
+    else if(i < 2500UL)
+    {
+        opr = 2500UL - opr;
+    }
+    //i=i/0.4;       //A mOhms resistor
+    //i = (200/37) * i; //Hall effect sensor  37/200=0.185
+    opr = 25UL * opr;
+    i = opr / 10UL; //HALL EFFECT ACS723LL    
+    opr = 0UL;     
+}
 //***PROBABLY THIS IS NOT GOOD ANYMORE BECAUSE OF MANUAL AUTO OPERATION
 
 void control_loop()
@@ -384,21 +274,21 @@ void calculate_avg()
         {
             iprom += i;
             vprom += v;
-            tprom += t;
+            //tprom += t;
             count--;
         }
         if (!count)
         {
             iprom = iprom / COUNTER;
             vprom = vprom / COUNTER;
-            tprom = tprom / COUNTER;
+            //tprom = tprom / COUNTER;
         }      
     }else
     {
         count--;
         iprom = 0;
         vprom = 0;
-        tprom = 0;
+        //tprom = 0;
     }
 }
 
@@ -490,8 +380,8 @@ void display_value(unsigned int value)
     UART_send_string(buffer);
 }
 
-//void Cell_ON()
-//{
+void Cell_ON()
+{
 //    if (cell_count == 49)
 //    {
 //        CELL1_ON;
@@ -517,12 +407,12 @@ void display_value(unsigned int value)
 //        CELL3_OFF;
 //        CELL4_ON;        
 //    }
-//}
+}
 
-//void Cell_OFF()
-//{
+void Cell_OFF()
+{
 //    CELL1_OFF;
 //    CELL2_OFF;
 //    CELL3_OFF;
 //    CELL4_OFF;
-//}
+}

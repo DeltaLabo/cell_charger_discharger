@@ -42,6 +42,28 @@
 #include <math.h>
 #include <stdint.h>         //To include uint8_t and uint16_t
 
+unsigned int 						ad_res;
+unsigned int						v;  //ADDED
+unsigned int 						i;  //ADDED
+unsigned int 						t;  //ADDED
+unsigned int 						count;             //ADDED
+unsigned short long   				iprom;
+unsigned short long 				vprom;
+unsigned short long					tprom;
+unsigned int 						vref;
+unsigned int 						iref;
+char 								cmode;
+unsigned char 						cc_cv;
+unsigned int 						second;
+unsigned char 						esc;
+int 								pp;
+int 								pi;
+float 								kp;				//Proportional constant, seems too big data type
+float 								ki;				//Integral constant, seems too big data type
+uint8_t                             dc;             //Duty, check data size
+unsigned char 						spb;			//Baud rate set
+unsigned int            			log_on; 
+
 #define		ERR_MAX					4095
 #define		ERR_MIN					-4095
 #define		SET_VOLTAGE(x)			{ vref = x; }
@@ -50,9 +72,9 @@
 #define 	_XTAL_FREQ 				32000000
 #define		BAUD_RATE               9600
 
-#define		V_CHAN                  0b010100 //RC4 
-#define		I_CHAN                  0b010010 //RC2
-#define		T_CHAN                  0b010011 //RC3
+#define		V_CHAN                  0b01101 //AN13 (RB5) 
+#define		I_CHAN                  0b00000 //AN0 (RA0)
+//#define		T_CHAN                  0b010011 //RC3
 
 #define		CELL1_ON				PORTAbits.RA7 = 1
 #define		CELL2_ON				PORTAbits.RA6 = 1
@@ -63,60 +85,38 @@
 #define		CELL3_OFF				PORTCbits.RC0 = 0
 #define		CELL4_OFF				PORTCbits.RC1 = 0
 
-#define		AD_SET_CHAN(x)          { ADPCHbits.ADPCH = x; }
-#define		AD_CONVERT()            { /*ADACLR = 1;*/ ADCON0bits.ADGO = 1; while(!PIR1bits.ADTIF); PIR1bits.ADTIF = 0;/*while(ADCON0bits.ADGO);*/ }
-#define     AD_RESULT()             { ad_res = 0; ad_res += ADFLTRL; ad_res += (ADFLTRH << 8) & 768;} 
+#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(20); }
+#define		AD_CONVERT()            { ADCON0bits.ADGO = 1; while(ADCON0bits.ADGO); }
+#define     AD_RESULT()             { ad_res = 0; ad_res += ADRESL; ad_res += (ADRESH << 8) & 0xF000;} 
 //CONTROL LOOP RELATED DEFINITION
 #define     CURRENT_MODE            4                               //Number of times the voltage should be equal to the CV voltage in order to change to CV mode.
 
 #define     LINEBREAK               UART_send_char(10)
 
 //DC-DC CONVERTER RELATED DEFINITION
-#define		STOP_CONVERTER()		{ inc = 0; set_NCO(); TRISAbits.TRISA4 = 1; PORTAbits.RA1 = 1;/*TURN OFF RELAY*/ Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
-#define  	START_CONVERTER()		{ inc = INC_MIN; TRISAbits.TRISA4 = 0; PORTAbits.RA1 = 0; /*TURN ON RELAY*/ Cell_ON(); }
+#define		STOP_CONVERTER()		{ dc = 0; set_DC(); /*TRISAbits.TRISA4 = 1; PORTAbits.RA1 = 1;*//*TURN OFF RELAY*/ Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
+#define  	START_CONVERTER()		{ dc = DC_MIN; /*TRISAbits.TRISA4 = 0; PORTAbits.RA1 = 0;*/ /*TURN ON RELAY*/ Cell_ON(); }
 
 #define 	LOG_ON()				{ log_on = 1; }
 #define 	LOG_OFF()				{ log_on = 0; }
 
 //PARAMETER OF CHARGE AND DISCHARGE
-#define     PARAM_CHAR()        	{ kp=2; ki=0.1; SET_CURRENT(i_char); PORTAbits.RA0 = 0; cmode=1; pi = 0; pp = 0; EOCD_count = 4;}
-#define     PARAM_DISC()        	{ kp=10; ki=0.5; SET_CURRENT(i_disc); PORTAbits.RA0 = 1; cmode=1; pi = 0; pp = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
-#define     PARAM_DCRES()       	{ kp=10; ki=0.5; SET_CURRENT(capacity / 5); PORTAbits.RA0 = 1; cmode=1; pi = 0; pp = 0; dc_res_count = 14;}
+#define     PARAM_CHAR()        	{ kp=2; ki=0.1; SET_CURRENT(i_char); /*PORTAbits.RA0 = 0;*/ cmode=1; pi = 0; pp = 0; EOCD_count = 4;}
+#define     PARAM_DISC()        	{ kp=10; ki=0.5; SET_CURRENT(i_disc); /*PORTAbits.RA0 = 1;*/ cmode=1; pi = 0; pp = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
+#define     PARAM_DCRES()       	{ kp=10; ki=0.5; SET_CURRENT(capacity / 5); /*PORTAbits.RA0 = 1;*/ cmode=1; pi = 0; pp = 0; dc_res_count = 14;}
 
-#define INC_MIN         32768 // DC = 1/32 MINIMUM
-#define INC_MAX         524287  // NEW APPROACH TEST
+#define 	DC_MIN         0		// DC = 1/32 MINIMUM
+#define 	DC_MAX         255		// NEW APPROACH TEST
 
  
 #define COUNTER         488
-
-extern unsigned int 					ad_res;
-extern unsigned int						v;  //ADDED
-extern unsigned int 					i;  //ADDED
-extern unsigned int 					t;  //ADDED
-extern unsigned int 					count;             //ADDED
-extern unsigned short long   			iprom;
-extern unsigned short long 				vprom;
-extern unsigned short long				tprom;
-extern unsigned int 					vref;
-extern unsigned int 					iref;
-extern char 							cmode;
-extern unsigned char 					cc_cv;
-extern unsigned int 					second;
-extern unsigned char 					esc;
-extern int 								pp;
-extern int 								pi;
-extern float 							kp;				//Proportional constant, seems too big data type
-extern float 							ki;				//Integral constant, seems too big data type
-extern unsigned long 					inc;			//Increment, check data size
-extern unsigned char 					spb;			//Baud rate set
-extern unsigned int            			log_on; 
 
 
 void Initialize_Hardware(void);
 void Init_Registers(void);
 void Shutdown_Peripherals(void);
 void pid(unsigned int feedback, unsigned int setpoint);
-void set_NCO(void);
+void set_DC(void);
 void read_ADC(void);
 void log_control(void);
 void display_value(unsigned int value);
