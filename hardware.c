@@ -130,33 +130,37 @@ void Init_Registers()
 void pid(unsigned int feedback, unsigned int setpoint)
 {
 int 	er;
-int		ipid;
+int		pi;
 	er = setpoint - feedback;
 
 	if(er > ERR_MAX) er = ERR_MAX;
 	if(er < ERR_MIN) er = ERR_MIN;
     
-	pp = er;
-	pi += er;
+	proportional = kp * er;
+	integral += ki * er * 0.001; //time base is 1Khz (t = 1/1000)
     
-	if(pi > ERR_MAX) pi = ERR_MAX;
-	if(pi < ERR_MIN) pi = ERR_MIN;
+	//if(pi > ERR_MAX) pi = ERR_MAX;
+	//if(pi < ERR_MIN) pi = ERR_MIN;
 
-	ipid = kp*pp; //Im going to put a constant here only to see
-	ipid += ki*(pi / 256); //It takes 256 instructions to overflow
+	pi = proportional + integral; //scaling a hundred times to reduce the size of the constants
     
-	if(ipid > ERR_MAX) ipid = ERR_MAX;
-	if(ipid < ERR_MIN) ipid = ERR_MIN;
-                 
-	dc += ipid; //This is the point in which a mix the PWM with the PID
-
+	//if(pi > ERR_MAX) pi = ERR_MAX;
+	//if(pi < ERR_MIN) pi = ERR_MIN;
+    
+    if (dc + pi >= DC_MAX){
+        dc = DC_MAX;
+    }else if (dc + pi <= DC_MIN){
+        dc = DC_MIN;
+    }else{
+        dc += pi; //This is the point in which a mix the PWM with the PID
+    }       
     set_DC();
 }
 
 void set_DC()
 {
-    if(dc < (DC_MIN+1)) dc = DC_MIN;                //Respect the limits of the increment
-    if(dc > (DC_MAX-1)) dc = DC_MAX;
+    //if(dc < (DC_MIN+1)) dc = DC_MIN;                //Respect the limits of the increment
+    //if(dc > (DC_MAX-1)) dc = DC_MAX;
     //dc = 150;
     PSMC1DCL = dc;     
     PSMC1CONbits.PSMC1LD = 1; //Load Buffer
@@ -168,10 +172,10 @@ void cc_cv_mode()
     {
         if(v > vref && cmode == 1)
         {
-            pi = 0;
+            integral = 0;
             cmode = 0;
-            kp = 3;
-            ki = 0.5;
+            kp = 0.01;
+            ki = 0.01;
         }
     }         
 }
@@ -220,7 +224,7 @@ void log_control()
                 /*UART_send_string(comma_str);
                 UART_send_string("Inc");
                 display_value(inc);*/
-                UART_send_string(&end_arr_str);
+                UART_send_string(end_arr_str);
             }
             count = COUNTER;
             iprom = 0;

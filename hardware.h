@@ -56,16 +56,16 @@ char 								cmode;
 unsigned char 						cc_cv;
 unsigned int 						second;
 unsigned char 						esc;
-int 								pp;
-int 								pi;
+int 								proportional;
+int 								integral;
 float 								kp;				//Proportional constant, seems too big data type
 float 								ki;				//Integral constant, seems too big data type
-uint8_t                             dc;             //Duty, check data size
+uint8_t                             dc = 0;             //Duty, check data size
 unsigned char 						spb;			//Baud rate set
 unsigned int            			log_on; 
 
-#define		ERR_MAX					4095
-#define		ERR_MIN					-4095
+#define		ERR_MAX					5000        //This is given by the maximum valued that can be sensed
+#define		ERR_MIN					-5000       //This is given by the maximum valued that can be sensed
 #define		SET_VOLTAGE(x)			{ vref = x; }
 #define		SET_CURRENT(x)			{ iref = x; }
 
@@ -101,9 +101,9 @@ unsigned int            			log_on;
 #define 	LOG_OFF()				{ log_on = 0; }
 
 //PARAMETER OF CHARGE AND DISCHARGE
-#define     PARAM_CHAR()        	{ kp=0.1; ki=0.05; SET_CURRENT(i_char); /*PORTAbits.RA0 = 0;*/ cmode=1; pi = 0; pp = 0; EOCD_count = 4;}
-#define     PARAM_DISC()        	{ kp=0.1; ki=0.05; SET_CURRENT(i_disc); /*PORTAbits.RA0 = 1;*/ cmode=1; pi = 0; pp = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
-#define     PARAM_DCRES()       	{ kp=0.1; ki=0.05; SET_CURRENT(capacity / 5); /*PORTAbits.RA0 = 1;*/ cmode=1; pi = 0; pp = 0; dc_res_count = 14;}
+#define     PARAM_CHAR()        	{ kp=0.01; ki=0.01; SET_CURRENT(i_char); /*PORTAbits.RA0 = 0;*/ cmode = 1; integral = 0; proportional = 0; EOCD_count = 4;}
+#define     PARAM_DISC()        	{ kp=0.01; ki=0.01; SET_CURRENT(i_disc); /*PORTAbits.RA0 = 1;*/ cmode = 1; integral = 0; proportional = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
+#define     PARAM_DCRES()       	{ kp=0.01; ki=0.01; SET_CURRENT(capacity / 5); /*PORTAbits.RA0 = 1;*/ cmode = 1; integral = 0; proportional = 0; dc_res_count = 14;}
 
 #define 	DC_MIN         0		// DC = 1/32 MINIMUM
 #define 	DC_MAX         255		// NEW APPROACH TEST
