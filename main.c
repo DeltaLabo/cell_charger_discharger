@@ -52,7 +52,7 @@ void main(void)
 //                PSMC1DCL = PWM;     
 //                PSMC1CONbits.PSMC1LD = 1; //Load Buffer
             }
-            read_ADC();           
+            read_ADC();
             calculate_avg();      
 			State_Machine();
 		}

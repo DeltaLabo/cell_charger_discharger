@@ -86,8 +86,8 @@ unsigned int            			log_on;
 #define		CELL4_OFF				PORTCbits.RC1 = 0
 
 #define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(20); }
-#define		AD_CONVERT()            { ADCON0bits.ADGO = 1; while(ADCON0bits.ADGO); }
-#define     AD_RESULT()             { ad_res = 0; ad_res += ADRESL; ad_res += (ADRESH << 8) & 0xF000;} 
+#define		AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);}
+#define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} 
 //CONTROL LOOP RELATED DEFINITION
 #define     CURRENT_MODE            4                               //Number of times the voltage should be equal to the CV voltage in order to change to CV mode.
 
@@ -101,15 +101,15 @@ unsigned int            			log_on;
 #define 	LOG_OFF()				{ log_on = 0; }
 
 //PARAMETER OF CHARGE AND DISCHARGE
-#define     PARAM_CHAR()        	{ kp=2; ki=0.1; SET_CURRENT(i_char); /*PORTAbits.RA0 = 0;*/ cmode=1; pi = 0; pp = 0; EOCD_count = 4;}
-#define     PARAM_DISC()        	{ kp=10; ki=0.5; SET_CURRENT(i_disc); /*PORTAbits.RA0 = 1;*/ cmode=1; pi = 0; pp = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
-#define     PARAM_DCRES()       	{ kp=10; ki=0.5; SET_CURRENT(capacity / 5); /*PORTAbits.RA0 = 1;*/ cmode=1; pi = 0; pp = 0; dc_res_count = 14;}
+#define     PARAM_CHAR()        	{ kp=0.1; ki=0.05; SET_CURRENT(i_char); /*PORTAbits.RA0 = 0;*/ cmode=1; pi = 0; pp = 0; EOCD_count = 4;}
+#define     PARAM_DISC()        	{ kp=0.1; ki=0.05; SET_CURRENT(i_disc); /*PORTAbits.RA0 = 1;*/ cmode=1; pi = 0; pp = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
+#define     PARAM_DCRES()       	{ kp=0.1; ki=0.05; SET_CURRENT(capacity / 5); /*PORTAbits.RA0 = 1;*/ cmode=1; pi = 0; pp = 0; dc_res_count = 14;}
 
 #define 	DC_MIN         0		// DC = 1/32 MINIMUM
 #define 	DC_MAX         255		// NEW APPROACH TEST
 
  
-#define COUNTER         488
+#define     COUNTER        976
 
 
 void Initialize_Hardware(void);

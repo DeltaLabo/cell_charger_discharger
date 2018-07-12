@@ -25,7 +25,7 @@ char const              T_str[] = "T";
 
 void Initialize_Hardware()
 {
-	CLRWDT();
+	//CLRWDT();
 	TMR0IF = 0;                        //Clear timer 0
 	ad_res = 0;                        //Clear ADC result variable
 	cmode = 1;                         //Start in CC mode
@@ -61,10 +61,10 @@ void Init_Registers()
     //-----------TIMER0 FOR CONTROL AND MEASURING LOOP-------------------------
     TMR0IE = 0;                         //Disable timer interruptions
     TMR0CS = 0;                         //Timer set to internal instruction cycle
-    OPTION_REGbits.PS = 0b101;          //Prescaler set to 64 //32 is 100
+    OPTION_REGbits.PS = 0b100;          //Prescaler set to 32
     OPTION_REGbits.PSA = 0;             //Prescaler activated
     TMR0IF = 0;                         //Clear timer flag
-    //Timer set to 32/4/64/256 = 976.56Hz/2
+    //Timer set to 32/4/64/256 = 976.56Hz
     
     //---------------------PSMC/PWM SETTING------------------------------------
     //TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3.
@@ -107,6 +107,9 @@ void Init_Registers()
     //INTCONbits.PEIE =1;                 //Pehierals interrupts
     
     //ADC INPUTS//check this after final design
+    TRISA3 = 1;                         //RA3, Positive voltage reference 
+    ANSA3 = 0;                          //RA3 analog
+    WPUA3 = 0;                          //Weak pull up Deactivated
     TRISA0 = 1;                         //RA0, current sensing input    
     ANSA0 = 1;                          //RA0 analog      
     WPUA0 = 0;                          //Weak pull up Deactivated
@@ -118,8 +121,10 @@ void Init_Registers()
     ADCON1bits.ADCS = 0b110;            //Clock selected as FOSC/64
     ADCON1bits.ADNREF = 0;              //Connected to Vss
     ADCON1bits.ADPREF = 0b01;           //Connected to Vref+
-    ADCON1bits.ADFM = 0;                //Sign and Magnitud result
+    ADCON1bits.ADFM = 1;                //2's compliment result
+    ADCON2bits.CHSN = 0b1111;           //Negative differential input as ADNREF
     ADCON0bits.ADON = 1;                //Turn on the ADC
+    
 }
 
 void pid(unsigned int feedback, unsigned int setpoint)
@@ -131,10 +136,9 @@ int		ipid;
 	if(er > ERR_MAX) er = ERR_MAX;
 	if(er < ERR_MIN) er = ERR_MIN;
     
-	if(cmode) pp = er; else
 	pp = er;
-
 	pi += er;
+    
 	if(pi > ERR_MAX) pi = ERR_MAX;
 	if(pi < ERR_MIN) pi = ERR_MIN;
 
@@ -151,9 +155,9 @@ int		ipid;
 
 void set_DC()
 {
-    if(dc < DC_MIN) dc = DC_MIN;                //Respect the limits of the increment
-    if(dc > DC_MAX) dc = DC_MAX;
-    
+    if(dc < (DC_MIN+1)) dc = DC_MIN;                //Respect the limits of the increment
+    if(dc > (DC_MAX-1)) dc = DC_MAX;
+    //dc = 150;
     PSMC1DCL = dc;     
     PSMC1CONbits.PSMC1LD = 1; //Load Buffer
 }
@@ -201,13 +205,16 @@ void log_control()
                 display_value(cell_count - 48);
                 UART_send_string(comma_str);
                 UART_send_string(V_str);
+                //display_value(v);
                 display_value(vprom*10);
                 UART_send_string(comma_str);
                 UART_send_string(I_str);
+                //display_value(i);
                 display_value(iprom*10);   
                 UART_send_string(comma_str);
                 UART_send_string(T_str);
-                display_value(tprom);  
+                display_value(dc);
+                //display_value(tprom);  
                 //UART_send_string(comma_str); //
                 //display_value(t);           //
                 /*UART_send_string(comma_str);
@@ -228,29 +235,32 @@ void read_ADC()
     AD_SET_CHAN(V_CHAN);
     AD_CONVERT();
     AD_RESULT();
-    opr = 1.28296 * ad_res;   //1051/1000
-    v = opr;    //0 as offset   
+    v = ad_res * 1.23779; //* 1.2207;
+    
+//    opr = 1.28296 * ad_res;   //1051/1000
+//    v = opr;    //0 as offset   
     AD_SET_CHAN(I_CHAN);
     AD_CONVERT();
     AD_RESULT();
-    opr = 1.2207 * ad_res;    
-    if(opr > 2500UL)
-    {
-        opr = opr - 2500UL;
-    }
-    else if(i == 2500UL)
-    {
-        opr = 0UL;
-    }
-    else if(i < 2500UL)
-    {
-        opr = 2500UL - opr;
-    }
-    //i=i/0.4;       //A mOhms resistor
-    //i = (200/37) * i; //Hall effect sensor  37/200=0.185
-    opr = 25UL * opr;
-    i = opr / 10UL; //HALL EFFECT ACS723LL    
-    opr = 0UL;     
+    i = ad_res * 1.23779;// * 1.2207 this is with 5000/4096;
+//    opr = 1.2207 * ad_res;    
+//    if(opr > 2500UL)
+//    {
+//        opr = opr - 2500UL;
+//    }
+//    else if(i == 2500UL)
+//    {
+//        opr = 0UL;
+//    }
+//    else if(i < 2500UL)
+//    {
+//        opr = 2500UL - opr;
+//    }
+//    //i=i/0.4;       //A mOhms resistor
+//    //i = (200/37) * i; //Hall effect sensor  37/200=0.185
+//    opr = 25UL * opr;
+//    i = opr / 10UL; //HALL EFFECT ACS723LL    
+//    opr = 0UL;     
 }
 //***PROBABLY THIS IS NOT GOOD ANYMORE BECAUSE OF MANUAL AUTO OPERATION
 
@@ -274,21 +284,21 @@ void calculate_avg()
         {
             iprom += i;
             vprom += v;
-            //tprom += t;
+            tprom += dc * 0.390625;
             count--;
         }
         if (!count)
         {
             iprom = iprom / COUNTER;
             vprom = vprom / COUNTER;
-            //tprom = tprom / COUNTER;
+            tprom = tprom / COUNTER;
         }      
     }else
     {
         count--;
         iprom = 0;
         vprom = 0;
-        //tprom = 0;
+        tprom = 0;
     }
 }
 
@@ -373,7 +383,7 @@ void UART_send_string(char* st_pt)
 
 void display_value(unsigned int value)
 {   
-    char buffer[6]; 
+    char buffer[8]; 
   
     utoa(buffer,value,10);  
   
