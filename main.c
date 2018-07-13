@@ -28,10 +28,16 @@ void main(void)
     esc = 0;    
     __delay_ms(10);
 
-    TRISBbits.TRISB0 = 0;               //Set RB0 as output. led
-    ANSELBbits.ANSB0 = 0;               //Digital
+    //TRISBbits.TRISB0 = 0;               //Set RB0 as output. led
+    //ANSELBbits.ANSB0 = 0;               //Digital
     TRISB1 = 1;     //Set RB1 as input
     WPUB1 = 0;      //Disable pull up
+    TRISC3 = 1;     //As input to avoid control //old position
+    WPUC3 = 0;      //Disable pull up
+    TRISC4 = 1;     //As input to avoid control //old position
+    WPUC4 = 0;      //Disable pull up
+    TRISC5 = 1;     //As input to avoid control //old position
+    WPUC5 = 0;      //Disable pull up
     
     while(1)
 	{        

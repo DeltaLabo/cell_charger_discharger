@@ -45,10 +45,10 @@ void Init_Registers()
     OSCCONbits.SPLLEN = 1;              //Enable PLL, it gives a problem if is done in the CONFWords
     //System clock set as 32MHz
     //--------------------OUPUTS FOR RELAYS------------------------------------
-    //TRISA0 = 0;                         //Set RA0 as output. C/D relay
-    //ANSA0 = 0;                          //Digital
-    //TRISA1 = 0;                         //Set RA3 as output.ON/OFF relay
-    //ANSA1 = 0;                          //Digital   
+    TRISA0 = 0;                         //Set RA0 as output. C/D relay
+    ANSA0 = 0;                          //Digital
+    TRISA1 = 0;                         //Set RA3 as output.ON/OFF relay
+    ANSA1 = 0;                          //Digital   
 //    //----------------OUTPUTS FOR CELL SWITCHER------------------------------
 //    TRISAbits.TRISA7 = 0;               //Set RA7 as output. Cell #1
 //    ANSELAbits.ANSA7 = 0;               //Digital
@@ -67,12 +67,9 @@ void Init_Registers()
     //Timer set to 32/4/64/256 = 976.56Hz
     
     //---------------------PSMC/PWM SETTING------------------------------------
-    //TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3.
-    //WPUA4 = 0;                          //Disable WPU for RA4.  
-
-    TRISB1 = 1;                         //Set as input
-    WPUB1 = 0;                          //Disable weak pull up
-    
+    TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3. 
+    WPUA4 = 0;                          //Disable WPU for RA4.  
+   
     PSMC1CON = 0x00;                    //Clear configuration to start 
     PSMC1MDL = 0x00;                    //No modulation
     PSMC1CLK = 0x01;                    //Driven by 64MHz system clock
@@ -110,9 +107,9 @@ void Init_Registers()
     TRISA3 = 1;                         //RA3, Positive voltage reference 
     ANSA3 = 0;                          //RA3 analog
     WPUA3 = 0;                          //Weak pull up Deactivated
-    TRISA0 = 1;                         //RA0, current sensing input    
-    ANSA0 = 1;                          //RA0 analog      
-    WPUA0 = 0;                          //Weak pull up Deactivated
+    TRISB4 = 1;                         //RB4, current sensing input    
+    ANSB4 = 1;                          //RB4 analog      
+    WPUB4 = 0;                          //Weak pull up Deactivated
     TRISB5 = 1;                         //RB5, voltage sensing input
     ANSB5 = 1;                          //RB5 analog
     WPUB5 = 0;                          //Weak pull up Deactivated
@@ -138,14 +135,8 @@ int		pi;
     
 	proportional = kp * er;
 	integral += ki * er * 0.001; //time base is 1Khz (t = 1/1000)
-    
-	//if(pi > ERR_MAX) pi = ERR_MAX;
-	//if(pi < ERR_MIN) pi = ERR_MIN;
 
-	pi = proportional + integral; //scaling a hundred times to reduce the size of the constants
-    
-	//if(pi > ERR_MAX) pi = ERR_MAX;
-	//if(pi < ERR_MIN) pi = ERR_MIN;
+	pi = proportional + integral; 
     
     if (dc + pi >= DC_MAX){
         dc = DC_MAX;
@@ -159,9 +150,6 @@ int		pi;
 
 void set_DC()
 {
-    //if(dc < (DC_MIN+1)) dc = DC_MIN;                //Respect the limits of the increment
-    //if(dc > (DC_MAX-1)) dc = DC_MAX;
-    //dc = 150;
     PSMC1DCL = dc;     
     PSMC1CONbits.PSMC1LD = 1; //Load Buffer
 }
@@ -174,8 +162,8 @@ void cc_cv_mode()
         {
             integral = 0;
             cmode = 0;
-            kp = 0.01;
-            ki = 0.01;
+            kp = 0.001;
+            ki = 0.05;
         }
     }         
 }
@@ -217,8 +205,8 @@ void log_control()
                 display_value(iprom*10);   
                 UART_send_string(comma_str);
                 UART_send_string(T_str);
-                display_value(dc);
-                //display_value(tprom);  
+                //display_value(dc);
+                display_value(tprom);  
                 //UART_send_string(comma_str); //
                 //display_value(t);           //
                 /*UART_send_string(comma_str);
@@ -239,34 +227,32 @@ void read_ADC()
     AD_SET_CHAN(V_CHAN);
     AD_CONVERT();
     AD_RESULT();
-    v = ad_res * 1.23779; //* 1.2207;
-    
-//    opr = 1.28296 * ad_res;   //1051/1000
-//    v = opr;    //0 as offset   
+    //v = ad_res * 1.23779; //* 1.2207;    
+    opr = 1.29296 * ad_res - 10;   //1051/1000 with 5039/4096  10 of bias
+    v = opr;    //0 as offset   
     AD_SET_CHAN(I_CHAN);
     AD_CONVERT();
     AD_RESULT();
-    i = ad_res * 1.23779;// * 1.2207 this is with 5000/4096;
-//    opr = 1.2207 * ad_res;    
-//    if(opr > 2500UL)
-//    {
-//        opr = opr - 2500UL;
-//    }
-//    else if(i == 2500UL)
-//    {
-//        opr = 0UL;
-//    }
-//    else if(i < 2500UL)
-//    {
-//        opr = 2500UL - opr;
-//    }
-//    //i=i/0.4;       //A mOhms resistor
-//    //i = (200/37) * i; //Hall effect sensor  37/200=0.185
-//    opr = 25UL * opr;
-//    i = opr / 10UL; //HALL EFFECT ACS723LL    
-//    opr = 0UL;     
+    opr = 1.23022 * ad_res - 20;     //with 5039/4096  20 of bias
+//    i = opr;
+    if(opr > 2500)
+    {
+        opr = opr - 2500;
+    }
+    else if(i == 2500)
+    {
+        opr = 0;
+    }
+    else if(i < 2500)
+    {
+        opr = 2500 - opr;
+    }
+    //i=i/0.4;       //A mOhms resistor
+    //i = (200/37) * i; //Hall effect sensor  37/200=0.185
+    opr = 25 * opr;
+    i = opr / 10; //HALL EFFECT ACS723LL
+    opr = 0;     
 }
-//***PROBABLY THIS IS NOT GOOD ANYMORE BECAUSE OF MANUAL AUTO OPERATION
 
 void control_loop()
 {

@@ -73,7 +73,7 @@ unsigned int            			log_on;
 #define		BAUD_RATE               9600
 
 #define		V_CHAN                  0b01101 //AN13 (RB5) 
-#define		I_CHAN                  0b00000 //AN0 (RA0)
+#define		I_CHAN                  0b01011 //AN11 (RB4)
 //#define		T_CHAN                  0b010011 //RC3
 
 #define		CELL1_ON				PORTAbits.RA7 = 1
@@ -85,7 +85,7 @@ unsigned int            			log_on;
 #define		CELL3_OFF				PORTCbits.RC0 = 0
 #define		CELL4_OFF				PORTCbits.RC1 = 0
 
-#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(20); }
+#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(10); }
 #define		AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);}
 #define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} 
 //CONTROL LOOP RELATED DEFINITION
@@ -94,19 +94,19 @@ unsigned int            			log_on;
 #define     LINEBREAK               UART_send_char(10)
 
 //DC-DC CONVERTER RELATED DEFINITION
-#define		STOP_CONVERTER()		{ dc = 0; set_DC(); /*TRISAbits.TRISA4 = 1; PORTAbits.RA1 = 1;*//*TURN OFF RELAY*/ Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
-#define  	START_CONVERTER()		{ dc = DC_MIN; /*TRISAbits.TRISA4 = 0; PORTAbits.RA1 = 0;*/ /*TURN ON RELAY*/ Cell_ON(); }
+#define		STOP_CONVERTER()		{ dc = 0; set_DC(); TRISC0 = 1; /*TURN OFF PWM*/ RA1 = 1;/*TURN OFF RELAY*/ Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
+#define  	START_CONVERTER()		{ dc = DC_MIN; TRISC0 = 0; /*TURN ON PWM*/ RA1 = 0; /*TURN ON RELAY*/ Cell_ON(); }
 
 #define 	LOG_ON()				{ log_on = 1; }
 #define 	LOG_OFF()				{ log_on = 0; }
 
 //PARAMETER OF CHARGE AND DISCHARGE
-#define     PARAM_CHAR()        	{ kp=0.01; ki=0.01; SET_CURRENT(i_char); /*PORTAbits.RA0 = 0;*/ cmode = 1; integral = 0; proportional = 0; EOCD_count = 4;}
-#define     PARAM_DISC()        	{ kp=0.01; ki=0.01; SET_CURRENT(i_disc); /*PORTAbits.RA0 = 1;*/ cmode = 1; integral = 0; proportional = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
-#define     PARAM_DCRES()       	{ kp=0.01; ki=0.01; SET_CURRENT(capacity / 5); /*PORTAbits.RA0 = 1;*/ cmode = 1; integral = 0; proportional = 0; dc_res_count = 14;}
+#define     PARAM_CHAR()        	{ kp=0.005; ki=0.0005; SET_CURRENT(i_char); RA0 = 0; cmode = 1; integral = 0; proportional = 0; EOCD_count = 4;}
+#define     PARAM_DISC()        	{ kp=0.008; ki=0.001; SET_CURRENT(i_disc); RA0 = 1; cmode = 1; integral = 0; proportional = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
+#define     PARAM_DCRES()       	{ kp=0.008; ki=0.001; SET_CURRENT(capacity / 5); RA0 = 1; cmode = 1; integral = 0; proportional = 0; dc_res_count = 14;}
 
-#define 	DC_MIN         0		// DC = 1/32 MINIMUM
-#define 	DC_MAX         255		// NEW APPROACH TEST
+#define 	DC_MIN         12		// DC = 0.05
+#define 	DC_MAX         240		// DC = 0.9
 
  
 #define     COUNTER        976
