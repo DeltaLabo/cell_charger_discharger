@@ -77,8 +77,8 @@ void Init_Registers()
     //PSMC1CLKbits.P1CPRE = 0b00;         //No prescaler (64MHz)
     //Period
     PSMC1PRH = 0x00;                    //No HB
-    PSMC1PRL = 0xFF;                    //255 + 1 clock cycles for period that is 4us (250KHz)
-    //This set the PWM with 8 bit of resolution
+    PSMC1PRL = 0x80;                    //127 + 1 clock cycles for period that is 2us (500KHz)
+    //This set the PWM with //8 bit of resolution
     //Duty cycle
     PSMC1DCH = 0x00;                    //Duty cycle starts in 0   
     PSMC1DCL = 0x00;                    //Duty cycle starts in 0   

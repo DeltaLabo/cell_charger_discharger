@@ -105,8 +105,8 @@ unsigned int            			log_on;
 #define     PARAM_DISC()        	{ kp=0.01; ki=0.002; SET_CURRENT(i_disc); RA0 = 1; cmode = 1; integral = 0; proportional = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
 #define     PARAM_DCRES()       	{ kp=0.01; ki=0.002; SET_CURRENT(capacity / 5); RA0 = 1; cmode = 1; integral = 0; proportional = 0; dc_res_count = 14;}
 
-#define 	DC_MIN         12		// DC = 0.05
-#define 	DC_MAX         243		// DC = 0.95
+#define 	DC_MIN         6		// DC = 0.05
+#define 	DC_MAX         121		// DC = 0.95
 
  
 #define     COUNTER        488//976
