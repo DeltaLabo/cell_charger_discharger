@@ -76,10 +76,10 @@ void Init_Registers()
     //PSMC1CLKbits.P1CSRC = 0b01;         //Driven by 64MHz system clock
     //PSMC1CLKbits.P1CPRE = 0b00;         //No prescaler (64MHz)
     //Period
-    PSMC1PRH = 0xFF;                    //256
-    PSMC1PRL = 0xFF;                    //256 
-    //+ 1 clock cycles for period that is 8us (125KHz)
-    //This set the PWM with //16 bit of resolution
+    PSMC1PRH = 0x01;                    //0x01
+    PSMC1PRL = 0xFF;                    //0xFF
+    //511 + 1 clock cycles for period that is 8us (125KHz)
+    //This set the PWM with 9 bit of resolution
     //Duty cycle
     PSMC1DCH = 0x00;                    //Duty cycle starts in 0   
     PSMC1DCL = 0x00;                    //Duty cycle starts in 0   
@@ -152,7 +152,7 @@ int		pi;
 void set_DC()
 {
     PSMC1DCL = dc & 0x00FF;
-    PSMC1DCH = dc >> 8;
+    PSMC1DCH = (dc >> 8) & 0x01;
     PSMC1CONbits.PSMC1LD = 1; //Load Buffer
 }
 
@@ -275,7 +275,7 @@ void calculate_avg()
         {
             iprom += i;
             vprom += v;
-            tprom += dc * 0.00152588;
+            tprom += dc * 1.953125;
             count--;
         }
         if (!count)
