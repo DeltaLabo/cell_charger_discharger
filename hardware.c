@@ -134,7 +134,7 @@ int		pi;
 	if(er < ERR_MIN) er = ERR_MIN;
     
 	proportional = kp * er;
-	integral += ki * er * 0.001; //time base is 1Khz (t = 1/1000)
+	integral += ki * er * 0.001024; //time base is 1Khz (t = 1/1000) /2Khz
 
 	pi = proportional + integral; 
     
@@ -158,12 +158,12 @@ void cc_cv_mode()
 {
     if (!count)
     {
-        if(v > vref && cmode == 1)
+        if(vprom > vref && cmode == 1)
         {
             integral = 0;
             cmode = 0;
-            kp = 0.001;
-            ki = 0.05;
+            kp = 0.07;
+            ki = 0.007;
         }
     }         
 }
@@ -223,7 +223,7 @@ void log_control()
 //THIS ADC IS WORKING NOW
 void read_ADC()
 {
-    unsigned long opr;
+    unsigned int opr;
     AD_SET_CHAN(V_CHAN);
     AD_CONVERT();
     AD_RESULT();
@@ -249,8 +249,7 @@ void read_ADC()
     }
     //i=i/0.4;       //A mOhms resistor
     //i = (200/37) * i; //Hall effect sensor  37/200=0.185
-    opr = 25 * opr;
-    i = opr / 10; //HALL EFFECT ACS723LL
+    i = opr * 2.5; //HALL EFFECT ACS723LL
     opr = 0;     
 }
 
@@ -274,7 +273,7 @@ void calculate_avg()
         {
             iprom += i;
             vprom += v;
-            tprom += dc * 0.390625;
+            tprom += dc * 3.90625;
             count--;
         }
         if (!count)

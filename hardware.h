@@ -95,21 +95,21 @@ unsigned int            			log_on;
 
 //DC-DC CONVERTER RELATED DEFINITION
 #define		STOP_CONVERTER()		{ dc = 0; set_DC(); TRISC0 = 1; /*TURN OFF PWM*/ RA1 = 1;/*TURN OFF RELAY*/ Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
-#define  	START_CONVERTER()		{ dc = DC_MIN; TRISC0 = 0; /*TURN ON PWM*/ RA1 = 0; /*TURN ON RELAY*/ Cell_ON(); }
+#define  	START_CONVERTER()		{ dc = DC_MIN; TRISC0 = 0; /*TURN ON PWM*/ RA1 = 0; /*TURN ON RELAY*/ Cell_ON(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
 
 #define 	LOG_ON()				{ log_on = 1; }
 #define 	LOG_OFF()				{ log_on = 0; }
 
 //PARAMETER OF CHARGE AND DISCHARGE
-#define     PARAM_CHAR()        	{ kp=0.005; ki=0.0005; SET_CURRENT(i_char); RA0 = 0; cmode = 1; integral = 0; proportional = 0; EOCD_count = 4;}
-#define     PARAM_DISC()        	{ kp=0.008; ki=0.001; SET_CURRENT(i_disc); RA0 = 1; cmode = 1; integral = 0; proportional = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
-#define     PARAM_DCRES()       	{ kp=0.008; ki=0.001; SET_CURRENT(capacity / 5); RA0 = 1; cmode = 1; integral = 0; proportional = 0; dc_res_count = 14;}
+#define     PARAM_CHAR()        	{ kp=0.015; ki=0.002; SET_CURRENT(i_char); RA0 = 0; cmode = 1; integral = 0; proportional = 0; EOCD_count = 4;}
+#define     PARAM_DISC()        	{ kp=0.01; ki=0.002; SET_CURRENT(i_disc); RA0 = 1; cmode = 1; integral = 0; proportional = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
+#define     PARAM_DCRES()       	{ kp=0.01; ki=0.002; SET_CURRENT(capacity / 5); RA0 = 1; cmode = 1; integral = 0; proportional = 0; dc_res_count = 14;}
 
 #define 	DC_MIN         12		// DC = 0.05
-#define 	DC_MAX         240		// DC = 0.9
+#define 	DC_MAX         243		// DC = 0.95
 
  
-#define     COUNTER        976
+#define     COUNTER        488//976
 
 
 void Initialize_Hardware(void);

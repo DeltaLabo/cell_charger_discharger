@@ -10,8 +10,6 @@
 #include "state_machine.h"
 
 char const              next_cell_str_main[] = "---------->NEXT_CELL<----------";
-uint16_t                counting = 0;
-uint8_t                 PWM = 0;
 
 void main(void)
 {
@@ -44,20 +42,6 @@ void main(void)
         if(TMR0IF)
         {
             TMR0IF = 0;
-            counting++;
-            if (counting > 20){
-                if (LATB0){
-                RB0 = 0;
-                }else RB0 = 1; 
-                counting = 0;
-//                UART_send_string("LED ON/OFF");
-//                LINEBREAK;
-//                if (PWM >= 255){
-//                    PWM = 0;
-//                }else PWM ++;
-//                PSMC1DCL = PWM;     
-//                PSMC1CONbits.PSMC1LD = 1; //Load Buffer
-            }
             read_ADC();
             calculate_avg();      
 			State_Machine();

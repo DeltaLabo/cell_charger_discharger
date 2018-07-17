@@ -209,6 +209,7 @@ void Li_Ion_states_p1()
         LINEBREAK;
         Start_State_Machine();
         UART_interrupt_enable();     //I CHANGE THE POSITION AND IT WAS A MESS PLEASE THINK BEFORE DOING ANYTHING TO THIS    
+        __delay_ms(100);
         if (start != 0x1B)
         {
             count = COUNTER;
