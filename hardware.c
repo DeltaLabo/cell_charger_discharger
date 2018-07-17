@@ -164,8 +164,8 @@ void cc_cv_mode()
         {
             integral = 0;
             cmode = 0;
-            kp = 0.07;
-            ki = 0.007;
+            kp = 0.03;
+            ki = 0.003;
         }
     }         
 }
