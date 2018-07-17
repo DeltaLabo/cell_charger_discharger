@@ -162,10 +162,11 @@ void cc_cv_mode()
     {
         if(vprom > vref && cmode == 1)
         {
+            proportional = 0;
             integral = 0;
             cmode = 0;
-            kp = 0.03;
-            ki = 0.003;
+            kp = 0.15;
+            ki = 0.01;
         }
     }         
 }
@@ -305,7 +306,7 @@ void Init_UART()
     baud rate and set BRGH for fast baud_rate**/
     //spb = ((_XTAL_FREQ/64)/BAUD_RATE) - 1;
     SP1BRGH = 0x00; 
-    SP1BRGL = 51;    
+    SP1BRGL = 25;    
     
     BRGH  = 0;  // for high baud_rate
     BRG16 = 0;  // for 16 bits timer

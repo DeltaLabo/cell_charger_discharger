@@ -42,28 +42,6 @@
 #include <math.h>
 #include <stdint.h>         //To include uint8_t and uint16_t
 
-unsigned int 						ad_res;
-unsigned int						v;  //ADDED
-unsigned int 						i;  //ADDED
-unsigned int 						t;  //ADDED
-unsigned int 						count;             //ADDED
-unsigned short long   				iprom;
-unsigned short long 				vprom;
-unsigned short long					tprom;
-unsigned int 						vref;
-unsigned int 						iref;
-char 								cmode;
-unsigned char 						cc_cv;
-unsigned int 						second;
-unsigned char 						esc;
-int 								proportional;
-int 								integral;
-float 								kp;				//Proportional constant, seems too big data type
-float 								ki;				//Integral constant, seems too big data type
-unsigned int                        dc = 0;         //Duty, change data size for 125Khz
-unsigned char 						spb;			//Baud rate set
-unsigned int            			log_on; 
-
 #define		ERR_MAX					5000        //This is given by the maximum valued that can be sensed
 #define		ERR_MIN					-5000       //This is given by the maximum valued that can be sensed
 #define		SET_VOLTAGE(x)			{ vref = x; }
@@ -95,7 +73,7 @@ unsigned int            			log_on;
 
 //DC-DC CONVERTER RELATED DEFINITION
 #define		STOP_CONVERTER()		{ dc = 0; set_DC(); TRISC0 = 1; /*TURN OFF PWM*/ RA1 = 1;/*TURN OFF RELAY*/ Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
-#define  	START_CONVERTER()		{ dc = DC_MIN; TRISC0 = 0; /*TURN ON PWM*/ RA1 = 0; /*TURN ON RELAY*/ Cell_ON(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
+#define  	START_CONVERTER()		{ dc = DC_MIN; TRISC0 = 0; /*TURN ON PWM*/ RA1 = 0; __delay_ms(10);/*TURN ON RELAY*/ Cell_ON(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
 
 #define 	LOG_ON()				{ log_on = 1; }
 #define 	LOG_OFF()				{ log_on = 0; }
@@ -110,6 +88,28 @@ unsigned int            			log_on;
 
  
 #define     COUNTER        488//976
+
+unsigned int 						ad_res;
+unsigned int						v;  //ADDED
+unsigned int 						i;  //ADDED
+unsigned int 						t;  //ADDED
+unsigned int 						count;             //ADDED
+unsigned short long   				iprom;
+unsigned short long 				vprom;
+unsigned short long					tprom;
+unsigned int 						vref;
+unsigned int 						iref;
+char 								cmode;
+unsigned char 						cc_cv;
+unsigned int 						second;
+unsigned char 						esc;
+int 								proportional;
+int 								integral;
+float 								kp;				//Proportional constant, seems too big data type
+float 								ki;				//Integral constant, seems too big data type
+unsigned int                        dc = 0;         //Duty, change data size for 125Khz
+unsigned char 						spb;			//Baud rate set
+unsigned int            			log_on; 
 
 
 void Initialize_Hardware(void);
