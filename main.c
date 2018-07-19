@@ -36,7 +36,7 @@ void main(void)
     WPUC4 = 0;      //Disable pull up
     TRISC5 = 1;     //As input to avoid control //old position
     WPUC5 = 0;      //Disable pull up
-    
+    //RA1 = 0; ///TEST
     while(1)
 	{        
         if(TMR0IF)
@@ -44,8 +44,9 @@ void main(void)
             TMR0IF = 0;
             read_ADC();
             calculate_avg();      
-			State_Machine();
+			State_Machine();         
 		}
+        //LOG_ON(); //TEST
         log_control();
 	}
 }

@@ -72,16 +72,16 @@
 #define     LINEBREAK               UART_send_char(10)
 
 //DC-DC CONVERTER RELATED DEFINITION
-#define		STOP_CONVERTER()		{ dc = 0; set_DC(); TRISC0 = 1; /*TURN OFF PWM*/ RA1 = 1;/*TURN OFF RELAY*/ Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
-#define  	START_CONVERTER()		{ dc = DC_MIN; TRISC0 = 0; /*TURN ON PWM*/ RA1 = 0; __delay_ms(10);/*TURN ON RELAY*/ Cell_ON(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
+#define		STOP_CONVERTER()		{ dc = 0; set_DC(); /*TRISC0 = 1; /*TURN OFF PWM*/ RA1 = 1;/*TURN OFF RELAY*/ Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
+#define  	START_CONVERTER()		{ dc = DC_MIN; set_DC(); /*TRISC0 = 0; /*TURN ON PWM*/ RA1 = 0; __delay_ms(100);/*TURN ON RELAY*/ Cell_ON(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
 
 #define 	LOG_ON()				{ log_on = 1; }
 #define 	LOG_OFF()				{ log_on = 0; }
 
 //PARAMETER OF CHARGE AND DISCHARGE
-#define     PARAM_CHAR()        	{ kp=0.03; ki=0.003; SET_CURRENT(i_char); RA0 = 0; cmode = 1; integral = 0; proportional = 0; EOCD_count = 4;}
-#define     PARAM_DISC()        	{ kp=0.03; ki=0.003; SET_CURRENT(i_disc); RA0 = 1; cmode = 1; integral = 0; proportional = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
-#define     PARAM_DCRES()       	{ kp=0.03; ki=0.003; SET_CURRENT(capacity / 5); RA0 = 1; cmode = 1; integral = 0; proportional = 0; dc_res_count = 14;}
+#define     PARAM_CHAR()        	{ kp=0.03; ki=0.003; SET_CURRENT(i_char); RA0 = 0; __delay_ms(100); cmode = 1; integral = 0; proportional = 0; EOCD_count = 4;}
+#define     PARAM_DISC()        	{ kp=0.03; ki=0.003; SET_CURRENT(i_disc); RA0 = 1; __delay_ms(100); cmode = 1; integral = 0; proportional = 0;  EOCD_count = 4;} //MAYBE THAT THING CHARGE CAN DISAPEAR
+#define     PARAM_DCRES()       	{ kp=0.03; ki=0.003; SET_CURRENT(capacity / 5); RA0 = 1; __delay_ms(100); cmode = 1; integral = 0; proportional = 0; dc_res_count = 14;}
 
 #define 	DC_MIN         25		// DC = 0.05
 #define 	DC_MAX         486    // DC = 0.95
@@ -90,13 +90,13 @@
 #define     COUNTER        488//976
 
 unsigned int 						ad_res;
-unsigned int						v;  //ADDED
-unsigned int 						i;  //ADDED
-unsigned int 						t;  //ADDED
+int                                 v;  //ADDED
+int                                 i;  //ADDED
+int                                 t;  //ADDED
 unsigned int 						count;             //ADDED
-unsigned short long   				iprom;
-unsigned short long 				vprom;
-unsigned short long					tprom;
+short long                          iprom;
+short long                          vprom;
+short long                          tprom;
 unsigned int 						vref;
 unsigned int 						iref;
 char 								cmode;
@@ -119,7 +119,7 @@ void pid(unsigned int feedback, unsigned int setpoint);
 void set_DC(void);
 void read_ADC(void);
 void log_control(void);
-void display_value(unsigned int value);
+void display_value(long value);
 void cc_cv_mode(void);
 void char_disc(void);
 void control_loop(void);

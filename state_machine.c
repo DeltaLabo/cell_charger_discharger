@@ -16,8 +16,6 @@ unsigned char           option;                     //choose between four option
 unsigned int            capacity;                   //definition of capacity per cell according to each chemistry
 unsigned int            i_char;                     //charging current in mA
 unsigned int            i_disc;                     //discharging curretn in mA
-//unsigned int            c_1_dcres;                  //current for first step of DC resistance measurement (0.2C for 10 seconds)
-//unsigned int            c_2_dcres;                  //current for second step of DC resistance measurement (1C for 1 second)
 unsigned char           cell_count;                 //cell counter from 1 to 4.
 unsigned char           cell_max;                   //number of cells to be tested
 unsigned int            EOCD_count;                 //counter for EOC 
@@ -119,22 +117,22 @@ void Init_State_Machine()
 
 void State_Machine()
 {
-    if (state == STANDBY)
-    {
-        STOP_CONVERTER();   
-        Init_State_Machine();
-        Define_Parameters();
-        if (cell_max != 0x1B)
-        {
-            state = IDLE;
-        }
-    }else
-    {
-        //LI-ION CASE 
-        Li_Ion_states_p1();
-        Li_Ion_states_p2();
-        //NI-MH CASE
-        //Ni_MH_states_p1();
+    switch(state){
+            case STANDBY:
+                STOP_CONVERTER();   
+                Init_State_Machine();
+                Define_Parameters();
+                if (cell_max != 0x1B)
+                {
+                    state = IDLE;
+                }
+                break;                
+            default: 
+                //LI-ION CASE 
+                Li_Ion_states_p1();
+                Li_Ion_states_p2();
+                //NI-MH CASE
+                //Ni_MH_states_p1();
     }
 }
 
@@ -202,119 +200,113 @@ void Start_State_Machine()
 void Li_Ion_states_p1()
 {
     //State machine for Li-Ion case
-    if (state == IDLE)
-    {
-        LINEBREAK;
-        UART_send_string(idle_str);
-        LINEBREAK;
-        Start_State_Machine();
-        UART_interrupt_enable();     //I CHANGE THE POSITION AND IT WAS A MESS PLEASE THINK BEFORE DOING ANYTHING TO THIS    
-        __delay_ms(100);
-        if (start != 0x1B)
-        {
-            count = COUNTER;
-            if (option == 49)
+    switch (state){
+        case IDLE:
+            LINEBREAK;
+            UART_send_string(idle_str);
+            LINEBREAK;
+            Start_State_Machine();
+            UART_interrupt_enable();     //I CHANGE THE POSITION AND IT WAS A MESS PLEASE THINK BEFORE DOING ANYTHING TO THIS    
+            if (start != 0x1B)
             {
-                /*state = DS_DC_res; 
-                PARAM_DCRES();
-                START_CONVERTER();*///PRUEBA PARA VER LA RESISTENCIA
-
-               state = PRECHARGE;
-               PARAM_CHAR();
-               START_CONVERTER();
+                count = COUNTER;
+                switch (option){
+                    case 49:
+                        /*state = DS_DC_res; 
+                        PARAM_DCRES();
+                        START_CONVERTER();*///PRUEBA PARA VER LA RESISTENCIA
+                        state = PRECHARGE;
+                        PARAM_CHAR();
+                        START_CONVERTER();
+                        break;
+                    case 50:
+                    case 52:
+                        state = DISCHARGE;
+                        PARAM_DISC();
+                        START_CONVERTER();
+                        break;
+                    case 51:
+                        LINEBREAK;
+                        UART_send_string(charge_str);
+                        LINEBREAK;
+                        state = CHARGE;
+                        PARAM_CHAR();
+                        START_CONVERTER();
+                        break;
+                    default:
+                        STOP_CONVERTER();
+                }                
             }
-            else if (option == 50 || option == 52)
+            break;
+        case PRECHARGE:   
+            LOG_ON();
+            control_loop();
+            if (!count)
             {
-                state = DISCHARGE;
-                PARAM_DISC();
-                START_CONVERTER();
-            }
-            else if (option == 51)
-            {
-                LINEBREAK;
-                UART_send_string(charge_str);
-                LINEBREAK;
-                state = CHARGE;
-                PARAM_CHAR();
-                START_CONVERTER();
-            }else
-            {
-                STOP_CONVERTER();
-            }                
-        }
-    }
-//PRECHARGE state definition
-    if (state == PRECHARGE)
-    {   
-        LOG_ON();
-        control_loop();
-        if (!count)
-        {
-            if (vprom < 900)
-            {
-                state = FAULT;
-                LINEBREAK;
-                UART_send_string(fault_str);
-                LINEBREAK;
-                UART_send_string(cell_below_str);
-                LINEBREAK;
-            }
-            if (iprom < EOC_current)
-            {                
-                if (!EOCD_count)
+                if (vprom < 900)
                 {
+                    state = FAULT;
                     LINEBREAK;
-                    UART_send_string(next_state_str);
+                    UART_send_string(fault_str);
                     LINEBREAK;
-                    state = WAIT;
-                    previous_state = PRECHARGE;
-                    wait_count = wait_time;
-                    STOP_CONVERTER();                       
-                }else EOCD_count--;
-            }else state = PRECHARGE;
-        }
-    }
-    if (state == DISCHARGE)
-    {
-        LOG_ON();
-        control_loop();
-        if (!count)
-        {
-            if (vprom < EOD_voltage && option == 49)
-            {
-                if (!EOCD_count)
-                { 
+                    UART_send_string(cell_below_str);
                     LINEBREAK;
-                    UART_send_string(next_state_str);
-                    LINEBREAK;
-                    state = WAIT;
-                    previous_state = DISCHARGE;
-                    wait_count = wait_time;
-                    STOP_CONVERTER();
-                }else EOCD_count--;
-            }else if (vprom < EOD_voltage && option == 50)
-            {
-                if (!EOCD_count)
-                {                 
-                    LINEBREAK;
-                    UART_send_string(next_state_str);
-                    LINEBREAK;
-                    state = WAIT;
-                    previous_state = DISCHARGE;
-                    wait_count = wait_time;
-                    STOP_CONVERTER();
-                }else EOCD_count--;
-            }else if (vprom < EOD_voltage && option == 52)
-            {
-                state = ISDONE;
-                LINEBREAK;
-                UART_send_string(done_str);
-                LINEBREAK;
-                STOP_CONVERTER();            
+                }
+                if (iprom < EOC_current)
+                {                
+                    if (!EOCD_count)
+                    {
+                        LINEBREAK;
+                        UART_send_string(next_state_str);
+                        LINEBREAK;
+                        state = WAIT;
+                        previous_state = PRECHARGE;
+                        wait_count = wait_time;
+                        STOP_CONVERTER();                       
+                    }else EOCD_count--;
+                }
             }
+            break;
+        case DISCHARGE:
+            LOG_ON();
+            control_loop();
+            if (!count)
+            {
+                if (vprom < EOD_voltage && option == 49)
+                {
+                    if (!EOCD_count)
+                    { 
+                        LINEBREAK;
+                        UART_send_string(next_state_str);
+                        LINEBREAK;
+                        state = WAIT;
+                        previous_state = DISCHARGE;
+                        wait_count = wait_time;
+                        STOP_CONVERTER();
+                    }else EOCD_count--;
+                }else if (vprom < EOD_voltage && option == 50)
+                {
+                    if (!EOCD_count)
+                    {                 
+                        LINEBREAK;
+                        UART_send_string(next_state_str);
+                        LINEBREAK;
+                        state = WAIT;
+                        previous_state = DISCHARGE;
+                        wait_count = wait_time;
+                        STOP_CONVERTER();
+                    }else EOCD_count--;
+                }else if (vprom < EOD_voltage && option == 52)
+                {
+                    state = ISDONE;
+                    LINEBREAK;
+                    UART_send_string(done_str);
+                    LINEBREAK;
+                    STOP_CONVERTER();            
+                }
+            }
+            break;
         }
-    }
-
     if (state == CHARGE)
     {   
         LOG_ON();

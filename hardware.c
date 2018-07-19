@@ -31,7 +31,7 @@ void Initialize_Hardware()
 	cmode = 1;                         //Start in CC mode
 	iref = 0;                  
 	vref = 0;
-	//STOP_CONVERTER();
+    STOP_CONVERTER();
 }
 
 void Init_Registers()
@@ -69,6 +69,7 @@ void Init_Registers()
     //---------------------PSMC/PWM SETTING------------------------------------
     TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3. 
     WPUA4 = 0;                          //Disable WPU for RA4.  
+    WPUC0 = 0;                          //Disable WPU for RC0.  //SEE IF THIS SOLVE THE ERROR
    
     PSMC1CON = 0x00;                    //Clear configuration to start 
     PSMC1MDL = 0x00;                    //No modulation
@@ -118,7 +119,7 @@ void Init_Registers()
     ADCON0bits.ADRMD = 0;               //12 bits result
     ADCON1bits.ADCS = 0b110;            //Clock selected as FOSC/64
     ADCON1bits.ADNREF = 0;              //Connected to Vss
-    ADCON1bits.ADPREF = 0b01;           //Connected to Vref+
+    ADCON1bits.ADPREF = 0b00;           //Connected to VDD, change after to Connected to Vref+ (01)
     ADCON1bits.ADFM = 1;                //2's compliment result
     ADCON2bits.CHSN = 0b1111;           //Negative differential input as ADNREF
     ADCON0bits.ADON = 1;                //Turn on the ADC
@@ -165,8 +166,8 @@ void cc_cv_mode()
             proportional = 0;
             integral = 0;
             cmode = 0;
-            kp = 0.15;
-            ki = 0.01;
+            kp = 0.03;//0.15
+            ki = 0.003;//0.04;
         }
     }         
 }
@@ -226,33 +227,26 @@ void log_control()
 //THIS ADC IS WORKING NOW
 void read_ADC()
 {
-    unsigned int opr;
+    int opr;
     AD_SET_CHAN(V_CHAN);
     AD_CONVERT();
     AD_RESULT();
     //v = ad_res * 1.23779; //* 1.2207;    
-    opr = 1.29296 * ad_res - 10;   //1051/1000 with 5039/4096  10 of bias
-    v = opr;    //0 as offset   
+    opr = 1.2865513 * ad_res;   //1051/1000 with 5014/4096
+    v = opr;    //0 as offset
+    if (v < 0) i = 0;
     AD_SET_CHAN(I_CHAN);
     AD_CONVERT();
     AD_RESULT();
-    opr = 1.23022 * ad_res - 20;     //with 5039/4096  20 of bias
-//    i = opr;
-    if(opr > 2500)
-    {
-        opr = opr - 2500;
-    }
-    else if(i == 2500)
-    {
-        opr = 0;
-    }
-    else if(i < 2500)
-    {
-        opr = 2500 - opr;
+    opr = 1.2241211 * ad_res;     //with 5014/4096
+    //i = opr;
+    opr = opr - 2525;
+    if (state == CHARGE){
+        opr = opr * -1;
     }
     //i=i/0.4;       //A mOhms resistor
     //i = (200/37) * i; //Hall effect sensor  37/200=0.185
-    i = opr * 2.5; //HALL EFFECT ACS723LL
+    i = opr * 2.5; //HALL EFFECT ACS723LL OFFSET OF 35
     opr = 0;     
 }
 
@@ -270,7 +264,7 @@ void control_loop()
 
 void calculate_avg()
 {
-    if(!PORTAbits.RA1)
+    if(1)
     {
         if (count)
         {
@@ -373,11 +367,11 @@ void UART_send_string(char* st_pt)
         UART_send_char(*st_pt++); //process it as a byte data
 }
 
-void display_value(unsigned int value)
+void display_value(long value)
 {   
     char buffer[8]; 
   
-    utoa(buffer,value,10);  
+    ltoa(buffer,value,10);  
   
     UART_send_string(buffer);
 }
