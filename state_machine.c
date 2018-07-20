@@ -8,35 +8,6 @@
 #include "state_machine.h"
 #include "hardware.h"
 
-unsigned char           start;                      //variable to receive the start command
-//unsigned char           chem;                       //chem = 49 -> Li-Ion, chem = 50-> Ni-MH || Other options can be included in the future  
-unsigned char           c_char;                     //option for charging current in C
-unsigned char           c_disc;                     //option for discharging current in C
-unsigned char           option;                     //choose between four options, different for each chemistry, look into Define_Parameter for details
-unsigned int            capacity;                   //definition of capacity per cell according to each chemistry
-unsigned int            i_char;                     //charging current in mA
-unsigned int            i_disc;                     //discharging curretn in mA
-unsigned char           cell_count;                 //cell counter from 1 to 4.
-unsigned char           cell_max;                   //number of cells to be tested
-unsigned int            EOCD_count;                 //counter for EOC 
-//unsigned int            ocv_count;                  //counter for OCV measurement
-unsigned int            wait_count;                 //counter for waiting time between states
-//unsigned int            small_count;                //counter for waiting time inside states
-unsigned int            dc_res_count;               //counter for DC resistance step
-unsigned char           state;                      //used with enum "states", defined in state_machine.h
-unsigned char           previous_state;             //used with enum "states" 
-//unsigned int            state_counter;              //used to show numerical value of the state
-unsigned int            EOC_current;                //end of charge current in mA
-unsigned int            EOD_voltage;                //end of dischage voltage in mV
-//double                  vmax;                       //maximum recorded voltage
-//double                  In_ocv;
-//double                  Pre_ocv;
-unsigned int            v_1_dcres;
-unsigned int            i_1_dcres;
-unsigned int            v_2_dcres;
-unsigned int            i_2_dcres;
-unsigned short long     dc_res_val;
-
 char const              wait_str[] = "STATE = WAIT";
 char const              prechar_str[] = "STATE = PRECHARGE";
 char const              idle_str[] = "STATE = IDLE";

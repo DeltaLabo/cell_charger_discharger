@@ -159,16 +159,15 @@ void set_DC()
 
 void cc_cv_mode()
 {
-    if (!count)
+    if(v > vref && cmode == 1) CV_count--;
+    if (!CV_count)
     {
-        if(vprom > vref && cmode == 1)
-        {
-            proportional = 0;
-            integral = 0;
-            cmode = 0;
-            kp = 0.03;//0.15
-            ki = 0.003;//0.04;
-        }
+        proportional = 0;
+        integral = 0;
+        cmode = 0;
+        kp = 0.2;//0.15
+        ki = 0.08;//0.04;
+        CV_count = CV_loops;
     }         
 }
 
@@ -241,8 +240,8 @@ void read_ADC()
     opr = 1.2241211 * ad_res;     //with 5014/4096
     //i = opr;
     opr = opr - 2525;
-    if (state == CHARGE){
-        opr = opr * -1;
+    if (state == CHARGE | state == PRECHARGE){
+        opr = -opr;
     }
     //i=i/0.4;       //A mOhms resistor
     //i = (200/37) * i; //Hall effect sensor  37/200=0.185
@@ -264,7 +263,7 @@ void control_loop()
 
 void calculate_avg()
 {
-    if(1)
+    if(!LATA1)
     {
         if (count)
         {
