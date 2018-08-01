@@ -165,9 +165,12 @@ void cc_cv_mode()
         {
             proportional = 0;
             integral = 0;
-            if (cmode) ki = 0.001;  //Put the integral at 0 at the very beginning               
+            if (cmode){
+                ki = 0.001;
+                kp = 0.1;
+            }               
             cmode = 0;
-            kp = 0.1;//0.15
+            kp = 0.2;  //0.2 with 0.01 produces a very good regulation at the end
             if (ki < 0.01) ki = ki + 0.001;
         }
     }         
