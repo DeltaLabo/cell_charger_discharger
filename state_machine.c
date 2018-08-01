@@ -277,55 +277,54 @@ void Li_Ion_states_p1()
                 }
             }
             break;
-        }
-    if (state == CHARGE)
-    {   
-        LOG_ON();
-        control_loop();
-        if (!count)
-        {
-            if (vprom < 900)
+        case CHARGE:
+            LOG_ON();
+            control_loop();
+            if (!count)
             {
-                state = FAULT;
-                LINEBREAK;
-                UART_send_string(fault_str);
-                LINEBREAK;
-                UART_send_string(cell_below_str);
-                LINEBREAK;
-            }           
-            if (iprom < EOC_current && option == 49)
-            {
-                if (!EOCD_count)
+                if (vprom < 900)
+                {
+                    state = FAULT;
+                    LINEBREAK;
+                    UART_send_string(fault_str);
+                    LINEBREAK;
+                    UART_send_string(cell_below_str);
+                    LINEBREAK;
+                }           
+                if (iprom < EOC_current && option == 49)
+                {
+                    if (!EOCD_count)
+                    {
+                        LINEBREAK;
+                        UART_send_string(next_state_str);
+                        LINEBREAK;
+                        state = WAIT;
+                        previous_state = CHARGE; //Esto lo cambie y estaba enredado
+                        wait_count = wait_time;
+                        STOP_CONVERTER(); 
+                    }else EOCD_count--;
+                }else if (iprom < EOC_current && option == 50)
+                {
+                    if (!EOCD_count)
+                    {
+                        LINEBREAK;
+                        UART_send_string(next_state_str);
+                        LINEBREAK;
+                        state = WAIT;
+                        previous_state = CHARGE; //Esto lo cambie y estaba enredado
+                        wait_count = wait_time;
+                        STOP_CONVERTER(); 
+                    }else EOCD_count--;
+                }else if (iprom < EOC_current && option == 51)
                 {
                     LINEBREAK;
-                    UART_send_string(next_state_str);
+                    UART_send_string(done_str);
                     LINEBREAK;
-                    state = WAIT;
-                    previous_state = CHARGE; //Esto lo cambie y estaba enredado
-                    wait_count = wait_time;
+                    state = ISDONE;
                     STOP_CONVERTER(); 
-                }else EOCD_count--;
-            }else if (iprom < EOC_current && option == 50)
-            {
-                if (!EOCD_count)
-                {
-                    LINEBREAK;
-                    UART_send_string(next_state_str);
-                    LINEBREAK;
-                    state = WAIT;
-                    previous_state = CHARGE; //Esto lo cambie y estaba enredado
-                    wait_count = wait_time;
-                    STOP_CONVERTER(); 
-                }else EOCD_count--;
-            }else if (iprom < EOC_current && option == 51)
-            {
-                LINEBREAK;
-                UART_send_string(done_str);
-                LINEBREAK;
-                state = ISDONE;
-                STOP_CONVERTER(); 
-            }else state = CHARGE; 
-        }
+                }else state = CHARGE; 
+            }
+            break;
     }
 }
 

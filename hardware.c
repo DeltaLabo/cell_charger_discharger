@@ -167,7 +167,7 @@ void cc_cv_mode()
             integral = 0;
             if (cmode) ki = 0.001;  //Put the integral at 0 at the very beginning               
             cmode = 0;
-            kp = 0.15;//0.15
+            kp = 0.1;//0.15
             if (ki < 0.01) ki = ki + 0.001;
         }
     }         

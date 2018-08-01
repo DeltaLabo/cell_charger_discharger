@@ -87,7 +87,7 @@
 #define 	DC_MAX         486    // DC = 0.95
 
  
-#define     COUNTER        488//976
+#define     COUNTER        976
 
 unsigned int 						ad_res;
 int                                 v;  //ADDED
