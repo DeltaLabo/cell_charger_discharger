@@ -159,15 +159,17 @@ void set_DC()
 
 void cc_cv_mode()
 {
-    if(v > vref && cmode == 1) CV_count--;
-    if (!CV_count)
+    if (!count)
     {
-        proportional = 0;
-        integral = 0;
-        cmode = 0;
-        kp = 0.2;//0.15
-        ki = 0.08;//0.04;
-        CV_count = CV_loops;
+        if(vprom > vref && cmode == 1)
+        {
+            proportional = 0;
+            integral = 0;
+            if (cmode) ki = 0.001;  //Put the integral at 0 at the very beginning               
+            cmode = 0;
+            kp = 0.15;//0.15
+            if (ki < 0.01) ki = ki + 0.001;
+        }
     }         
 }
 
