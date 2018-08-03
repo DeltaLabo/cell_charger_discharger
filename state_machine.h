@@ -18,6 +18,8 @@
     void fDISCHARGE(void);
     void fDC_res(void);
     void fWAIT(void);
+    void fISDONE(void);
+    void fFAULT(void);
     void Init_State_Machine(void);
     void Start_state_machine(void);
     void Parameter_Set(void);

@@ -97,8 +97,11 @@ void State_Machine()
             case WAIT:    
                 fWAIT();
                 break;
-            default:
-                Li_Ion_states_p2();
+            case ISDONE:    
+                fISDONE();
+                break;
+            case FAULT:    
+                fFAULT();
                 break;
     }
 }
@@ -270,72 +273,54 @@ void fWAIT()
     }
 }
 
+void fISDONE()
+{
+    if (cell_count < cell_max)
+    {
+        __delay_ms(500);       
+        cell_count++;
+        state = IDLE;   
+    }else
+    {
+        state = STANDBY;
+    }    
+}
+
+void fFAULT()
+{
+    STOP_CONVERTER();
+    state = STANDBY;
+}
+
 
 void Converter_settings()
 {
+    kp=0.03; 
+    ki=0.003;
+    cmode = 1;
+    integral = 0;
+    EOCD_count = EOCD_loops;
+    CV_count = CV_loops;
     switch(state)
     {
         case PRECHARGE:
         case CHARGE:
-            kp=0.03; 
-            ki=0.003; 
             SET_CURRENT(i_char); 
-            RA0 = 0; 
-            __delay_ms(100); 
-            cmode = 1; 
-            integral = 0; 
-            EOCD_count = EOCD_loops; 
-            CV_count = CV_loops;
+            RA0 = 0;
             break;
         case DISCHARGE:
-            kp=0.03;
-            ki=0.003;
             SET_CURRENT(i_disc);
-            RA0 = 1;
-            __delay_ms(100);
-            cmode = 1;
-            integral = 0;
-            EOCD_count = EOCD_loops;
+            RA0 = 1;            
             break;
         case CS_DC_res:
         case DS_DC_res:
-            kp=0.03;
-            ki=0.003;
             SET_CURRENT(capacity / 5);
-            RA0 = 1;
-            __delay_ms(100);
-            cmode = 1;
-            integral = 0;
             dc_res_count = 14;
+            RA0 = 1;            
             break;
     }
+    __delay_ms(10);
 }
-
-
-void Li_Ion_states_p2()
-{
-    if (state == ISDONE)
-    {
-        UART_send_string("DONE");
-        if (cell_count < cell_max)
-        {
-            __delay_ms(500);       
-            cell_count++;
-            state = IDLE;   
-        }else
-        {
-            state = STANDBY;
-        }
-    }
-
-    if (state == FAULT)
-    {
-        STOP_CONVERTER();
-        state = STANDBY;
-    }
-}
-
-
 
 void Define_Parameters()
 {
