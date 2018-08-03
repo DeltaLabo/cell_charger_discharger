@@ -15,8 +15,7 @@ char const              end_arr_str[] = "<-";
 char const              in_wait_str[] = "------------W-";
 char const              end_wait_str[] = "-W------------";
 char const              hip_str[] = "-";
-char const              in_sta_str[] = "S-";
-char const              end_sta_str[] = "-S";
+char const              S_str[] = "S";
 char const              C_str[] = "C";
 char const              V_str[] = "V";
 char const              I_str[] = "I";
@@ -197,12 +196,11 @@ void log_control()
             if (log_on)
             {
                 LINEBREAK;
-                UART_send_string(in_sta_str);
-                display_value(state);
-                UART_send_string(end_sta_str);
-                UART_send_string(in_arr_str);
                 UART_send_string(C_str);
                 display_value(cell_count - 48);
+                UART_send_string(comma_str);
+                UART_send_string(S_str);
+                display_value(state);
                 UART_send_string(comma_str);
                 UART_send_string(V_str);
                 //display_value(v);
@@ -220,7 +218,6 @@ void log_control()
                 /*UART_send_string(comma_str);
                 UART_send_string("Inc");
                 display_value(inc);*/
-                UART_send_string(end_arr_str);
             }
             count = COUNTER;
             iprom = 0;
