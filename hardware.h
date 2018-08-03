@@ -125,3 +125,4 @@ char UART_get_char(void);
 void UART_send_string(char* st_pt);
 void Cell_ON(void);
 void Cell_OFF(void);
+void timing(void);

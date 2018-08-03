@@ -44,10 +44,10 @@ void main(void)
             TMR0IF = 0;
             read_ADC();
             calculate_avg();      
-			State_Machine();         
-		}
-        //LOG_ON(); //TEST
-        log_control();
+			State_Machine();  
+            log_control();
+            timing();       
+		}        
 	}
 }
 

@@ -201,10 +201,6 @@ void log_control()
                 //UART_send_string((char*)comma_str);
 
             }
-            count = COUNTER;
-            iprom = 0;
-            vprom = 0;
-            tprom = 0;
         }
 }
 //THIS ADC IS WORKING NOW
@@ -245,29 +241,40 @@ void control_loop()
     }
 }
 
-void calculate_avg()
+void timing()
 {
-    if(!LATA1)
-    {
-        if (count)
-        {
-            iprom += i;
-            vprom += v;
-            tprom += dc * 1.953125;
-            count--;
-        }
-        if (!count)
-        {
-            iprom = iprom / COUNTER;
-            vprom = vprom / COUNTER;
-            tprom = tprom / COUNTER;
-        }      
-    }else
+    if(count)
     {
         count--;
-        iprom = 0;
-        vprom = 0;
-        tprom = 0;
+    }else
+    {
+        count = COUNTER;
+
+    }
+}
+
+void calculate_avg()
+{
+    if(1)
+    {
+        switch(count)
+        {
+            case COUNTER:
+                iprom = 0;
+                vprom = 0;
+                tprom = 0;
+                break;
+            case 0:
+                iprom = iprom / COUNTER;
+                vprom = vprom / COUNTER;
+                tprom = tprom / COUNTER;
+                break;
+            default:
+                iprom += i;
+                vprom += v;
+                tprom += dc * 1.953125;
+                break;
+        }    
     }
 }
 
