@@ -43,9 +43,14 @@ void main(void)
         {
             TMR0IF = 0;
             read_ADC();
-            calculate_avg();      
-			State_Machine();  
-            log_control();
+            calculate_avg();
+            if (!count)
+            {                     
+                cc_cv_mode();
+                State_Machine();  
+                log_control(); 
+            }
+            if (conv) control_loop(); 
             timing();       
 		}        
 	}
