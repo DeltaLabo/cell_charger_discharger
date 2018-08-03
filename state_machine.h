@@ -14,11 +14,12 @@
     
     void fSTANDBY(void);
     void fIDLE(void);
+    void fCHARGE(void);
+    void fDISCHARGE(void);
     void Init_State_Machine(void);
     void Start_state_machine(void);
     void Parameter_Set(void);
     void State_Machine(void);
-    void Li_Ion_states_p1(void);
     void Li_Ion_states_p2(void);
     void option_50(void);
     void Define_Parameters(void);
