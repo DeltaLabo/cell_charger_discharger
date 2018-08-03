@@ -8,18 +8,9 @@
 #include "state_machine.h"
 #include "hardware.h"
 
-char const              wait_str[] = "STATE = WAIT";
-char const              prechar_str[] = "STATE = PRECHARGE";
-char const              idle_str[] = "STATE = IDLE";
-char const              standby_str[] = "STATE = STANDBY";
-char const              charge_str[] = "STATE = CHARGE";
-char const              discharge_str[] = "STATE = DISCHARGE";
-char const              fault_str[] = "STATE = FAULT";
 char const              press_s_str[] = "Press 's' to start: ";
 char const              starting_str[] = "Starting...";
-char const              DS_DC_res_str[] = "STATE = DISCHARGED STATE DC RESISTANCE";
-char const              CS_DC_res_str[] = "STATE = CHARGED STATE DC RESISTANCE";
-char const              done_str[] = "STATE = DONE";
+char const              done_str[] = "DONE";
 char const              state_res_str[] = "-------------S-";
 char const              end_state_res_str[] = "-S-------------";
 char const              DC_res_str[] = "------------>R";
@@ -173,9 +164,7 @@ void Li_Ion_states_p1()
     //State machine for Li-Ion case
     switch (state){
         case IDLE:
-            LINEBREAK;
-            UART_send_string(idle_str);
-            LINEBREAK;
+            STOP_CONVERTER();
             Start_State_Machine();
             UART_interrupt_enable();     //I CHANGE THE POSITION AND IT WAS A MESS PLEASE THINK BEFORE DOING ANYTHING TO THIS    
             if (start != 0x1B)
@@ -197,15 +186,10 @@ void Li_Ion_states_p1()
                         START_CONVERTER();
                         break;
                     case 51:
-                        LINEBREAK;
-                        UART_send_string(charge_str);
-                        LINEBREAK;
                         state = CHARGE;
                         PARAM_CHAR();
                         START_CONVERTER();
                         break;
-                    default:
-                        STOP_CONVERTER();
                 }                
             }
             break;
@@ -217,9 +201,6 @@ void Li_Ion_states_p1()
                 if (vprom < 900)
                 {
                     state = FAULT;
-                    LINEBREAK;
-                    UART_send_string(fault_str);
-                    LINEBREAK;
                     UART_send_string(cell_below_str);
                     LINEBREAK;
                 }
@@ -285,9 +266,6 @@ void Li_Ion_states_p1()
                 if (vprom < 900)
                 {
                     state = FAULT;
-                    LINEBREAK;
-                    UART_send_string(fault_str);
-                    LINEBREAK;
                     UART_send_string(cell_below_str);
                     LINEBREAK;
                 }           
@@ -414,7 +392,6 @@ void Li_Ion_states_p2()
     if (state == FAULT)
     {
         STOP_CONVERTER();
-        UART_send_string(standby_str);
         state = STANDBY;
     }
 }

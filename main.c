@@ -72,10 +72,6 @@ void interrupt serial_interrupt(void)
             dc_res_count = 0;
         }else if  (esc == 110)
         {
-            STOP_CONVERTER();
-            LINEBREAK;
-            UART_send_string(next_cell_str_main);
-            LINEBREAK;
             __delay_ms(50);
             cell_count++;
             state = IDLE;  

@@ -72,8 +72,8 @@
 #define     LINEBREAK               UART_send_char(10)
 
 //DC-DC CONVERTER RELATED DEFINITION
-#define		STOP_CONVERTER()		{ dc = 0; set_DC(); /*TRISC0 = 1; /*TURN OFF PWM*/ RA1 = 1;/*TURN OFF RELAY*/ Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
-#define  	START_CONVERTER()		{ dc = DC_MIN; set_DC(); /*TRISC0 = 0; /*TURN ON PWM*/ RA1 = 0; __delay_ms(100);/*TURN ON RELAY*/ Cell_ON(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
+#define		STOP_CONVERTER()		{ dc = 0; set_DC(); RA1 = 1; Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
+#define  	START_CONVERTER()		{ dc = DC_MIN; set_DC(); RA1 = 0; __delay_ms(100); Cell_ON(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
 
 #define 	LOG_ON()				{ log_on = 1; }
 #define 	LOG_OFF()				{ log_on = 0; }
