@@ -12,8 +12,6 @@
 char const              comma_str[] = ",";
 char const              in_arr_str[] = "->";
 char const              end_arr_str[] = "<-";
-char const              in_wait_str[] = "------------W-";
-char const              end_wait_str[] = "-W------------";
 char const              hip_str[] = "-";
 char const              S_str[] = "S";
 char const              C_str[] = "C";
@@ -179,20 +177,6 @@ void log_control()
 {
         if (!count)
         {
-            if (wait_count < wait_time && wait_count > 1)
-            {   
-                LINEBREAK;
-                UART_send_string(in_wait_str);
-                display_value(wait_count);
-                UART_send_string(end_wait_str);             
-            }
-            if (wait_count) wait_count--;
-            /*if (dc_res_count)
-            {
-                UART_send_string(hip_str);
-                display_value(dc_res_count);
-                UART_send_string(hip_str);               
-            }*/
             if (log_on)
             {
                 LINEBREAK;

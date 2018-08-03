@@ -26,9 +26,8 @@
     void Define_Parameters(void);
     void Li_Ion_param(void);
     void Ni_MH_param(void);
+    void Converter_settings(void);
     
-
-
    
     //General definitions
     #define CV_loops            4

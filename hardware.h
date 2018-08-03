@@ -72,16 +72,11 @@
 #define     LINEBREAK               UART_send_char(10)
 
 //DC-DC CONVERTER RELATED DEFINITION
-#define		STOP_CONVERTER()		{ dc = 0; set_DC(); RA1 = 1; Cell_OFF(); LOG_OFF(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
-#define  	START_CONVERTER()		{ dc = DC_MIN; set_DC(); RA1 = 0; __delay_ms(100); Cell_ON(); v = 0; i = 0; t = 0; vprom = 0; iprom = 0; tprom = 0;}
+#define		STOP_CONVERTER()		{ dc = 0; set_DC(); RA1 = 1; Cell_OFF(); LOG_OFF();}
+#define  	START_CONVERTER()		{ dc = DC_MIN; set_DC(); RA1 = 0; __delay_ms(100); Cell_ON();}
 
 #define 	LOG_ON()				{ log_on = 1; }
 #define 	LOG_OFF()				{ log_on = 0; }
-
-//PARAMETER OF CHARGE AND DISCHARGE
-#define     PARAM_CHAR()        	{ kp=0.03; ki=0.003; SET_CURRENT(i_char); RA0 = 0; __delay_ms(100); cmode = 1; integral = 0; proportional = 0; EOCD_count = EOCD_loops; CV_count = CV_loops;}
-#define     PARAM_DISC()        	{ kp=0.03; ki=0.003; SET_CURRENT(i_disc); RA0 = 1; __delay_ms(100); cmode = 1; integral = 0; proportional = 0;  EOCD_count = EOCD_loops;} //MAYBE THAT THING CHARGE CAN DISAPEAR
-#define     PARAM_DCRES()       	{ kp=0.03; ki=0.003; SET_CURRENT(capacity / 5); RA0 = 1; __delay_ms(100); cmode = 1; integral = 0; proportional = 0; dc_res_count = 14;}
 
 #define 	DC_MIN         25		// DC = 0.05
 #define 	DC_MAX         486    // DC = 0.95
@@ -110,7 +105,6 @@ float 								ki;				//Integral constant, seems too big data type
 unsigned int                        dc = 0;         //Duty, change data size for 125Khz
 unsigned char 						spb;			//Baud rate set
 unsigned int            			log_on; 
-
 
 void Initialize_Hardware(void);
 void Init_Registers(void);

@@ -57,6 +57,8 @@ char const              li_ion_op_2_sel_str[] = "Discharge->Charge selected...";
 char const              li_ion_op_3_sel_str[] = "Only Charge selected...";
 char const              li_ion_op_4_sel_str[] = "Only Discharge selected...";
 char const              cell_below_str[] = "Cell below 0.9V or not present";
+char const              in_wait_str[] = "------------W-";
+char const              end_wait_str[] = "-W------------";
  
 void Init_State_Machine()
 {
@@ -120,18 +122,18 @@ void fIDLE()
         switch (option){
             case 49:
                 state = PRECHARGE;
-                PARAM_CHAR();
+                Converter_settings();
                 START_CONVERTER();
                 break;
             case 50:
             case 52:
                 state = DISCHARGE;
-                PARAM_DISC();
+                Converter_settings();
                 START_CONVERTER();
                 break;
             case 51:
                 state = CHARGE;
-                PARAM_CHAR();
+                Converter_settings();
                 START_CONVERTER();
                 break;
         }                
@@ -200,16 +202,18 @@ void fDC_res()
         {
             v_2_dcres = vprom;
             i_2_dcres = iprom;
-            STOP_CONVERTER();
+            STOP_CONVERTER();            
             dc_res_val = (v_1_dcres - v_2_dcres) * 10000;
             dc_res_val = dc_res_val / (i_2_dcres - i_1_dcres);
         }
         if (!dc_res_count)
         {   
+            LINEBREAK;
             UART_send_string(DC_res_str);
             display_value(dc_res_val);
             UART_send_string(end_str);
-            LINEBREAK;             
+            LINEBREAK;
+            LOG_OFF();   ///I dont like this 
             previous_state = state;
             state = WAIT;
             wait_count = wait_time;              
@@ -217,47 +221,96 @@ void fDC_res()
     }    
 }
 
-void Li_Ion_states_p2()
+void fWAIT()
 {
-    if (state == WAIT)
+    STOP_CONVERTER();  ///MAYBEOK
+    if (!count)
     {
-        STOP_CONVERTER();  ///MAYBEOK
-        if (!count)
-        {
-            if(!wait_count)
-            {           
-                if (previous_state == PRECHARGE) //The maximum charging time here is still missing, better to let it to the end
-                {  
+        if (wait_count)
+        {   
+            LINEBREAK;
+            UART_send_string(in_wait_str);
+            display_value(wait_count);
+            UART_send_string(end_wait_str);
+            wait_count--;             
+        }
+        if(!wait_count)
+        {           
+            switch(previous_state)
+            {
+                case PRECHARGE:
                     state = DISCHARGE;
-                    PARAM_DISC();
+                    Converter_settings();
                     START_CONVERTER();
-                }else if (previous_state == DISCHARGE)
-                {
-                    state = DS_DC_res; 
-                    PARAM_DCRES();
-                    START_CONVERTER();
-                }else if (previous_state == CHARGE)
-                {
+                    break;
+                case CHARGE:
                     state = CS_DC_res; 
-                    PARAM_DCRES();
-                    START_CONVERTER();                                     
-                }else if (previous_state == CS_DC_res)
-                {
-                    LINEBREAK;
-                    UART_send_string(done_str);
-                    LINEBREAK;
+                    Converter_settings();
+                    START_CONVERTER(); 
+                    break;
+                case DISCHARGE:
+                    state = DS_DC_res; 
+                    Converter_settings();
+                    START_CONVERTER();
+                    break;
+                case DS_DC_res:
+                    state = CHARGE;
+                    Converter_settings();
+                    START_CONVERTER();
+                    break;
+                case CS_DC_res:
                     state = ISDONE;
                     STOP_CONVERTER();
-                }else if (previous_state == DS_DC_res)
-                {
-                    state = CHARGE;
-                    PARAM_CHAR();
-                    START_CONVERTER();
-                }
-            }else state = WAIT;
+                    break;
+            }
         }
     }
+}
 
+
+void Converter_settings()
+{
+    switch(state)
+    {
+        case PRECHARGE:
+        case CHARGE:
+            kp=0.03; 
+            ki=0.003; 
+            SET_CURRENT(i_char); 
+            RA0 = 0; 
+            __delay_ms(100); 
+            cmode = 1; 
+            integral = 0; 
+            EOCD_count = EOCD_loops; 
+            CV_count = CV_loops;
+            break;
+        case DISCHARGE:
+            kp=0.03;
+            ki=0.003;
+            SET_CURRENT(i_disc);
+            RA0 = 1;
+            __delay_ms(100);
+            cmode = 1;
+            integral = 0;
+            EOCD_count = EOCD_loops;
+            break;
+        case CS_DC_res:
+        case DS_DC_res:
+            kp=0.03;
+            ki=0.003;
+            SET_CURRENT(capacity / 5);
+            RA0 = 1;
+            __delay_ms(100);
+            cmode = 1;
+            integral = 0;
+            dc_res_count = 14;
+            break;
+    }
+}
+
+
+void Li_Ion_states_p2()
+{
     if (state == ISDONE)
     {
         if (cell_count < cell_max)
