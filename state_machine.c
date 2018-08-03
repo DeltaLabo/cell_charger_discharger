@@ -88,6 +88,10 @@ void State_Machine()
             case DISCHARGE:
                 fDISCHARGE();
                 break;
+            case CS_DC_res:
+            case DS_DC_res:
+                fDC_res();
+                break;
             default:
                 Li_Ion_states_p2();
                 break;
@@ -180,21 +184,41 @@ void fDISCHARGE()
     }
 }
 
+void fDC_res()
+{
+    LOG_ON();
+    control_loop();  
+    if(!count)
+    {
+        if (dc_res_count == 4)  //Check all this timming
+        {
+            v_1_dcres = vprom;
+            i_1_dcres = iprom;
+            SET_CURRENT(capacity);                  
+        }
+        if (dc_res_count == 1)
+        {
+            v_2_dcres = vprom;
+            i_2_dcres = iprom;
+            STOP_CONVERTER();
+            dc_res_val = (v_1_dcres - v_2_dcres) * 10000;
+            dc_res_val = dc_res_val / (i_2_dcres - i_1_dcres);
+        }
+        if (!dc_res_count)
+        {   
+            UART_send_string(DC_res_str);
+            display_value(dc_res_val);
+            UART_send_string(end_str);
+            LINEBREAK;             
+            previous_state = state;
+            state = WAIT;
+            wait_count = wait_time;              
+        }else dc_res_count--;
+    }    
+}
+
 void Li_Ion_states_p2()
 {
-    if(state == CS_DC_res)
-    {
-        control_loop();
-        Calculate_DC_res();
-    }
-
-    if(state == DS_DC_res)
-    {
-        control_loop();
-        Calculate_DC_res();
-    }
-
-
     if (state == WAIT)
     {
         STOP_CONVERTER();  ///MAYBEOK
@@ -551,52 +575,3 @@ void Start_state_machine()
     }
 }
 
-void Calculate_DC_res()
-{
-    //LOG_ON();  
-    if(!count)
-    {
-        if (dc_res_count == 14)  // cambiar a constante
-        {
-            LINEBREAK;
-            UART_send_string(state_res_str);
-            display_value(state);
-            UART_send_string(end_state_res_str);
-            LINEBREAK;          
-        } 
-        if (dc_res_count == 4)
-        {
-            v_1_dcres = vprom;
-            i_1_dcres = iprom;
-            SET_CURRENT(capacity);                  
-        }
-        if (dc_res_count == 1)
-        {
-            v_2_dcres = vprom;
-            i_2_dcres = iprom;
-            STOP_CONVERTER();
-            dc_res_val = (v_1_dcres - v_2_dcres) * 10000UL;
-            dc_res_val = dc_res_val / (i_2_dcres - i_1_dcres);
-            /*LINEBREAK;
-            display_value(v_1_dcres);
-            LINEBREAK;
-            display_value(v_2_dcres);
-            LINEBREAK;
-            display_value(i_1_dcres);
-            LINEBREAK;
-            display_value(i_2_dcres);
-            LINEBREAK;*/
-            UART_send_string(DC_res_str);
-            display_value(dc_res_val);
-            UART_send_string(end_str);
-            LINEBREAK; 
-        }
-        if (!dc_res_count)        {               
-
-            if (state == DS_DC_res) previous_state = DS_DC_res;
-            if (state == CS_DC_res) previous_state = CS_DC_res;
-            state = WAIT;
-            wait_count = wait_time;              
-        }else dc_res_count--;
-    }    
-}

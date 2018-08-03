@@ -16,6 +16,7 @@
     void fIDLE(void);
     void fCHARGE(void);
     void fDISCHARGE(void);
+    void fDC_res(void);
     void Init_State_Machine(void);
     void Start_state_machine(void);
     void Parameter_Set(void);
@@ -25,7 +26,7 @@
     void Define_Parameters(void);
     void Li_Ion_param(void);
     void Ni_MH_param(void);
-    void Calculate_DC_res(void);
+    
 
 
    
