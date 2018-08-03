@@ -94,6 +94,9 @@ void State_Machine()
             case DS_DC_res:
                 fDC_res();
                 break;
+            case WAIT:    
+                fWAIT();
+                break;
             default:
                 Li_Ion_states_p2();
                 break;
@@ -134,7 +137,7 @@ void fIDLE()
             case 51:
                 state = CHARGE;
                 Converter_settings();
-                START_CONVERTER();
+                START_CONVERTER();  
                 break;
         }                
     }
@@ -178,7 +181,7 @@ void fDISCHARGE()
             { 
                 previous_state = state;
                 if (option == 52) state = ISDONE;
-                state = WAIT;                
+                else state = WAIT;                
                 wait_count = wait_time;
                 STOP_CONVERTER();
             }else EOCD_count--;
@@ -313,6 +316,7 @@ void Li_Ion_states_p2()
 {
     if (state == ISDONE)
     {
+        UART_send_string("DONE");
         if (cell_count < cell_max)
         {
             __delay_ms(500);       
