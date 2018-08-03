@@ -149,126 +149,114 @@ void fIDLE()
 void fCHARGE()
 {
     LOG_ON();
-    control_loop();
-    if (!count)
+    conv = 1;
+    if (vprom < 900)
     {
-        if (vprom < 900)
+        state = FAULT;
+        UART_send_string((char*)cell_below_str);
+        LINEBREAK;
+    }
+    if (iprom < EOC_current)
+    {                
+        if (!EOCD_count)
         {
-            state = FAULT;
-            UART_send_string((char*)cell_below_str);
-            LINEBREAK;
-        }
-        if (iprom < EOC_current)
-        {                
-            if (!EOCD_count)
-            {
-                previous_state = state;
-                if (state == CHARGE && option == 51) state = ISDONE;
-                else state = WAIT;                
-                wait_count = wait_time;
-                STOP_CONVERTER();                       
-            }else EOCD_count--;
-        }
+            previous_state = state;
+            if (state == CHARGE && option == 51) state = ISDONE;
+            else state = WAIT;                
+            wait_count = wait_time;
+            STOP_CONVERTER();                       
+        }else EOCD_count--;
     }
 }
 
 void fDISCHARGE()
 {
     LOG_ON();
-    control_loop();
-    if (!count)
+    conv = 1;
+    if (vprom < EOD_voltage)
     {
-        if (vprom < EOD_voltage)
-        {
-            if (!EOCD_count)
-            { 
-                previous_state = state;
-                if (option == 52) state = ISDONE;
-                else state = WAIT;                
-                wait_count = wait_time;
-                STOP_CONVERTER();
-            }else EOCD_count--;
-        }
+        if (!EOCD_count)
+        { 
+            previous_state = state;
+            if (option == 52) state = ISDONE;
+            else state = WAIT;                
+            wait_count = wait_time;
+            STOP_CONVERTER();
+        }else EOCD_count--;
     }
 }
 
 void fDC_res()
 {
     LOG_ON();
-    control_loop();  
-    if(!count)
+    conv = 1;
+    if (dc_res_count == 4)  //Check all this timming
     {
-        if (dc_res_count == 4)  //Check all this timming
-        {
-            v_1_dcres = vprom;
-            i_1_dcres = iprom;
-            SET_CURRENT(capacity);                  
-        }
-        if (dc_res_count == 1)
-        {
-            v_2_dcres = vprom;
-            i_2_dcres = iprom;
-            STOP_CONVERTER();            
-            dc_res_val = (v_1_dcres - v_2_dcres) * 10000;
-            dc_res_val = dc_res_val / (i_2_dcres - i_1_dcres);
-        }
-        if (!dc_res_count)
-        {   
-            LINEBREAK;
-            UART_send_string((char*)DC_res_str);
-            display_value(dc_res_val);
-            UART_send_string((char*)end_str);
-            LINEBREAK;
-            LOG_OFF();   ///I dont like this 
-            previous_state = state;
-            state = WAIT;
-            wait_count = wait_time;              
-        }else dc_res_count--;
-    }    
+        v_1_dcres = vprom;
+        i_1_dcres = iprom;
+        SET_CURRENT(capacity);                  
+    }
+    if (dc_res_count == 1)
+    {
+        v_2_dcres = vprom;
+        i_2_dcres = iprom;
+        STOP_CONVERTER();            
+        dc_res_val = (v_1_dcres - v_2_dcres) * 10000;
+        dc_res_val = dc_res_val / (i_2_dcres - i_1_dcres);
+    }
+    if (!dc_res_count)
+    {   
+        LINEBREAK;
+        UART_send_string((char*)DC_res_str);
+        display_value(dc_res_val);
+        UART_send_string((char*)end_str);
+        LINEBREAK;
+        LOG_OFF();   ///I dont like this 
+        previous_state = state;
+        state = WAIT;
+        wait_count = wait_time;              
+    }else dc_res_count--;
 }
 
 void fWAIT()
 {
     STOP_CONVERTER();  ///MAYBEOK
-    if (!count)
-    {
-        if (wait_count)
-        {   
-            LINEBREAK;
-            UART_send_string((char*)in_wait_str);
-            display_value(wait_count);
-            UART_send_string((char*)end_wait_str);
-            wait_count--;             
-        }
-        if(!wait_count)
-        {           
-            switch(previous_state)
-            {
-                case PRECHARGE:
-                    state = DISCHARGE;
-                    Converter_settings();
-                    START_CONVERTER();
-                    break;
-                case CHARGE:
-                    state = CS_DC_res; 
-                    Converter_settings();
-                    START_CONVERTER(); 
-                    break;
-                case DISCHARGE:
-                    state = DS_DC_res; 
-                    Converter_settings();
-                    START_CONVERTER();
-                    break;
-                case DS_DC_res:
-                    state = CHARGE;
-                    Converter_settings();
-                    START_CONVERTER();
-                    break;
-                case CS_DC_res:
-                    state = ISDONE;
-                    STOP_CONVERTER();
-                    break;
-            }
+    if (wait_count)
+    {   
+        LINEBREAK;
+        UART_send_string((char*)in_wait_str);
+        display_value(wait_count);
+        UART_send_string((char*)end_wait_str);
+        wait_count--;             
+    }
+    if(!wait_count)
+    {           
+        switch(previous_state)
+        {
+            case PRECHARGE:
+                state = DISCHARGE;
+                Converter_settings();
+                START_CONVERTER();
+                break;
+            case CHARGE:
+                state = CS_DC_res; 
+                Converter_settings();
+                START_CONVERTER(); 
+                break;
+            case DISCHARGE:
+                state = DS_DC_res; 
+                Converter_settings();
+                START_CONVERTER();
+                break;
+            case DS_DC_res:
+                state = CHARGE;
+                Converter_settings();
+                START_CONVERTER();
+                break;
+            case CS_DC_res:
+                state = ISDONE;
+                STOP_CONVERTER();
+                break;
         }
     }
 }

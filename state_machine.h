@@ -78,6 +78,7 @@
     unsigned int            v_2_dcres;
     unsigned int            i_2_dcres;
     unsigned short long     dc_res_val;
+    unsigned int            conv = 0;                     //Turn converter ON and OFF.
     
 #endif /* STATE_MACHINE_H*/
 

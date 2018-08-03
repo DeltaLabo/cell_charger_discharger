@@ -72,7 +72,7 @@
 #define     LINEBREAK               UART_send_char(10)
 
 //DC-DC CONVERTER RELATED DEFINITION
-#define		STOP_CONVERTER()		{ dc = 0; set_DC(); RA1 = 1; Cell_OFF(); LOG_OFF();}
+#define		STOP_CONVERTER()		{ dc = 0; set_DC(); RA1 = 1; Cell_OFF(); LOG_OFF(); conv = 0;}
 #define  	START_CONVERTER()		{ dc = DC_MIN; set_DC(); RA1 = 0; __delay_ms(100); Cell_ON();}
 
 #define 	LOG_ON()				{ log_on = 1; }

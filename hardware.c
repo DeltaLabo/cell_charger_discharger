@@ -155,53 +155,47 @@ void set_DC()
 
 void cc_cv_mode()
 {
-    if (!count)
+    if(vprom > vref && cmode == 1)
     {
-        if(vprom > vref && cmode == 1)
-        {
-            proportional = 0;
-            integral = 0;
-            if (cmode){
-                ki = 0.001;
-                kp = 0.1;
-            }               
-            cmode = 0;
-            kp = 0.2;  //0.2 with 0.01 produces a very good regulation at the end
-            if (ki < 0.01) ki = ki + 0.001;
-        }
-    }         
+        proportional = 0;
+        integral = 0;
+        if (cmode){
+            ki = 0.001;
+            kp = 0.1;
+        }               
+        cmode = 0;
+        kp = 0.2;  //0.2 with 0.01 produces a very good regulation at the end
+        if (ki < 0.01) ki = ki + 0.001;
+    }     
 }
 
 void log_control()
 {
-        if (!count)
-        {
-            if (log_on)
-            {
-                LINEBREAK;
-                UART_send_string((char*)C_str);
-                display_value(cell_count - 48);
-                UART_send_string((char*)comma_str);
-                UART_send_string((char*)(char*)S_str);
-                display_value(state);
-                UART_send_string((char*)(char*)comma_str);
-                UART_send_string((char*)(char*)V_str);
-                //display_value(v);
-                display_value(vprom*10);
-                UART_send_string((char*)comma_str);
-                UART_send_string((char*)I_str);
-                //display_value(i);
-                display_value(iprom*10);   
-                UART_send_string((char*)comma_str);
-                UART_send_string((char*)T_str);
-                //display_value(dc);
-                display_value(tprom);  
-                //UART_send_string((char*)comma_str); //
-                //display_value(t);           //
-                //UART_send_string((char*)comma_str);
+    if (log_on)
+    {
+        LINEBREAK;
+        UART_send_string((char*)C_str);
+        display_value(cell_count - 48);
+        UART_send_string((char*)comma_str);
+        UART_send_string((char*)(char*)S_str);
+        display_value(state);
+        UART_send_string((char*)(char*)comma_str);
+        UART_send_string((char*)(char*)V_str);
+        //display_value(v);
+        display_value(vprom*10);
+        UART_send_string((char*)comma_str);
+        UART_send_string((char*)I_str);
+        //display_value(i);
+        display_value(iprom*10);   
+        UART_send_string((char*)comma_str);
+        UART_send_string((char*)T_str);
+        //display_value(dc);
+        display_value(tprom);  
+        //UART_send_string((char*)comma_str); //
+        //display_value(t);           //
+        //UART_send_string((char*)comma_str);
 
-            }
-        }
+    }
 }
 //THIS ADC IS WORKING NOW
 void read_ADC()
@@ -231,8 +225,7 @@ void read_ADC()
 
 void control_loop()
 {
-    cc_cv_mode();
-	if(!cmode)
+    if(!cmode)
     {
         pid(v, vref);
     }else
@@ -255,27 +248,24 @@ void timing()
 
 void calculate_avg()
 {
-    if(1)
+    switch(count)
     {
-        switch(count)
-        {
-            case COUNTER:
-                iprom = 0;
-                vprom = 0;
-                tprom = 0;
-                break;
-            case 0:
-                iprom = iprom / COUNTER;
-                vprom = vprom / COUNTER;
-                tprom = tprom / COUNTER;
-                break;
-            default:
-                iprom += i;
-                vprom += v;
-                tprom += dc * 1.953125;
-                break;
-        }    
-    }
+        case COUNTER:
+            iprom = 0;
+            vprom = 0;
+            tprom = 0;
+            break;
+        case 0:
+            iprom = iprom / COUNTER;
+            vprom = vprom / COUNTER;
+            tprom = tprom / COUNTER;
+            break;
+        default:
+            iprom += i;
+            vprom += v;
+            tprom += dc * 1.953125;
+            break;
+    }   
 }
 
 //**Beginning of the UART related functions. 
