@@ -129,18 +129,15 @@ void fIDLE()
             case 49:
                 state = PRECHARGE;
                 Converter_settings();
-                START_CONVERTER();
                 break;
             case 50:
             case 52:
                 state = DISCHARGE;
                 Converter_settings();
-                START_CONVERTER();
                 break;
             case 51:
                 state = CHARGE;
-                Converter_settings();
-                START_CONVERTER();  
+                Converter_settings(); 
                 break;
         }                
     }
@@ -236,22 +233,18 @@ void fWAIT()
             case PRECHARGE:
                 state = DISCHARGE;
                 Converter_settings();
-                START_CONVERTER();
                 break;
             case CHARGE:
                 state = CS_DC_res; 
                 Converter_settings();
-                START_CONVERTER(); 
                 break;
             case DISCHARGE:
                 state = DS_DC_res; 
                 Converter_settings();
-                START_CONVERTER();
                 break;
             case DS_DC_res:
                 state = CHARGE;
                 Converter_settings();
-                START_CONVERTER();
                 break;
             case CS_DC_res:
                 state = ISDONE;
@@ -289,6 +282,9 @@ void Converter_settings()
     integral = 0;
     EOCD_count = EOCD_loops;
     CV_count = CV_loops;
+    dc = DC_START; 
+    set_DC(); 
+    Cell_ON();
     switch(state)
     {
         case PRECHARGE:
