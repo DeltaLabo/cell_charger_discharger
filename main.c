@@ -12,22 +12,13 @@
 char const              next_cell_str_main[] = "---------->NEXT_CELL<----------";
 
 void main(void)
-{
+{    
     Init_Registers();
-	Initialize_Hardware();
-    Init_UART();
-    state = STANDBY;       
-    count = COUNTER; 
-    iprom = 0;
-    vprom = 0;
-    tprom = 0;
-    wait_count = 0;
-    dc_res_count = 0;
-    esc = 0;    
+	Initialize_general();
+    Init_UART(); 
     __delay_ms(10);
-
-    //TRISBbits.TRISB0 = 0;               //Set RB0 as output. led
-    //ANSELBbits.ANSB0 = 0;               //Digital
+    UART_send_string("RESET\r\n");    
+    //HACKS FOR THIS BOARD
     TRISB1 = 1;     //Set RB1 as input
     WPUB1 = 0;      //Disable pull up
     TRISC3 = 1;     //As input to avoid control //old position
@@ -36,7 +27,6 @@ void main(void)
     WPUC4 = 0;      //Disable pull up
     TRISC5 = 1;     //As input to avoid control //old position
     WPUC5 = 0;      //Disable pull up
-    //RA1 = 0; ///TEST
     while(1)
 	{        
         if(TMR0IF)

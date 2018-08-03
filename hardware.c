@@ -20,15 +20,23 @@ char const              I_str[] = "I";
 char const              T_str[] = "T";
 
 
-void Initialize_Hardware()
+void Initialize_general()
 {
-	//CLRWDT();
-	TMR0IF = 0;                        //Clear timer 0
+	CLRWDT();
+	STOP_CONVERTER();
+    TMR0IF = 0;                        //Clear timer 0
 	ad_res = 0;                        //Clear ADC result variable
 	cmode = 1;                         //Start in CC mode
 	iref = 0;                  
 	vref = 0;
-    STOP_CONVERTER();
+    state = STANDBY;       
+    count = COUNTER; 
+    iprom = 0;
+    vprom = 0;
+    tprom = 0;
+    wait_count = 0;
+    dc_res_count = 0;
+    esc = 0;     
 }
 
 void Init_Registers()
@@ -142,8 +150,7 @@ int		pi;
         dc = DC_MIN;
     }else{
         dc += pi; //This is the point in which a mix the PWM with the PID
-    }       
-    set_DC();
+    }   
 }
 
 void set_DC()
@@ -207,7 +214,6 @@ void read_ADC()
     //v = ad_res * 1.23779; //* 1.2207;    
     opr = (int)(1.2865513 * ad_res);   //1051/1000 with 5014/4096
     v = opr;    //0 as offset
-    if (v < 0) i = 0;
     AD_SET_CHAN(I_CHAN);
     AD_CONVERT();
     AD_RESULT();
@@ -232,6 +238,7 @@ void control_loop()
     {
         pid(i, iref);
     }
+    set_DC();
 }
 
 void timing()

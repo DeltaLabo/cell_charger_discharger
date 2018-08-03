@@ -42,8 +42,8 @@
 #include <math.h>
 #include <stdint.h>         //To include uint8_t and uint16_t
 
-#define		ERR_MAX					5000        //This is given by the maximum valued that can be sensed
-#define		ERR_MIN					-5000       //This is given by the maximum valued that can be sensed
+#define		ERR_MAX					200        //This is given by the maximum valued that can be sensed
+#define		ERR_MIN					-200       //This is given by the maximum valued that can be sensed
 #define		SET_VOLTAGE(x)			{ vref = x; }
 #define		SET_CURRENT(x)			{ iref = x; }
 
@@ -106,7 +106,7 @@ unsigned int                        dc = 0;         //Duty, change data size for
 unsigned char 						spb;			//Baud rate set
 unsigned int            			log_on; 
 
-void Initialize_Hardware(void);
+void Initialize_general(void);
 void Init_Registers(void);
 void Shutdown_Peripherals(void);
 void pid(unsigned int feedback, unsigned int setpoint);
