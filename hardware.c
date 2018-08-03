@@ -98,10 +98,7 @@ void Init_Registers()
     TRISC0 = 0;                         //Set RC0 as output
     
     //---------------------ADC SETTINGS----------------------------------------
-    //INTERRUPTS 
-    //PIE1bits.ADIE = 1;                  //Activate interrupts
-    //INTCONbits.PEIE =1;                 //Pehierals interrupts
-    
+   
     //ADC INPUTS//check this after final design
     TRISA3 = 1;                         //RA3, Positive voltage reference 
     ANSA3 = 0;                          //RA3 analog
@@ -120,7 +117,9 @@ void Init_Registers()
     ADCON1bits.ADFM = 1;                //2's compliment result
     ADCON2bits.CHSN = 0b1111;           //Negative differential input as ADNREF
     ADCON0bits.ADON = 1;                //Turn on the ADC
-    
+
+    //---------------------INTERRUPTS----------------------------------------
+    INTCONbits.GIE = 0;                 //Activate Global Interrupts
 }
 
 void pid(unsigned int feedback, unsigned int setpoint)
@@ -132,8 +131,8 @@ int		pi;
 	if(er > ERR_MAX) er = ERR_MAX;
 	if(er < ERR_MIN) er = ERR_MIN;
     
-	proportional = kp * er;
-	integral += ki * er * 0.001024; //time base is 1Khz (t = 1/1000) /2Khz
+	proportional = (int)(kp * er);
+	integral += (int)(ki * er * 0.001024); //time base is 1Khz (t = 1/1000) /2Khz
 
 	pi = proportional + integral; 
     
@@ -180,28 +179,27 @@ void log_control()
             if (log_on)
             {
                 LINEBREAK;
-                UART_send_string(C_str);
+                UART_send_string((char*)C_str);
                 display_value(cell_count - 48);
-                UART_send_string(comma_str);
-                UART_send_string(S_str);
+                UART_send_string((char*)comma_str);
+                UART_send_string((char*)(char*)S_str);
                 display_value(state);
-                UART_send_string(comma_str);
-                UART_send_string(V_str);
+                UART_send_string((char*)(char*)comma_str);
+                UART_send_string((char*)(char*)V_str);
                 //display_value(v);
                 display_value(vprom*10);
-                UART_send_string(comma_str);
-                UART_send_string(I_str);
+                UART_send_string((char*)comma_str);
+                UART_send_string((char*)I_str);
                 //display_value(i);
                 display_value(iprom*10);   
-                UART_send_string(comma_str);
-                UART_send_string(T_str);
+                UART_send_string((char*)comma_str);
+                UART_send_string((char*)T_str);
                 //display_value(dc);
                 display_value(tprom);  
-                //UART_send_string(comma_str); //
+                //UART_send_string((char*)comma_str); //
                 //display_value(t);           //
-                /*UART_send_string(comma_str);
-                UART_send_string("Inc");
-                display_value(inc);*/
+                //UART_send_string((char*)comma_str);
+
             }
             count = COUNTER;
             iprom = 0;
@@ -217,13 +215,13 @@ void read_ADC()
     AD_CONVERT();
     AD_RESULT();
     //v = ad_res * 1.23779; //* 1.2207;    
-    opr = 1.2865513 * ad_res;   //1051/1000 with 5014/4096
+    opr = (int)(1.2865513 * ad_res);   //1051/1000 with 5014/4096
     v = opr;    //0 as offset
     if (v < 0) i = 0;
     AD_SET_CHAN(I_CHAN);
     AD_CONVERT();
     AD_RESULT();
-    opr = 1.2241211 * ad_res;     //with 5014/4096
+    opr = (int)(1.2241211 * ad_res);     //with 5014/4096
     //i = opr;
     opr = opr - 2525;
     if (state == CHARGE | state == PRECHARGE){
@@ -231,7 +229,7 @@ void read_ADC()
     }
     //i=i/0.4;       //A mOhms resistor
     //i = (200/37) * i; //Hall effect sensor  37/200=0.185
-    i = opr * 2.5; //HALL EFFECT ACS723LL OFFSET OF 35
+    i = (int)(opr * 2.5); //HALL EFFECT ACS723LL OFFSET OF 35
     opr = 0;     
 }
 
@@ -358,7 +356,7 @@ void display_value(long value)
   
     ltoa(buffer,value,10);  
   
-    UART_send_string(buffer);
+    UART_send_string((char*)buffer);
 }
 
 void Cell_ON()

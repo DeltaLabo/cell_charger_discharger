@@ -155,7 +155,7 @@ void fCHARGE()
         if (vprom < 900)
         {
             state = FAULT;
-            UART_send_string(cell_below_str);
+            UART_send_string((char*)cell_below_str);
             LINEBREAK;
         }
         if (iprom < EOC_current)
@@ -215,9 +215,9 @@ void fDC_res()
         if (!dc_res_count)
         {   
             LINEBREAK;
-            UART_send_string(DC_res_str);
+            UART_send_string((char*)DC_res_str);
             display_value(dc_res_val);
-            UART_send_string(end_str);
+            UART_send_string((char*)end_str);
             LINEBREAK;
             LOG_OFF();   ///I dont like this 
             previous_state = state;
@@ -235,9 +235,9 @@ void fWAIT()
         if (wait_count)
         {   
             LINEBREAK;
-            UART_send_string(in_wait_str);
+            UART_send_string((char*)in_wait_str);
             display_value(wait_count);
-            UART_send_string(end_wait_str);
+            UART_send_string((char*)end_wait_str);
             wait_count--;             
         }
         if(!wait_count)
@@ -329,19 +329,17 @@ void Define_Parameters()
     option = 0;
     cell_max = 0;
     LINEBREAK; 
-    UART_send_string(param_def_str);
+    UART_send_string((char*)param_def_str);
     LINEBREAK;
     //LI-ION CASE
-        ///*
-        UART_send_string(chem_def_liion);
-        LINEBREAK;
-        LINEBREAK;  
-        Li_Ion_param();
-        //*/
+    UART_send_string((char*)chem_def_liion);
+    LINEBREAK;
+    LINEBREAK;  
+    Li_Ion_param();
     //END OF LI-ION CASE
     //NI-MH CASE
         /*
-        UART_send_string(chem_def_nimh);
+        UART_send_string((char*)chem_def_nimh);
         LINEBREAK;
         LINEBREAK;  
         Ni_MH_param();
@@ -353,224 +351,229 @@ void Li_Ion_param ()
 {         
     LINEBREAK;
     SET_VOLTAGE(Li_Ion_CV);
-    UART_send_string(cv_val_str);
+    UART_send_string((char*)cv_val_str);
     display_value(Li_Ion_CV);
-    UART_send_string(mv_str);
+    UART_send_string((char*)mv_str);
     LINEBREAK;
     capacity = Li_Ion_CAP;
-    UART_send_string(nom_cap_str);
+    UART_send_string((char*)nom_cap_str);
     display_value(capacity);
-    UART_send_string(mAh_str);
+    UART_send_string((char*)mAh_str);
     LINEBREAK;
     LINEBREAK;
     //-------CHARGE CURRENT
-    UART_send_string(def_char_curr_str);
+    UART_send_string((char*)def_char_curr_str);
     LINEBREAK;
-    UART_send_string(quarter_c_str);
+    UART_send_string((char*)quarter_c_str);
     LINEBREAK;
-    UART_send_string(half_c_str);
+    UART_send_string((char*)half_c_str);
     LINEBREAK;
-    UART_send_string(one_c_str);
+    UART_send_string((char*)one_c_str);
     LINEBREAK;
     LINEBREAK;
     while(c_char == 0)                               //Wait until the value of c_char is defined by the user
     {
         c_char = UART_get_char();                    //Get the value in the terminal.
-        if (c_char == 49)
+        switch(c_char)
         {
-            i_char = capacity/4;
-            UART_send_string(char_def_quarter_str);
-            LINEBREAK;
-        }
-        else if (c_char == 50)
-        {
-            i_char = capacity/2;
-            UART_send_string(char_def_half_str);
-            LINEBREAK;
-        }
-        else if (c_char == 51)
-        {
-            i_char = capacity;
-            UART_send_string(char_def_one_str);
-            LINEBREAK;
-        }else if (c_char == 0x1B)
-        {
-            c_disc = 0x1B;
-            option = 0x1B;
-            cell_max = 0x1B;
-            state = STANDBY;
-            LINEBREAK;
-            UART_send_string(restarting_str);
-            LINEBREAK; 
-        }else
-        {
-            c_char = 0;
-            LINEBREAK;
-            UART_send_string(num_1and3_str);
-            LINEBREAK;
+            case 49:
+                i_char = capacity/4;
+                UART_send_string((char*)char_def_quarter_str);
+                LINEBREAK;
+                break;
+            case 50:
+                i_char = capacity/2;
+                UART_send_string((char*)char_def_half_str);
+                LINEBREAK;
+                break;
+            case 51:
+                i_char = capacity;
+                UART_send_string((char*)char_def_one_str);
+                LINEBREAK;
+                break;
+            case 0x1B:
+                c_disc = 0x1B;
+                option = 0x1B;
+                cell_max = 0x1B;
+                state = STANDBY;
+                LINEBREAK;
+                UART_send_string((char*)restarting_str);
+                LINEBREAK; 
+                break;
+            default:
+                c_char = 0;
+                LINEBREAK;
+                UART_send_string((char*)num_1and3_str);
+                LINEBREAK;                
+                break;
         }
     }
     if (c_char != 0x1B)     //Only show the message if the ESC was not pressed
     {
         EOC_current = Li_Ion_EOC_curr;
-        UART_send_string(EOC_I_str);
+        UART_send_string((char*)EOC_I_str);
         display_value(EOC_current);
-        UART_send_string(mA_str);
+        UART_send_string((char*)mA_str);
         LINEBREAK; 
         LINEBREAK;
         //-------DISCHARGE CURRENT
-        UART_send_string(def_disc_curr_str);
+        UART_send_string((char*)def_disc_curr_str);
         LINEBREAK;
-        UART_send_string(quarter_c_str);
+        UART_send_string((char*)quarter_c_str);
         LINEBREAK;
-        UART_send_string(half_c_str);
+        UART_send_string((char*)half_c_str);
         LINEBREAK;
-        UART_send_string(one_c_str);
+        UART_send_string((char*)one_c_str);
         LINEBREAK;
         LINEBREAK;
     }
     while(c_disc == 0)
     {
         c_disc = UART_get_char();                    //Get the value in the terminal.
-        if (c_disc == 49)
+        switch (c_disc)
         {
-            i_disc = capacity/4;
-            UART_send_string(dis_def_quarter_str);
-            LINEBREAK;
-        }
-        else if (c_disc == 50)
-        {
-            i_disc = capacity/2;
-            UART_send_string(dis_def_half_str);
-            LINEBREAK;
-        }
-        else if (c_disc == 51)
-        {
-            i_disc = capacity;
-            UART_send_string(dis_def_one_str);
-            LINEBREAK;
-        }else if (c_disc == 0x1B)
-        {
-            option = 0x1B;
-            cell_max = 0x1B;
-            state = STANDBY;
-            LINEBREAK;
-            UART_send_string(restarting_str);
-            LINEBREAK; 
-        }else
-        {
-            c_disc = 0;
-            LINEBREAK;
-            UART_send_string(num_1and3_str);
-            LINEBREAK;
+            case 49:
+                i_disc = capacity/4;
+                UART_send_string((char*)dis_def_quarter_str);
+                LINEBREAK;            
+                break;
+            case 50:
+                i_disc = capacity/2;
+                UART_send_string((char*)dis_def_half_str);
+                LINEBREAK;         
+                break;
+            case 51:
+                i_disc = capacity;
+                UART_send_string((char*)dis_def_one_str);
+                LINEBREAK;
+                break;
+            case 0x1B:
+                option = 0x1B;
+                cell_max = 0x1B;
+                state = STANDBY;
+                LINEBREAK;
+                UART_send_string((char*)restarting_str);
+                LINEBREAK;             
+                break;
+            default:
+                c_disc = 0;
+                LINEBREAK;
+                UART_send_string((char*)num_1and3_str);
+                LINEBREAK;                
+                break;
         }
     }
     if (c_disc != 0x1B)
     {
         //-------EOD voltage
         EOD_voltage = Li_Ion_EOD_volt;
-        UART_send_string(EOD_V_str);
+        UART_send_string((char*)EOD_V_str);
         display_value(EOD_voltage);
-        UART_send_string(mv_str);
+        UART_send_string((char*)mv_str);
         LINEBREAK;
         //-------Li-Ion case for options
         LINEBREAK;
-        UART_send_string(cho_bet_str);
+        UART_send_string((char*)cho_bet_str);
         LINEBREAK;
-        UART_send_string(li_ion_op_1_str);
+        UART_send_string((char*)li_ion_op_1_str);
         LINEBREAK;
-        UART_send_string(li_ion_op_2_str);
+        UART_send_string((char*)li_ion_op_2_str);
         LINEBREAK;
-        UART_send_string(li_ion_op_3_str);
+        UART_send_string((char*)li_ion_op_3_str);
         LINEBREAK;
-        UART_send_string(li_ion_op_4_str);
+        UART_send_string((char*)li_ion_op_4_str);
         LINEBREAK;
         LINEBREAK;
     }
     while(option == 0)
     {
         option = UART_get_char();                    //Get the value in the terminal.
-        if (option == 49)
+        switch(option)
         {
-            LINEBREAK;
-            UART_send_string(li_ion_op_1_sel_str);
-            LINEBREAK;
-        }else if (option == 50)
-        {
-            LINEBREAK;
-            UART_send_string(li_ion_op_2_sel_str);
-            LINEBREAK;
-        }else if (option == 51)
-        {
-            LINEBREAK;
-            UART_send_string(li_ion_op_3_sel_str);
-            LINEBREAK;
-        }else if (option == 52)
-        {
-            LINEBREAK;
-            UART_send_string(li_ion_op_4_sel_str);
-            LINEBREAK;
-        }else if (option == 0x1B)
-        {
-            cell_max = 0x1B;
-            state = STANDBY;
-            LINEBREAK;
-            UART_send_string(restarting_str);
-            LINEBREAK;
-        }else
-        {
-            option = 0;
-            LINEBREAK;
-            UART_send_string(num_1and4_str);
-            LINEBREAK;
-        } 
+            case 49:
+                LINEBREAK;
+                UART_send_string((char*)li_ion_op_1_sel_str);
+                LINEBREAK;
+                break;
+            case 50:
+                LINEBREAK;
+                UART_send_string((char*)li_ion_op_2_sel_str);
+                LINEBREAK;
+                break;
+            case 51:
+                LINEBREAK;
+                UART_send_string((char*)li_ion_op_3_sel_str);
+                LINEBREAK;            
+                break;
+            case 52:
+                LINEBREAK;
+                UART_send_string((char*)li_ion_op_4_sel_str);
+                LINEBREAK;            
+                break;
+            case 0x1B:
+                cell_max = 0x1B;
+                state = STANDBY;
+                LINEBREAK;
+                UART_send_string((char*)restarting_str);
+                LINEBREAK;
+                break;
+            default:
+                option = 0;
+                LINEBREAK;
+                UART_send_string((char*)num_1and4_str);
+                LINEBREAK;
+                break;
+
+        }
     }                 
     if (option != 0x1B)
     {
         LINEBREAK;
-        UART_send_string(def_num_cell_str);
+        UART_send_string((char*)def_num_cell_str);
         LINEBREAK;
     }
     while(cell_max == 0)
     {
         cell_max = UART_get_char();                 //Get the value in the terminal.
-        if (cell_max == 49)
+        switch(cell_max)
         {
-            LINEBREAK;
-            UART_send_string(num_cell_str);
-            UART_send_string(one_str);
-            LINEBREAK;
-        }else if (cell_max == 50)
-        {
-            LINEBREAK;
-            UART_send_string(num_cell_str);
-            UART_send_string(two_str);
-            LINEBREAK;
-        }else if (cell_max == 51)
-        {
-            LINEBREAK;
-            UART_send_string(num_cell_str);
-            UART_send_string(three_str);
-            LINEBREAK;
-        }else if (cell_max == 52)
-        {
-            LINEBREAK;
-            UART_send_string(num_cell_str);
-            UART_send_string(four_str);
-            LINEBREAK;
-        }else if (cell_max == 0x1B)
-        {
-            state = STANDBY;
-            LINEBREAK;
-            UART_send_string(restarting_str);
-            LINEBREAK;
-        }else
-        {
-            cell_max = 0;
-            LINEBREAK;
-            UART_send_string(num_1and4_str);
-            LINEBREAK;
-        } 
+            case 49:
+                LINEBREAK;
+                UART_send_string((char*)num_cell_str);
+                UART_send_string((char*)one_str);
+                LINEBREAK;
+                break;
+            case 50:
+                LINEBREAK;
+                UART_send_string((char*)num_cell_str);
+                UART_send_string((char*)two_str);
+                LINEBREAK;
+                break;
+            case 51:
+                LINEBREAK;
+                UART_send_string((char*)num_cell_str);
+                UART_send_string((char*)three_str);
+                LINEBREAK;  
+                break;
+            case 52:
+                LINEBREAK;
+                UART_send_string((char*)num_cell_str);
+                UART_send_string((char*)four_str);
+                LINEBREAK;
+                break;
+            case 0x1B:
+                state = STANDBY;
+                LINEBREAK;
+                UART_send_string((char*)restarting_str);
+                LINEBREAK;
+                break;
+            default:
+                cell_max = 0;
+                LINEBREAK;
+                UART_send_string((char*)num_1and4_str);
+                LINEBREAK;
+                break;
+        }           
     }
 }
 
@@ -578,39 +581,41 @@ void Start_state_machine()
 {   
     switch (cell_count){
         case 49:
-            UART_send_string(press_s_str);
+            UART_send_string((char*)press_s_str);
             LINEBREAK;
             while(start == 0)
             {
                 start = UART_get_char();                    //Get the value in the terminal.
-                if(start == 115)                            //If value = "s" then...
+                switch(start)
                 {
-                    UART_send_string(starting_str);        
-                    LINEBREAK;                                 
-                    LINEBREAK;    
-                }else if(start == 0x1B)
-                {
-                    state = STANDBY;
-                }else
-                {
-                    UART_send_string(press_s_str);
-                    LINEBREAK;
-                    start = 0; 
+                    case 115:
+                        UART_send_string((char*)starting_str);        
+                        LINEBREAK;                                 
+                        LINEBREAK;   
+                        break;
+                    case 0x1B:
+                        state = STANDBY;
+                        break;
+                    default:
+                        UART_send_string((char*)press_s_str);
+                        LINEBREAK;
+                        start = 0; 
+                        break;
                 }
             }
             if (start != 0x1B)
             {
                 LINEBREAK;
-                UART_send_string(cell_str);
+                UART_send_string((char*)cell_str);
                 LINEBREAK;           
             }
             break;
         default:
             LINEBREAK; 
-            UART_send_string(starting_str);                                            
+            UART_send_string((char*)starting_str);                                            
             LINEBREAK; 
             LINEBREAK;
-            UART_send_string(cell_str);
+            UART_send_string((char*)cell_str);
             display_value((long)(cell_count - 48));
             LINEBREAK;   
             break;
