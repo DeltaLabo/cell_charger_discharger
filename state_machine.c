@@ -31,10 +31,7 @@ char const              cho_bet_str[] = "Chose between following options: ";
 char const              quarter_c_str[] = "(1) 0.25C";
 char const              half_c_str[] = "(2) 0.50C";
 char const              one_c_str[] = "(3) 1C";
-char const              cell1_str[] = "Cell 1"; 
-char const              cell2_str[] = "Cell 2"; 
-char const              cell3_str[] = "Cell 3"; 
-char const              cell4_str[] = "Cell 4"; 
+char const              cell_str[] = "Cell "; 
 char const              dis_def_quarter_str[] = "Discharge current defined as 0.25C";
 char const              dis_def_half_str[] = "Discharge current defined as 0.5C";
 char const              dis_def_one_str[] = "Discharge current defined as 1C";
@@ -60,8 +57,6 @@ char const              li_ion_op_2_sel_str[] = "Discharge->Charge selected...";
 char const              li_ion_op_3_sel_str[] = "Only Charge selected...";
 char const              li_ion_op_4_sel_str[] = "Only Discharge selected...";
 char const              cell_below_str[] = "Cell below 0.9V or not present";
-char const              next_state_str[] = "---------->NEXT_STATE<----------";
-char const              next_cell_str[] = "---------->NEXT_CELL<----------";
  
 void Init_State_Machine()
 {
@@ -81,79 +76,99 @@ void State_Machine()
 {
     switch(state){
             case STANDBY:
-                STOP_CONVERTER();   
-                Init_State_Machine();
-                Define_Parameters();
-                if (cell_max != 0x1B)
-                {
-                    state = IDLE;
-                }
+                fSTANDBY();
                 break;                
-            default: 
-                //LI-ION CASE 
+            case IDLE:
+                fIDLE();
+                break;
+            default:
                 Li_Ion_states_p1();
                 Li_Ion_states_p2();
-                //NI-MH CASE
-                //Ni_MH_states_p1();
+                break;
     }
 }
 
-void Start_State_Machine()
-{   
-    if(cell_count == 49)
+void fSTANDBY()
+{
+    STOP_CONVERTER();   
+    Init_State_Machine();
+    Define_Parameters();
+    if (cell_max != 0x1B)
     {
-        UART_send_string(press_s_str);
-        LINEBREAK;
-        while(start == 0)
-        {
-            start = UART_get_char();                    //Get the value in the terminal.
-            if(start == 115)                            //If value = "s" then...
-            {
-                UART_send_string(starting_str);        
-                LINEBREAK;                                 
-                LINEBREAK;    
-            }else if(start == 0x1B)
-            {
-                state = STANDBY;
-            }else
-            {
-                UART_send_string(press_s_str);
-                LINEBREAK;
-                start = 0; 
-            }
-        }
-        if (start != 0x1B)
-        {
-            LINEBREAK;
-            UART_send_string(cell1_str);
-            LINEBREAK;           
-        }
+        state = IDLE;
+    }
+}
 
-    }else if(cell_count == 50)
+void fIDLE()
+{
+    STOP_CONVERTER();               //When switching between cells, the converter need to be stopped, maybe...
+    Start_state_machine();          
+    UART_interrupt_enable();        //I CHANGE THE POSITION AND IT WAS A MESS PLEASE THINK BEFORE DOING ANYTHING TO THIS    
+    if (start != 0x1B)
     {
-        UART_send_string(starting_str);        
-        LINEBREAK;                                 
-        LINEBREAK; 
-        LINEBREAK;
-        UART_send_string(cell2_str);
-        LINEBREAK;        
-    }else if(cell_count == 51)
-    {
-        UART_send_string(starting_str);        
-        LINEBREAK;                                 
-        LINEBREAK; 
-        LINEBREAK;
-        UART_send_string(cell3_str);
-        LINEBREAK;        
-    }else if(cell_count == 52)
-    {
-        UART_send_string(starting_str);        
-        LINEBREAK;                                 
-        LINEBREAK; 
-        LINEBREAK;
-        UART_send_string(cell4_str);
-        LINEBREAK;        
-    }      
+        count = COUNTER;
+        switch (option){
+            case 49:
+                state = PRECHARGE;
+                PARAM_CHAR();
+                START_CONVERTER();
+                break;
+            case 50:
+            case 52:
+                state = DISCHARGE;
+                PARAM_DISC();
+                START_CONVERTER();
+                break;
+            case 51:
+                state = CHARGE;
+                PARAM_CHAR();
+                START_CONVERTER();
+                break;
+        }                
+    }
+}
+
+void Start_state_machine()
+{   
+    switch (cell_count){
+        case 49:
+            UART_send_string(press_s_str);
+            LINEBREAK;
+            while(start == 0)
+            {
+                start = UART_get_char();                    //Get the value in the terminal.
+                if(start == 115)                            //If value = "s" then...
+                {
+                    UART_send_string(starting_str);        
+                    LINEBREAK;                                 
+                    LINEBREAK;    
+                }else if(start == 0x1B)
+                {
+                    state = STANDBY;
+                }else
+                {
+                    UART_send_string(press_s_str);
+                    LINEBREAK;
+                    start = 0; 
+                }
+            }
+            if (start != 0x1B)
+            {
+                LINEBREAK;
+                UART_send_string(cell_str);
+                LINEBREAK;           
+            }
+            break;
+        default:
+            UART_send_string(starting_str);        
+            LINEBREAK;                                 
+            LINEBREAK; 
+            LINEBREAK;
+            UART_send_string(cell_str);
+            display_value((long)(cell_count - 48));
+            LINEBREAK;   
+            break;
+    }
 }
 
 
@@ -163,36 +178,6 @@ void Li_Ion_states_p1()
 {
     //State machine for Li-Ion case
     switch (state){
-        case IDLE:
-            STOP_CONVERTER();
-            Start_State_Machine();
-            UART_interrupt_enable();     //I CHANGE THE POSITION AND IT WAS A MESS PLEASE THINK BEFORE DOING ANYTHING TO THIS    
-            if (start != 0x1B)
-            {
-                count = COUNTER;
-                switch (option){
-                    case 49:
-                        /*state = DS_DC_res; 
-                        PARAM_DCRES();
-                        START_CONVERTER();*///PRUEBA PARA VER LA RESISTENCIA
-                        state = PRECHARGE;
-                        PARAM_CHAR();
-                        START_CONVERTER();
-                        break;
-                    case 50:
-                    case 52:
-                        state = DISCHARGE;
-                        PARAM_DISC();
-                        START_CONVERTER();
-                        break;
-                    case 51:
-                        state = CHARGE;
-                        PARAM_CHAR();
-                        START_CONVERTER();
-                        break;
-                }                
-            }
-            break;
         case PRECHARGE:   
             LOG_ON();
             control_loop();
@@ -208,9 +193,6 @@ void Li_Ion_states_p1()
                 {                
                     if (!EOCD_count)
                     {
-                        LINEBREAK;
-                        UART_send_string(next_state_str);
-                        LINEBREAK;
                         state = WAIT;
                         previous_state = PRECHARGE;
                         wait_count = wait_time;
@@ -228,9 +210,6 @@ void Li_Ion_states_p1()
                 {
                     if (!EOCD_count)
                     { 
-                        LINEBREAK;
-                        UART_send_string(next_state_str);
-                        LINEBREAK;
                         state = WAIT;
                         previous_state = DISCHARGE;
                         wait_count = wait_time;
@@ -239,10 +218,7 @@ void Li_Ion_states_p1()
                 }else if (vprom < EOD_voltage && option == 50)
                 {
                     if (!EOCD_count)
-                    {                 
-                        LINEBREAK;
-                        UART_send_string(next_state_str);
-                        LINEBREAK;
+                    {
                         state = WAIT;
                         previous_state = DISCHARGE;
                         wait_count = wait_time;
@@ -273,9 +249,6 @@ void Li_Ion_states_p1()
                 {
                     if (!EOCD_count)
                     {
-                        LINEBREAK;
-                        UART_send_string(next_state_str);
-                        LINEBREAK;
                         state = WAIT;
                         previous_state = CHARGE; //Esto lo cambie y estaba enredado
                         wait_count = wait_time;
@@ -285,9 +258,6 @@ void Li_Ion_states_p1()
                 {
                     if (!EOCD_count)
                     {
-                        LINEBREAK;
-                        UART_send_string(next_state_str);
-                        LINEBREAK;
                         state = WAIT;
                         previous_state = CHARGE; //Esto lo cambie y estaba enredado
                         wait_count = wait_time;
@@ -329,27 +299,17 @@ void Li_Ion_states_p2()
             if(!wait_count)
             {           
                 if (previous_state == PRECHARGE) //The maximum charging time here is still missing, better to let it to the end
-                {
-                    
-                    LINEBREAK;
-                    UART_send_string(next_state_str);
-                    LINEBREAK;
+                {  
                     state = DISCHARGE;
                     PARAM_DISC();
                     START_CONVERTER();
                 }else if (previous_state == DISCHARGE)
                 {
-                    LINEBREAK;
-                    UART_send_string(next_state_str);
-                    LINEBREAK;
                     state = DS_DC_res; 
                     PARAM_DCRES();
                     START_CONVERTER();
                 }else if (previous_state == CHARGE)
                 {
-                    LINEBREAK;
-                    UART_send_string(next_state_str);
-                    LINEBREAK;
                     state = CS_DC_res; 
                     PARAM_DCRES();
                     START_CONVERTER();                                     
@@ -362,9 +322,6 @@ void Li_Ion_states_p2()
                     STOP_CONVERTER();
                 }else if (previous_state == DS_DC_res)
                 {
-                    LINEBREAK;
-                    UART_send_string(next_state_str);
-                    LINEBREAK;
                     state = CHARGE;
                     PARAM_CHAR();
                     START_CONVERTER();
@@ -377,10 +334,7 @@ void Li_Ion_states_p2()
     {
         if (cell_count < cell_max)
         {
-            __delay_ms(500);
-            LINEBREAK;
-            UART_send_string(next_cell_str);
-            LINEBREAK;            
+            __delay_ms(500);       
             cell_count++;
             state = IDLE;   
         }else
@@ -688,11 +642,8 @@ void Calculate_DC_res()
             UART_send_string(end_str);
             LINEBREAK; 
         }
-        if (!dc_res_count)
-        {                
-            LINEBREAK;
-            UART_send_string(next_state_str);
-            LINEBREAK;
+        if (!dc_res_count)        {               
+
             if (state == DS_DC_res) previous_state = DS_DC_res;
             if (state == CS_DC_res) previous_state = CS_DC_res;
             state = WAIT;

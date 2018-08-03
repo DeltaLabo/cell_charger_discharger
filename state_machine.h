@@ -12,8 +12,10 @@
     #define STATE_MACHINE_H
 	enum states { STANDBY = 0, IDLE = 1, FAULT = 2, ISDONE = 3, WAIT = 4, PRECHARGE = 5, DISCHARGE = 6, CHARGE = 7, POSTDISCHARGE = 8, DS_DC_res = 9, CS_DC_res = 10};
     
+    void fSTANDBY(void);
+    void fIDLE(void);
     void Init_State_Machine(void);
-    void Start_State_Machine(void);
+    void Start_state_machine(void);
     void Parameter_Set(void);
     void State_Machine(void);
     void Li_Ion_states_p1(void);
