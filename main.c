@@ -17,7 +17,11 @@ void main(void)
 	Initialize_general();
     Init_UART(); 
     __delay_ms(10);
-    UART_send_string("RESET\r\n");    
+    //UART_send_string("\r\nPCON: "); 
+    //display_value(PCON);
+    //UART_send_string(" \r\nSTATUS:");
+    //display_value(STATUS);
+    //WPUE3 = 1;      //Enable pull up for MCLR
     //HACKS FOR THIS BOARD
     TRISB1 = 1;     //Set RB1 as input
     WPUB1 = 0;      //Disable pull up
@@ -42,8 +46,8 @@ void main(void)
             if (!count)
             {                     
                 cc_cv_mode();
-                State_Machine();  
-                log_control(); 
+                log_control();      //Log control shall be before the state machine
+                State_Machine();                  
             }
             timing();       
 		}        

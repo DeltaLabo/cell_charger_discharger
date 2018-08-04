@@ -36,7 +36,7 @@
     #define CV_loops            4
     #define EOCD_loops           4
     #define OCV_time            976
-    #define wait_time           10//600
+    #define wait_time           600
 
     //Li-Ion definitions
     #define Li_Ion_CV           4200
