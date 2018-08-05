@@ -66,10 +66,10 @@ void Init_Registers()
     //-----------TIMER0 FOR CONTROL AND MEASURING LOOP-------------------------
     TMR0IE = 0;                         //Disable timer interruptions
     TMR0CS = 0;                         //Timer set to internal instruction cycle
-    OPTION_REGbits.PS = 0b100;          //Prescaler set to 32
+    OPTION_REGbits.PS = 0b101;          //Prescaler set to 64
     OPTION_REGbits.PSA = 0;             //Prescaler activated
     TMR0IF = 0;                         //Clear timer flag
-    //Timer set to 32/4/64/256 = 976.56Hz
+    //Timer set to 32/4/64/256 = 488.28Hz
     
     //---------------------PSMC/PWM SETTING------------------------------------
     TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3. 
@@ -140,7 +140,7 @@ int		pi;
 	if(er < ERR_MIN) er = ERR_MIN;
     
 	proportional = (int)(kp * er);
-	integral += (int)(ki * er * 0.001024); //time base is 1Khz (t = 1/1000) /2Khz
+	integral += (int)((ki * er)/488); //time base is 0.5Khz 
 
 	pi = proportional + integral; 
     
@@ -163,16 +163,20 @@ void set_DC()
 void cc_cv_mode()
 {
     if(vprom > vref && cmode == 1)
-    {
-        proportional = 0;
-        integral = 0;
-        if (cmode){
-            ki = 0.001;
-            kp = 0.1;
-        }               
-        cmode = 0;
-        kp = 0.2;  //0.2 with 0.01 produces a very good regulation at the end
-        if (ki < 0.01) ki = ki + 0.001;
+    {        
+//        if (!CV_count)
+//        {
+            proportional = 0;
+            integral = 0;
+//            if (cmode){
+//                ki = 0.001;
+//                kp = 0.1;
+//            }               
+            cmode = 0;
+            kp = 0.5;  //0.2 with 0.01 produces a very good regulation at the end
+            ki = 0.04;
+            //if (ki < 0.04) ki = ki + 0.001;
+//        }else CV_count--;
     }     
 }
 
@@ -212,12 +216,12 @@ void read_ADC()
     AD_CONVERT();
     AD_RESULT();
     //v = ad_res * 1.23779; //* 1.2207;    
-    opr = (int)(1.2865513 * ad_res);   //1051/1000 with 5014/4096
+    opr = (int)(1.28655 * ad_res);   //1051/1000 with 5014/4096
     v = opr;    //0 as offset
     AD_SET_CHAN(I_CHAN);
     AD_CONVERT();
     AD_RESULT();
-    opr = (int)(1.2241211 * ad_res);     //with 5014/4096
+    opr = (int)(1.22412 * ad_res);     //with 5014/4096
     //i = opr;
     opr = opr - 2525;
     if (state == CHARGE | state == PRECHARGE){
@@ -249,7 +253,6 @@ void timing()
     }else
     {
         count = COUNTER;
-
     }
 }
 

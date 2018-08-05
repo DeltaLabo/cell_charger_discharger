@@ -38,17 +38,17 @@ void main(void)
             TMR0IF = 0;
             read_ADC();
             calculate_avg();
-            if (conv)
-            {
-                RA1 = 0;            //close main relay
-                control_loop();     //start controlling
-            }else RA1 = 1; 
             if (!count)
             {                     
                 cc_cv_mode();
                 log_control();      //Log control shall be before the state machine
                 State_Machine();                  
             }
+            if (conv)
+            {
+                RA1 = 0;            //close main relay
+                control_loop();     //start controlling
+            }else RA1 = 1; 
             timing();       
 		}        
 	}

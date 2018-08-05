@@ -42,8 +42,8 @@
 #include <math.h>
 #include <stdint.h>         //To include uint8_t and uint16_t
 
-#define		ERR_MAX					2000        //This is given by the maximum valued that can be sensed
-#define		ERR_MIN					-2000       //This is given by the maximum valued that can be sensed
+#define		ERR_MAX					1000        //This is given by the maximum valued that can be sensed
+#define		ERR_MIN					-1000       //This is given by the maximum valued that can be sensed
 #define		SET_VOLTAGE(x)			{ vref = x; }
 #define		SET_CURRENT(x)			{ iref = x; }
 
@@ -63,7 +63,7 @@
 #define		CELL3_OFF				PORTCbits.RC0 = 0
 #define		CELL4_OFF				PORTCbits.RC1 = 0
 
-#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(10); }
+#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(20); }
 #define		AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);}
 #define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} 
 //CONTROL LOOP RELATED DEFINITION
@@ -82,7 +82,7 @@
 #define 	DC_MAX         486    // DC = 0.95
 
  
-#define     COUNTER        976
+#define     COUNTER        488
 
 unsigned int 						ad_res;
 int                                 v;  //ADDED

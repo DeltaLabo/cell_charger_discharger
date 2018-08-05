@@ -33,8 +33,8 @@
     
    
     //General definitions
-    #define CV_loops            4
-    #define EOCD_loops           4
+    #define CV_loops            2
+    #define EOCD_loops          4
     #define OCV_time            976
     #define wait_time           600
 
