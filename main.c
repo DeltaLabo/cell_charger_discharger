@@ -9,8 +9,6 @@
 #include "hardware.h"
 #include "state_machine.h"
 
-char const              next_cell_str_main[] = "---------->NEXT_CELL<----------";
-
 void main(void)
 {    
     Init_Registers();
@@ -48,7 +46,8 @@ void main(void)
             {
                 RA1 = 0;            //close main relay
                 control_loop();     //start controlling
-            }else RA1 = 1; 
+                if (TMR0IF) UART_send_string("T_ERROR");
+            }else RA1 = 1;             
             timing();       
 		}        
 	}
@@ -69,10 +68,12 @@ void interrupt serial_interrupt(void)
 
         if (esc == 0x1B)
         {
-            state = STANDBY;
+            STOP_CONVERTER();
             esc = 0;
             wait_count = 0;
             dc_res_count = 0;
+            __delay_ms(50);
+            state = STANDBY;
         }else if  (esc == 110)
         {
             __delay_ms(50);

@@ -66,10 +66,10 @@ void Init_Registers()
     //-----------TIMER0 FOR CONTROL AND MEASURING LOOP-------------------------
     TMR0IE = 0;                         //Disable timer interruptions
     TMR0CS = 0;                         //Timer set to internal instruction cycle
-    OPTION_REGbits.PS = 0b101;          //Prescaler set to 64
+    OPTION_REGbits.PS = 0b110;          //Prescaler set to 64
     OPTION_REGbits.PSA = 0;             //Prescaler activated
     TMR0IF = 0;                         //Clear timer flag
-    //Timer set to 32/4/64/256 = 488.28Hz
+    //Timer set to 32/4/64/256 = 244.14Hz
     
     //---------------------PSMC/PWM SETTING------------------------------------
     TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3. 
@@ -140,7 +140,7 @@ int		pi;
 	if(er < ERR_MIN) er = ERR_MIN;
     
 	proportional = (int)(kp * er);
-	integral += (int)((ki * er)/488); //time base is 0.5Khz 
+	integral += (int)((ki * er)/COUNTER); //time base is 0.5Khz 
 
 	pi = proportional + integral; 
     
@@ -173,8 +173,8 @@ void cc_cv_mode()
 //                kp = 0.1;
 //            }               
             cmode = 0;
-            kp = 0.5;  //0.2 with 0.01 produces a very good regulation at the end
-            ki = 0.04;
+            kp = 0.2;  //0.2 with 0.01 produces a very good regulation at the end
+            ki = 0.2;
             //if (ki < 0.04) ki = ki + 0.001;
 //        }else CV_count--;
     }     
@@ -193,15 +193,15 @@ void log_control()
         UART_send_string((char*)(char*)comma_str);
         UART_send_string((char*)(char*)V_str);
         //display_value(v);
-        display_value(vprom*10);
+        display_value((int)vprom);
         UART_send_string((char*)comma_str);
         UART_send_string((char*)I_str);
         //display_value(i);
-        display_value(iprom*10);   
+        display_value((int)iprom);   
         UART_send_string((char*)comma_str);
         UART_send_string((char*)T_str);
         //display_value(dc);
-        display_value(tprom);  
+        display_value((int)tprom);  
         //UART_send_string((char*)comma_str); //
         //display_value(t);           //
         //UART_send_string((char*)comma_str);
@@ -264,18 +264,11 @@ void calculate_avg()
             iprom = 0;
             vprom = 0;
             tprom = 0;
-            break;
-        case 0:
-            iprom = iprom / COUNTER;
-            vprom = vprom / COUNTER;
-            tprom = tprom / COUNTER;
-            break;
-        default:
-            iprom += i;
-            vprom += v;
-            tprom += dc * 1.953125;
-            break;
+            break;           
     }   
+    iprom = (i + iprom)/2;
+    vprom = (v + vprom)/2;
+    tprom = dc * 1.953125;
 }
 
 //**Beginning of the UART related functions. 
@@ -357,11 +350,11 @@ void UART_send_string(char* st_pt)
         UART_send_char(*st_pt++); //process it as a byte data
 }
 
-void display_value(long value)
+void display_value(int value)
 {   
-    char buffer[8]; 
+    char buffer[6]; 
   
-    ltoa(buffer,value,10);  
+    itoa(buffer,value,10);  
   
     UART_send_string((char*)buffer);
 }
