@@ -276,8 +276,8 @@ void fFAULT()
 
 void Converter_settings()
 {
-    kp=0.02; 
-    ki=0.015;
+    kp=0.025; //0.025 with 0.01 is good
+    ki=0.02;
     cmode = 1;
     integral = 0;
     EOCD_count = EOCD_loops;

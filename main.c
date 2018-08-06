@@ -36,10 +36,10 @@ void main(void)
             TMR0IF = 0;
             read_ADC();
             calculate_avg();
+            log_control();      //Log control shall be before the state machine
             if (!count)
             {                     
                 cc_cv_mode();
-                log_control();      //Log control shall be before the state machine
                 State_Machine();                  
             }
             if (conv)
@@ -48,7 +48,7 @@ void main(void)
                 control_loop();     //start controlling
                 if (TMR0IF) UART_send_string("T_ERROR");
             }else RA1 = 1;             
-            timing();       
+            timing();            
 		}        
 	}
 }

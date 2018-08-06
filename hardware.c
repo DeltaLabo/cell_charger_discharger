@@ -9,15 +9,12 @@
 #include "state_machine.h"
 
 //unsigned int            ad_res;
-char const              comma_str[] = ",";
-char const              in_arr_str[] = "->";
-char const              end_arr_str[] = "<-";
-char const              hip_str[] = "-";
-char const              S_str[] = "S";
-char const              C_str[] = "C";
-char const              V_str[] = "V";
-char const              I_str[] = "I";
-char const              T_str[] = "T";
+char const              comma = ',';
+char const              S_str = 'S';
+char const              C_str = 'C';
+char const              V_str = 'V';
+char const              I_str = 'I';
+char const              T_str = 'T';
 
 
 void Initialize_general()
@@ -66,10 +63,10 @@ void Init_Registers()
     //-----------TIMER0 FOR CONTROL AND MEASURING LOOP-------------------------
     TMR0IE = 0;                         //Disable timer interruptions
     TMR0CS = 0;                         //Timer set to internal instruction cycle
-    OPTION_REGbits.PS = 0b110;          //Prescaler set to 64
+    OPTION_REGbits.PS = 0b110;          //Prescaler set to 128
     OPTION_REGbits.PSA = 0;             //Prescaler activated
     TMR0IF = 0;                         //Clear timer flag
-    //Timer set to 32/4/64/256 = 244.14Hz
+    //Timer set to 32/4/128/256 = 244.14Hz
     
     //---------------------PSMC/PWM SETTING------------------------------------
     TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3. 
@@ -173,39 +170,109 @@ void cc_cv_mode()
 //                kp = 0.1;
 //            }               
             cmode = 0;
-            kp = 0.2;  //0.2 with 0.01 produces a very good regulation at the end
-            ki = 0.2;
+            kp = 0.4;  //0.4 with 0.3 produces a very good regulation at the end
+            ki = 0.35;
             //if (ki < 0.04) ki = ki + 0.001;
 //        }else CV_count--;
     }     
 }
 
 void log_control()
-{
+{  
     if (log_on)
     {
-        LINEBREAK;
-        UART_send_string((char*)C_str);
-        display_value(cell_count - 48);
-        UART_send_string((char*)comma_str);
-        UART_send_string((char*)(char*)S_str);
-        display_value(state);
-        UART_send_string((char*)(char*)comma_str);
-        UART_send_string((char*)(char*)V_str);
-        //display_value(v);
-        display_value((int)vprom);
-        UART_send_string((char*)comma_str);
-        UART_send_string((char*)I_str);
-        //display_value(i);
-        display_value((int)iprom);   
-        UART_send_string((char*)comma_str);
-        UART_send_string((char*)T_str);
-        //display_value(dc);
-        display_value((int)tprom);  
-        //UART_send_string((char*)comma_str); //
-        //display_value(t);           //
-        //UART_send_string((char*)comma_str);
-
+        switch (count){
+            case 0:
+                ip_buff = (int) iprom;
+                vp_buff = (int) vprom; 
+                tp_buff = (int) tprom;
+                LINEBREAK;
+                break;
+            case COUNTER:    
+                UART_send_char(C_str);
+                break;
+            case COUNTER - 1:
+                UART_send_char(cell_count);
+                break;
+            case COUNTER - 2:
+                UART_send_char(comma);
+                break;
+            case COUNTER - 3:
+                UART_send_char(S_str);
+                break;
+            case COUNTER - 4: 
+                UART_send_char(state + 48);
+                break;
+            case COUNTER - 5:
+                UART_send_char(comma);
+                break;
+            case COUNTER - 6:
+                UART_send_char(V_str);
+                break;
+            case COUNTER - 7:
+                itoa(log_buffer,vp_buff,10);
+                break;
+            case COUNTER - 8:
+                UART_send_char(log_buffer[0]);
+                break;
+            case COUNTER - 9:
+                UART_send_char(log_buffer[1]);
+                break;
+            case COUNTER - 10:
+                UART_send_char(log_buffer[2]);
+                break;
+            case COUNTER - 11:
+                if (vp_buff > 1000) UART_send_char(log_buffer[3]);
+                break;
+            case COUNTER - 12:
+                UART_send_char(comma);
+                break;
+            case COUNTER - 13:
+                memset(log_buffer, '0', 6);
+                break;
+            case COUNTER - 14:
+                UART_send_char(I_str);
+                break;
+            case COUNTER - 15:
+                itoa(log_buffer,ip_buff,10);
+                break;
+            case COUNTER - 16:
+                UART_send_char(log_buffer[0]);
+                break;
+            case COUNTER - 17:
+                UART_send_char(log_buffer[1]);
+                break;
+            case COUNTER - 18:
+                UART_send_char(log_buffer[2]);
+                break;
+            case COUNTER - 19:
+                if (ip_buff > 1000) UART_send_char(log_buffer[3]);
+                break;
+            case COUNTER - 20:
+                UART_send_char(comma);
+                break;
+            case COUNTER - 21:
+                memset(log_buffer, '0', 6);
+                break;
+            case COUNTER - 22:
+                UART_send_char(T_str);
+                break;
+            case COUNTER - 23:
+                itoa(log_buffer,tp_buff,10);
+                break;
+            case COUNTER - 24:
+                UART_send_char(log_buffer[0]);
+                break;
+            case COUNTER - 25:
+                UART_send_char(log_buffer[1]);
+                break;
+            case COUNTER - 26:
+                UART_send_char(log_buffer[2]);
+                break;
+            case COUNTER - 27:
+                if (ip_buff > 1000) UART_send_char(log_buffer[3]);  //IT IS NEEDED ??
+                break;        
+        }
     }
 }
 //THIS ADC IS WORKING NOW
@@ -255,7 +322,7 @@ void timing()
         count = COUNTER;
     }
 }
-
+//THIS NEXT FUNCTION SEEMS LIKE A GOOD SOLUTION I TESTED IT AGAINST OTHERS AND STILL THE BEST
 void calculate_avg()
 {
     switch(count)
@@ -264,11 +331,18 @@ void calculate_avg()
             iprom = 0;
             vprom = 0;
             tprom = 0;
-            break;           
+            break;
+        case 0:
+            iprom /= COUNTER;
+            vprom /= COUNTER;
+            tprom /= COUNTER;
+            break;
+        default:
+            iprom += i;
+            vprom += v;
+            tprom += dc * 1.953125;
+            break;
     }   
-    iprom = (i + iprom)/2;
-    vprom = (v + vprom)/2;
-    tprom = dc * 1.953125;
 }
 
 //**Beginning of the UART related functions. 

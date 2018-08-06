@@ -41,6 +41,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>         //To include uint8_t and uint16_t
+#include <string.h>
 
 #define		ERR_MAX					500        //This is given by the maximum valued that can be sensed
 #define		ERR_MIN					-500       //This is given by the maximum valued that can be sensed
@@ -63,7 +64,7 @@
 #define		CELL3_OFF				PORTCbits.RC0 = 0
 #define		CELL4_OFF				PORTCbits.RC1 = 0
 
-#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(10); }
+#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(5); }
 #define		AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);}
 #define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} 
 //CONTROL LOOP RELATED DEFINITION
@@ -89,9 +90,9 @@ int                                 v;  //ADDED
 int                                 i;  //ADDED
 int                                 t;  //ADDED
 unsigned int 						count = COUNTER;             //ADDED
-int                         iprom;
-int                        vprom;
-int                         tprom;
+short long                          iprom;
+short long                          vprom;
+short long                          tprom;
 unsigned int 						vref;
 unsigned int 						iref;
 char 								cmode;
@@ -105,6 +106,10 @@ float 								ki;				//Integral constant, seems too big data type
 unsigned int                        dc = 0;         //Duty, change data size for 125Khz
 unsigned char 						spb;			//Baud rate set
 unsigned int            			log_on; 
+char                                log_buffer[5]={0};   //for printing data in the log
+int                                 ip_buff = 0;
+int                                 vp_buff = 0;  
+int                                 tp_buff = 0; 
 
 void Initialize_general(void);
 void Init_Registers(void);
