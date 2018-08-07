@@ -1,9 +1,10 @@
-/* Main loop for Charge and Discharge System. */
+/* Main source file for Charge and Discharge System. */
 /* Kyutech Institute of Technology. LaSEINE. Supervisor: Mengu CHO.*/
 /* 
- * File:  main.c 
- * Author: Juan J. Rojas
- * Version control: Git
+ * File:  hardware.c 
+ * Author: Juan J. Rojas.
+ * Mail (after leaving Kyutech): juan.rojas@tec.ac.cr
+ * Version control in Git: https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 #include "hardware.h"
@@ -46,7 +47,7 @@ void main(void)
             {
                 RA1 = 0;            //close main relay
                 control_loop();     //start controlling
-                if (TMR0IF) UART_send_string("T_ERROR");
+                if (TMR0IF) UART_send_string((char*)"T_ERROR");
             }else RA1 = 1;             
             timing();            
 		}        

@@ -1,10 +1,10 @@
-/* Hardware related definitions for Charge and Discharge System. */
-
+/* Hardware header file for Charge and Discharge System. */
 /* Kyutech Institute of Technology. LaSEINE. Supervisor: Mengu CHO.*/
 /* 
- * File:  hardware.h 
+ * File:  hardware.c 
  * Author: Juan J. Rojas.
- * Comments: Version control under Git
+ * Mail (after leaving Kyutech): juan.rojas@tec.ac.cr
+ * Version control in Git: https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 
@@ -42,9 +42,10 @@
 #include <math.h>
 #include <stdint.h>         //To include uint8_t and uint16_t
 #include <string.h>
+#include <stdbool.h>			//Include bool type
 
-#define		ERR_MAX					500        //This is given by the maximum valued that can be sensed
-#define		ERR_MIN					-500       //This is given by the maximum valued that can be sensed
+#define		ERR_MAX					500        //!< Maximum permisible error, useful to avoid ringing
+#define		ERR_MIN					-500       //!< Minimum permisible error, useful to avoid ringing
 #define		SET_VOLTAGE(x)			{ vref = x; }
 #define		SET_CURRENT(x)			{ iref = x; }
 
@@ -101,15 +102,22 @@ unsigned int 						second;
 unsigned char 						esc;
 int 								proportional;
 int 								integral;
-float 								kp;				//Proportional constant, seems too big data type
-float 								ki;				//Integral constant, seems too big data type
-unsigned int                        dc = 0;         //Duty, change data size for 125Khz
-unsigned char 						spb;			//Baud rate set
-unsigned int            			log_on; 
-char                                log_buffer[5]={0};   //for printing data in the log
+float 								kp;							//Proportional constant, seems too big data type
+float 								ki;							//Integral constant, seems too big data type
+unsigned int                        dc = 0;         			//Duty, change data size for 125Khz
+unsigned char 						spb;						//Baud rate set
+unsigned int            			log_on = 0;					//Variable to indicate if the log is activated  
+char                                log_buffer[5]={0};   		//for printing data in the log
 int                                 ip_buff = 0;
 int                                 vp_buff = 0;  
 int                                 tp_buff = 0; 
+
+char const              comma = ',';
+char const              S_str = 'S';
+char const              C_str = 'C';
+char const              V_str = 'V';
+char const              I_str = 'I';
+char const              T_str = 'T';
 
 void Initialize_general(void);
 void Init_Registers(void);

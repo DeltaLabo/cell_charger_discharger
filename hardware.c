@@ -1,21 +1,13 @@
-/* Hardware related source file for Charge and Discharge System. */
+/* Hardware source file for Charge and Discharge System. */
 /* Kyutech Institute of Technology. LaSEINE. Supervisor: Mengu CHO.*/
 /* 
  * File:  hardware.c 
  * Author: Juan J. Rojas.
- * Version control in Git
+ * Mail (after leaving Kyutech): juan.rojas@tec.ac.cr
+ * Version control in Git: https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 #include "hardware.h"
 #include "state_machine.h"
-
-//unsigned int            ad_res;
-char const              comma = ',';
-char const              S_str = 'S';
-char const              C_str = 'C';
-char const              V_str = 'V';
-char const              I_str = 'I';
-char const              T_str = 'T';
-
 
 void Initialize_general()
 {

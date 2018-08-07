@@ -1,84 +1,63 @@
 /* State machine source file for Charge and Discharge System. */
 /* Kyutech Institute of Technology. LaSEINE. Supervisor: Mengu CHO.*/
 /* 
- * File:  state_machine.c 
+ * File:  hardware.c 
  * Author: Juan J. Rojas.
- * Version control in Git
+ * Mail (after leaving Kyutech): juan.rojas@tec.ac.cr
+ * Version control in Git: https://bitbucket.org/juanjorojash/cell_charger_discharger
+ */
+
+/**
+ * @file state_machine.c
+ * @author Juan J. Rojas
+ * @date 7 Aug 2018
+ * @brief File containing example of doxygen usage for quick reference.
+ *
+ * Here typically goes a more extensive explanation of what the header
+ * defines. Doxygens tags are words preceeded by either a backslash @\
+ * or by an at symbol @@.
+ * @see https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 #include "state_machine.h"
 #include "hardware.h"
-
-char const              press_s_str[] = "Press 's' to start: ";
-char const              starting_str[] = "Starting...";
-char const              done_str[] = "DONE";
-char const              state_res_str[] = "-------------S-";
-char const              end_state_res_str[] = "-S-------------";
-char const              DC_res_str[] = "------------>R";
-char const              end_str[] = "<------------";
-char const              num_1and2_str[] = "Please input a number between 1 and 2";
-char const              num_1and3_str[] = "Please input a number between 1 and 3";
-char const              num_1and4_str[] = "Please input a number between 1 and 4";         
-char const              param_def_str[] = "---Parameter definition for charger and discharger---";
-char const              restarting_str[] = "Restarting...";
-char const              chem_def_liion[] = "Chemistry defined as Li-Ion";
-char const              chem_def_nimh[] = "Chemistry defined as Ni-MH";
-char const              mv_str[] = " mV";
-char const              mAh_str[] = " mAh";
-char const              mA_str[] = " mA";
-char const              EOD_V_str[] = "End of discharge voltage: ";
-char const              EOC_I_str[] = "End of charge current: ";
-char const              cho_bet_str[] = "Chose between following options: ";
-char const              quarter_c_str[] = "(1) 0.25C";
-char const              half_c_str[] = "(2) 0.50C";
-char const              one_c_str[] = "(3) 1C";
-char const              cell_str[] = "Cell "; 
-char const              dis_def_quarter_str[] = "Discharge current defined as 0.25C";
-char const              dis_def_half_str[] = "Discharge current defined as 0.5C";
-char const              dis_def_one_str[] = "Discharge current defined as 1C";
-char const              char_def_quarter_str[] = "Charge current defined as 0.25C";
-char const              char_def_half_str[] = "Charge current defined as 0.5C";
-char const              char_def_one_str[] = "Charge current defined as 1C";
-char const              cv_val_str[] = "Constant voltage value: ";
-char const              nom_cap_str[] = "Nominal capacity: ";
-char const              def_char_curr_str[] = "Define charge current (input the number): ";
-char const              def_disc_curr_str[] = "Define discharge current (input the number): ";
-char const              def_num_cell_str[] = "Define number of cells to be tested (input the number): ";
-char const              num_cell_str[] = "Number of cells to be tested: ";
-char const              one_str[] = "1";
-char const              two_str[] = "2";
-char const              three_str[] = "3";
-char const              four_str[] = "4";
-char const              li_ion_op_1_str[] = "(1) Precharge->Discharge->Charge";
-char const              li_ion_op_2_str[] = "(2) Discharge->Charge";
-char const              li_ion_op_3_str[] = "(3) Only Charge";
-char const              li_ion_op_4_str[] = "(4) Only Discharge";
-char const              li_ion_op_1_sel_str[] = "Precharge->Discharge->Charge selected...";
-char const              li_ion_op_2_sel_str[] = "Discharge->Charge selected...";
-char const              li_ion_op_3_sel_str[] = "Only Charge selected...";
-char const              li_ion_op_4_sel_str[] = "Only Discharge selected...";
-char const              cell_below_str[] = "Cell below 0.9V or not present";
-char const              in_wait_str[] = "------------W-";
-char const              end_wait_str[] = "-W------------";
- 
-void Init_State_Machine()
-{
-    INTCONbits.GIE = 0;     //probar ponerlo en los registros
-    start = 0;
-    option = 0;
-    cell_max = 0;
-    c_char = 0;
-    c_disc = 0;
-//    vmax = 0;
-    cell_count = 49;
-    dc_res_count = 0;
-    LOG_OFF();    
-}
-
+/**
+ * @brief Example showing how to document a function with Doxygen.
+ *
+ * Description of what the function does. This part may refer to the parameters
+ * of the function, like @p param1 or @p param2. A word of code can also be
+ * inserted like @c this which is equivalent to <tt>this</tt> and can be useful
+ * to say that the function returns a @c void or an @c int. If you want to have
+ * more than one word in typewriter font, then just use @<tt@>.
+ * We can also include text verbatim,
+ * @verbatim like this@endverbatim
+ * Sometimes it is also convenient to include an example of usage:
+ * @code
+ * BoxStruct *out = Box_The_Function_Name(param1, param2);
+ * printf("something...\n");
+ * @endcode
+ * Or,
+ * @code{.py}
+ * pyval = python_func(arg1, arg2)
+ * print pyval
+ * @endcode
+ * when the language is not the one used in the current source file (but
+ * <b>be careful</b> as this may be supported only by recent versions
+ * of Doxygen). By the way, <b>this is how you write bold text</b> or,
+ * if it is just one word, then you can just do @b this.
+ * @param param1 Description of the first parameter of the function.
+ * @param param2 The second one, which follows @p param1.
+ * @return Describe what the function returns.
+ * @see Box_The_Second_Function
+ * @see Box_The_Last_One
+ * @see http://website/
+ * @note Something to note.
+ * @warning Warning.
+ */
 void State_Machine()
 {
     switch(state){
             case STANDBY:
-                fSTANDBY();
+                fSTANDBY();             /**<Standy function.*/
                 break;                
             case IDLE:
                 fIDLE();
@@ -106,10 +85,15 @@ void State_Machine()
     }
 }
 
+//!Stand-by state function
+/*!
+More elaborated desc
+@param void
+@return void
+*/
 void fSTANDBY()
 {
     STOP_CONVERTER();   
-    Init_State_Machine();
     Define_Parameters();
     if (cell_max != 0x1B)
     {
@@ -560,19 +544,26 @@ void Li_Ion_param ()
         }           
     }
 }
-
+/**
+ * @brief Function to start the State Machine
+ *
+ * At first, this function check which is the current cell. If @cell_count is equal to 
+ * '1' it will ask for user intervention to start. It will prompt the user to press 's'.
+ * If the user press 's' the program will start, but the user can also press 'ESC' and go 
+ * to the @pSTANDBY state. 
+ */
 void Start_state_machine()
 {   
     switch (cell_count){
-        case 49:
-            UART_send_string((char*)press_s_str);
-            LINEBREAK;
-            while(start == 0)
+        case '1':                                                            //In case is the cell#1
+            UART_send_string((char*)press_s_str);                           //Ask the user to press "s"
+            LINEBREAK;                  
+            while(start == 0)                                               
             {
-                start = UART_get_char();                    //Get the value in the terminal.
+                start = UART_get_char();                                    //Get the value in the terminal.
                 switch(start)
                 {
-                    case 115:
+                    case 's':
                         UART_send_string((char*)starting_str);        
                         LINEBREAK;                                 
                         LINEBREAK;   
@@ -600,7 +591,7 @@ void Start_state_machine()
             LINEBREAK; 
             LINEBREAK;
             UART_send_string((char*)cell_str);
-            display_value((long)(cell_count - 48));
+            display_value((int)(cell_count - 48));
             LINEBREAK;   
             break;
     }
