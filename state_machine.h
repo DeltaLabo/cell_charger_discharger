@@ -19,13 +19,12 @@
     void fWAIT(void);
     void fISDONE(void);
     void fFAULT(void);
-    void Init_State_Machine(void);
+    void Init_state_machine(void);
     void Start_state_machine(void);
-    void Parameter_Set(void);
-    void State_Machine(void);
-    void Li_Ion_states_p2(void);
+    void Parameter_set(void);
+    void State_machine(void);
     void option_50(void);
-    void Define_Parameters(void);
+    void Define_param(void);
     void Li_Ion_param(void);
     void Ni_MH_param(void);
     void Converter_settings(void);
@@ -48,7 +47,7 @@
     #define Ni_MH_EOC_DV        10
     #define Ni_MH_EOD_volt      1000
 
-    unsigned char           start;                          //variable to receive the start command
+    unsigned char           start = 0;                      //variable to receive the start command
     //unsigned char           chem;                         //chem = 49 -> Li-Ion, chem = 50-> Ni-MH || Other options can be included in the future  
     unsigned char           c_char = 0;                     //charging current in C
     unsigned char           c_disc = 0;                     //discharging current in C

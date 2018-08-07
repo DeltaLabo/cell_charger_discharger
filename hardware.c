@@ -9,7 +9,7 @@
 #include "hardware.h"
 #include "state_machine.h"
 
-void Initialize_general()
+void Init_general()
 {
 	CLRWDT();
 	STOP_CONVERTER();
@@ -28,7 +28,7 @@ void Initialize_general()
     esc = 0;     
 }
 
-void Init_Registers()
+void Init_registers()
 {
     //-----------------------GENERAL-------------------------------------------
     nWPUEN = 0;           //Allow change of individual WPU
@@ -116,7 +116,8 @@ void Init_Registers()
     ADCON0bits.ADON = 1;                //Turn on the ADC
 
     //---------------------INTERRUPTS----------------------------------------
-    INTCONbits.GIE = 0;                 //Activate Global Interrupts
+    PEIE = 1;                           //Activate pehierals Interrupts
+    GIE = 1;                            //Activate Global Interrupts
 }
 
 void pid(unsigned int feedback, unsigned int setpoint)
@@ -163,7 +164,7 @@ void cc_cv_mode()
 //            }               
             cmode = 0;
             kp = 0.4;  //0.4 with 0.3 produces a very good regulation at the end
-            ki = 0.35;
+            ki = 0.4;
             //if (ki < 0.04) ki = ki + 0.001;
 //        }else CV_count--;
     }     
@@ -380,8 +381,6 @@ void UART_interrupt_enable()
     }
     RCIE = 1;                   //enable reception interrupts
     TXIE = 0;                   //disable transmision interrupts
-    PEIE = 1;                   //enable peripherals interrupts
-    GIE = 1;                    //enable global interrupts   
 }
 
 //**Function to send one byte of date to UART**//

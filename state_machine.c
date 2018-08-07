@@ -53,7 +53,7 @@
  * @note Something to note.
  * @warning Warning.
  */
-void State_Machine()
+void State_machine()
 {
     switch(state){
             case STANDBY:
@@ -92,9 +92,9 @@ More elaborated desc
 @return void
 */
 void fSTANDBY()
-{
+{    
     STOP_CONVERTER();   
-    Define_Parameters();
+    Define_param();
     if (cell_max != 0x1B)
     {
         state = IDLE;
@@ -290,12 +290,14 @@ void Converter_settings()
     __delay_ms(10);
 }
 
-void Define_Parameters()
+void Define_param()
 {
+    start = 0;
     c_char = 0;
     c_disc = 0;
     option = 0;
     cell_max = 0;
+    cell_count = 49;
     LINEBREAK; 
     UART_send_string((char*)param_def_str);
     LINEBREAK;
@@ -547,15 +549,17 @@ void Li_Ion_param ()
 /**
  * @brief Function to start the State Machine
  *
- * At first, this function check which is the current cell. If @cell_count is equal to 
- * '1' it will ask for user intervention to start. It will prompt the user to press 's'.
- * If the user press 's' the program will start, but the user can also press 'ESC' and go 
- * to the @pSTANDBY state. 
+ * At first, this function check which is the current cell. If @p cell_count is equal to 
+ * <b>'1'</b> it will ask for user intervention to start. It will prompt the user to press <b>'s'</b>.
+ * If the user press it, the program will start. The user can also press <b>'ESC'</b> and go 
+ * to the @p STANDBY state. If the current cell is <b>not '1'</b> the program will start without 
+ * the user intervention. 
  */
 void Start_state_machine()
 {   
+    start = 0;
     switch (cell_count){
-        case '1':                                                            //In case is the cell#1
+        case '1':                                                           //In case is the cell#1
             UART_send_string((char*)press_s_str);                           //Ask the user to press "s"
             LINEBREAK;                  
             while(start == 0)                                               
@@ -578,7 +582,7 @@ void Start_state_machine()
                         break;
                 }
             }
-            if (start != 0x1B)
+            if (start != 0x1B)      //The user pressed ESC                                      
             {
                 LINEBREAK;
                 UART_send_string((char*)cell_str);

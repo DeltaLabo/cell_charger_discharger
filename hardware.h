@@ -44,8 +44,8 @@
 #include <string.h>
 #include <stdbool.h>			//Include bool type
 
-#define		ERR_MAX					500        //!< Maximum permisible error, useful to avoid ringing
-#define		ERR_MIN					-500       //!< Minimum permisible error, useful to avoid ringing
+#define		ERR_MAX					250        //!< Maximum permisible error, useful to avoid ringing
+#define		ERR_MIN					-250       //!< Minimum permisible error, useful to avoid ringing
 #define		SET_VOLTAGE(x)			{ vref = x; }
 #define		SET_CURRENT(x)			{ iref = x; }
 
@@ -119,8 +119,8 @@ char const              V_str = 'V';
 char const              I_str = 'I';
 char const              T_str = 'T';
 
-void Initialize_general(void);
-void Init_Registers(void);
+void Init_general(void);
+void Init_registers(void);
 void Shutdown_Peripherals(void);
 void pid(unsigned int feedback, unsigned int setpoint);
 void set_DC(void);

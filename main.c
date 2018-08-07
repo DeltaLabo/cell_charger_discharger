@@ -12,8 +12,8 @@
 
 void main(void)
 {    
-    Init_Registers();
-	Initialize_general();
+    Init_registers();
+	Init_general();
     Init_UART(); 
     __delay_ms(10);
     //UART_send_string("\r\nPCON: "); 
@@ -41,7 +41,7 @@ void main(void)
             if (!count)
             {                     
                 cc_cv_mode();
-                State_Machine();                  
+                State_machine();                  
             }
             if (conv)
             {
@@ -75,7 +75,7 @@ void interrupt serial_interrupt(void)
             dc_res_count = 0;
             __delay_ms(50);
             state = STANDBY;
-        }else if  (esc == 110)
+        }else if  (esc == 'n')      //if the user press 'n' to go to next cell
         {
             __delay_ms(50);
             cell_count++;
