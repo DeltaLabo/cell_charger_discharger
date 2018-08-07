@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['start_5fstate_5fmachine',['Start_state_machine',['../state__machine_8c.html#aed563ae909f60360b1eaee8bcf5803e3',1,'state_machine.c']]],
-  ['state_5fmachine',['State_Machine',['../state__machine_8c.html#a24cf40f69d05911e0d024723e54713c1',1,'state_machine.c']]]
+  ['li_5fion_5fparam',['Li_Ion_param',['../state__machine_8c.html#adcfbf8a12cd4c5c3525e9592263e0940',1,'state_machine.c']]]
 ];

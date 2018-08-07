@@ -316,9 +316,12 @@ void Define_param()
         */
     //END OF NI-MH CASE
 }
-
+/** @brief Function to define the parameters of the charge/discharge process fo Li-Ion chemistry*/
 void Li_Ion_param ()
-{         
+{   
+    /** This function will first show the pre-set parameters for charging that are:
+    - @p Li_Ion_CV = 4200 mV
+    - @p Li_Ion_CAP = 3250 mAh */      
     LINEBREAK;
     SET_VOLTAGE(Li_Ion_CV);
     UART_send_string((char*)cv_val_str);
@@ -331,7 +334,11 @@ void Li_Ion_param ()
     UART_send_string((char*)mAh_str);
     LINEBREAK;
     LINEBREAK;
-    //-------CHARGE CURRENT
+    /** For the charging current it will offer three options :
+    - 0.2 C
+    - 0.5 C
+    - 1 C
+    */    
     UART_send_string((char*)def_char_curr_str);
     LINEBREAK;
     UART_send_string((char*)quarter_c_str);
@@ -341,30 +348,32 @@ void Li_Ion_param ()
     UART_send_string((char*)one_c_str);
     LINEBREAK;
     LINEBREAK;
-    while(c_char == 0)                               //Wait until the value of c_char is defined by the user
+    while(c_char == 0)  //Wait until the value of c_char is defined by the user, which will change it from zero
     {
-        c_char = UART_get_char();                    //Get the value in the terminal.
+        c_char = UART_get_char();  //Get the value in the terminal.
         switch(c_char)
         {
-            case 49:
-                i_char = capacity/4;
+            case '1':       
+                i_char = capacity/4;  //0.25C
                 UART_send_string((char*)char_def_quarter_str);
                 LINEBREAK;
                 break;
-            case 50:
-                i_char = capacity/2;
+            case '2':
+                i_char = capacity/2;  //0.5C
                 UART_send_string((char*)char_def_half_str);
                 LINEBREAK;
                 break;
-            case 51:
-                i_char = capacity;
+            case '3':
+                i_char = capacity;  //1C      
                 UART_send_string((char*)char_def_one_str);
                 LINEBREAK;
                 break;
-            case 0x1B:
+            case 0x1B:  //The user pressed ESC
+                //Set this three parameters in ESC to used them to jump over the rest of the function code
                 c_disc = 0x1B;
                 option = 0x1B;
                 cell_max = 0x1B;
+                //Go to STANBY 
                 state = STANDBY;
                 LINEBREAK;
                 UART_send_string((char*)restarting_str);
@@ -556,10 +565,9 @@ void Li_Ion_param ()
  * the user intervention. 
  */
 void Start_state_machine()
-{   
-    start = 0;
-    switch (cell_count){
-        case '1':                                                           //In case is the cell#1
+{
+    switch (cell_count){        
+        case '1':                                                           //*<In case is the cell#1
             UART_send_string((char*)press_s_str);                           //Ask the user to press "s"
             LINEBREAK;                  
             while(start == 0)                                               
