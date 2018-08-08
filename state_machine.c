@@ -292,6 +292,7 @@ void Converter_settings()
 
 void Define_param()
 {
+    RCIE = 0;                   //disable reception interrupts
     start = 0;
     c_char = 0;
     c_disc = 0;
@@ -316,12 +317,15 @@ void Define_param()
         */
     //END OF NI-MH CASE
 }
+
+
 /** @brief Function to define the parameters of the charge/discharge process fo Li-Ion chemistry*/
 void Li_Ion_param ()
 {   
-    /** This function will first show the pre-set parameters for charging that are:
-    - @p Li_Ion_CV = 4200 mV
-    - @p Li_Ion_CAP = 3250 mAh */      
+    /**This function will first show the general constants for Li-Ion chemistry that are:
+    *- @p Li_Ion_CV = 4200 mV
+    *- @p Li_Ion_CAP = 3250 mAh
+    */      
     LINEBREAK;
     SET_VOLTAGE(Li_Ion_CV);
     UART_send_string((char*)cv_val_str);
@@ -334,10 +338,10 @@ void Li_Ion_param ()
     UART_send_string((char*)mAh_str);
     LINEBREAK;
     LINEBREAK;
-    /** For the charging current it will offer three options :
-    - 0.2 C
-    - 0.5 C
-    - 1 C
+    /**For the charging current it will offer three options:
+        - 0.2 C
+        - 0.5 C
+        - 1 C
     */    
     UART_send_string((char*)def_char_curr_str);
     LINEBREAK;
@@ -353,6 +357,7 @@ void Li_Ion_param ()
         c_char = UART_get_char();  //Get the value in the terminal.
         switch(c_char)
         {
+            /** After chosing charging current, the program will print it*/
             case '1':       
                 i_char = capacity/4;  //0.25C
                 UART_send_string((char*)char_def_quarter_str);
@@ -368,44 +373,41 @@ void Li_Ion_param ()
                 UART_send_string((char*)char_def_one_str);
                 LINEBREAK;
                 break;
+            /** Unless the user press ESC, in that case the program will be restarted to the @p STANBY state.*/    
             case 0x1B:  //The user pressed ESC
-                //Set this three parameters in ESC to used them to jump over the rest of the function code
-                c_disc = 0x1B;
-                option = 0x1B;
-                cell_max = 0x1B;
-                //Go to STANBY 
                 state = STANDBY;
                 LINEBREAK;
                 UART_send_string((char*)restarting_str);
                 LINEBREAK; 
-                break;
+                // Go to the ESCAPE label 
+                goto ESCAPE;
             default:
                 c_char = 0;
                 LINEBREAK;
-                UART_send_string((char*)num_1and3_str);
+                UART_send_string((char*)num_1and3_str);  //Ask the user to use a number between 1 and 3
                 LINEBREAK;                
                 break;
         }
     }
-    if (c_char != 0x1B)     //Only show the message if the ESC was not pressed
-    {
-        EOC_current = Li_Ion_EOC_curr;
-        UART_send_string((char*)EOC_I_str);
-        display_value(EOC_current);
-        UART_send_string((char*)mA_str);
-        LINEBREAK; 
-        LINEBREAK;
-        //-------DISCHARGE CURRENT
-        UART_send_string((char*)def_disc_curr_str);
-        LINEBREAK;
-        UART_send_string((char*)quarter_c_str);
-        LINEBREAK;
-        UART_send_string((char*)half_c_str);
-        LINEBREAK;
-        UART_send_string((char*)one_c_str);
-        LINEBREAK;
-        LINEBREAK;
-    }
+    /** Now the program will show the end-of-charge current constant that is:
+        - @p Li_Ion_EOC_curr = 100 mA
+    */    
+    EOC_current = Li_Ion_EOC_curr;
+    UART_send_string((char*)EOC_I_str);
+    display_value(EOC_current);
+    UART_send_string((char*)mA_str);
+    LINEBREAK; 
+    LINEBREAK;
+    //-------DISCHARGE CURRENT
+    UART_send_string((char*)def_disc_curr_str);
+    LINEBREAK;
+    UART_send_string((char*)quarter_c_str);
+    LINEBREAK;
+    UART_send_string((char*)half_c_str);
+    LINEBREAK;
+    UART_send_string((char*)one_c_str);
+    LINEBREAK;
+    LINEBREAK;    
     while(c_disc == 0)
     {
         c_disc = UART_get_char();                    //Get the value in the terminal.
@@ -427,13 +429,12 @@ void Li_Ion_param ()
                 LINEBREAK;
                 break;
             case 0x1B:
-                option = 0x1B;
-                cell_max = 0x1B;
                 state = STANDBY;
                 LINEBREAK;
                 UART_send_string((char*)restarting_str);
-                LINEBREAK;             
-                break;
+                LINEBREAK; 
+                // Go to the ESCAPE label 
+                goto ESCAPE;
             default:
                 c_disc = 0;
                 LINEBREAK;
@@ -442,28 +443,25 @@ void Li_Ion_param ()
                 break;
         }
     }
-    if (c_disc != 0x1B)
-    {
-        //-------EOD voltage
-        EOD_voltage = Li_Ion_EOD_volt;
-        UART_send_string((char*)EOD_V_str);
-        display_value(EOD_voltage);
-        UART_send_string((char*)mv_str);
-        LINEBREAK;
-        //-------Li-Ion case for options
-        LINEBREAK;
-        UART_send_string((char*)cho_bet_str);
-        LINEBREAK;
-        UART_send_string((char*)li_ion_op_1_str);
-        LINEBREAK;
-        UART_send_string((char*)li_ion_op_2_str);
-        LINEBREAK;
-        UART_send_string((char*)li_ion_op_3_str);
-        LINEBREAK;
-        UART_send_string((char*)li_ion_op_4_str);
-        LINEBREAK;
-        LINEBREAK;
-    }
+    //-------EOD voltage
+    EOD_voltage = Li_Ion_EOD_volt;
+    UART_send_string((char*)EOD_V_str);
+    display_value(EOD_voltage);
+    UART_send_string((char*)mv_str);
+    LINEBREAK;
+    //-------Li-Ion case for options
+    LINEBREAK;
+    UART_send_string((char*)cho_bet_str);
+    LINEBREAK;
+    UART_send_string((char*)li_ion_op_1_str);
+    LINEBREAK;
+    UART_send_string((char*)li_ion_op_2_str);
+    LINEBREAK;
+    UART_send_string((char*)li_ion_op_3_str);
+    LINEBREAK;
+    UART_send_string((char*)li_ion_op_4_str);
+    LINEBREAK;
+    LINEBREAK;
     while(option == 0)
     {
         option = UART_get_char();                    //Get the value in the terminal.
@@ -490,12 +488,12 @@ void Li_Ion_param ()
                 LINEBREAK;            
                 break;
             case 0x1B:
-                cell_max = 0x1B;
                 state = STANDBY;
                 LINEBREAK;
                 UART_send_string((char*)restarting_str);
-                LINEBREAK;
-                break;
+                LINEBREAK; 
+                // Go to the ESCAPE label 
+                goto ESCAPE;
             default:
                 option = 0;
                 LINEBREAK;
@@ -505,12 +503,9 @@ void Li_Ion_param ()
 
         }
     }                 
-    if (option != 0x1B)
-    {
-        LINEBREAK;
-        UART_send_string((char*)def_num_cell_str);
-        LINEBREAK;
-    }
+    LINEBREAK;
+    UART_send_string((char*)def_num_cell_str);
+    LINEBREAK;
     while(cell_max == 0)
     {
         cell_max = UART_get_char();                 //Get the value in the terminal.
@@ -554,6 +549,7 @@ void Li_Ion_param ()
                 break;
         }           
     }
+    ESCAPE:
 }
 /**
  * @brief Function to start the State Machine

@@ -120,17 +120,17 @@ void Init_registers()
     GIE = 1;                            //Activate Global Interrupts
 }
 
-void pid(unsigned int feedback, unsigned int setpoint)
+void pid(float feedback, unsigned int setpoint)
 {
-int 	er;
-int		pi;
+float 	er;
+float   pi;
 	er = setpoint - feedback;
 
 	if(er > ERR_MAX) er = ERR_MAX;
 	if(er < ERR_MIN) er = ERR_MIN;
     
-	proportional = (int)(kp * er);
-	integral += (int)((ki * er)/COUNTER); //time base is 0.5Khz 
+	proportional = (kp * er);
+	integral += (ki * er)/COUNTER; //time base is 0.5Khz 
 
 	pi = proportional + integral; 
     
@@ -139,7 +139,7 @@ int		pi;
     }else if (dc + pi <= DC_MIN){
         dc = DC_MIN;
     }else{
-        dc += pi; //This is the point in which a mix the PWM with the PID
+        dc += (int)(pi + 0.5); //This is the point in which a mix the PWM with the PID
     }   
 }
 
@@ -271,17 +271,17 @@ void log_control()
 //THIS ADC IS WORKING NOW
 void read_ADC()
 {
-    int opr;
+    float opr;
     AD_SET_CHAN(V_CHAN);
     AD_CONVERT();
     AD_RESULT();
     //v = ad_res * 1.23779; //* 1.2207;    
-    opr = (int)(1.28655 * ad_res);   //1051/1000 with 5014/4096
+    opr = (float)(1.28655 * ad_res);   //1051/1000 with 5014/4096
     v = opr;    //0 as offset
     AD_SET_CHAN(I_CHAN);
     AD_CONVERT();
     AD_RESULT();
-    opr = (int)(1.22412 * ad_res);     //with 5014/4096
+    opr = (float)(1.22412 * ad_res);     //with 5014/4096
     //i = opr;
     opr = opr - 2525;
     if (state == CHARGE | state == PRECHARGE){
@@ -289,7 +289,7 @@ void read_ADC()
     }
     //i=i/0.4;       //A mOhms resistor
     //i = (200/37) * i; //Hall effect sensor  37/200=0.185
-    i = (int)(opr * 2.5); //HALL EFFECT ACS723LL OFFSET OF 35
+    i = (float)(opr * 2.5); //HALL EFFECT ACS723LL OFFSET OF 35
     opr = 0;     
 }
 

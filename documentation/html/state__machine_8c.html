@@ -201,15 +201,19 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Define_param</b> ()</
 </div><div class="memdoc">
 
 <p>Function to define the parameters of the charge/discharge process fo Li-Ion chemistry. </p>
-<p>This function will first show the pre-set parameters for charging that are:</p><ul>
+<p>This function will first show the general constants for Li-Ion chemistry that are:</p><ul>
 <li><code>Li_Ion_CV</code> = 4200 mV</li>
 <li><code>Li_Ion_CAP</code> = 3250 mAh</li>
 </ul>
-<p><br />
- Then it will ask the user for three options:</p><ul>
+<p>For the charging current it will offer three options:</p><ul>
 <li>0.2 C</li>
 <li>0.5 C</li>
 <li>1 C</li>
+</ul>
+<p>After chosing charging current, the program will print it</p>
+<p>Unless the user press ESC, in that case the program will be restarted to the <code>STANBY</code> state.</p>
+<p>Now the program will show the end-of-charge current constant that is:</p><ul>
+<li><code>Li_Ion_EOC_curr</code> = 100 mA</li>
 </ul>
 
 </div>

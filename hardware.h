@@ -86,29 +86,29 @@
  
 #define     COUNTER        244
 
-unsigned int 						ad_res;
-int                                 v;  //ADDED
-int                                 i;  //ADDED
-int                                 t;  //ADDED
 unsigned int 						count = COUNTER;             //ADDED
-short long                          iprom;
-short long                          vprom;
-short long                          tprom;
+unsigned int 						ad_res;
+float                               v;  //ADDED
+float                               i;  //ADDED
+float                               t;  //ADDED
+float                               iprom;
+float                               vprom;
+float                               tprom;
+float 								proportional;
+float 								integral;
+float 								kp;							//Proportional constant, seems too big data type
+float 								ki;		
 unsigned int 						vref;
 unsigned int 						iref;
 char 								cmode;
 unsigned char 						cc_cv;
 unsigned int 						second;
-unsigned char 						esc;
-int 								proportional;
-int 								integral;
-float 								kp;							//Proportional constant, seems too big data type
-float 								ki;							//Integral constant, seems too big data type
+unsigned char 						esc;					
 unsigned int                        dc = 0;         			//Duty, change data size for 125Khz
 unsigned char 						spb;						//Baud rate set
 unsigned int            			log_on = 0;					//Variable to indicate if the log is activated  
 char                                log_buffer[5]={0};   		//for printing data in the log
-int                                 ip_buff = 0;
+int                                 ip_buff = 0;  //Buffer for 
 int                                 vp_buff = 0;  
 int                                 tp_buff = 0; 
 
