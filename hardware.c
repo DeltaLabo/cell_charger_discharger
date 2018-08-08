@@ -297,7 +297,7 @@ void control_loop()
 {
     if(!cmode)
     {
-        pid(v, vref);
+        pid(v, vref + 18);  //offset of 18
     }else
     {
         pid(i, iref);
