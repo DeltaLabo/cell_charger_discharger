@@ -40,7 +40,7 @@ void main(void)
             log_control();      //Log control shall be before the state machine
             if (!count)
             {                     
-                cc_cv_mode();
+                cc_cv_mode(vprom, vref, cmode);
                 State_machine();                  
             }
             if (conv)

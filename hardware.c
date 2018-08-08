@@ -150,9 +150,9 @@ void set_DC()
     PSMC1CONbits.PSMC1LD = 1; //Load Buffer
 }
 
-void cc_cv_mode()
+void cc_cv_mode(float current_voltage, unsigned int reference_voltage, char CC_mode_status)
 {
-    if(vprom > vref && cmode == 1)
+    if(current_voltage > reference_voltage && CC_mode_status == 1)
     {        
 //        if (!CV_count)
 //        {
@@ -164,7 +164,7 @@ void cc_cv_mode()
 //            }               
             cmode = 0;
             kp = 0.4;  //0.4 with 0.3 produces a very good regulation at the end
-            ki = 0.4;
+            ki = 0.5;
             //if (ki < 0.04) ki = ki + 0.001;
 //        }else CV_count--;
     }     
