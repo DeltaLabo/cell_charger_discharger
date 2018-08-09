@@ -94,12 +94,30 @@ More elaborated desc
 void fSTANDBY()
 {    
     STOP_CONVERTER();  
-    RCIE = 0;                   //disable reception interrupts
-    Define_param();
-    if (cell_max != 0x1B)
-    {
-        state = IDLE;
-    }
+    RCIE = 0;  //disable reception interrupts
+    start = 0;
+    c_char = 0;
+    c_disc = 0;
+    option = 0;
+    cell_max = 0;
+    cell_count = 49;
+    LINEBREAK; 
+    UART_send_string((char*)param_def_str);
+    LINEBREAK;
+    //LI-ION CASE
+    UART_send_string((char*)chem_def_liion);
+    LINEBREAK;
+    LINEBREAK;  
+    Li_Ion_param();
+    //END OF LI-ION CASE
+    //NI-MH CASE
+        /*
+        UART_send_string((char*)chem_def_nimh);
+        LINEBREAK;
+        LINEBREAK;  
+        Ni_MH_param();
+        */
+    //END OF NI-MH CASE
 }
 
 void fIDLE()
@@ -290,34 +308,6 @@ void Converter_settings()
             break;
     }
     __delay_ms(10);
-}
-
-void Define_param()
-{
-    RCIE = 0;                   //disable reception interrupts
-    start = 0;
-    c_char = 0;
-    c_disc = 0;
-    option = 0;
-    cell_max = 0;
-    cell_count = 49;
-    LINEBREAK; 
-    UART_send_string((char*)param_def_str);
-    LINEBREAK;
-    //LI-ION CASE
-    UART_send_string((char*)chem_def_liion);
-    LINEBREAK;
-    LINEBREAK;  
-    Li_Ion_param();
-    //END OF LI-ION CASE
-    //NI-MH CASE
-        /*
-        UART_send_string((char*)chem_def_nimh);
-        LINEBREAK;
-        LINEBREAK;  
-        Ni_MH_param();
-        */
-    //END OF NI-MH CASE
 }
 
 /**@brief Function to define the parameters of the charge/discharge process fo Li-Ion chemistry.
@@ -574,7 +564,8 @@ void Li_Ion_param ()
                 break;
         }           
     }
-    ESCAPE:  //label to goto the end of the function 
+    state = IDLE;  //go to IDLE state
+    ESCAPE: ;  //label to goto the end of the function 
 }
 
 /**@brief Function to start the state machine.
@@ -628,6 +619,6 @@ void Start_state_machine()
     UART_send_string((char*)cell_str);
     display_value((int)(cell_count - '0'));
     LINEBREAK; 
-    NOSTART:  //label to goto the end of the function 
+    NOSTART: ;  //label to goto the end of the function 
 }
 

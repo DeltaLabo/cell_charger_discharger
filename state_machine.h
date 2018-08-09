@@ -24,7 +24,6 @@
     void Parameter_set(void);
     void State_machine(void);
     void option_50(void);
-    void Define_param(void);
     void Li_Ion_param(void);
     void Ni_MH_param(void);
     void Converter_settings(void);
