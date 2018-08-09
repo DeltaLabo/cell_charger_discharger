@@ -1,5 +1,6 @@
-Charger and Discharger Project
-Creator: Juan J. Rojas
+My Main Page {#mainpage}
+============
+Documentation that will appear on the main pag
 
 ### What is this repository for? ###
 

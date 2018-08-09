@@ -1,10 +1,14 @@
-/* Main source file for Charge and Discharge System. */
-/* Kyutech Institute of Technology. LaSEINE. Supervisor: Mengu CHO.*/
-/* 
- * File:  hardware.c 
- * Author: Juan J. Rojas.
- * Mail (after leaving Kyutech): juan.rojas@tec.ac.cr
- * Version control in Git: https://bitbucket.org/juanjorojash/cell_charger_discharger
+/**
+ * @file main.c
+ * @author Juan J. Rojas
+ * @date 7 Aug 2018
+ * @brief Main source file for Charge and Discharge System.
+ * @par Institution:
+ * LaSEINE / CeNT. Kyushu Institute of Technology.
+ * @par Mail (after leaving Kyutech):
+ * juan.rojas@tec.ac.cr
+ * @par Git repository:
+ * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 #include "hardware.h"
@@ -77,6 +81,7 @@ void interrupt serial_interrupt(void)
             state = STANDBY;
         }else if  (esc == 'n')      //if the user press 'n' to go to next cell
         {
+            STOP_CONVERTER();
             __delay_ms(50);
             cell_count++;
             state = IDLE;  

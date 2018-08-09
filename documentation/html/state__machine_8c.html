@@ -68,7 +68,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>File containing example of doxygen usage for quick reference.  
+<p>State machine source file for Charge and Discharge System.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;state_machine.h&quot;</code><br />
 <code>#include &quot;hardware.h&quot;</code><br />
@@ -76,13 +76,13 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a720fb40709da65800a7083dc528d4b75"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a720fb40709da65800a7083dc528d4b75">State_machine</a> ()</td></tr>
-<tr class="memdesc:a720fb40709da65800a7083dc528d4b75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Example showing how to document a function with Doxygen.  <a href="#a720fb40709da65800a7083dc528d4b75">More...</a><br /></td></tr>
+<tr class="memdesc:a720fb40709da65800a7083dc528d4b75"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function contain the main switching.  <a href="#a720fb40709da65800a7083dc528d4b75">More...</a><br /></td></tr>
 <tr class="separator:a720fb40709da65800a7083dc528d4b75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a615d15018432f32225d7680126353f7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a615d15018432f32225d7680126353f7b">fSTANDBY</a> ()</td></tr>
 <tr class="memdesc:a615d15018432f32225d7680126353f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stand-by state function.  <a href="#a615d15018432f32225d7680126353f7b">More...</a><br /></td></tr>
 <tr class="separator:a615d15018432f32225d7680126353f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab8843d66ed853494d05155924f4229e"><td class="memItemLeft" align="right" valign="top"><a id="aab8843d66ed853494d05155924f4229e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>fIDLE</b> ()</td></tr>
+<tr class="memitem:aab8843d66ed853494d05155924f4229e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#aab8843d66ed853494d05155924f4229e">fIDLE</a> ()</td></tr>
+<tr class="memdesc:aab8843d66ed853494d05155924f4229e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine.  <a href="#aab8843d66ed853494d05155924f4229e">More...</a><br /></td></tr>
 <tr class="separator:aab8843d66ed853494d05155924f4229e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f63169934c3ee15942c859a2619e78e"><td class="memItemLeft" align="right" valign="top"><a id="a2f63169934c3ee15942c859a2619e78e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>fCHARGE</b> ()</td></tr>
@@ -103,9 +103,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>fFAULT</b> ()</td></t
 <tr class="memitem:a7269099146eb3fc4fd6b7a194d55421d"><td class="memItemLeft" align="right" valign="top"><a id="a7269099146eb3fc4fd6b7a194d55421d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b> ()</td></tr>
 <tr class="separator:a7269099146eb3fc4fd6b7a194d55421d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0a2465b04a3d9d71807984fb08a7e74"><td class="memItemLeft" align="right" valign="top"><a id="ad0a2465b04a3d9d71807984fb08a7e74"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Define_param</b> ()</td></tr>
-<tr class="separator:ad0a2465b04a3d9d71807984fb08a7e74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adcfbf8a12cd4c5c3525e9592263e0940"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#adcfbf8a12cd4c5c3525e9592263e0940">Li_Ion_param</a> ()</td></tr>
 <tr class="memdesc:adcfbf8a12cd4c5c3525e9592263e0940"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to define the parameters of the charge/discharge process fo Li-Ion chemistry.  <a href="#adcfbf8a12cd4c5c3525e9592263e0940">More...</a><br /></td></tr>
 <tr class="separator:adcfbf8a12cd4c5c3525e9592263e0940"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -114,10 +111,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Define_param</b> ()</
 <tr class="separator:aed563ae909f60360b1eaee8bcf5803e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>File containing example of doxygen usage for quick reference. </p>
+<div class="textblock"><p>State machine source file for Charge and Discharge System. </p>
 <dl class="section author"><dt>Author</dt><dd>Juan J. Rojas </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>7 Aug 2018 Here typically goes a more extensive explanation of what the header defines. Doxygens tags are words preceeded by either a backslash \ or by an at symbol @. </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a href="https://bitbucket.org/juanjorojash/cell_charger_discharger">https://bitbucket.org/juanjorojash/cell_charger_discharger</a> </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>7 Aug 2018 </dd></dl>
+<dl class="section user"><dt>Institution:</dt><dd>LaSEINE / CeNT. Kyushu Institute of Technology. </dd></dl>
+<dl class="section user"><dt>Mail (after leaving Kyutech):</dt><dd><a href="#" onclick="location.href='mai'+'lto:'+'jua'+'n.'+'roj'+'as'+'@te'+'c.'+'ac.'+'cr'; return false;">juan.<span style="display: none;">.nosp@m.</span>roja<span style="display: none;">.nosp@m.</span>s@tec<span style="display: none;">.nosp@m.</span>.ac.<span style="display: none;">.nosp@m.</span>cr</a> </dd></dl>
+<dl class="section user"><dt>Git repository:</dt><dd><a href="https://bitbucket.org/juanjorojash/cell_charger_discharger">https://bitbucket.org/juanjorojash/cell_charger_discharger</a> </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="abfbd54f51445d45b916ee44c9c1d24ae"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abfbd54f51445d45b916ee44c9c1d24ae">&#9670;&nbsp;</a></span>fDC_res()</h2>
@@ -135,6 +134,27 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Define_param</b> ()</
       </table>
 </div><div class="memdoc">
 <p>I dont like this </p>
+
+</div>
+</div>
+<a id="aab8843d66ed853494d05155924f4229e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab8843d66ed853494d05155924f4229e">&#9670;&nbsp;</a></span>fIDLE()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void fIDLE </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function define the IDLE state of the state machine. </p>
+<p>At first, the program will call the <a class="el" href="state__machine_8c.html#aed563ae909f60360b1eaee8bcf5803e3">Start_state_machine()</a> function. </p>
 
 </div>
 </div>
@@ -251,7 +271,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Define_param</b> ()</
 <p>The user should input the desired number.</p>
 <p>After chosing the number or cells the program will print it.</p>
 <p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
-<p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em>, <em>4</em> or <em>ESC</em> the program will print a warning message and wait for a valid input. </p>
+<p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em>, <em>4</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
+<p>After the user has set the number of cells the program will go to the <code>IDLE</code> state. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="state__machine_8c.html#aab8843d66ed853494d05155924f4229e" title="This function define the IDLE state of the state machine. ">fIDLE()</a> </dd></dl>
 
 </div>
 </div>
@@ -304,22 +325,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Define_param</b> ()</
       </table>
 </div><div class="memdoc">
 
-<p>Example showing how to document a function with Doxygen. </p>
-<p>Description of what the function does. This part may refer to the parameters of the function, like <code>param1</code> or <code>param2</code>. A word of code can also be inserted like <code>this</code> which is equivalent to <code>this</code> and can be useful to say that the function returns a <code>void</code> or an <code>int</code>. If you want to have more than one word in typewriter font, then just use &lt;tt&gt;. We can also include text verbatim, </p><pre class="fragment">like this</pre><p> Sometimes it is also convenient to include an example of usage: </p><div class="fragment"><div class="line">BoxStruct *out = Box_The_Function_Name(param1, param2);</div><div class="line">printf(<span class="stringliteral">&quot;something...\n&quot;</span>);</div></div><!-- fragment --><p> Or, </p><div class="fragment"><div class="line">pyval = python_func(arg1, arg2)</div><div class="line"><span class="keywordflow">print</span> pyval</div></div><!-- fragment --><p> when the language is not the one used in the current source file (but <b>be careful</b> as this may be supported only by recent versions of Doxygen). By the way, <b>this is how you write bold text</b> or, if it is just one word, then you can just do <b>this</b>. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">param1</td><td>Description of the first parameter of the function. </td></tr>
-    <tr><td class="paramname">param2</td><td>The second one, which follows <code>param1</code>. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Describe what the function returns. </dd></dl>
-<dl class="section see"><dt>See also</dt><dd>Box_The_Second_Function </dd>
-<dd>
-Box_The_Last_One </dd>
-<dd>
-<a href="http://website/">http://website/</a> </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Something to note. </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Warning. </dd></dl>
+<p>This function contain the main switching. </p>
 <p>&lt;Standy function. </p>
 
 </div>
