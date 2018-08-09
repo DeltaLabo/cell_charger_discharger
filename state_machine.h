@@ -112,7 +112,7 @@
     char const              nom_cap_str[] = "Nominal capacity: ";
     char const              def_char_curr_str[] = "Define charge current (input the number): ";
     char const              def_disc_curr_str[] = "Define discharge current (input the number): ";
-    char const              def_num_cell_str[] = "Define number of cells to be tested (input the number): ";
+    char const              def_num_cell_str[] = "Define number of cells to be tested (input the number, maximum of 4): ";
     char const              num_cell_str[] = "Number of cells to be tested: ";
     char const              one_str[] = "1";
     char const              two_str[] = "2";

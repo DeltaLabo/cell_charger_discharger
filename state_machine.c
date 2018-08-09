@@ -294,6 +294,7 @@ void Converter_settings()
 
 void Define_param()
 {
+    RCIE = 0;                   //disable reception interrupts
     start = 0;
     c_char = 0;
     c_disc = 0;
@@ -319,8 +320,13 @@ void Define_param()
     //END OF NI-MH CASE
 }
 
+/**@brief Function to define the parameters of the charge/discharge process fo Li-Ion chemistry.
+*/
 void Li_Ion_param ()
-{         
+{   
+    /**This function will first show the pre-set parameters for charging that are:*/
+    /**> @p Li_Ion_CV = 4200 mV*/
+    /**> @p Li_Ion_CAP = 3250 mAh*/
     LINEBREAK;
     SET_VOLTAGE(Li_Ion_CV);
     UART_send_string((char*)cv_val_str);
@@ -333,273 +339,295 @@ void Li_Ion_param ()
     UART_send_string((char*)mAh_str);
     LINEBREAK;
     LINEBREAK;
-    //-------CHARGE CURRENT
+    /**For the charging current it will show three options:*/
     UART_send_string((char*)def_char_curr_str);
     LINEBREAK;
+    /** - 1) 0.25 C*/
     UART_send_string((char*)quarter_c_str);
     LINEBREAK;
+    /** - 2) 0.5 C*/
     UART_send_string((char*)half_c_str);
     LINEBREAK;
+    /** - 3) 1 C*/
     UART_send_string((char*)one_c_str);
     LINEBREAK;
     LINEBREAK;
-    while(c_char == 0)                               //Wait until the value of c_char is defined by the user
+    /** .*/
+    while(c_char == 0)
     {
-        c_char = UART_get_char();                    //Get the value in the terminal.
+    /**The user should input the desired option.*/
+        c_char = UART_get_char();  //Get the value in the terminal.
         switch(c_char)
-        {
-            case 49:
+        {   
+    /**After chosing charging current, the program will print it.*/
+            case '1':
                 i_char = capacity/4;
-                UART_send_string((char*)char_def_quarter_str);
+                UART_send_string((char*)char_def_quarter_str);  //0.25C
                 LINEBREAK;
                 break;
-            case 50:
+            case '2':
                 i_char = capacity/2;
-                UART_send_string((char*)char_def_half_str);
+                UART_send_string((char*)char_def_half_str);  //0.5C
                 LINEBREAK;
                 break;
-            case 51:
+            case '3':
                 i_char = capacity;
-                UART_send_string((char*)char_def_one_str);
+                UART_send_string((char*)char_def_one_str);  //0.1C
                 LINEBREAK;
                 break;
-            case 0x1B:
-                c_disc = 0x1B;
-                option = 0x1B;
-                cell_max = 0x1B;
+    /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
+                case 0x1B:
                 state = STANDBY;
                 LINEBREAK;
-                UART_send_string((char*)restarting_str);
+                UART_send_string((char*)restarting_str);  //restarting...
                 LINEBREAK; 
-                break;
-            default:
-                c_char = 0;
+                goto ESCAPE;  //go to the end of the function 
+    /**If the user press something different from @e 1, @e 2, @e 3 or @e ESC the program will print 
+    a warning message and wait for a valid input.*/
+                default:
+                c_char = 0;  //reset c_char so it stays inside the while loop.
                 LINEBREAK;
-                UART_send_string((char*)num_1and3_str);
+                UART_send_string((char*)num_1and3_str);  //ask the user to use a number between 1 and 3.
                 LINEBREAK;                
                 break;
         }
     }
-    if (c_char != 0x1B)     //Only show the message if the ESC was not pressed
-    {
-        EOC_current = Li_Ion_EOC_curr;
-        UART_send_string((char*)EOC_I_str);
-        display_value(EOC_current);
-        UART_send_string((char*)mA_str);
-        LINEBREAK; 
-        LINEBREAK;
-        //-------DISCHARGE CURRENT
-        UART_send_string((char*)def_disc_curr_str);
-        LINEBREAK;
-        UART_send_string((char*)quarter_c_str);
-        LINEBREAK;
-        UART_send_string((char*)half_c_str);
-        LINEBREAK;
-        UART_send_string((char*)one_c_str);
-        LINEBREAK;
-        LINEBREAK;
-    }
+    /**Next, the program will show the end-of-charge current constant that is:*/
+    /**> @p Li_Ion_EOC_curr = 100 mA*/ 
+    EOC_current = Li_Ion_EOC_curr;
+    UART_send_string((char*)EOC_I_str);
+    display_value(EOC_current);
+    UART_send_string((char*)mA_str);
+    LINEBREAK; 
+    LINEBREAK;
+    /**For the discharging current it will show three options:*/
+    UART_send_string((char*)def_disc_curr_str);
+    LINEBREAK;
+    /** - 1) 0.25 C*/
+    UART_send_string((char*)quarter_c_str);
+    LINEBREAK;
+    /** - 2) 0.5 C*/
+    UART_send_string((char*)half_c_str);
+    LINEBREAK;
+    /** - 3) 1 C*/
+    UART_send_string((char*)one_c_str);
+    LINEBREAK;
+    LINEBREAK;
+    /** .*/
     while(c_disc == 0)
     {
-        c_disc = UART_get_char();                    //Get the value in the terminal.
+    /**The user should input the desired option.*/
+        c_disc = UART_get_char();  //Get the value in the terminal.
         switch (c_disc)
         {
-            case 49:
+    /**After chosing charging current, the program will print it.*/
+            case '1':
                 i_disc = capacity/4;
-                UART_send_string((char*)dis_def_quarter_str);
+                UART_send_string((char*)dis_def_quarter_str);  //0.25 C
                 LINEBREAK;            
                 break;
-            case 50:
+            case '2':
                 i_disc = capacity/2;
-                UART_send_string((char*)dis_def_half_str);
+                UART_send_string((char*)dis_def_half_str);  //0.5 C
                 LINEBREAK;         
                 break;
-            case 51:
+            case '3':
                 i_disc = capacity;
-                UART_send_string((char*)dis_def_one_str);
+                UART_send_string((char*)dis_def_one_str);  //1C
                 LINEBREAK;
                 break;
-            case 0x1B:
-                option = 0x1B;
-                cell_max = 0x1B;
+    /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
+            case 0x1B:  //ESC button was pressed
                 state = STANDBY;
                 LINEBREAK;
-                UART_send_string((char*)restarting_str);
+                UART_send_string((char*)restarting_str);  //restarting...
                 LINEBREAK;             
-                break;
+                goto ESCAPE;  //go to the end of the function 
+    /**If the user press something different from @e 1, @e 2, @e 3 or @e ESC the program will print 
+    a warning message and wait for a valid input.*/
             default:
                 c_disc = 0;
                 LINEBREAK;
-                UART_send_string((char*)num_1and3_str);
+                UART_send_string((char*)num_1and3_str);  //ask the user to use a number between 1 and 3.
                 LINEBREAK;                
                 break;
         }
     }
-    if (c_disc != 0x1B)
-    {
-        //-------EOD voltage
-        EOD_voltage = Li_Ion_EOD_volt;
-        UART_send_string((char*)EOD_V_str);
-        display_value(EOD_voltage);
-        UART_send_string((char*)mv_str);
-        LINEBREAK;
-        //-------Li-Ion case for options
-        LINEBREAK;
-        UART_send_string((char*)cho_bet_str);
-        LINEBREAK;
-        UART_send_string((char*)li_ion_op_1_str);
-        LINEBREAK;
-        UART_send_string((char*)li_ion_op_2_str);
-        LINEBREAK;
-        UART_send_string((char*)li_ion_op_3_str);
-        LINEBREAK;
-        UART_send_string((char*)li_ion_op_4_str);
-        LINEBREAK;
-        LINEBREAK;
-    }
+    /**Next, the program will show the end-of-discharge voltage constant that is:*/
+    /**> @p Li_Ion_EOD_volt = @p 3000 [mV]*/ 
+    EOD_voltage = Li_Ion_EOD_volt;
+    UART_send_string((char*)EOD_V_str);
+    display_value(EOD_voltage);
+    UART_send_string((char*)mv_str);
+    LINEBREAK;
+    /**For the test cycle it will show four options:*/
+    LINEBREAK;
+    UART_send_string((char*)cho_bet_str);
+    LINEBREAK;
+    /** - 1) Precharge->Discharge->Charge (includes DC resistance measure after charge and after discharge).*/
+    UART_send_string((char*)li_ion_op_1_str);
+    LINEBREAK;
+    /** - 2) Discharge->Charge (includes DC resistance measure after charge and after discharge).*/
+    UART_send_string((char*)li_ion_op_2_str);
+    LINEBREAK;
+    /** - 3) Only Charge*/
+    UART_send_string((char*)li_ion_op_3_str);
+    LINEBREAK;
+    /** - 4) Only Discharge*/
+    UART_send_string((char*)li_ion_op_4_str);
+    LINEBREAK;
+    LINEBREAK;
+    /** .*/
     while(option == 0)
     {
-        option = UART_get_char();                    //Get the value in the terminal.
+    /**The user should input the desired option.*/
+        option = UART_get_char();  //Get the value in the terminal.
         switch(option)
         {
-            case 49:
+    /**After chosing the test cycle option the program will print it.*/
+            case '1':
                 LINEBREAK;
-                UART_send_string((char*)li_ion_op_1_sel_str);
-                LINEBREAK;
-                break;
-            case 50:
-                LINEBREAK;
-                UART_send_string((char*)li_ion_op_2_sel_str);
+                UART_send_string((char*)li_ion_op_1_sel_str);  //Precharge->Discharge->Charge
                 LINEBREAK;
                 break;
-            case 51:
+            case '2':
                 LINEBREAK;
-                UART_send_string((char*)li_ion_op_3_sel_str);
+                UART_send_string((char*)li_ion_op_2_sel_str);  //Discharge->Charge
+                LINEBREAK;
+                break;
+            case '3':
+                LINEBREAK;
+                UART_send_string((char*)li_ion_op_3_sel_str);  //Only Charge
                 LINEBREAK;            
                 break;
-            case 52:
+            case '4':
                 LINEBREAK;
-                UART_send_string((char*)li_ion_op_4_sel_str);
+                UART_send_string((char*)li_ion_op_4_sel_str);  //Only Discharge
                 LINEBREAK;            
                 break;
+    /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
             case 0x1B:
-                cell_max = 0x1B;
                 state = STANDBY;
                 LINEBREAK;
                 UART_send_string((char*)restarting_str);
                 LINEBREAK;
-                break;
+                goto ESCAPE;  //go to the end of the function 
+    /**If the user press something different from @e 1, @e 2, @e 3, @e 4 or @e ESC the program will print 
+    a warning message and wait for a valid input.*/
             default:
                 option = 0;
                 LINEBREAK;
-                UART_send_string((char*)num_1and4_str);
+                UART_send_string((char*)num_1and4_str);  //ask the user to use a number between 1 and 4.
                 LINEBREAK;
                 break;
-
         }
-    }                 
-    if (option != 0x1B)
-    {
-        LINEBREAK;
-        UART_send_string((char*)def_num_cell_str);
-        LINEBREAK;
     }
+    LINEBREAK;
+    /**Then, the program will ask the user how many cells he wants to test (4 cells is the maximum):*/
+    UART_send_string((char*)def_num_cell_str);
+    LINEBREAK;
     while(cell_max == 0)
     {
-        cell_max = UART_get_char();                 //Get the value in the terminal.
+    /**The user should input the desired number.*/
+        cell_max = UART_get_char();  //Get the value in the terminal.
         switch(cell_max)
         {
-            case 49:
+    /**After chosing the number or cells the program will print it.*/
+            case '1':
                 LINEBREAK;
                 UART_send_string((char*)num_cell_str);
                 UART_send_string((char*)one_str);
                 LINEBREAK;
                 break;
-            case 50:
+            case '2':
                 LINEBREAK;
                 UART_send_string((char*)num_cell_str);
                 UART_send_string((char*)two_str);
                 LINEBREAK;
                 break;
-            case 51:
+            case '3':
                 LINEBREAK;
                 UART_send_string((char*)num_cell_str);
                 UART_send_string((char*)three_str);
                 LINEBREAK;  
                 break;
-            case 52:
+            case '4':
                 LINEBREAK;
                 UART_send_string((char*)num_cell_str);
                 UART_send_string((char*)four_str);
                 LINEBREAK;
                 break;
+    /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
             case 0x1B:
                 state = STANDBY;
                 LINEBREAK;
                 UART_send_string((char*)restarting_str);
                 LINEBREAK;
-                break;
+                goto ESCAPE;  //go to the end of the function 
+    /**If the user press something different from @e 1, @e 2, @e 3, @e 4 or @e ESC the program will print 
+    a warning message and wait for a valid input.*/
             default:
-                cell_max = 0;
+                cell_max = 0;   //Keep the program inside the while loop 
                 LINEBREAK;
-                UART_send_string((char*)num_1and4_str);
+                UART_send_string((char*)num_1and4_str);  //ask the user to use a number between 1 and 4.
                 LINEBREAK;
                 break;
         }           
     }
+    ESCAPE:  //label to goto the end of the function 
 }
-/**
- * @brief Function to start the State Machine
- *
- * At first, this function check which is the current cell. If @p cell_count is equal to 
- * <b>'1'</b> it will ask for user intervention to start. It will prompt the user to press <b>'s'</b>.
- * If the user press it, the program will start. The user can also press <b>'ESC'</b> and go 
- * to the @p STANDBY state. If the current cell is <b>not '1'</b> the program will start without 
- * the user intervention. 
- */
+
+/**@brief Function to start the state machine.
+*/
 void Start_state_machine()
-{   
+{
+    /** At first, this function will check which is the current cell. This is defined in:*/
+    /**> @p cell_count*/ 
     start = 0;
     switch (cell_count){
-        case '1':                                                           //In case is the cell#1
-            UART_send_string((char*)press_s_str);                           //Ask the user to press "s"
+    /**If @p cell_count is equal to @b '1', it will ask for user intervention to start.*/
+        case '1':
+    /**It will prompt the user to press @b 's'.*/
+            UART_send_string((char*)press_s_str);
             LINEBREAK;                  
             while(start == 0)                                               
             {
-                start = UART_get_char();                                    //Get the value in the terminal.
+                start = UART_get_char();  //Get the value in the terminal.
                 switch(start)
                 {
-                    case 's':
-                        UART_send_string((char*)starting_str);        
-                        LINEBREAK;                                 
-                        LINEBREAK;   
+    /**If the user press it, the program will start.*/
+                    case 's': 
                         break;
+    /**The user also can press @e 'ESC' and the program will be restarted to the @p STANBY state.*/ 
                     case 0x1B:
                         state = STANDBY;
-                        break;
+                        goto NOSTART;  //go to the end of the function 
+    /**If the user press something different from @e s, or @e ESC the program will print 
+    a warning message and wait for a valid input.*/
                     default:
+                        LINEBREAK;
                         UART_send_string((char*)press_s_str);
                         LINEBREAK;
-                        start = 0; 
+                        start = 0;  //Keep the program inside the while loop 
                         break;
                 }
             }
-            if (start != 0x1B)      //The user pressed ESC                                      
-            {
-                LINEBREAK;
-                UART_send_string((char*)cell_str);
-                LINEBREAK;           
-            }
             break;
-        default:
-            LINEBREAK; 
-            UART_send_string((char*)starting_str);                                            
-            LINEBREAK; 
-            LINEBREAK;
-            UART_send_string((char*)cell_str);
-            display_value((int)(cell_count - 48));
-            LINEBREAK;   
+    /**If the current cell is @b not @b '1' the program will start without 
+    the user intervention.*/
+        default: 
             break;
     }
+    /**Before starting, the program will print the following:*/
+    LINEBREAK; 
+    /**Starting...*/
+    UART_send_string((char*)starting_str);                                            
+    LINEBREAK; 
+    LINEBREAK;
+    /**Cell {1,2,3 or 4}*/
+    UART_send_string((char*)cell_str);
+    display_value((int)(cell_count - '0'));
+    LINEBREAK; 
+    NOSTART:  //label to goto the end of the function 
 }
 

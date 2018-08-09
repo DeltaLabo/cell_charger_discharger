@@ -110,7 +110,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Define_param</b> ()</
 <tr class="memdesc:adcfbf8a12cd4c5c3525e9592263e0940"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to define the parameters of the charge/discharge process fo Li-Ion chemistry.  <a href="#adcfbf8a12cd4c5c3525e9592263e0940">More...</a><br /></td></tr>
 <tr class="separator:adcfbf8a12cd4c5c3525e9592263e0940"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed563ae909f60360b1eaee8bcf5803e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#aed563ae909f60360b1eaee8bcf5803e3">Start_state_machine</a> ()</td></tr>
-<tr class="memdesc:aed563ae909f60360b1eaee8bcf5803e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to start the State Machine.  <a href="#aed563ae909f60360b1eaee8bcf5803e3">More...</a><br /></td></tr>
+<tr class="memdesc:aed563ae909f60360b1eaee8bcf5803e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to start the state machine.  <a href="#aed563ae909f60360b1eaee8bcf5803e3">More...</a><br /></td></tr>
 <tr class="separator:aed563ae909f60360b1eaee8bcf5803e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -201,20 +201,57 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Define_param</b> ()</
 </div><div class="memdoc">
 
 <p>Function to define the parameters of the charge/discharge process fo Li-Ion chemistry. </p>
-<p>This function will first show the general constants for Li-Ion chemistry that are:</p><ul>
-<li><code>Li_Ion_CV</code> = 4200 mV</li>
-<li><code>Li_Ion_CAP</code> = 3250 mAh</li>
+<p>This function will first show the pre-set parameters for charging that are:</p>
+<blockquote class="doxtable">
+<p><code>Li_Ion_CV</code> = 4200 mV </p>
+</blockquote>
+<blockquote class="doxtable">
+<p><code>Li_Ion_CAP</code> = 3250 mAh </p>
+</blockquote>
+<p>For the charging current it will show three options:</p>
+<ul>
+<li>1) 0.25 C</li>
+<li>2) 0.5 C</li>
+<li>3) 1 C</li>
 </ul>
-<p>For the charging current it will offer three options:</p><ul>
-<li>0.2 C</li>
-<li>0.5 C</li>
-<li>1 C</li>
+<p>The user should input the desired option.</p>
+<p>After chosing charging current, the program will print it.</p>
+<p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
+<p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
+<p>Next, the program will show the end-of-charge current constant that is:</p>
+<blockquote class="doxtable">
+<p><code>Li_Ion_EOC_curr</code> = 100 mA </p>
+</blockquote>
+<p>For the discharging current it will show three options:</p>
+<ul>
+<li>1) 0.25 C</li>
+<li>2) 0.5 C</li>
+<li>3) 1 C</li>
 </ul>
-<p>After chosing charging current, the program will print it</p>
-<p>Unless the user press ESC, in that case the program will be restarted to the <code>STANBY</code> state.</p>
-<p>Now the program will show the end-of-charge current constant that is:</p><ul>
-<li><code>Li_Ion_EOC_curr</code> = 100 mA</li>
+<p>The user should input the desired option.</p>
+<p>After chosing charging current, the program will print it.</p>
+<p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
+<p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
+<p>Next, the program will show the end-of-discharge voltage constant that is:</p>
+<blockquote class="doxtable">
+<p><code>Li_Ion_EOD_volt</code> = <code>3000</code> [mV] </p>
+</blockquote>
+<p>For the test cycle it will show four options:</p>
+<ul>
+<li>1) Precharge-&gt;Discharge-&gt;Charge (includes DC resistance measure after charge and after discharge).</li>
+<li>2) Discharge-&gt;Charge (includes DC resistance measure after charge and after discharge).</li>
+<li>3) Only Charge</li>
+<li>4) Only Discharge</li>
 </ul>
+<p>The user should input the desired option.</p>
+<p>After chosing the test cycle option the program will print it.</p>
+<p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
+<p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em>, <em>4</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
+<p>Then, the program will ask the user how many cells he wants to test (4 cells is the maximum):</p>
+<p>The user should input the desired number.</p>
+<p>After chosing the number or cells the program will print it.</p>
+<p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
+<p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em>, <em>4</em> or <em>ESC</em> the program will print a warning message and wait for a valid input. </p>
 
 </div>
 </div>
@@ -234,8 +271,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Define_param</b> ()</
       </table>
 </div><div class="memdoc">
 
-<p>Function to start the State Machine. </p>
-<p>At first, this function check which is the current cell. If <code>cell_count</code> is equal to <b>'1'</b> it will ask for user intervention to start. It will prompt the user to press <b>'s'</b>. If the user press it, the program will start. The user can also press <b>'ESC'</b> and go to the <code>STANDBY</code> state. If the current cell is <b>not '1'</b> the program will start without the user intervention. </p>
+<p>Function to start the state machine. </p>
+<p>At first, this function will check which is the current cell. This is defined in:</p>
+<blockquote class="doxtable">
+<p><code>cell_count</code> </p>
+</blockquote>
+<p>If <code>cell_count</code> is equal to <b>'1'</b>, it will ask for user intervention to start.</p>
+<p>It will prompt the user to press <b>'s'</b>.</p>
+<p>If the user press it, the program will start.</p>
+<p>The user also can press <em>'ESC'</em> and the program will be restarted to the <code>STANBY</code> state.</p>
+<p>If the user press something different from <em>s</em>, or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
+<p>If the current cell is <b>not</b> <b>'1'</b> the program will start without the user intervention.</p>
+<p>Before starting, the program will print the following:</p>
+<p>Starting...</p>
+<p>Cell {1,2,3 or 4} </p>
 
 </div>
 </div>
