@@ -170,6 +170,7 @@ void fDISCHARGE()
 
 void fDC_res() //can be improved a lot!!
 {
+    
     //LOG_ON();
     conv = 1;
     if (dc_res_count == 4)  //Check all this timming
@@ -183,14 +184,14 @@ void fDC_res() //can be improved a lot!!
         v_2_dcres = vprom;
         i_2_dcres = iprom;
         STOP_CONVERTER();            
-        dc_res_val = (unsigned short long)((v_1_dcres - v_2_dcres) * 10000);
-        dc_res_val = dc_res_val / (unsigned short long)(i_2_dcres - i_1_dcres);
+        dc_res_val = ((v_1_dcres - v_2_dcres)/(i_2_dcres - i_1_dcres));
+        dc_res_val = dc_res_val * 10000;
     }
     if (!dc_res_count)
     {   
         LINEBREAK;
         UART_send_string((char*)DC_res_str);
-        display_value(dc_res_val);
+        display_value((int)dc_res_val);
         UART_send_string((char*)end_str);
         LINEBREAK;
         LOG_OFF();   ///I dont like this 

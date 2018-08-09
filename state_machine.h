@@ -71,11 +71,11 @@
     //double                  vmax;                         //maximum recorded voltage
     //double                  In_ocv;
     //double                  Pre_ocv;
-    unsigned int            v_1_dcres;
-    unsigned int            i_1_dcres;
-    unsigned int            v_2_dcres;
-    unsigned int            i_2_dcres;
-    unsigned short long     dc_res_val;
+    float                   v_1_dcres;
+    float                   i_1_dcres;
+    float                   v_2_dcres;
+    float                   i_2_dcres;
+    float                   dc_res_val;
     unsigned int            conv = 0;                       //Turn converter ON and OFF.
     
     char const              press_s_str[] = "Press 's' to start: ";
