@@ -1,6 +1,13 @@
-My Main Page {#mainpage}
+Electrochemical Cell Charger/Discharger/Tester -- README {#mainpage}
 ============
-Documentation that will appear on the main pag
+
+### Most recent version of this repository can be found in: ###
+
+* [Bitbucket](https://bitbucket.org/juanjorojash/cell_charger_discharger/src/master/)
+
+### Documentation ###
+
+* Full documentation in HTLM version can be found in **documentation/htlm/index.htlm**
 
 ### What is this repository for? ###
 

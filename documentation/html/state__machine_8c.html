@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.14"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Charger_Discharger: state_machine.c File Reference</title>
+<title>Electrochemical Cell Charger/Discharger/Tester: state_machine.c File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Charger_Discharger
+   <div id="projectname">Electrochemical Cell Charger/Discharger/Tester
    </div>
   </td>
  </tr>
@@ -70,38 +70,44 @@ $(function() {
 
 <p>State machine source file for Charge and Discharge System.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;state_machine.h&quot;</code><br />
-<code>#include &quot;hardware.h&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="state__machine_8h_source.html">state_machine.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="hardware_8h_source.html">hardware.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a720fb40709da65800a7083dc528d4b75"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a720fb40709da65800a7083dc528d4b75">State_machine</a> ()</td></tr>
-<tr class="memdesc:a720fb40709da65800a7083dc528d4b75"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function contain the main switching.  <a href="#a720fb40709da65800a7083dc528d4b75">More...</a><br /></td></tr>
+<tr class="memdesc:a720fb40709da65800a7083dc528d4b75"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function contain the main switching between the states of the main state machine.  <a href="#a720fb40709da65800a7083dc528d4b75">More...</a><br /></td></tr>
 <tr class="separator:a720fb40709da65800a7083dc528d4b75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a615d15018432f32225d7680126353f7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a615d15018432f32225d7680126353f7b">fSTANDBY</a> ()</td></tr>
-<tr class="memdesc:a615d15018432f32225d7680126353f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stand-by state function.  <a href="#a615d15018432f32225d7680126353f7b">More...</a><br /></td></tr>
+<tr class="memitem:a615d15018432f32225d7680126353f7b"><td class="memItemLeft" align="right" valign="top"><a id="a615d15018432f32225d7680126353f7b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a615d15018432f32225d7680126353f7b">fSTANDBY</a> ()</td></tr>
+<tr class="memdesc:a615d15018432f32225d7680126353f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the <code>STANDBY</code> state of the state machine. <br /></td></tr>
 <tr class="separator:a615d15018432f32225d7680126353f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab8843d66ed853494d05155924f4229e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#aab8843d66ed853494d05155924f4229e">fIDLE</a> ()</td></tr>
 <tr class="memdesc:aab8843d66ed853494d05155924f4229e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine.  <a href="#aab8843d66ed853494d05155924f4229e">More...</a><br /></td></tr>
 <tr class="separator:aab8843d66ed853494d05155924f4229e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f63169934c3ee15942c859a2619e78e"><td class="memItemLeft" align="right" valign="top"><a id="a2f63169934c3ee15942c859a2619e78e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>fCHARGE</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a2f63169934c3ee15942c859a2619e78e">fCHARGE</a> ()</td></tr>
+<tr class="memdesc:a2f63169934c3ee15942c859a2619e78e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine. <br /></td></tr>
 <tr class="separator:a2f63169934c3ee15942c859a2619e78e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a472415d54e3ef78c66a3f751e4eec24c"><td class="memItemLeft" align="right" valign="top"><a id="a472415d54e3ef78c66a3f751e4eec24c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>fDISCHARGE</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a472415d54e3ef78c66a3f751e4eec24c">fDISCHARGE</a> ()</td></tr>
+<tr class="memdesc:a472415d54e3ef78c66a3f751e4eec24c"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine. <br /></td></tr>
 <tr class="separator:a472415d54e3ef78c66a3f751e4eec24c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abfbd54f51445d45b916ee44c9c1d24ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#abfbd54f51445d45b916ee44c9c1d24ae">fDC_res</a> ()</td></tr>
+<tr class="memdesc:abfbd54f51445d45b916ee44c9c1d24ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine.  <a href="#abfbd54f51445d45b916ee44c9c1d24ae">More...</a><br /></td></tr>
 <tr class="separator:abfbd54f51445d45b916ee44c9c1d24ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a921708424dee13fb5c6f6f1029723cea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a921708424dee13fb5c6f6f1029723cea">fWAIT</a> ()</td></tr>
+<tr class="memdesc:a921708424dee13fb5c6f6f1029723cea"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine.  <a href="#a921708424dee13fb5c6f6f1029723cea">More...</a><br /></td></tr>
 <tr class="separator:a921708424dee13fb5c6f6f1029723cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d80f4f910216189739bef97a1122ccb"><td class="memItemLeft" align="right" valign="top"><a id="a7d80f4f910216189739bef97a1122ccb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>fISDONE</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a7d80f4f910216189739bef97a1122ccb">fISDONE</a> ()</td></tr>
+<tr class="memdesc:a7d80f4f910216189739bef97a1122ccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine. <br /></td></tr>
 <tr class="separator:a7d80f4f910216189739bef97a1122ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a357568e00e8e69fdae90ec29d83c8f35"><td class="memItemLeft" align="right" valign="top"><a id="a357568e00e8e69fdae90ec29d83c8f35"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>fFAULT</b> ()</td></tr>
+<tr class="memitem:a357568e00e8e69fdae90ec29d83c8f35"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a357568e00e8e69fdae90ec29d83c8f35">fFAULT</a> ()</td></tr>
+<tr class="memdesc:a357568e00e8e69fdae90ec29d83c8f35"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the FAULT state of the state machine.  <a href="#a357568e00e8e69fdae90ec29d83c8f35">More...</a><br /></td></tr>
 <tr class="separator:a357568e00e8e69fdae90ec29d83c8f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7269099146eb3fc4fd6b7a194d55421d"><td class="memItemLeft" align="right" valign="top"><a id="a7269099146eb3fc4fd6b7a194d55421d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b> ()</td></tr>
+<tr class="memitem:a7269099146eb3fc4fd6b7a194d55421d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a7269099146eb3fc4fd6b7a194d55421d">Converter_settings</a> ()</td></tr>
+<tr class="memdesc:a7269099146eb3fc4fd6b7a194d55421d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to set the configurations of the converter.  <a href="#a7269099146eb3fc4fd6b7a194d55421d">More...</a><br /></td></tr>
 <tr class="separator:a7269099146eb3fc4fd6b7a194d55421d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adcfbf8a12cd4c5c3525e9592263e0940"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#adcfbf8a12cd4c5c3525e9592263e0940">Li_Ion_param</a> ()</td></tr>
 <tr class="memdesc:adcfbf8a12cd4c5c3525e9592263e0940"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to define the parameters of the charge/discharge process fo Li-Ion chemistry.  <a href="#adcfbf8a12cd4c5c3525e9592263e0940">More...</a><br /></td></tr>
@@ -118,6 +124,55 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b
 <dl class="section user"><dt>Mail (after leaving Kyutech):</dt><dd><a href="#" onclick="location.href='mai'+'lto:'+'jua'+'n.'+'roj'+'as'+'@te'+'c.'+'ac.'+'cr'; return false;">juan.<span style="display: none;">.nosp@m.</span>roja<span style="display: none;">.nosp@m.</span>s@tec<span style="display: none;">.nosp@m.</span>.ac.<span style="display: none;">.nosp@m.</span>cr</a> </dd></dl>
 <dl class="section user"><dt>Git repository:</dt><dd><a href="https://bitbucket.org/juanjorojash/cell_charger_discharger">https://bitbucket.org/juanjorojash/cell_charger_discharger</a> </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="a7269099146eb3fc4fd6b7a194d55421d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7269099146eb3fc4fd6b7a194d55421d">&#9670;&nbsp;</a></span>Converter_settings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Converter_settings </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Function to set the configurations of the converter. </p>
+<p>Initially, the function set the proportional (<code>kp</code>) and integral (<code>ki</code>) constants for the PI loop.</p>
+<p>Then, the system is configured to start in constant current mode by setting. <code> cmode = 1 </code></p>
+<p>The integral component of the PI (<code>integral</code>) is set to zero.</p>
+<p><code>EOCD_count</code> is defined as <code>EOCD_LOOPS</code>. That is, after the system is in EOC condition, the condition needs to be mantained for <code>EOCD_LOOPS</code> loop cycles before the system stop the charge process.</p>
+<p><code>CV_count</code> is defined as <code>CV_LOOPS</code>. That is, after the system reach the CV voltage, the condition needs to be mantained for <code>CV_LOOPS</code> loop cycles before the system change to <b> constant voltage mode </b>.</p>
+<p>The initial <b> duty cycle </b> of the PWM is set to <code>DC_START</code> </p>
+<p>The <a class="el" href="#a95853552054d1c99e8765eca54abb930">set_DC()</a> function is called.</p>
+<p>The <a class="el" href="#a1d26bd6e1261ba0d776c492ad35593f4">Cell_ON()</a> function is called.</p>
+<p>If the current state is <code>PRECHARGE</code> or <code>CHARGE</code> </p>
+<blockquote class="doxtable">
+<p>The current setpoint (<code>iref</code>) is defined as <code>i_char</code> </p>
+</blockquote>
+<blockquote class="doxtable">
+<p>The charge/discharge relay (<code>RA0</code>) will be set to the charge position (low) </p>
+</blockquote>
+<p>If the current state is <code>DISCHARGE</code> </p>
+<blockquote class="doxtable">
+<p>The current setpoint (<code>iref</code>) is defined as <code>i_disc</code> </p>
+</blockquote>
+<blockquote class="doxtable">
+<p>The charge/discharge relay (<code>RA0</code>) will be set to the discharge position (high) </p>
+</blockquote>
+<p>If the current state is <code>CS_DC_res</code> or <code>DS_DC_res</code> </p>
+<blockquote class="doxtable">
+<p>The current setpoint (<code>iref</code>) is defined as <code> capacity / 5 </code> </p>
+</blockquote>
+<blockquote class="doxtable">
+<p>The charge/discharge relay (<code>RA0</code>) will be set to the discharge position (high) </p>
+</blockquote>
+
+</div>
+</div>
 <a id="abfbd54f51445d45b916ee44c9c1d24ae"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abfbd54f51445d45b916ee44c9c1d24ae">&#9670;&nbsp;</a></span>fDC_res()</h2>
 
@@ -133,7 +188,31 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>This function define the IDLE state of the state machine. </p>
 <p>I dont like this </p>
+
+</div>
+</div>
+<a id="a357568e00e8e69fdae90ec29d83c8f35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a357568e00e8e69fdae90ec29d83c8f35">&#9670;&nbsp;</a></span>fFAULT()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void fFAULT </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function define the FAULT state of the state machine. </p>
+<p>The function will stop the converter usign <a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER()</a> macro</p>
+<p>The <code>state</code> will be set to <code>STANDBY</code> </p>
 
 </div>
 </div>
@@ -158,33 +237,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b
 
 </div>
 </div>
-<a id="a615d15018432f32225d7680126353f7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a615d15018432f32225d7680126353f7b">&#9670;&nbsp;</a></span>fSTANDBY()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void fSTANDBY </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Stand-by state function. </p>
-<p>More elaborated desc </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">void</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
-
-</div>
-</div>
 <a id="a921708424dee13fb5c6f6f1029723cea"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a921708424dee13fb5c6f6f1029723cea">&#9670;&nbsp;</a></span>fWAIT()</h2>
 
@@ -200,6 +252,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>This function define the IDLE state of the state machine. </p>
 <p>MAYBEOK </p>
 
 </div>
@@ -228,6 +282,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b
 <blockquote class="doxtable">
 <p><code>Li_Ion_CAP</code> = 3250 mAh </p>
 </blockquote>
+<p>The <code>capacity</code> will be set to <code>Li_Ion_CAP</code>.</p>
 <p>For the charging current it will show three options:</p>
 <ul>
 <li>1) 0.25 C</li>
@@ -235,7 +290,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b
 <li>3) 1 C</li>
 </ul>
 <p>The user should input the desired option.</p>
-<p>After chosing charging current, the program will print it.</p>
+<p>After chosing the charging current, the program will assign it to <code>i_char</code> and print it.</p>
 <p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
 <p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
 <p>Next, the program will show the end-of-charge current constant that is:</p>
@@ -249,10 +304,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b
 <li>3) 1 C</li>
 </ul>
 <p>The user should input the desired option.</p>
-<p>After chosing charging current, the program will print it.</p>
+<p>After chosing the discharging current, the program will assign it to <code>i_disc</code> and print it.</p>
 <p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
 <p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
-<p>Next, the program will show the end-of-discharge voltage constant that is:</p>
+<p>Next, the program will show the end-of-discharge voltage constant that is: ((CHANGE THIS STYLE))</p>
 <blockquote class="doxtable">
 <p><code>Li_Ion_EOD_volt</code> = <code>3000</code> [mV] </p>
 </blockquote>
@@ -263,13 +318,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b
 <li>3) Only Charge</li>
 <li>4) Only Discharge</li>
 </ul>
-<p>The user should input the desired option.</p>
-<p>After chosing the test cycle option the program will print it.</p>
+<p>The user should input the desired option, which will be assigned to <code>option</code> </p>
+<p>After that the program will print it.</p>
 <p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
 <p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em>, <em>4</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
 <p>Then, the program will ask the user how many cells he wants to test (4 cells is the maximum):</p>
-<p>The user should input the desired number.</p>
-<p>After chosing the number or cells the program will print it.</p>
+<p>The user should input the desired number, which will be assigned to <code>cell_max</code> </p>
+<p>After that the program will print it.</p>
 <p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
 <p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em>, <em>4</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
 <p>After the user has set the number of cells the program will go to the <code>IDLE</code> state. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="state__machine_8c.html#aab8843d66ed853494d05155924f4229e" title="This function define the IDLE state of the state machine. ">fIDLE()</a> </dd></dl>
@@ -325,8 +380,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Converter_settings</b
       </table>
 </div><div class="memdoc">
 
-<p>This function contain the main switching. </p>
-<p>&lt;Standy function. </p>
+<p>This function contain the main switching between the states of the main state machine. </p>
+<p>The <code>STANDBY</code> state goes to the <a class="el" href="state__machine_8c.html#a615d15018432f32225d7680126353f7b">fSTANDBY()</a> function.</p>
+<p>The <code>IDLE</code> state goes to the <a class="el" href="state__machine_8c.html#aab8843d66ed853494d05155924f4229e">fIDLE()</a> function.</p>
+<p>The <code>PRECHARGE</code> and <code>CHARGE</code> states go to the <a class="el" href="state__machine_8c.html#a2f63169934c3ee15942c859a2619e78e">fCHARGE()</a> function.</p>
+<p>The <code>DISCHARGE</code> state goes to the <a class="el" href="state__machine_8c.html#a472415d54e3ef78c66a3f751e4eec24c">fDISCHARGE()</a> function.</p>
+<p>The <code>CS_DC_res</code> and <code>DS_DC_res</code> states go to the <a class="el" href="state__machine_8c.html#abfbd54f51445d45b916ee44c9c1d24ae">fDC_res()</a> function.</p>
+<p>The <code>WAIT</code> state goes to the <a class="el" href="state__machine_8c.html#a921708424dee13fb5c6f6f1029723cea">fWAIT()</a> function.</p>
+<p>The <code>ISDONE</code> state goes to the <a class="el" href="state__machine_8c.html#a7d80f4f910216189739bef97a1122ccb">fISDONE()</a> function.</p>
+<p>The <code>FAULT</code> state goes to the <a class="el" href="state__machine_8c.html#a357568e00e8e69fdae90ec29d83c8f35">fFAULT()</a> function. </p>
 
 </div>
 </div>

@@ -13,45 +13,49 @@
 #include "state_machine.h"
 #include "hardware.h"
 
-/**@brief This function contain the main switching.
+/**@brief This function contain the main switching between the states of the main state machine.
 */
 void State_machine()
 {
     switch(state){
+    /**The @c STANDBY state goes to the @link fSTANDBY() @endlink function.*/
             case STANDBY:
-                fSTANDBY();             /**<Standy function.*/
-                break;                
+                fSTANDBY();  
+                break;   
+    /**The @c IDLE state goes to the @link fIDLE() @endlink function.*/             
             case IDLE:
-                fIDLE();
+                fIDLE();  
                 break;
-            case PRECHARGE:
+    /**The @c PRECHARGE and @c CHARGE states go to the @link fCHARGE() @endlink function.*/  
+            case PRECHARGE:  
             case CHARGE:   
-                fCHARGE();
+                fCHARGE();  
                 break;
+    /**The @c DISCHARGE state goes to the @link fDISCHARGE() @endlink function.*/ 
             case DISCHARGE:
                 fDISCHARGE();
                 break;
+    /**The @c CS_DC_res and @c DS_DC_res states go to the @link fDC_res() @endlink function.*/
             case CS_DC_res:
             case DS_DC_res:
                 fDC_res();
                 break;
+    /**The @c WAIT state goes to the @link fWAIT() @endlink function.*/
             case WAIT:    
                 fWAIT();
                 break;
+    /**The @c ISDONE state goes to the @link fISDONE() @endlink function.*/
             case ISDONE:    
                 fISDONE();
                 break;
+    /**The @c FAULT state goes to the @link fFAULT() @endlink function.*/
             case FAULT:    
                 fFAULT();
                 break;
     }
 }
 
-//!Stand-by state function
-/*!
-More elaborated desc
-@param void
-@return void
+/**@brief This function define the @c STANDBY state of the state machine.
 */
 void fSTANDBY()
 {    
@@ -110,6 +114,8 @@ void fIDLE()
     }
 }
 
+/**@brief This function define the IDLE state of the state machine.
+*/
 void fCHARGE()
 {
     LOG_ON();
@@ -127,12 +133,14 @@ void fCHARGE()
             previous_state = state;
             if (state == CHARGE && option == 51) state = ISDONE;
             else state = WAIT;                
-            wait_count = wait_time;
+            wait_count = WAIT_TIME;
             STOP_CONVERTER();                       
         }else EOCD_count--;
     }
 }
 
+/**@brief This function define the IDLE state of the state machine.
+*/
 void fDISCHARGE()
 {
     LOG_ON();
@@ -144,12 +152,14 @@ void fDISCHARGE()
             previous_state = state;
             if (option == 52) state = ISDONE;
             else state = WAIT;                
-            wait_count = wait_time;
+            wait_count = WAIT_TIME;
             STOP_CONVERTER();
         }else EOCD_count--;
     }
 }
 
+/**@brief This function define the IDLE state of the state machine.
+*/
 void fDC_res() //can be improved a lot!!
 {
     
@@ -159,7 +169,7 @@ void fDC_res() //can be improved a lot!!
     {
         v_1_dcres = vprom;
         i_1_dcres = iprom;
-        SET_CURRENT(capacity);                  
+        iref = capacity;                  
     }
     if (dc_res_count == 1)
     {
@@ -179,10 +189,12 @@ void fDC_res() //can be improved a lot!!
         LOG_OFF();   ///I dont like this 
         previous_state = state;
         state = WAIT;
-        wait_count = wait_time;              
+        wait_count = WAIT_TIME;              
     }else dc_res_count--;
 }
 
+/**@brief This function define the IDLE state of the state machine.
+*/
 void fWAIT()
 {
     STOP_CONVERTER();  ///MAYBEOK
@@ -222,6 +234,8 @@ void fWAIT()
     }
 }
 
+/**@brief This function define the IDLE state of the state machine.
+*/
 void fISDONE()
 {
     if (cell_count < cell_max)
@@ -235,39 +249,63 @@ void fISDONE()
     }    
 }
 
+/**@brief This function define the FAULT state of the state machine.
+*/
 void fFAULT()
-{
+{   
+    /**The function will stop the converter usign @link STOP_CONVERTER() @endlink macro*/
     STOP_CONVERTER();
+    /**The @p state will be set to @p STANDBY*/
     state = STANDBY;
 }
 
-
+/**@brief Function to set the configurations of the converter.
+*/
 void Converter_settings()
 {
-    kp=0.025; //0.025 with 0.01 is good
-    ki=0.02;
+    /**Initially, the function set the proportional (@p kp) and integral (@p ki) constants for the PI loop.*/
+    kp = 0.025; 
+    ki = 0.02;
+    /**Then, the system is configured to start in constant current mode by setting. <tt> cmode = 1 </tt>*/        
     cmode = 1;
+    /**The integral component of the PI (@p integral) is set to zero.*/
     integral = 0;
-    EOCD_count = EOCD_loops;
-    CV_count = CV_loops;
-    dc = DC_START; 
-    set_DC(); 
-    Cell_ON();
+    /**@p EOCD_count is defined as @p EOCD_LOOPS. That is, after the system is in EOC condition, the condition 
+    needs to be mantained for @p EOCD_LOOPS loop cycles before the system stop the charge process.*/
+    EOCD_count = EOCD_LOOPS;
+    /**@p CV_count is defined as @p CV_LOOPS. That is, after the system reach the CV voltage, the condition 
+    needs to be mantained for @p CV_LOOPS loop cycles before the system change to <b> constant voltage mode </b>.*/
+    CV_count = CV_LOOPS;
+    /**The initial <b> duty cycle </b> of the PWM is set to @p DC_START*/
+    dc = DC_START;
+    /**The @link set_DC() @endlink function is called.*/  
+    set_DC();
+    /**The @link Cell_ON() @endlink function is called.*/
+    Cell_ON();    
     switch(state)
     {
+        /**If the current state is @p PRECHARGE or @p CHARGE*/
         case PRECHARGE:
         case CHARGE:
-            SET_CURRENT(i_char); 
+        /**> The current setpoint (@p iref) is defined as @p i_char*/
+            iref = i_char; 
+        /**> The charge/discharge relay (@p RA0) will be set to the charge position (low)*/
             RA0 = 0;
             break;
+        /**If the current state is @p DISCHARGE*/
         case DISCHARGE:
-            SET_CURRENT(i_disc);
+        /**> The current setpoint (@p iref) is defined as @p i_disc*/
+            iref = i_disc;
+        /**> The charge/discharge relay (@p RA0) will be set to the discharge position (high)*/
             RA0 = 1;            
             break;
+        /**If the current state is @p CS_DC_res or @p DS_DC_res*/
         case CS_DC_res:
         case DS_DC_res:
-            SET_CURRENT(capacity / 5);
+        /**> The current setpoint (@p iref) is defined as <tt> capacity / 5 </tt>*/
+            iref = capacity / 5;
             dc_res_count = 14;
+        /**> The charge/discharge relay (@p RA0) will be set to the discharge position (high)*/
             RA0 = 1;            
             break;
     }
@@ -282,11 +320,12 @@ void Li_Ion_param ()
     /**> @p Li_Ion_CV = 4200 mV*/
     /**> @p Li_Ion_CAP = 3250 mAh*/
     LINEBREAK;
-    SET_VOLTAGE(Li_Ion_CV);
+    vref = Li_Ion_CV;
     UART_send_string((char*)cv_val_str);
     display_value(Li_Ion_CV);
     UART_send_string((char*)mv_str);
     LINEBREAK;
+    /** The @p capacity will be set to @p Li_Ion_CAP.*/
     capacity = Li_Ion_CAP;
     UART_send_string((char*)nom_cap_str);
     display_value(capacity);
@@ -313,7 +352,7 @@ void Li_Ion_param ()
         c_char = UART_get_char();  //Get the value in the terminal.
         switch(c_char)
         {   
-    /**After chosing charging current, the program will print it.*/
+    /**After chosing the charging current, the program will assign it to @p i_char and print it.*/
             case '1':
                 i_char = capacity/4;
                 UART_send_string((char*)char_def_quarter_str);  //0.25C
@@ -374,7 +413,7 @@ void Li_Ion_param ()
         c_disc = UART_get_char();  //Get the value in the terminal.
         switch (c_disc)
         {
-    /**After chosing charging current, the program will print it.*/
+    /**After chosing the discharging current, the program will assign it to @p i_disc and print it.*/
             case '1':
                 i_disc = capacity/4;
                 UART_send_string((char*)dis_def_quarter_str);  //0.25 C
@@ -407,7 +446,7 @@ void Li_Ion_param ()
                 break;
         }
     }
-    /**Next, the program will show the end-of-discharge voltage constant that is:*/
+    /**Next, the program will show the end-of-discharge voltage constant that is: ((CHANGE THIS STYLE))*/
     /**> @p Li_Ion_EOD_volt = @p 3000 [mV]*/ 
     EOD_voltage = Li_Ion_EOD_volt;
     UART_send_string((char*)EOD_V_str);
@@ -434,11 +473,11 @@ void Li_Ion_param ()
     /** .*/
     while(option == 0)
     {
-    /**The user should input the desired option.*/
+    /**The user should input the desired option, which will be assigned to @p option*/
         option = UART_get_char();  //Get the value in the terminal.
         switch(option)
         {
-    /**After chosing the test cycle option the program will print it.*/
+    /**After that the program will print it.*/
             case '1':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_1_sel_str);  //Precharge->Discharge->Charge
@@ -482,11 +521,11 @@ void Li_Ion_param ()
     LINEBREAK;
     while(cell_max == 0)
     {
-    /**The user should input the desired number.*/
+    /**The user should input the desired number, which will be assigned to @p cell_max*/
         cell_max = UART_get_char();  //Get the value in the terminal.
         switch(cell_max)
         {
-    /**After chosing the number or cells the program will print it.*/
+    /**After that the program will print it.*/
             case '1':
                 LINEBREAK;
                 UART_send_string((char*)num_cell_str);

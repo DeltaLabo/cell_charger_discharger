@@ -1,10 +1,14 @@
-/* Hardware header file for Charge and Discharge System. */
-/* Kyutech Institute of Technology. LaSEINE. Supervisor: Mengu CHO.*/
-/* 
- * File:  hardware.c 
- * Author: Juan J. Rojas.
- * Mail (after leaving Kyutech): juan.rojas@tec.ac.cr
- * Version control in Git: https://bitbucket.org/juanjorojash/cell_charger_discharger
+/**
+ * @file hardware.h
+ * @author Juan J. Rojas
+ * @date 7 Aug 2018
+ * @brief Hardware header file for Charge and Discharge System.
+ * @par Institution:
+ * LaSEINE / CeNT. Kyushu Institute of Technology.
+ * @par Mail (after leaving Kyutech):
+ * juan.rojas@tec.ac.cr
+ * @par Git repository:
+ * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 
@@ -46,8 +50,6 @@
 
 #define		ERR_MAX					250        //!< Maximum permisible error, useful to avoid ringing
 #define		ERR_MIN					-250       //!< Minimum permisible error, useful to avoid ringing
-#define		SET_VOLTAGE(x)			{ vref = x; }
-#define		SET_CURRENT(x)			{ iref = x; }
 
 #define 	_XTAL_FREQ 				32000000
 #define		BAUD_RATE               9600
@@ -65,6 +67,9 @@
 #define		CELL3_OFF				PORTCbits.RC0 = 0
 #define		CELL4_OFF				PORTCbits.RC1 = 0
 
+/** @def AD_SET_CHAN(x)
+Set the ADC channel to @p x and wait for 5 microseconds. 
+*/
 #define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(5); }
 #define		AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);}
 #define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} 
@@ -74,6 +79,10 @@
 #define     LINEBREAK               UART_send_char(10)
 
 //DC-DC CONVERTER RELATED DEFINITION
+/** @def STOP_CONVERTER()
+Set @p conv to zero, turn off the main relay (@p RA1), set the duty cycle in @p DC_MIN, 
+turn off all the cell relays in the switcher board and disable the logging of data to the terminal   
+*/
 #define		STOP_CONVERTER()		{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); }
 
 #define 	LOG_ON()				{ log_on = 1; }

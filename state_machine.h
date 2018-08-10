@@ -1,10 +1,14 @@
-/* State machine header file for Charge and Discharge System. */
-/* Kyutech Institute of Technology. LaSEINE. Supervisor: Mengu CHO.*/
-/* 
- * File:  hardware.c 
- * Author: Juan J. Rojas.
- * Mail (after leaving Kyutech): juan.rojas@tec.ac.cr
- * Version control in Git: https://bitbucket.org/juanjorojash/cell_charger_discharger
+/**
+ * @file state_machine.h
+ * @author Juan J. Rojas
+ * @date 7 Aug 2018
+ * @brief State machine header file for Charge and Discharge System.
+ * @par Institution:
+ * LaSEINE / CeNT. Kyushu Institute of Technology.
+ * @par Mail (after leaving Kyutech):
+ * juan.rojas@tec.ac.cr
+ * @par Git repository:
+ * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 #ifndef STATE_MACHINE_H
@@ -30,10 +34,10 @@
     
    
     //General definitions
-    #define CV_loops            2
-    #define EOCD_loops          4
-    #define OCV_time            976
-    #define wait_time           600
+    #define CV_LOOPS            2
+    #define EOCD_LOOPS          4
+    #define WAIT_TIME           600
+    #define DC_RES_TIME
 
     //Li-Ion definitions
     #define Li_Ion_CV           4200
@@ -57,7 +61,7 @@
     unsigned char           cell_count = 49;                //cell counter from 1 to 4. Initialized as '1'
     unsigned char           cell_max = 0;                   //number of cells to be tested
     unsigned int            EOCD_count;                     //counter for EOC 
-    unsigned char           CV_count = CV_loops;            //counter for CV
+    unsigned char           CV_count = CV_LOOPS;            //counter for CV
     //unsigned int            ocv_count;                    //counter for OCV measurement
     unsigned int            wait_count;                     //counter for waiting time between states
     //unsigned int            small_count;                  //counter for waiting time inside states
