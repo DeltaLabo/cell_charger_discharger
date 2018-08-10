@@ -376,17 +376,23 @@ void Init_UART()
     RX9   = 0;    // 8-bit reception mode selected
     //__8-bit mode selected__//    
     //INTERRUPTS
-}
-
-void UART_interrupt_enable()
-{
-    while(RCIF){                //clear the reception register
+        while(RCIF){                //clear the reception register
         esc = RC1REG;
         esc = 0;
     }
-    RCIE = 1;                   //enable reception interrupts
+    RCIE = 0;                   //disable reception interrupts
     TXIE = 0;                   //disable transmision interrupts
 }
+
+// void UART_interrupt_enable()
+// {
+//     while(RCIF){                //clear the reception register
+//         esc = RC1REG;
+//         esc = 0;
+//     }
+//     RCIE = 1;                   //enable reception interrupts
+//     TXIE = 0;                   //disable transmision interrupts
+// }
 
 //**Function to send one byte of date to UART**//
 void UART_send_char(char bt)  

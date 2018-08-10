@@ -32,6 +32,14 @@
     void Ni_MH_param(void);
     void Converter_settings(void);
     
+    /** @def LI_ION_CHEM
+    Set to one to choose Li_Ion chemistry
+    */
+    #define LI_ION_CHEM         1
+     /** @def NI_MH_CHEM 
+    Set to one to choose Ni-MH chemistry
+    */
+    #define NI_MH_CHEM          0
    
     //General definitions
     #define CV_LOOPS            2
@@ -50,10 +58,7 @@
     #define Ni_MH_EOC_DV        10
     #define Ni_MH_EOD_volt      1000
 
-    unsigned char           start = 0;                      //variable to receive the start command
     //unsigned char           chem;                         //chem = 49 -> Li-Ion, chem = 50-> Ni-MH || Other options can be included in the future  
-    unsigned char           c_char = 0;                     //charging current in C
-    unsigned char           c_disc = 0;                     //discharging current in C
     unsigned char           option = 0;                     //choose between four options, different for each chemistry, look into Define_Parameter for details
     unsigned int            capacity;                       //definition of capacity per cell according to each chemistry
     unsigned int            i_char;                         //charging current in mA

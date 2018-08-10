@@ -10,6 +10,7 @@
  * @par Git repository:
  * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
+
 #include "state_machine.h"
 #include "hardware.h"
 
@@ -58,60 +59,46 @@ void State_machine()
 /**@brief This function define the @c STANDBY state of the state machine.
 */
 void fSTANDBY()
-{    
-    STOP_CONVERTER();  
-    RCIE = 0;  //disable reception interrupts
-    start = 0;
-    c_char = 0;
-    c_disc = 0;
+{   
+    /**First, the function will stop the converter usign @link STOP_CONVERTER() @endlink macro*/
+    STOP_CONVERTER();
+    /**Next, the variables related with the setting of parameters are initizalized: 
+    <tt>option = 0, cell_max = 0, cell_count = '1'</tt>*/
     option = 0;
     cell_max = 0;
-    cell_count = 49;
+    cell_count = '1';
+    /**The following message will be printed @code ---Parameter definition for charger and discharger--- @endcode*/
     LINEBREAK; 
     UART_send_string((char*)param_def_str);
     LINEBREAK;
-    //LI-ION CASE
+    /**If @link LI_ION_CHEM @endlink is set to @b 1, the folowing message will be displayed:*/
+#if (LI_ION_CHEM) 
+    /**> Chemistry defined as Li-Ion*/
     UART_send_string((char*)chem_def_liion);
     LINEBREAK;
-    LINEBREAK;  
+    LINEBREAK;
+    /** And the funtion will call the @link Li_Ion_param() @endlink function*/
     Li_Ion_param();
-    //END OF LI-ION CASE
-    //NI-MH CASE
-        /*
-        UART_send_string((char*)chem_def_nimh);
-        LINEBREAK;
-        LINEBREAK;  
-        Ni_MH_param();
-        */
-    //END OF NI-MH CASE
+    /**If @link NI_MH_CHEM @endlink is set to @b 1 and LI_ION_CHEM @endlink is set to @b 0, 
+    the folowing message will be displayed:*/
+#elif (NI_MH_CHEM)
+    /**> Chemistry defined as Ni-MH*/
+    UART_send_string((char*)chem_def_nimh);
+    LINEBREAK;
+    LINEBREAK;  
+    /** And the funtion will call the @link Ni_MH_param() @endlink function*/
+    Ni_MH_param();
+#endif
 }
 
 /**@brief This function define the IDLE state of the state machine.
 */
 void fIDLE()
 {
-    /**At first, the program will call the @link Start_state_machine() @endlink function.*/
-    Start_state_machine();          
-    UART_interrupt_enable();        //I CHANGE THE POSITION AND IT WAS A MESS PLEASE THINK BEFORE DOING ANYTHING TO THIS    
-    if (start != 0x1B)
-    {
-        count = COUNTER;
-        switch (option){
-            case 49:
-                state = PRECHARGE;
-                Converter_settings();
-                break;
-            case 50:
-            case 52:
-                state = DISCHARGE;
-                Converter_settings();
-                break;
-            case 51:
-                state = CHARGE;
-                Converter_settings(); 
-                break;
-        }                
-    }
+    /**At first, the function will call the @link Start_state_machine() @endlink function.*/
+    Start_state_machine();
+    /**Then, it will call the @link Converter_settings() @endlink function.*/
+    Converter_settings(); 
 }
 
 /**@brief This function define the IDLE state of the state machine.
@@ -287,38 +274,48 @@ void Converter_settings()
         /**If the current state is @p PRECHARGE or @p CHARGE*/
         case PRECHARGE:
         case CHARGE:
-        /**> The current setpoint (@p iref) is defined as @p i_char*/
+            /**> The current setpoint (@p iref) is defined as @p i_char*/
             iref = i_char; 
-        /**> The charge/discharge relay (@p RA0) will be set to the charge position (low)*/
+            /**> The charge/discharge relay (@p RA0) will be set to the charge position (low)*/
             RA0 = 0;
             break;
         /**If the current state is @p DISCHARGE*/
         case DISCHARGE:
-        /**> The current setpoint (@p iref) is defined as @p i_disc*/
+            /**> The current setpoint (@p iref) is defined as @p i_disc*/
             iref = i_disc;
-        /**> The charge/discharge relay (@p RA0) will be set to the discharge position (high)*/
+            /**> The charge/discharge relay (@p RA0) will be set to the discharge position (high)*/
             RA0 = 1;            
             break;
         /**If the current state is @p CS_DC_res or @p DS_DC_res*/
         case CS_DC_res:
         case DS_DC_res:
-        /**> The current setpoint (@p iref) is defined as <tt> capacity / 5 </tt>*/
+            /**> The current setpoint (@p iref) is defined as <tt> capacity / 5 </tt>*/
             iref = capacity / 5;
             dc_res_count = 14;
-        /**> The charge/discharge relay (@p RA0) will be set to the discharge position (high)*/
+            /**> The charge/discharge relay (@p RA0) will be set to the discharge position (high)*/
             RA0 = 1;            
             break;
     }
     __delay_ms(10);
+    /**Then, it will enable the USART reception interrupts to give the posibility to the user to press
+    @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
+    RCIE = 1;
+    /**The timing counter @p count will be intialized to @p COUNTER, to start a full control loop cycle.*/    
+    count = COUNTER;
 }
 
-/**@brief Function to define the parameters of the charge/discharge process fo Li-Ion chemistry.
+/**@brief Function to define the parameters of the charge/discharge process for Li-Ion chemistry.
 */
 void Li_Ion_param ()
 {   
-    /**This function will first show the pre-set parameters for charging that are:*/
-    /**> @p Li_Ion_CV = 4200 mV*/
-    /**> @p Li_Ion_CAP = 3250 mAh*/
+    /**First, this function will declare and intialize to zero a variable called @p input, which will
+    be used to store the input of the user.*/
+    unsigned char input = 0;
+    /**Then, it will show the pre-set parameters for charging that are:*/
+    /**@code 
+    Li_Ion_CV = 4200 mV
+    Li_Ion_CAP = 3250 mAh 
+    @endcode*/
     LINEBREAK;
     vref = Li_Ion_CV;
     UART_send_string((char*)cv_val_str);
@@ -332,7 +329,7 @@ void Li_Ion_param ()
     UART_send_string((char*)mAh_str);
     LINEBREAK;
     LINEBREAK;
-    /**For the charging current it will show three options:*/
+    /**For the charging current it will print three options:*/
     UART_send_string((char*)def_char_curr_str);
     LINEBREAK;
     /** - 1) 0.25 C*/
@@ -346,13 +343,13 @@ void Li_Ion_param ()
     LINEBREAK;
     LINEBREAK;
     /** .*/
-    while(c_char == 0)
+    while(input == 0)
     {
     /**The user should input the desired option.*/
-        c_char = UART_get_char();  //Get the value in the terminal.
-        switch(c_char)
+        input = UART_get_char();  //Get the value in the terminal.
+        switch(input)
         {   
-    /**After chosing the charging current, the program will assign it to @p i_char and print it.*/
+            /**After chosing the charging current, the program will assign it to @p i_char and print it.*/
             case '1':
                 i_char = capacity/4;
                 UART_send_string((char*)char_def_quarter_str);  //0.25C
@@ -368,23 +365,25 @@ void Li_Ion_param ()
                 UART_send_string((char*)char_def_one_str);  //0.1C
                 LINEBREAK;
                 break;
-    /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
+                /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
                 case 0x1B:
                 state = STANDBY;
                 LINEBREAK;
                 UART_send_string((char*)restarting_str);  //restarting...
                 LINEBREAK; 
                 goto ESCAPE;  //go to the end of the function 
-    /**If the user press something different from @e 1, @e 2, @e 3 or @e ESC the program will print 
-    a warning message and wait for a valid input.*/
+                /**If the user press something different from @b 1, @b 2, @b 3 or @b ESC the program will print 
+                a warning message and wait for a valid input.*/
                 default:
-                c_char = 0;  //reset c_char so it stays inside the while loop.
+                input = 0;  //stay inside the while loop.
                 LINEBREAK;
                 UART_send_string((char*)num_1and3_str);  //ask the user to use a number between 1 and 3.
                 LINEBREAK;                
                 break;
         }
     }
+    /**Variable @p input is cleared*/
+    input = 0; 
     /**Next, the program will show the end-of-charge current constant that is:*/
     /**> @p Li_Ion_EOC_curr = 100 mA*/ 
     EOC_current = Li_Ion_EOC_curr;
@@ -407,13 +406,13 @@ void Li_Ion_param ()
     LINEBREAK;
     LINEBREAK;
     /** .*/
-    while(c_disc == 0)
+    while(input == 0)
     {
-    /**The user should input the desired option.*/
-        c_disc = UART_get_char();  //Get the value in the terminal.
-        switch (c_disc)
+        /**The user should input the desired option.*/
+        input = UART_get_char();  //Get the value in the terminal.
+        switch (input)
         {
-    /**After chosing the discharging current, the program will assign it to @p i_disc and print it.*/
+            /**After chosing the discharging current, the program will assign it to @p i_disc and print it.*/
             case '1':
                 i_disc = capacity/4;
                 UART_send_string((char*)dis_def_quarter_str);  //0.25 C
@@ -429,23 +428,25 @@ void Li_Ion_param ()
                 UART_send_string((char*)dis_def_one_str);  //1C
                 LINEBREAK;
                 break;
-    /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
+            /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
             case 0x1B:  //ESC button was pressed
                 state = STANDBY;
                 LINEBREAK;
                 UART_send_string((char*)restarting_str);  //restarting...
                 LINEBREAK;             
                 goto ESCAPE;  //go to the end of the function 
-    /**If the user press something different from @e 1, @e 2, @e 3 or @e ESC the program will print 
-    a warning message and wait for a valid input.*/
+            /**If the user press something different from @e 1, @e 2, @e 3 or @e ESC the program will print 
+            a warning message and wait for a valid input.*/
             default:
-                c_disc = 0;
+                input = 0;
                 LINEBREAK;
                 UART_send_string((char*)num_1and3_str);  //ask the user to use a number between 1 and 3.
                 LINEBREAK;                
                 break;
         }
     }
+    /**Varible @p input is cleared*/
+    input = 0;
     /**Next, the program will show the end-of-discharge voltage constant that is: ((CHANGE THIS STYLE))*/
     /**> @p Li_Ion_EOD_volt = @p 3000 [mV]*/ 
     EOD_voltage = Li_Ion_EOD_volt;
@@ -473,40 +474,48 @@ void Li_Ion_param ()
     /** .*/
     while(option == 0)
     {
-    /**The user should input the desired option, which will be assigned to @p option*/
+        /**The user should input the desired option, which will be assigned to @p option*/
         option = UART_get_char();  //Get the value in the terminal.
         switch(option)
         {
-    /**After that the program will print it.*/
+            /**After that the program will print the selected option and:*/
             case '1':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_1_sel_str);  //Precharge->Discharge->Charge
                 LINEBREAK;
+                /**> if @option is equal to @b 1 it will set the @p state as @p PRECHARGE*/
+                state = PRECHARGE;
                 break;
             case '2':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_2_sel_str);  //Discharge->Charge
                 LINEBREAK;
+                /**> if @option is equal to @b 2 it will set the @p state as @p DISCHARGE*/
+                state = DISCHARGE;
                 break;
             case '3':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_3_sel_str);  //Only Charge
-                LINEBREAK;            
+                LINEBREAK;
+                /**> if @option is equal to @b 3 it will set the @p state as @p CHARGE*/
+                state = CHARGE;            
                 break;
             case '4':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_4_sel_str);  //Only Discharge
-                LINEBREAK;            
+                LINEBREAK;
+                /**> if @option is equal to @b 4 it will set the @p state as @p DISCHARGE*/
+                state = DISCHARGE;                
                 break;
-    /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
+            /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
             case 0x1B:
                 state = STANDBY;
                 LINEBREAK;
                 UART_send_string((char*)restarting_str);
                 LINEBREAK;
                 goto ESCAPE;  //go to the end of the function 
-    /**If the user press something different from @e 1, @e 2, @e 3, @e 4 or @e ESC the program will print 
-    a warning message and wait for a valid input.*/
+            /**If the user press something different from @b 1, @b 2, @b 3, @b 4 or @b ESC the program will print 
+            a warning message and wait for a valid input.*/
             default:
                 option = 0;
                 LINEBREAK;
@@ -521,11 +530,11 @@ void Li_Ion_param ()
     LINEBREAK;
     while(cell_max == 0)
     {
-    /**The user should input the desired number, which will be assigned to @p cell_max*/
+        /**The user should input the desired number, which will be assigned to @p cell_max*/
         cell_max = UART_get_char();  //Get the value in the terminal.
         switch(cell_max)
         {
-    /**After that the program will print it.*/
+            /**After that the program will print it.*/
             case '1':
                 LINEBREAK;
                 UART_send_string((char*)num_cell_str);
@@ -550,15 +559,15 @@ void Li_Ion_param ()
                 UART_send_string((char*)four_str);
                 LINEBREAK;
                 break;
-    /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
+            /**Unless the user press @b ESC, in that case the program will be restarted to the @p STANBY state.*/
             case 0x1B:
                 state = STANDBY;
                 LINEBREAK;
                 UART_send_string((char*)restarting_str);
                 LINEBREAK;
                 goto ESCAPE;  //go to the end of the function 
-    /**If the user press something different from @e 1, @e 2, @e 3, @e 4 or @e ESC the program will print 
-    a warning message and wait for a valid input.*/
+            /**If the user press something different from @b 1, @b 2, @b 3, @b 4 or @b ESC the program will print 
+            a warning message and wait for a valid input.*/
             default:
                 cell_max = 0;   //Keep the program inside the while loop 
                 LINEBREAK;
@@ -572,33 +581,41 @@ void Li_Ion_param ()
     ESCAPE: ;  //label to goto the end of the function 
 }
 
+/**@brief Function to define the parameters of the charge/discharge process for Li-Ion chemistry.
+*/
+void Ni_MH_param()
+{
+    /**It's empty*/
+}
+
 /**@brief Function to start the state machine.
 */
 void Start_state_machine()
 {
-    /** At first, this function will check which is the current cell. This is defined in:*/
-    /**> @p cell_count*/ 
-    start = 0;
+    /**First, this function will declare and intialize to zero a variable called @p start, which will
+    be used to store the input of the user.*/ 
+    unsigned char start = 0;
     switch (cell_count){
-    /**If @p cell_count is equal to @b '1', it will ask for user intervention to start.*/
+        /**If the current cell is the first (<tt>cell_count</tt>) , it will ask for user intervention to start.*/
         case '1':
-    /**It will prompt the user to press @b 's'.*/
+            /**It will prompt the user to press @b s.*/
             UART_send_string((char*)press_s_str);
             LINEBREAK;                  
             while(start == 0)                                               
             {
-                start = UART_get_char();  //Get the value in the terminal.
+                /**`The key pressed by the user will be assigne to @p start.*/
+                start = UART_get_char();
                 switch(start)
                 {
-    /**If the user press it, the program will start.*/
+                    /**If the user press @b s, the program will start.*/
                     case 's': 
                         break;
-    /**The user also can press @e 'ESC' and the program will be restarted to the @p STANBY state.*/ 
+                    /**The user also can press @b ESC and the program will be restarted to the @p STANBY state.*/ 
                     case 0x1B:
                         state = STANDBY;
                         goto NOSTART;  //go to the end of the function 
-    /**If the user press something different from @e s, or @e ESC the program will print 
-    a warning message and wait for a valid input.*/
+                    /**If the user press something different from @b s, or @b ESC the program will print 
+                    a warning message and wait for a valid input.*/
                     default:
                         LINEBREAK;
                         UART_send_string((char*)press_s_str);
@@ -608,8 +625,8 @@ void Start_state_machine()
                 }
             }
             break;
-    /**If the current cell is @b not @b '1' the program will start without 
-    the user intervention.*/
+        /**If the current cell is @b not @b '1' the program will start without 
+        the user intervention.*/
         default: 
             break;
     }

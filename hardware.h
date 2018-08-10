@@ -81,9 +81,10 @@ Set the ADC channel to @p x and wait for 5 microseconds.
 //DC-DC CONVERTER RELATED DEFINITION
 /** @def STOP_CONVERTER()
 Set @p conv to zero, turn off the main relay (@p RA1), set the duty cycle in @p DC_MIN, 
-turn off all the cell relays in the switcher board and disable the logging of data to the terminal   
+turn off all the cell relays in the switcher board and disable the logging of data to the terminal 
+and the USART reception interrupts
 */
-#define		STOP_CONVERTER()		{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); }
+#define		STOP_CONVERTER()		{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); RCIE = 0;}
 
 #define 	LOG_ON()				{ log_on = 1; }
 #define 	LOG_OFF()				{ log_on = 0; }

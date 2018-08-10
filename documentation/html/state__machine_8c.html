@@ -78,9 +78,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a720fb40709da65800a7083dc528d4b75"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a720fb40709da65800a7083dc528d4b75">State_machine</a> ()</td></tr>
 <tr class="memdesc:a720fb40709da65800a7083dc528d4b75"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function contain the main switching between the states of the main state machine.  <a href="#a720fb40709da65800a7083dc528d4b75">More...</a><br /></td></tr>
 <tr class="separator:a720fb40709da65800a7083dc528d4b75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a615d15018432f32225d7680126353f7b"><td class="memItemLeft" align="right" valign="top"><a id="a615d15018432f32225d7680126353f7b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a615d15018432f32225d7680126353f7b">fSTANDBY</a> ()</td></tr>
-<tr class="memdesc:a615d15018432f32225d7680126353f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the <code>STANDBY</code> state of the state machine. <br /></td></tr>
+<tr class="memitem:a615d15018432f32225d7680126353f7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#a615d15018432f32225d7680126353f7b">fSTANDBY</a> ()</td></tr>
+<tr class="memdesc:a615d15018432f32225d7680126353f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the <code>STANDBY</code> state of the state machine.  <a href="#a615d15018432f32225d7680126353f7b">More...</a><br /></td></tr>
 <tr class="separator:a615d15018432f32225d7680126353f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab8843d66ed853494d05155924f4229e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8c.html#aab8843d66ed853494d05155924f4229e">fIDLE</a> ()</td></tr>
 <tr class="memdesc:aab8843d66ed853494d05155924f4229e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine.  <a href="#aab8843d66ed853494d05155924f4229e">More...</a><br /></td></tr>
@@ -170,6 +169,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stat
 <blockquote class="doxtable">
 <p>The charge/discharge relay (<code>RA0</code>) will be set to the discharge position (high) </p>
 </blockquote>
+<p>Then, it will enable the USART reception interrupts to give the posibility to the user to press <b>ESC</b> to cancel or <b>n</b> to go to the next cell, at any time during the testing process</p>
+<p>The timing counter <code>count</code> will be intialized to <code>COUNTER</code>, to start a full control loop cycle. </p>
 
 </div>
 </div>
@@ -233,7 +234,31 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stat
 </div><div class="memdoc">
 
 <p>This function define the IDLE state of the state machine. </p>
-<p>At first, the program will call the <a class="el" href="state__machine_8c.html#aed563ae909f60360b1eaee8bcf5803e3">Start_state_machine()</a> function. </p>
+<p>At first, the function will call the <a class="el" href="state__machine_8c.html#aed563ae909f60360b1eaee8bcf5803e3">Start_state_machine()</a> function.</p>
+<p>Then, it will call the <a class="el" href="state__machine_8c.html#a7269099146eb3fc4fd6b7a194d55421d">Converter_settings()</a> function. </p>
+
+</div>
+</div>
+<a id="a615d15018432f32225d7680126353f7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a615d15018432f32225d7680126353f7b">&#9670;&nbsp;</a></span>fSTANDBY()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void fSTANDBY </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function define the <code>STANDBY</code> state of the state machine. </p>
+<p>First, the function will stop the converter usign <a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER()</a> macro</p>
+<p>Then, it will disable the USART reception interrupts</p>
+<p>Next, the variables related with the setting of parameters are initizalized: <code> start = 0, </code></p>
 
 </div>
 </div>
@@ -275,14 +300,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stat
 </div><div class="memdoc">
 
 <p>Function to define the parameters of the charge/discharge process fo Li-Ion chemistry. </p>
-<p>This function will first show the pre-set parameters for charging that are:</p>
-<blockquote class="doxtable">
-<p><code>Li_Ion_CV</code> = 4200 mV </p>
-</blockquote>
-<blockquote class="doxtable">
-<p><code>Li_Ion_CAP</code> = 3250 mAh </p>
-</blockquote>
-<p>The <code>capacity</code> will be set to <code>Li_Ion_CAP</code>.</p>
+<p>First, this function will declare and intialize to zero a variable called <code>input</code>, which will be used to store the input of the user.</p>
+<p>Then, it will show the pre-set parameters for charging that are:</p>
+<div class="fragment"><div class="line">@p Li_Ion_CV = 4200 mV</div><div class="line">@p Li_Ion_CAP = 3250 mAh </div></div><!-- fragment --><p>The <code>capacity</code> will be set to <code>Li_Ion_CAP</code>.</p>
 <p>For the charging current it will show three options:</p>
 <ul>
 <li>1) 0.25 C</li>
@@ -293,6 +313,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stat
 <p>After chosing the charging current, the program will assign it to <code>i_char</code> and print it.</p>
 <p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
 <p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
+<p>Variable <code>input</code> is cleared</p>
 <p>Next, the program will show the end-of-charge current constant that is:</p>
 <blockquote class="doxtable">
 <p><code>Li_Ion_EOC_curr</code> = 100 mA </p>
@@ -307,6 +328,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stat
 <p>After chosing the discharging current, the program will assign it to <code>i_disc</code> and print it.</p>
 <p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
 <p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
+<p>Varible <code>input</code> is cleared</p>
 <p>Next, the program will show the end-of-discharge voltage constant that is: ((CHANGE THIS STYLE))</p>
 <blockquote class="doxtable">
 <p><code>Li_Ion_EOD_volt</code> = <code>3000</code> [mV] </p>
@@ -319,14 +341,26 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stat
 <li>4) Only Discharge</li>
 </ul>
 <p>The user should input the desired option, which will be assigned to <code>option</code> </p>
-<p>After that the program will print it.</p>
+<p>After that the program will print the selected option and:</p>
+<blockquote class="doxtable">
+<p>if  is equal to <b>1</b> it will set the <code>state</code> as <code>PRECHARGE</code> </p>
+</blockquote>
+<blockquote class="doxtable">
+<p>if  is equal to <b>2</b> it will set the <code>state</code> as <code>DISCHARGE</code> </p>
+</blockquote>
+<blockquote class="doxtable">
+<p>if  is equal to <b>3</b> it will set the <code>state</code> as <code>CHARGE</code> </p>
+</blockquote>
+<blockquote class="doxtable">
+<p>if  is equal to <b>4</b> it will set the <code>state</code> as <code>DISCHARGE</code> </p>
+</blockquote>
 <p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
-<p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em>, <em>4</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
+<p>If the user press something different from <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b> or <b>ESC</b> the program will print a warning message and wait for a valid input.</p>
 <p>Then, the program will ask the user how many cells he wants to test (4 cells is the maximum):</p>
 <p>The user should input the desired number, which will be assigned to <code>cell_max</code> </p>
 <p>After that the program will print it.</p>
-<p>Unless the user press <em>ESC</em>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
-<p>If the user press something different from <em>1</em>, <em>2</em>, <em>3</em>, <em>4</em> or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
+<p>Unless the user press <b>ESC</b>, in that case the program will be restarted to the <code>STANBY</code> state.</p>
+<p>If the user press something different from <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b> or <b>ESC</b> the program will print a warning message and wait for a valid input.</p>
 <p>After the user has set the number of cells the program will go to the <code>IDLE</code> state. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="state__machine_8c.html#aab8843d66ed853494d05155924f4229e" title="This function define the IDLE state of the state machine. ">fIDLE()</a> </dd></dl>
 
 </div>
@@ -348,15 +382,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stat
 </div><div class="memdoc">
 
 <p>Function to start the state machine. </p>
-<p>At first, this function will check which is the current cell. This is defined in:</p>
-<blockquote class="doxtable">
-<p><code>cell_count</code> </p>
-</blockquote>
-<p>If <code>cell_count</code> is equal to <b>'1'</b>, it will ask for user intervention to start.</p>
-<p>It will prompt the user to press <b>'s'</b>.</p>
-<p>If the user press it, the program will start.</p>
-<p>The user also can press <em>'ESC'</em> and the program will be restarted to the <code>STANBY</code> state.</p>
-<p>If the user press something different from <em>s</em>, or <em>ESC</em> the program will print a warning message and wait for a valid input.</p>
+<p>First, this function will declare and intialize to zero a variable called <code>start</code>, which will be used to store the input of the user.</p>
+<p>If the current cell is the first (<code>cell_count</code>) , it will ask for user intervention to start.</p>
+<p>It will prompt the user to press <b>s</b>.</p>
+<p>`The key pressed by the user will be assigne to <code>start</code>.</p>
+<p>If the user press <b>s</b>, the program will start.</p>
+<p>The user also can press <b>ESC</b> and the program will be restarted to the <code>STANBY</code> state.</p>
+<p>If the user press something different from <b>s</b>, or <b>ESC</b> the program will print a warning message and wait for a valid input.</p>
 <p>If the current cell is <b>not</b> <b>'1'</b> the program will start without the user intervention.</p>
 <p>Before starting, the program will print the following:</p>
 <p>Starting...</p>
