@@ -60,6 +60,7 @@ void main(void)
 
 void interrupt serial_interrupt(void) 
 {
+    char esc = 0;
     if(RCIF)
     {
 

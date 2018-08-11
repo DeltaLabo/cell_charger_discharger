@@ -30,7 +30,7 @@ void Init_general()
     tprom = 0;
     wait_count = 0;
     dc_res_count = 0;
-    esc = 0;     
+    //esc = 0;     
 }
 
 void Init_registers()
@@ -376,10 +376,6 @@ void Init_UART()
     RX9   = 0;    // 8-bit reception mode selected
     //__8-bit mode selected__//    
     //INTERRUPTS
-        while(RCIF){                //clear the reception register
-        esc = RC1REG;
-        esc = 0;
-    }
     RCIE = 0;                   //disable reception interrupts
     TXIE = 0;                   //disable transmision interrupts
 }

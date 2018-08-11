@@ -134,7 +134,7 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>AD_CONVERT</b>()&#160;&#160;&#160;{ GO_nDONE = 1; while(GO_nDONE);}</td></tr>
 <tr class="separator:a57f8ee4c55d0b9230535c602e01dbbdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a049dca77d5e2be6f3780ce6a632a5ef3"><td class="memItemLeft" align="right" valign="top"><a id="a049dca77d5e2be6f3780ce6a632a5ef3"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>AD_RESULT</b>()&#160;&#160;&#160;{ ad_res = 0; ad_res = (ADRESL &amp; 0xFF)|((ADRESH &lt;&lt; 8) &amp; 0xF00);}</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>AD_RESULT</b>()&#160;&#160;&#160;{ <a class="el" href="hardware_8h.html#a0474cc065c19a2af8d2874ce3ee75ba9">ad_res</a> = 0; <a class="el" href="hardware_8h.html#a0474cc065c19a2af8d2874ce3ee75ba9">ad_res</a> = (ADRESL &amp; 0xFF)|((ADRESH &lt;&lt; 8) &amp; 0xF00);}</td></tr>
 <tr class="separator:a049dca77d5e2be6f3780ce6a632a5ef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae43ad088d4a64a9931b771c191e0e25b"><td class="memItemLeft" align="right" valign="top"><a id="ae43ad088d4a64a9931b771c191e0e25b"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>CURRENT_MODE</b>&#160;&#160;&#160;4</td></tr>
@@ -142,7 +142,7 @@ Macros</h2></td></tr>
 <tr class="memitem:a0597ae89918183de03119186d8995e75"><td class="memItemLeft" align="right" valign="top"><a id="a0597ae89918183de03119186d8995e75"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>LINEBREAK</b>&#160;&#160;&#160;UART_send_char(10)</td></tr>
 <tr class="separator:a0597ae89918183de03119186d8995e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER</a>()&#160;&#160;&#160;{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); }</td></tr>
+<tr class="memitem:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER</a>()&#160;&#160;&#160;{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); RCIE = 0;}</td></tr>
 <tr class="separator:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d26e5ca6078be961b6b42719ebca269"><td class="memItemLeft" align="right" valign="top"><a id="a4d26e5ca6078be961b6b42719ebca269"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>LOG_ON</b>()&#160;&#160;&#160;{ log_on = 1; }</td></tr>
@@ -160,7 +160,8 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>DC_MAX</b>&#160;&#160;&#160;486</td></tr>
 <tr class="separator:a701d2222601b84faafa94cb1909df104"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7194053a42881b1b4bc8546b4c8713e9"><td class="memItemLeft" align="right" valign="top"><a id="a7194053a42881b1b4bc8546b4c8713e9"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>COUNTER</b>&#160;&#160;&#160;244</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9">COUNTER</a>&#160;&#160;&#160;244</td></tr>
+<tr class="memdesc:a7194053a42881b1b4bc8546b4c8713e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">COUNTER blablabla solo para ver. <br /></td></tr>
 <tr class="separator:a7194053a42881b1b4bc8546b4c8713e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -227,50 +228,64 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>timing</b> (void)</td
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a16ff2d8e15ade4948398b0aeb80124a8"><td class="memItemLeft" align="right" valign="top"><a id="a16ff2d8e15ade4948398b0aeb80124a8"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>count</b> = COUNTER</td></tr>
+<tr class="memitem:a16ff2d8e15ade4948398b0aeb80124a8"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a></td></tr>
+<tr class="memdesc:a16ff2d8e15ade4948398b0aeb80124a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter that should be cleared every second.  <a href="#a16ff2d8e15ade4948398b0aeb80124a8">More...</a><br /></td></tr>
 <tr class="separator:a16ff2d8e15ade4948398b0aeb80124a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0474cc065c19a2af8d2874ce3ee75ba9"><td class="memItemLeft" align="right" valign="top"><a id="a0474cc065c19a2af8d2874ce3ee75ba9"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>ad_res</b></td></tr>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a0474cc065c19a2af8d2874ce3ee75ba9">ad_res</a></td></tr>
+<tr class="memdesc:a0474cc065c19a2af8d2874ce3ee75ba9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Result of an ADC measurement. <br /></td></tr>
 <tr class="separator:a0474cc065c19a2af8d2874ce3ee75ba9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48d9522e58fa05906c6dba23e5745a72"><td class="memItemLeft" align="right" valign="top"><a id="a48d9522e58fa05906c6dba23e5745a72"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>v</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72">v</a></td></tr>
+<tr class="memdesc:a48d9522e58fa05906c6dba23e5745a72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last voltage ADC measurement. <br /></td></tr>
 <tr class="separator:a48d9522e58fa05906c6dba23e5745a72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58e739b7bdf8275493686ae76e3705c3"><td class="memItemLeft" align="right" valign="top"><a id="a58e739b7bdf8275493686ae76e3705c3"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>i</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3">i</a></td></tr>
+<tr class="memdesc:a58e739b7bdf8275493686ae76e3705c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last current ADC measurement. <br /></td></tr>
 <tr class="separator:a58e739b7bdf8275493686ae76e3705c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afea36502e9d227ff62c5fb2719a246f2"><td class="memItemLeft" align="right" valign="top"><a id="afea36502e9d227ff62c5fb2719a246f2"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>t</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#afea36502e9d227ff62c5fb2719a246f2">t</a></td></tr>
+<tr class="memdesc:afea36502e9d227ff62c5fb2719a246f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last temperature ADC measurement. <br /></td></tr>
 <tr class="separator:afea36502e9d227ff62c5fb2719a246f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afce1f09585094a8102cf627d00de6d6f"><td class="memItemLeft" align="right" valign="top"><a id="afce1f09585094a8102cf627d00de6d6f"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>iprom</b></td></tr>
-<tr class="separator:afce1f09585094a8102cf627d00de6d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8a45b535ece3b14958359be03fa74b0"><td class="memItemLeft" align="right" valign="top"><a id="aa8a45b535ece3b14958359be03fa74b0"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>vprom</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0">vprom</a></td></tr>
+<tr class="memdesc:aa8a45b535ece3b14958359be03fa74b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one second average of <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72">v</a>. <br /></td></tr>
 <tr class="separator:aa8a45b535ece3b14958359be03fa74b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afce1f09585094a8102cf627d00de6d6f"><td class="memItemLeft" align="right" valign="top"><a id="afce1f09585094a8102cf627d00de6d6f"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f">iprom</a></td></tr>
+<tr class="memdesc:afce1f09585094a8102cf627d00de6d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one second average of <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3">i</a>. <br /></td></tr>
+<tr class="separator:afce1f09585094a8102cf627d00de6d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade869e001da18e227da4d9dbb0b616da"><td class="memItemLeft" align="right" valign="top"><a id="ade869e001da18e227da4d9dbb0b616da"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>tprom</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da">tprom</a></td></tr>
+<tr class="memdesc:ade869e001da18e227da4d9dbb0b616da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one second average of <a class="el" href="hardware_8h.html#afea36502e9d227ff62c5fb2719a246f2">t</a>. <br /></td></tr>
 <tr class="separator:ade869e001da18e227da4d9dbb0b616da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad984965db113bd0969498c826e23ab44"><td class="memItemLeft" align="right" valign="top"><a id="ad984965db113bd0969498c826e23ab44"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>proportional</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ad984965db113bd0969498c826e23ab44">proportional</a></td></tr>
+<tr class="memdesc:ad984965db113bd0969498c826e23ab44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Proportional component of PI compensator. <br /></td></tr>
 <tr class="separator:ad984965db113bd0969498c826e23ab44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1174af01b8a329a6d465ea6e0951b3e5"><td class="memItemLeft" align="right" valign="top"><a id="a1174af01b8a329a6d465ea6e0951b3e5"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>integral</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a1174af01b8a329a6d465ea6e0951b3e5">integral</a></td></tr>
+<tr class="memdesc:a1174af01b8a329a6d465ea6e0951b3e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integral component of PI compensator. <br /></td></tr>
 <tr class="separator:a1174af01b8a329a6d465ea6e0951b3e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f7add0f84d583bc2eceb290d6c4cc06"><td class="memItemLeft" align="right" valign="top"><a id="a1f7add0f84d583bc2eceb290d6c4cc06"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>kp</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a1f7add0f84d583bc2eceb290d6c4cc06">kp</a></td></tr>
+<tr class="memdesc:a1f7add0f84d583bc2eceb290d6c4cc06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Proportional compesator gain. <br /></td></tr>
 <tr class="separator:a1f7add0f84d583bc2eceb290d6c4cc06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a050993b7ca6c97e62c1020017f716b91"><td class="memItemLeft" align="right" valign="top"><a id="a050993b7ca6c97e62c1020017f716b91"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>ki</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a050993b7ca6c97e62c1020017f716b91">ki</a></td></tr>
+<tr class="memdesc:a050993b7ca6c97e62c1020017f716b91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integral compesator gain. <br /></td></tr>
 <tr class="separator:a050993b7ca6c97e62c1020017f716b91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee13c6daa3d9424e3f4d5d81beb57bd4"><td class="memItemLeft" align="right" valign="top"><a id="aee13c6daa3d9424e3f4d5d81beb57bd4"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>vref</b></td></tr>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aee13c6daa3d9424e3f4d5d81beb57bd4">vref</a></td></tr>
+<tr class="memdesc:aee13c6daa3d9424e3f4d5d81beb57bd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Voltage setpoint. <br /></td></tr>
 <tr class="separator:aee13c6daa3d9424e3f4d5d81beb57bd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a391ee908f1bdc84f0f5e80916a288881"><td class="memItemLeft" align="right" valign="top"><a id="a391ee908f1bdc84f0f5e80916a288881"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>iref</b></td></tr>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a391ee908f1bdc84f0f5e80916a288881">iref</a></td></tr>
+<tr class="memdesc:a391ee908f1bdc84f0f5e80916a288881"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current setpoint. <br /></td></tr>
 <tr class="separator:a391ee908f1bdc84f0f5e80916a288881"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa14de202054f8be3764087df08c27eda"><td class="memItemLeft" align="right" valign="top"><a id="aa14de202054f8be3764087df08c27eda"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>cmode</b></td></tr>
+char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aa14de202054f8be3764087df08c27eda">cmode</a></td></tr>
+<tr class="memdesc:aa14de202054f8be3764087df08c27eda"><td class="mdescLeft">&#160;</td><td class="mdescRight">CC / CV selector. CC: <code> cmode = 1 </code>. CV: <code> cmode = 0 </code> <br /></td></tr>
 <tr class="separator:aa14de202054f8be3764087df08c27eda"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4915e76c096a146c74c575b138a8ee6f"><td class="memItemLeft" align="right" valign="top"><a id="a4915e76c096a146c74c575b138a8ee6f"></a>
 unsigned char&#160;</td><td class="memItemRight" valign="bottom"><b>cc_cv</b></td></tr>
@@ -358,11 +373,11 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>T_str</b> = 'T'
           <td class="memname">#define STOP_CONVERTER</td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td>&#160;&#160;&#160;{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); }</td>
+          <td>&#160;&#160;&#160;{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); RCIE = 0;}</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Set <code>conv</code> to zero, turn off the main relay (<code>RA1</code>), set the duty cycle in <code>DC_MIN</code>, turn off all the cell relays in the switcher board and disable the logging of data to the terminal </p>
+<p>Set <code>conv</code> to zero, turn off the main relay (<code>RA1</code>), set the duty cycle in <code>DC_MIN</code>, turn off all the cell relays in the switcher board and disable the logging of data to the terminal and the USART reception interrupts </p>
 
 </div>
 </div>
@@ -383,6 +398,24 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>T_str</b> = 'T'
       </table>
 </div><div class="memdoc">
 <p>Initialize SPBRG register for required baud rate and set BRGH for fast baud_rate </p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a16ff2d8e15ade4948398b0aeb80124a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16ff2d8e15ade4948398b0aeb80124a8">&#9670;&nbsp;</a></span>count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int count</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Counter that should be cleared every second. </p>
+<p>Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger all the events that are done every second. </p>
 
 </div>
 </div>

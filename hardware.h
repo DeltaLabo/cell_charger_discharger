@@ -54,10 +54,9 @@
 #define 	_XTAL_FREQ 				32000000
 #define		BAUD_RATE               9600
 
-#define		V_CHAN                  0b01101 //AN13 (RB5) 
-#define		I_CHAN                  0b01011 //AN11 (RB4)
-//#define		T_CHAN                  0b010011 //RC3
-
+#define		V_CHAN                  0b01101 ///> Definition of ADC channel for voltage measurements. AN13(RB5) 
+#define		I_CHAN                  0b01011 ///> Definition of ADC channel for current measurements. AN11(RB4)
+//#define		T_CHAN                  0b010011 ///> Definition of ADC channel for temperature measurements.
 #define		CELL1_ON				PORTAbits.RA7 = 1
 #define		CELL2_ON				PORTAbits.RA6 = 1
 #define		CELL3_ON				PORTCbits.RC0 = 1
@@ -66,56 +65,49 @@
 #define		CELL2_OFF				PORTAbits.RA6 = 0
 #define		CELL3_OFF				PORTCbits.RC0 = 0
 #define		CELL4_OFF				PORTCbits.RC1 = 0
-
 /** @def AD_SET_CHAN(x)
 Set the ADC channel to @p x and wait for 5 microseconds. 
 */
 #define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(5); }
 #define		AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);}
 #define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} 
-//CONTROL LOOP RELATED DEFINITION
-#define     CURRENT_MODE            4                               //Number of times the voltage should be equal to the CV voltage in order to change to CV mode.
-
-#define     LINEBREAK               UART_send_char(10)
-
 //DC-DC CONVERTER RELATED DEFINITION
-/** @def STOP_CONVERTER()
-Set @p conv to zero, turn off the main relay (@p RA1), set the duty cycle in @p DC_MIN, 
-turn off all the cell relays in the switcher board and disable the logging of data to the terminal 
-and the USART reception interrupts
-*/
 #define		STOP_CONVERTER()		{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); RCIE = 0;}
-
-#define 	LOG_ON()				{ log_on = 1; }
-#define 	LOG_OFF()				{ log_on = 0; }
-
-#define 	DC_MIN         25		// DC = 0.05
-#define     DC_START       51      //DC = 0.1
-#define 	DC_MAX         486    // DC = 0.95
-
- 
-#define     COUNTER        244
-
-unsigned int 						count = COUNTER;             //ADDED
-unsigned int 						ad_res;
-float                               v;  //ADDED
-float                               i;  //ADDED
-float                               t;  //ADDED
-float                               iprom;
-float                               vprom;
-float                               tprom;
-float 								proportional;
-float 								integral;
-float 								kp;							//Proportional constant, seems too big data type
-float 								ki;		
-unsigned int 						vref;
-unsigned int 						iref;
-char 								cmode;
-unsigned char 						cc_cv;
-unsigned int 						second;
-unsigned char 						esc;					
-unsigned int                        dc = 0;         			//Duty, change data size for 125Khz
+/**< @brief Stop the converter*/
+/**< Set @p conv to zero, turn off the main relay (@p RA1), set the duty cycle in @p DC_MIN, 
+turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
+and the USART reception interrupts.
+*/
+#define 	UART_INT_ON()			{ while(RCIF) clear = RC1REG; RCIE = 1; }  
+///< Clear transmission buffer and turn ON UART transmission interrupts.
+#define 	UART_INT_OFF()			{ log_on = 0; }  ///< Turn OFF UART transmission interrupts.
+#define 	LOG_ON()				{ log_on = 1; }  ///< Turn OFF logging in the terminal.
+#define 	LOG_OFF()				{ log_on = 0; }  ///< Turn ON logging in the terminal.
+#define 	DC_MIN         			25  ///< Minimum possible duty cycle, set around @b 0.05
+#define     DC_START       			51  ///< Initial duty cycle, set around @b 0.1
+#define 	DC_MAX         			486  ///< Maximum possible duty cycle, set around @b 0.95
+#define     COUNTER        			244  ///< Counter value, needed to obtained one second between counts. 
+#define     LINEBREAK               UART_send_char(10)  ///< Send a linebreak to the terminal.
+unsigned int 						count; ///< Counter that should be cleared every second.
+/**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
+all the events that are done every second.*/
+unsigned int 						ad_res; ///< Result of an ADC measurement.
+float                               v;  ///< Last voltage ADC measurement.
+float                               i;  ///< Last current ADC measurement.
+float                               t;  ///<  Last temperature ADC measurement.
+float                               vprom;  ///< Last one-second-average of @link v @endlink.
+float                               iprom;  ///< Last one-second-average of @link i @endlink.
+float                               tprom;  ///< Last one-second-average of @link t @endlink. 
+float 								proportional;  ///< Proportional component of PI compensator
+float 								integral;  ///< Integral component of PI compensator
+float 								kp;  ///< Proportional compesator gain
+float 								ki;  ///< Integral compesator gain		
+unsigned int 						vref;  ///< Voltage setpoint
+unsigned int 						iref;  ///< Current setpoint
+char 								cmode;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt> 	
+unsigned int                        dc = 0;  ///< Duty cycle
 unsigned char 						spb;						//Baud rate set
+char 								clear;  ///< Variable to clear the transmission buffer of UART
 unsigned int            			log_on = 0;					//Variable to indicate if the log is activated  
 char                                log_buffer[5]={0};   		//for printing data in the log
 int                                 ip_buff = 0;  //Buffer for 
