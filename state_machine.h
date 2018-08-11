@@ -72,7 +72,7 @@
     //unsigned int            small_count;                  //counter for waiting time inside states
     unsigned int            dc_res_count = 0;               //counter for DC resistance step
     unsigned char           state;                          //used with enum "states", defined in state_machine.h
-    unsigned char           prev_or_next_state;             //used with enum "states" 
+    unsigned char           prev_state;             //used with enum "states" 
     //unsigned int            state_counter;                //used to show numerical value of the state
     unsigned int            EOC_current;                    //end of charge current in mA
     unsigned int            EOD_voltage;                    //end of dischage voltage in mV

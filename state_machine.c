@@ -117,7 +117,7 @@ void fCHARGE()
     {                
         if (!EOCD_count)
         {
-            prev_or_next_state = state;
+            prev_state = state;
             if (state == CHARGE && option == 51) state = ISDONE;
             else state = WAIT;                
             wait_count = WAIT_TIME;
@@ -136,7 +136,7 @@ void fDISCHARGE()
     {
         if (!EOCD_count)
         { 
-            prev_or_next_state = state;
+            prev_state = state;
             if (option == 52) state = ISDONE;
             else state = WAIT;                
             wait_count = WAIT_TIME;
@@ -174,7 +174,7 @@ void fDC_res() //can be improved a lot!!
         UART_send_string((char*)end_str);
         LINEBREAK;
         LOG_OFF();   ///I dont like this 
-        prev_or_next_state = state;
+        prev_state = state;
         state = WAIT;
         wait_count = WAIT_TIME;              
     }else dc_res_count--;
@@ -195,7 +195,7 @@ void fWAIT()
     }
     if(!wait_count)
     {           
-        switch(prev_or_next_state)
+        switch(prev_state)
         {
             case PRECHARGE:
                 state = DISCHARGE;
@@ -250,11 +250,30 @@ void fFAULT()
 */
 void Start_state_machine()
 {
-    /**First, this function will declare and intialize to zero a variable called @p start, which will
+    /**First,*/
+    switch(option)
+    {
+        /**Check the option (CHANGE)*/
+        case '1':
+            /**> if @option is equal to @b 1 it will set the @p state as @p PRECHARGE*/
+            state = PRECHARGE;
+            break;
+        case '2':
+            /**> if @option is equal to @b 2 it will set the @p state as @p DISCHARGE*/
+            state = DISCHARGE;
+            break;
+        case '3':
+            /**> if @option is equal to @b 3 it will set the @p state as @p CHARGE*/
+            state = CHARGE;            
+            break;
+        case '4':
+            /**> if @option is equal to @b 4 it will set the @p state as @p DISCHARGE*/
+            state = DISCHARGE;                
+            break;
+    }
+    /**First, this function will declare and initialized to zero a variable called @p start, which will
     be used to store the input of the user.*/ 
     unsigned char start = 0;
-    /**After that the variable @p previous_or_next_state will be asigned to  @p state*/
-    state = prev_or_next_state;
     switch (cell_count){
         /**If the current cell is the first (<tt>cell_count</tt>) , it will ask for user intervention to start.*/
         case '1':
@@ -263,7 +282,7 @@ void Start_state_machine()
             LINEBREAK;                  
             while(start == 0)                                               
             {
-                /**`The key pressed by the user will be assigne to @p start.*/
+                /**`The key pressed by the user will be assigned to @p start.*/
                 start = UART_get_char();
                 switch(start)
                 {
@@ -289,7 +308,7 @@ void Start_state_machine()
         the user intervention.*/
         default: 
             break;
-    }
+    }    
     /**Before starting, the program will print the following:*/
     LINEBREAK; 
     /**Starting...*/
@@ -325,11 +344,7 @@ void Converter_settings()
     /**The @link set_DC() @endlink function is called.*/  
     set_DC();
     /**The @link Cell_ON() @endlink function is called.*/
-    Cell_ON(); 
-    //DEBUG
-    UART_send_char('S');
-    display_value(state);
-    UART_send_char('\n');
+    Cell_ON();
     switch(state)
     {
         /**If the current state is @p PRECHARGE or @p CHARGE*/
@@ -362,7 +377,7 @@ void Converter_settings()
     @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
     RCIE = 1;
     /**The timing counter @p count will be intialized to @p COUNTER, to start a full control loop cycle.*/    
-    count = COUNTER;
+    count = 0;
 }
 
 /**@brief Function to define the parameters of the charge/discharge process for Li-Ion chemistry.
@@ -544,29 +559,21 @@ void Li_Ion_param ()
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_1_sel_str);  //Precharge->Discharge->Charge
                 LINEBREAK;
-                /**> if @option is equal to @b 1 it will set the @p state as @p PRECHARGE*/
-                prev_or_next_state = PRECHARGE;
                 break;
             case '2':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_2_sel_str);  //Discharge->Charge
                 LINEBREAK;
-                /**> if @option is equal to @b 2 it will set the @p state as @p DISCHARGE*/
-                prev_or_next_state = DISCHARGE;
                 break;
             case '3':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_3_sel_str);  //Only Charge
-                LINEBREAK;
-                /**> if @option is equal to @b 3 it will set the @p state as @p CHARGE*/
-                prev_or_next_state = CHARGE;            
+                LINEBREAK;         
                 break;
             case '4':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_4_sel_str);  //Only Discharge
-                LINEBREAK;
-                /**> if @option is equal to @b 4 it will set the @p state as @p DISCHARGE*/
-                prev_or_next_state = DISCHARGE;                
+                LINEBREAK;             
                 break;
             /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
             case 0x1B:
