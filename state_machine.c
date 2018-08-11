@@ -117,7 +117,7 @@ void fCHARGE()
     {                
         if (!EOCD_count)
         {
-            previous_state = state;
+            prev_or_next_state = state;
             if (state == CHARGE && option == 51) state = ISDONE;
             else state = WAIT;                
             wait_count = WAIT_TIME;
@@ -136,7 +136,7 @@ void fDISCHARGE()
     {
         if (!EOCD_count)
         { 
-            previous_state = state;
+            prev_or_next_state = state;
             if (option == 52) state = ISDONE;
             else state = WAIT;                
             wait_count = WAIT_TIME;
@@ -174,7 +174,7 @@ void fDC_res() //can be improved a lot!!
         UART_send_string((char*)end_str);
         LINEBREAK;
         LOG_OFF();   ///I dont like this 
-        previous_state = state;
+        prev_or_next_state = state;
         state = WAIT;
         wait_count = WAIT_TIME;              
     }else dc_res_count--;
@@ -195,7 +195,7 @@ void fWAIT()
     }
     if(!wait_count)
     {           
-        switch(previous_state)
+        switch(prev_or_next_state)
         {
             case PRECHARGE:
                 state = DISCHARGE;
@@ -246,6 +246,63 @@ void fFAULT()
     state = STANDBY;
 }
 
+/**@brief Function to start the state machine.
+*/
+void Start_state_machine()
+{
+    /**First, this function will declare and intialize to zero a variable called @p start, which will
+    be used to store the input of the user.*/ 
+    unsigned char start = 0;
+    /**After that the variable @p previous_or_next_state will be asigned to  @p state*/
+    state = prev_or_next_state;
+    switch (cell_count){
+        /**If the current cell is the first (<tt>cell_count</tt>) , it will ask for user intervention to start.*/
+        case '1':
+            /**It will prompt the user to press @b s.*/
+            UART_send_string((char*)press_s_str);
+            LINEBREAK;                  
+            while(start == 0)                                               
+            {
+                /**`The key pressed by the user will be assigne to @p start.*/
+                start = UART_get_char();
+                switch(start)
+                {
+                    /**If the user press @b s, the program will start.*/
+                    case 's': 
+                        break;
+                    /**The user also can press @b ESC and the program will be restarted to the @p STANBY state.*/ 
+                    case 0x1B:
+                        state = STANDBY;
+                        goto NOSTART;  //go to the end of the function 
+                    /**If the user press something different from @b s, or @b ESC the program will print 
+                    a warning message and wait for a valid input.*/
+                    default:
+                        LINEBREAK;
+                        UART_send_string((char*)press_s_str);
+                        LINEBREAK;
+                        start = 0;  //Keep the program inside the while loop 
+                        break;
+                }
+            }
+            break;
+        /**If the current cell is @b not @b '1' the program will start without 
+        the user intervention.*/
+        default: 
+            break;
+    }
+    /**Before starting, the program will print the following:*/
+    LINEBREAK; 
+    /**Starting...*/
+    UART_send_string((char*)starting_str);                                            
+    LINEBREAK; 
+    LINEBREAK;
+    /**Cell {1,2,3 or 4}*/
+    UART_send_string((char*)cell_str);
+    display_value((int)(cell_count - '0'));
+    LINEBREAK; 
+    NOSTART: ;  //label to goto the end of the function 
+}
+
 /**@brief Function to set the configurations of the converter.
 */
 void Converter_settings()
@@ -268,7 +325,11 @@ void Converter_settings()
     /**The @link set_DC() @endlink function is called.*/  
     set_DC();
     /**The @link Cell_ON() @endlink function is called.*/
-    Cell_ON();    
+    Cell_ON(); 
+    //DEBUG
+    UART_send_char('S');
+    display_value(state);
+    UART_send_char('\n');
     switch(state)
     {
         /**If the current state is @p PRECHARGE or @p CHARGE*/
@@ -484,28 +545,28 @@ void Li_Ion_param ()
                 UART_send_string((char*)li_ion_op_1_sel_str);  //Precharge->Discharge->Charge
                 LINEBREAK;
                 /**> if @option is equal to @b 1 it will set the @p state as @p PRECHARGE*/
-                state = PRECHARGE;
+                prev_or_next_state = PRECHARGE;
                 break;
             case '2':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_2_sel_str);  //Discharge->Charge
                 LINEBREAK;
                 /**> if @option is equal to @b 2 it will set the @p state as @p DISCHARGE*/
-                state = DISCHARGE;
+                prev_or_next_state = DISCHARGE;
                 break;
             case '3':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_3_sel_str);  //Only Charge
                 LINEBREAK;
                 /**> if @option is equal to @b 3 it will set the @p state as @p CHARGE*/
-                state = CHARGE;            
+                prev_or_next_state = CHARGE;            
                 break;
             case '4':
                 LINEBREAK;
                 UART_send_string((char*)li_ion_op_4_sel_str);  //Only Discharge
                 LINEBREAK;
                 /**> if @option is equal to @b 4 it will set the @p state as @p DISCHARGE*/
-                state = DISCHARGE;                
+                prev_or_next_state = DISCHARGE;                
                 break;
             /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
             case 0x1B:
@@ -587,59 +648,3 @@ void Ni_MH_param()
 {
     /**It's empty*/
 }
-
-/**@brief Function to start the state machine.
-*/
-void Start_state_machine()
-{
-    /**First, this function will declare and intialize to zero a variable called @p start, which will
-    be used to store the input of the user.*/ 
-    unsigned char start = 0;
-    switch (cell_count){
-        /**If the current cell is the first (<tt>cell_count</tt>) , it will ask for user intervention to start.*/
-        case '1':
-            /**It will prompt the user to press @b s.*/
-            UART_send_string((char*)press_s_str);
-            LINEBREAK;                  
-            while(start == 0)                                               
-            {
-                /**`The key pressed by the user will be assigne to @p start.*/
-                start = UART_get_char();
-                switch(start)
-                {
-                    /**If the user press @b s, the program will start.*/
-                    case 's': 
-                        break;
-                    /**The user also can press @b ESC and the program will be restarted to the @p STANBY state.*/ 
-                    case 0x1B:
-                        state = STANDBY;
-                        goto NOSTART;  //go to the end of the function 
-                    /**If the user press something different from @b s, or @b ESC the program will print 
-                    a warning message and wait for a valid input.*/
-                    default:
-                        LINEBREAK;
-                        UART_send_string((char*)press_s_str);
-                        LINEBREAK;
-                        start = 0;  //Keep the program inside the while loop 
-                        break;
-                }
-            }
-            break;
-        /**If the current cell is @b not @b '1' the program will start without 
-        the user intervention.*/
-        default: 
-            break;
-    }
-    /**Before starting, the program will print the following:*/
-    LINEBREAK; 
-    /**Starting...*/
-    UART_send_string((char*)starting_str);                                            
-    LINEBREAK; 
-    LINEBREAK;
-    /**Cell {1,2,3 or 4}*/
-    UART_send_string((char*)cell_str);
-    display_value((int)(cell_count - '0'));
-    LINEBREAK; 
-    NOSTART: ;  //label to goto the end of the function 
-}
-
