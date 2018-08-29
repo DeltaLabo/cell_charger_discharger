@@ -56,7 +56,7 @@
 
 #define		V_CHAN                  0b01101 ///> Definition of ADC channel for voltage measurements. AN13(RB5) 
 #define		I_CHAN                  0b01011 ///> Definition of ADC channel for current measurements. AN11(RB4)
-//#define		T_CHAN                  0b010011 ///> Definition of ADC channel for temperature measurements.
+#define		T_CHAN                  0b01100 ///> Definition of ADC channel for temperature measurements. AN12(RB0)
 #define		CELL1_ON				PORTAbits.RA7 = 1
 #define		CELL2_ON				PORTAbits.RA6 = 1
 #define		CELL3_ON				PORTCbits.RC0 = 1

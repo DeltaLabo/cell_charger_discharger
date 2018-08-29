@@ -268,7 +268,7 @@ void log_control()
                 UART_send_char(log_buffer[2]);
                 break;
             case COUNTER - 27:
-                if (ip_buff > 1000) UART_send_char(log_buffer[3]);  //IT IS NEEDED ??
+                if (tp_buff > 1000) UART_send_char(log_buffer[3]);  //IT IS NEEDED ??
                 break;        
         }
     }
@@ -276,7 +276,7 @@ void log_control()
 //THIS ADC IS WORKING NOW
 void read_ADC()
 {
-    float opr;
+    float opr = 0;
     AD_SET_CHAN(V_CHAN);
     AD_CONVERT();
     AD_RESULT();
@@ -295,7 +295,12 @@ void read_ADC()
     //i=i/0.4;       //A mOhms resistor
     //i = (200/37) * i; //Hall effect sensor  37/200=0.185
     i = (float)(opr * 2.5); //HALL EFFECT ACS723LL OFFSET OF 35
-    opr = 0;     
+    AD_SET_CHAN(T_CHAN);
+    AD_CONVERT();
+    AD_RESULT();     
+    opr = (float)(1.22412 * ad_res);
+    opr = (float)(1866.3 - opr);
+    t = (float) (opr/1.169);
 }
 
 void control_loop()
@@ -338,7 +343,8 @@ void calculate_avg()
         default:
             iprom += i;
             vprom += v;
-            tprom += dc * 1.953125;
+            tprom += t;
+            //tprom += dc * 1.953125;
             break;
     }   
 }

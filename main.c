@@ -26,6 +26,8 @@ void main(void)
     //display_value(STATUS);
     //WPUE3 = 1;      //Enable pull up for MCLR
     //HACKS FOR THIS BOARD
+    TRISB0 = 1;     //Set RB1 as input
+    WPUB0 = 0;      //Disable pull up
     TRISB1 = 1;     //Set RB1 as input
     WPUB1 = 0;      //Disable pull up
     TRISC3 = 1;     //As input to avoid control //old position
