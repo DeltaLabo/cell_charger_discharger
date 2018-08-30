@@ -60,10 +60,11 @@ void Init_registers()
     //-----------TIMER0 FOR CONTROL AND MEASURING LOOP-------------------------
     TMR0IE = 0;                         //Disable timer interruptions
     TMR0CS = 0;                         //Timer set to internal instruction cycle
-    OPTION_REGbits.PS = 0b110;          //Prescaler set to 128
+    OPTION_REGbits.PS = 0b010;          //Prescaler set to 8
     OPTION_REGbits.PSA = 0;             //Prescaler activated
     TMR0IF = 0;                         //Clear timer flag
-    //Timer set to 32/4/128/256 = 244.14Hz
+    TMR0 = 0x9E;                        //Counter set to 255 - 100 + 2 (delay for sync) = 157
+    //Timer set to 32/4/8/100 = 10kHz
     
     //---------------------PSMC/PWM SETTING------------------------------------
     TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3. 
@@ -323,6 +324,8 @@ void timing()
     }else
     {
         count = COUNTER;
+        if(SEC < 59) SEC++;
+        else{SEC = 0; MIN++;}
     }
 }
 //THIS NEXT FUNCTION SEEMS LIKE A GOOD SOLUTION I TESTED IT AGAINST OTHERS AND STILL THE BEST

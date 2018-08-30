@@ -86,7 +86,7 @@ and the USART reception interrupts.
 #define 	DC_MIN         			25  ///< Minimum possible duty cycle, set around @b 0.05
 #define     DC_START       			51  ///< Initial duty cycle, set around @b 0.1
 #define 	DC_MAX         			486  ///< Maximum possible duty cycle, set around @b 0.95
-#define     COUNTER        			244  ///< Counter value, needed to obtained one second between counts. 
+#define     COUNTER        			500  ///< Counter value, needed to obtained one second between counts. 
 #define     LINEBREAK               UART_send_char(10)  ///< Send a linebreak to the terminal.
 unsigned int 						count; ///< Counter that should be cleared every second.
 /**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
@@ -114,6 +114,10 @@ char                                log_buffer[5]={0};   		//for printing data i
 int                                 ip_buff = 0;  ///< Current buffer to send to the terminal usign @link log_control() @endlink.
 int                                 vp_buff = 0;  ///< Voltage buffer to send to the terminal usign @link log_control() @endlink.
 int                                 tp_buff = 0;  ///< Temperature buffer to send to the terminal usign @link log_control() @endlink.
+uint8_t 			                US_COUNT = 20;  //count 40 because f=10Khz, so 4ms
+uint8_t 			                MS4_FLAG = 0;
+uint8_t 			                SEC = 0;
+uint8_t 			                MIN = 0;
 
 char const              comma = ',';
 char const              S_str = 'S';
