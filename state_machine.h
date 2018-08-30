@@ -31,16 +31,16 @@
     void Li_Ion_param(void);
     void Ni_MH_param(void);
     void Converter_settings(void);
-    
-    /** @def LI_ION_CHEM
-    Set to one to choose Li_Ion chemistry
-    */
-    #define LI_ION_CHEM         1
-     /** @def NI_MH_CHEM 
-    Set to one to choose Ni-MH chemistry
-    */
-    #define NI_MH_CHEM          0
-   
+    //////*********************************/////
+    /** @def LI_ION_CHEM                    ////
+    Set to one to choose Li_Ion chemistry   ////
+    */                                      ////
+    #define LI_ION_CHEM         0           ////
+     /** @def NI_MH_CHEM                    ////
+    Set to one to choose Ni-MH chemistry    ////
+    */                                      ////
+    #define NI_MH_CHEM          1           ////
+    //////*********************************/////
     //General definitions
     #define CV_LOOPS            2
     #define EOCD_LOOPS          4
@@ -54,6 +54,7 @@
     #define Li_Ion_EOD_volt     3000
 
     //Ni-MH definitions
+    #define Ni_MH_CV            1700
     #define Ni_MH_CAP           2500
     #define Ni_MH_EOC_DV        10
     #define Ni_MH_EOD_volt      1000

@@ -339,12 +339,13 @@ void calculate_avg()
             iprom /= COUNTER;
             vprom /= COUNTER;
             tprom /= COUNTER;
+            if ((int) vprom > vmax) vmax = (int) vprom;
             break;
         default:
             iprom += i;
             vprom += v;
-            tprom += t;
-            //tprom += dc * 1.953125;
+            //tprom += t;
+            tprom += dc * 1.953125;
             break;
     }   
 }

@@ -98,6 +98,7 @@ float                               t;  ///<  Last temperature ADC measurement.
 float                               vprom;  ///< Last one-second-average of @link v @endlink.
 float                               iprom;  ///< Last one-second-average of @link i @endlink.
 float                               tprom;  ///< Last one-second-average of @link t @endlink. 
+int                                 vmax = 0;   ///< Maximum recorded average voltage. 
 float 								proportional;  ///< Proportional component of PI compensator
 float 								integral;  ///< Integral component of PI compensator
 float 								kp;  ///< Proportional compesator gain
@@ -110,9 +111,9 @@ unsigned char 						spb;						//Baud rate set
 char 								clear;  ///< Variable to clear the transmission buffer of UART
 unsigned int            			log_on = 0;					//Variable to indicate if the log is activated  
 char                                log_buffer[5]={0};   		//for printing data in the log
-int                                 ip_buff = 0;  //Buffer for 
-int                                 vp_buff = 0;  
-int                                 tp_buff = 0; 
+int                                 ip_buff = 0;  ///< Current buffer to send to the terminal usign @link log_control() @endlink.
+int                                 vp_buff = 0;  ///< Voltage buffer to send to the terminal usign @link log_control() @endlink.
+int                                 tp_buff = 0;  ///< Temperature buffer to send to the terminal usign @link log_control() @endlink.
 
 char const              comma = ',';
 char const              S_str = 'S';
