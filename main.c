@@ -40,17 +40,8 @@ void main(void)
     while(1)
 	{   
         if(TMR0IF){
-            TMR0IF = 0;   
-            TMR0 = 0x9E;         
-            US_COUNT --;
-            if (!US_COUNT){
-                US_COUNT = 20;
-                MS4_FLAG = 1;
-            }
-        }      
-        if(MS4_FLAG)
-        {
-            MS4_FLAG = 0;
+            TMR0 = 0x07;
+            TMR0IF = 0;
             read_ADC();
             calculate_avg();
             log_control();      //Log control shall be before the state machine
@@ -63,7 +54,7 @@ void main(void)
             {
                 RA1 = 0;            //close main relay
                 control_loop();     //start controlling
-                if (MS4_FLAG) UART_send_string((char*)"T_ERROR");
+                if (TMR0IF) UART_send_string((char*)"T_ERROR");
             }else RA1 = 1;             
             timing();            
 		}        

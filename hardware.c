@@ -60,11 +60,11 @@ void Init_registers()
     //-----------TIMER0 FOR CONTROL AND MEASURING LOOP-------------------------
     TMR0IE = 0;                         //Disable timer interruptions
     TMR0CS = 0;                         //Timer set to internal instruction cycle
-    OPTION_REGbits.PS = 0b010;          //Prescaler set to 8
+    OPTION_REGbits.PS = 0b110;          //Prescaler set to 128
     OPTION_REGbits.PSA = 0;             //Prescaler activated
     TMR0IF = 0;                         //Clear timer flag
-    TMR0 = 0x9E;                        //Counter set to 255 - 100 + 2 (delay for sync) = 157
-    //Timer set to 32/4/8/100 = 10kHz
+    TMR0 = 0x07;                        //Counter set to 255 - 250 + 2 (delay for sync) = 7
+    //Timer set to 32/4/128/250 = 250Hz
     
     //---------------------PSMC/PWM SETTING------------------------------------
     TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3. 
@@ -270,9 +270,44 @@ void log_control()
                 break;
             case COUNTER - 27:
                 if (tp_buff > 1000) UART_send_char(log_buffer[3]);  //IT IS NEEDED ??
-                break;        
-        }
+                break;
+            case COUNTER - 28:
+                UART_send_char(comma);
+                break;
+            case COUNTER - 29:
+                memset(log_buffer, '0', 6);
+                break;
+            case COUNTER - 30:
+                itoa(log_buffer,minute,10);
+                break;
+            case COUNTER - 31:
+                if (minute < 10) UART_send_char('0');
+                else UART_send_char(log_buffer[0]);
+                break;
+            case COUNTER - 32:
+                if (minute < 10) UART_send_char(log_buffer[0]);
+                else UART_send_char(log_buffer[1]);
+                break;
+            case COUNTER - 33:
+                UART_send_char(colons);
+                break;
+            case COUNTER - 34:
+                memset(log_buffer, '0', 6);
+                break;
+            case COUNTER - 35:
+                itoa(log_buffer,second,10);
+                break;
+            case COUNTER - 36:
+                if (second < 10) UART_send_char('0');
+                else UART_send_char(log_buffer[0]);
+                break;
+            case COUNTER - 37:
+                if (second < 10) UART_send_char(log_buffer[0]);
+                else UART_send_char(log_buffer[1]);
+                break;                
+        }    
     }
+    if (!log_on) RESET_TIME();
 }
 //THIS ADC IS WORKING NOW
 void read_ADC()
@@ -324,8 +359,8 @@ void timing()
     }else
     {
         count = COUNTER;
-        if(SEC < 59) SEC++;
-        else{SEC = 0; MIN++;}
+        if(second < 59) second++;
+        else{second = 0; minute++;}
     }
 }
 //THIS NEXT FUNCTION SEEMS LIKE A GOOD SOLUTION I TESTED IT AGAINST OTHERS AND STILL THE BEST
