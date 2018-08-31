@@ -341,14 +341,16 @@ void Start_state_machine()
 void Converter_settings()
 {
     /**Initially, the function set the proportional (@p kp) and integral (@p ki) constants for the PI loop.*/
-    kp = 0.025; 
-    ki = 0.02;
+    kp = 0.025;//kp = 0.025;  
+    ki = 0.04;//ki = 0.02;
     /**Then, the system is configured to start in constant current mode by setting. <tt> cmode = 1 </tt>*/        
     cmode = 1;
     /**The integral component of the PI (@p integral) is set to zero.*/
     integral = 0;
     /**Capacity (@p q_prom) is set to zero.*/
     qprom = 0;
+    /**Maximu averaged voltage (@p vmax) is set to zero.*/
+    vmax = 0;
     /**@p EOCD_count is defined as @p EOCD_LOOPS. That is, after the system is in EOC condition, the condition 
     needs to be mantained for @p EOCD_LOOPS loop cycles before the system stop the charge process.*/
     EOCD_count = EOCD_LOOPS;
@@ -395,7 +397,7 @@ void Converter_settings()
     /**The timing counter @p count will be intialized to @p COUNTER, to start a full control loop cycle.*/    
     count = 0;
 }
-
+#if (LI_ION_CHEM) 
 /**@brief Function to define the parameters of the charge/discharge process for Li-Ion chemistry.
 */
 void Li_Ion_param ()
@@ -664,7 +666,8 @@ void Li_Ion_param ()
     state = IDLE;  //go to IDLE state
     ESCAPE: ;  //label to goto the end of the function 
 }
-
+#endif 
+#if (NI_MH_CHEM) 
 /**@brief Function to define the parameters of the charge/discharge process for Li-Ion chemistry.
 */
 void Ni_MH_param()
@@ -933,3 +936,4 @@ void Ni_MH_param()
     state = IDLE;  //go to IDLE state
     ESCAPE: ;  //label to goto the end of the function 
 }
+#endif 
