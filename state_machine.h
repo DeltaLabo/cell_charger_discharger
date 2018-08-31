@@ -43,7 +43,7 @@
     //////*********************************/////
     //General definitions
     #define CV_LOOPS            2
-    #define EOCD_LOOPS          4
+    #define EOCD_LOOPS          2
     #define WAIT_TIME           600
     #define DC_RES_TIME
 
@@ -66,7 +66,7 @@
     unsigned int            i_disc;                         //discharging curretn in mA
     unsigned char           cell_count = 49;                //cell counter from 1 to 4. Initialized as '1'
     unsigned char           cell_max = 0;                   //number of cells to be tested
-    unsigned int            EOCD_count;                     //counter for EOC 
+    unsigned int            EOCD_count = EOCD_LOOPS;        //counter for EOC 
     unsigned char           CV_count = CV_LOOPS;            //counter for CV
     //unsigned int            ocv_count;                    //counter for OCV measurement
     unsigned int            wait_count;                     //counter for waiting time between states

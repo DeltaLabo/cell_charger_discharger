@@ -113,6 +113,7 @@ void fCHARGE()
         UART_send_string((char*)cell_below_str);
         LINEBREAK;
     }
+    #if (LI_ION_CHEM) 
     if (iprom < EOC_current)
     {                
         if (!EOCD_count)
@@ -124,6 +125,19 @@ void fCHARGE()
             STOP_CONVERTER();                       
         }else EOCD_count--;
     }
+    #elif (NI_MH_CHEM)
+    if (vprom < (vmax - 10) || minute >= 60)
+    {
+        if (!EOCD_count)
+        { //NEED CHANGES
+            prev_state = state;
+            if (state == CHARGE && option == 51) state = ISDONE;
+            else state = WAIT;                
+            wait_count = WAIT_TIME;
+            STOP_CONVERTER();    
+        }else EOCD_count--;
+    }
+    #endif    
 }
 
 /**@brief This function define the IDLE state of the state machine.
@@ -333,6 +347,8 @@ void Converter_settings()
     cmode = 1;
     /**The integral component of the PI (@p integral) is set to zero.*/
     integral = 0;
+    /**Capacity (@p q_prom) is set to zero.*/
+    qprom = 0;
     /**@p EOCD_count is defined as @p EOCD_LOOPS. That is, after the system is in EOC condition, the condition 
     needs to be mantained for @p EOCD_LOOPS loop cycles before the system stop the charge process.*/
     EOCD_count = EOCD_LOOPS;

@@ -46,8 +46,10 @@ void main(void)
             calculate_avg();
             log_control();      //Log control shall be before the state machine
             if (!count)
-            {                     
+            {           
+                #if (LI_ION_CHEM) 
                 cc_cv_mode(vprom, vref, cmode);
+                #endif
                 State_machine();                  
             }
             if (conv)

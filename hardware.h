@@ -92,29 +92,31 @@ and the USART reception interrupts.
 unsigned int 						count; ///< Counter that should be cleared every second.
 /**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
 all the events that are done every second.*/
-unsigned int 						ad_res; ///< Result of an ADC measurement.
+unsigned        					ad_res; ///< Result of an ADC measurement.
 float                               v;  ///< Last voltage ADC measurement.
 float                               i;  ///< Last current ADC measurement.
 float                               t;  ///<  Last temperature ADC measurement.
 float                               vprom;  ///< Last one-second-average of @link v @endlink.
 float                               iprom;  ///< Last one-second-average of @link i @endlink.
 float                               tprom;  ///< Last one-second-average of @link t @endlink. 
+float                               qprom;  ///< Integration of @link i @endlink.
 int                                 vmax = 0;   ///< Maximum recorded average voltage. 
 float 								proportional;  ///< Proportional component of PI compensator
 float 								integral;  ///< Integral component of PI compensator
 float 								kp;  ///< Proportional compesator gain
 float 								ki;  ///< Integral compesator gain		
-unsigned int 						vref;  ///< Voltage setpoint
-unsigned int 						iref;  ///< Current setpoint
+unsigned    						vref;  ///< Voltage setpoint
+unsigned     						iref;  ///< Current setpoint
 char 								cmode;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt> 	
-unsigned int                        dc = 0;  ///< Duty cycle
+unsigned                            dc = 0;  ///< Duty cycle
 unsigned char 						spb;						//Baud rate set
 char 								clear;  ///< Variable to clear the transmission buffer of UART
-unsigned int            			log_on = 0;					//Variable to indicate if the log is activated  
-char                                log_buffer[5]={0};   		//for printing data in the log
+unsigned                			log_on = 0;					//Variable to indicate if the log is activated  
+char                                log_buffer[8]={0};   		//for printing data in the log
 int                                 ip_buff = 0;  ///< Current buffer to send to the terminal usign @link log_control() @endlink.
 int                                 vp_buff = 0;  ///< Voltage buffer to send to the terminal usign @link log_control() @endlink.
 int                                 tp_buff = 0;  ///< Temperature buffer to send to the terminal usign @link log_control() @endlink.
+unsigned                            qp_buff = 0;  ///< Capacity buffer to send to the terminal usign @link log_control() @endlink.
 int         		                second = 0;
 int     			                minute = 0;
 
@@ -125,6 +127,7 @@ char const              C_str = 'C';
 char const              V_str = 'V';
 char const              I_str = 'I';
 char const              T_str = 'T';
+char const              Q_str = 'Q';
 
 void Init_general(void);
 void Init_registers(void);
