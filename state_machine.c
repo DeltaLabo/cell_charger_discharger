@@ -183,9 +183,14 @@ void fDC_res() //can be improved a lot!!
     if (!dc_res_count)
     {   
         LINEBREAK;
-        UART_send_string((char*)DC_res_str);
+        UART_send_char(C_str);
+        UART_send_char(cell_count);
+        UART_send_char(comma);
+        UART_send_char(S_str);
+        UART_send_char(state + 48);
+        UART_send_char(comma);
+        UART_send_char(R_str);
         display_value((int)dc_res_val);
-        UART_send_string((char*)end_str);
         LINEBREAK;
         LOG_OFF();   ///I dont like this 
         prev_state = state;
@@ -349,8 +354,13 @@ void Converter_settings()
     integral = 0;
     /**Capacity (@p q_prom) is set to zero.*/
     qprom = 0;
-    /**Maximu averaged voltage (@p vmax) is set to zero.*/
+    /**Maximum averaged voltage (@p vmax) is set to zero.*/
     vmax = 0;
+    /**Clean all the log buffers*/
+    ip_buff = 0;
+    vp_buff = 0; 
+    tp_buff = 0; 
+    qp_buff = 0;
     /**@p EOCD_count is defined as @p EOCD_LOOPS. That is, after the system is in EOC condition, the condition 
     needs to be mantained for @p EOCD_LOOPS loop cycles before the system stop the charge process.*/
     EOCD_count = EOCD_LOOPS;

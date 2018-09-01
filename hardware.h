@@ -68,7 +68,7 @@
 /** @def AD_SET_CHAN(x)
 Set the ADC channel to @p x and wait for 5 microseconds. 
 */
-#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(5); }
+#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(1); }
 #define		AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);}
 #define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} 
 //DC-DC CONVERTER RELATED DEFINITION
@@ -80,7 +80,7 @@ and the USART reception interrupts.
 */
 #define 	UART_INT_ON()			{ while(RCIF) clear = RC1REG; RCIE = 1; }  
 ///< Clear transmission buffer and turn ON UART transmission interrupts.
-#define 	UART_INT_OFF()			{ log_on = 0; }  ///< Turn OFF UART transmission interrupts.
+//#define 	UART_INT_OFF()			{ log_on = 0; }  ///< Turn OFF UART transmission interrupts. //CHECK THIS
 #define 	LOG_ON()				{ log_on = 1; }  ///< Turn OFF logging in the terminal.
 #define 	LOG_OFF()				{ log_on = 0; }  ///< Turn ON logging in the terminal.
 #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
@@ -89,7 +89,7 @@ and the USART reception interrupts.
 #define 	DC_MAX         			486  ///< Maximum possible duty cycle, set around @b 0.95
 #define     COUNTER        			250  ///< Counter value, needed to obtained one second between counts. 
 #define     LINEBREAK               UART_send_char(10)  ///< Send a linebreak to the terminal.
-unsigned int 						count; ///< Counter that should be cleared every second.
+unsigned     						count; ///< Counter that should be cleared every second.
 /**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
 all the events that are done every second.*/
 unsigned        					ad_res; ///< Result of an ADC measurement.
@@ -128,6 +128,7 @@ char const              V_str = 'V';
 char const              I_str = 'I';
 char const              T_str = 'T';
 char const              Q_str = 'Q';
+char const              R_str = 'R';
 
 void Init_general(void);
 void Init_registers(void);

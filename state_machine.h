@@ -90,10 +90,6 @@
     char const              press_s_str[] = "Press 's' to start: ";
     char const              starting_str[] = "Starting...";
     char const              done_str[] = "DONE";
-    char const              state_res_str[] = "-------------S-";
-    char const              end_state_res_str[] = "-S-------------";
-    char const              DC_res_str[] = "------------>R";
-    char const              end_str[] = "<------------";
     char const              num_1and2_str[] = "Please input a number between 1 and 2";
     char const              num_1and3_str[] = "Please input a number between 1 and 3";
     char const              num_1and4_str[] = "Please input a number between 1 and 4";         

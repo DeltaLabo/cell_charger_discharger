@@ -112,9 +112,9 @@ void Init_registers()
     TRISB5 = 1;                         //RB5, voltage sensing input
     ANSB5 = 1;                          //RB5 analog
     WPUB5 = 0;                          //Weak pull up Deactivated
-    
+    //TEMP SENSING IS MISSING
     ADCON0bits.ADRMD = 0;               //12 bits result
-    ADCON1bits.ADCS = 0b110;            //Clock selected as FOSC/64
+    ADCON1bits.ADCS = 0b010;            //Clock selected as FOSC/32
     ADCON1bits.ADNREF = 0;              //Connected to Vss
     ADCON1bits.ADPREF = 0b00;           //Connected to VDD, change after to Connected to Vref+ (01)
     ADCON1bits.ADFM = 1;                //2's compliment result
@@ -332,7 +332,10 @@ void log_control()
                 break;
             case COUNTER - 46:
                 if (qp_buff >= 10000) UART_send_char(log_buffer[4]);
-                break;             
+                break;  
+            case COUNTER - 47:
+                UART_send_char('<');
+                break;    
         } 
     }
     if (!log_on) RESET_TIME();
@@ -356,9 +359,7 @@ void read_ADC()
     if (state == CHARGE | state == PRECHARGE){
         opr = -opr;
     }
-    //i=i/0.4;       //A mOhms resistor
-    //i = (200/37) * i; //Hall effect sensor  37/200=0.185
-    i = (float)(opr * 2.5); //HALL EFFECT ACS723LL OFFSET OF 35
+    i = (float)(opr * 2.5); //HALL EFFECT ACS723LL
     AD_SET_CHAN(T_CHAN);
     AD_CONVERT();
     AD_RESULT();     
