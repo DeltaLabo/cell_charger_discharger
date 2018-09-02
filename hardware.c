@@ -451,20 +451,21 @@ void Init_UART()
     TX9   = 0;    // 8-bit reception selected
     RX9   = 0;    // 8-bit reception mode selected
     //__8-bit mode selected__//    
+
     //INTERRUPTS
     RCIE = 0;                   //disable reception interrupts
     TXIE = 0;                   //disable transmision interrupts
 }
 
-// void UART_interrupt_enable()
-// {
-//     while(RCIF){                //clear the reception register
-//         esc = RC1REG;
-//         esc = 0;
-//     }
-//     RCIE = 1;                   //enable reception interrupts
-//     TXIE = 0;                   //disable transmision interrupts
-// }
+ void UART_interrupt_enable()
+ {
+    char clear_buffer = 0;
+    while(RCIF){                //clear the reception register
+        clear_buffer = RC1REG;
+    }
+    RCIE = 1;                   //enable reception interrupts
+    TXIE = 0;                   //disable transmision interrupts
+ }
 
 //**Function to send one byte of date to UART**//
 void UART_send_char(char bt)  

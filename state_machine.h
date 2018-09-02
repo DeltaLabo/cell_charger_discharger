@@ -61,22 +61,22 @@
 
     //unsigned char           chem;                         //chem = 49 -> Li-Ion, chem = 50-> Ni-MH || Other options can be included in the future  
     unsigned char           option = 0;                     //choose between four options, different for each chemistry, look into Define_Parameter for details
-    unsigned int            capacity;                       //definition of capacity per cell according to each chemistry
-    unsigned int            i_char;                         //charging current in mA
-    unsigned int            i_disc;                         //discharging curretn in mA
+    unsigned                capacity;                       //definition of capacity per cell according to each chemistry
+    unsigned                i_char;                         //charging current in mA
+    unsigned                i_disc;                         //discharging curretn in mA
     unsigned char           cell_count = 49;                //cell counter from 1 to 4. Initialized as '1'
     unsigned char           cell_max = 0;                   //number of cells to be tested
-    unsigned int            EOCD_count = EOCD_LOOPS;        //counter for EOC 
+    unsigned                EOCD_count = EOCD_LOOPS;        //counter for EOC 
     unsigned char           CV_count = CV_LOOPS;            //counter for CV
     //unsigned int            ocv_count;                    //counter for OCV measurement
-    unsigned int            wait_count;                     //counter for waiting time between states
+    unsigned                wait_count;                     //counter for waiting time between states
     //unsigned int            small_count;                  //counter for waiting time inside states
-    unsigned int            dc_res_count = 0;               //counter for DC resistance step
+    unsigned                dc_res_count = 0;               //counter for DC resistance step
     unsigned char           state;                          //used with enum "states", defined in state_machine.h
     unsigned char           prev_state;             //used with enum "states" 
     //unsigned int            state_counter;                //used to show numerical value of the state
-    unsigned int            EOC_current;                    //end of charge current in mA
-    unsigned int            EOD_voltage;                    //end of dischage voltage in mV
+    unsigned                EOC_current;                    //end of charge current in mA
+    unsigned                EOD_voltage;                    //end of dischage voltage in mV
     //double                  vmax;                         //maximum recorded voltage
     //double                  In_ocv;
     //double                  Pre_ocv;
@@ -85,7 +85,7 @@
     float                   v_2_dcres;
     float                   i_2_dcres;
     float                   dc_res_val;
-    unsigned int            conv = 0;                       //Turn converter ON and OFF.
+    unsigned                conv = 0;                       //Turn converter ON and OFF.
     
     char const              press_s_str[] = "Press 's' to start: ";
     char const              starting_str[] = "Starting...";
@@ -132,8 +132,6 @@
     char const              li_ion_op_3_sel_str[] = "Only Charge selected...";
     char const              li_ion_op_4_sel_str[] = "Only Discharge selected...";
     char const              cell_below_str[] = "Cell below 0.9V or not present";
-    char const              in_wait_str[] = "------------W-";
-    char const              end_wait_str[] = "-W------------";
 
 #endif /* STATE_MACHINE_H*/
 

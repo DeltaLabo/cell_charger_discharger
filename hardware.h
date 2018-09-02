@@ -17,6 +17,8 @@
 // 'C' source line config statements
 
 // CONFIG1
+#ifndef HARDWARE_H
+    #define HARDWARE_H
 #pragma config FOSC = INTOSC    // Oscillator Selection (INTOSC oscillator: I/O function on CLKIN pin)
 #pragma config WDTE = OFF       // Watchdog Timer Disabled (WDT disabled)
 #pragma config PWRTE = OFF      // Power-up Timer Enable (PWRT disabled)
@@ -72,7 +74,7 @@ Set the ADC channel to @p x and wait for 5 microseconds.
 #define		AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);}
 #define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} 
 //DC-DC CONVERTER RELATED DEFINITION
-#define		STOP_CONVERTER()		{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); RCIE = 0;}
+#define		STOP_CONVERTER()		{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF();}
 /**< @brief Stop the converter*/
 /**< Set @p conv to zero, turn off the main relay (@p RA1), set the duty cycle in @p DC_MIN, 
 turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
@@ -119,6 +121,7 @@ int                                 tp_buff = 0;  ///< Temperature buffer to sen
 unsigned                            qp_buff = 0;  ///< Capacity buffer to send to the terminal usign @link log_control() @endlink.
 int         		                second = 0;
 int     			                minute = 0;
+unsigned                            timeout = 0;
 
 char const              comma = ',';
 char const              colons = ':';
@@ -129,6 +132,7 @@ char const              I_str = 'I';
 char const              T_str = 'T';
 char const              Q_str = 'Q';
 char const              R_str = 'R';
+char const              W_str = 'W';
 
 void Init_general(void);
 void Init_registers(void);
@@ -150,3 +154,5 @@ void UART_send_string(char* st_pt);
 void Cell_ON(void);
 void Cell_OFF(void);
 void timing(void);
+
+#endif /* HARDWARE_H*/

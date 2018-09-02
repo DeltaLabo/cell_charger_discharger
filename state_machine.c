@@ -62,6 +62,9 @@ void fSTANDBY()
 {   
     /**First, the function will stop the converter usign @link STOP_CONVERTER() @endlink macro*/
     STOP_CONVERTER();
+    /**Then, it will disable the USART reception interrupts to avoid interference with the setting of
+    parameters in the @p STANDBY state*/  
+    RCIE = 0;                   //disable reception interrupts
     /**Next, the variables related with the setting of parameters are initizalized: 
     <tt>option = 0, cell_max = 0, cell_count = '1'</tt>*/
     option = 0;
@@ -86,7 +89,7 @@ void fSTANDBY()
     UART_send_string((char*)chem_def_nimh);
     LINEBREAK;
     LINEBREAK;  
-    /** And the funtion will call the @link Ni_MH_param() @endlink function*/
+    /** And the function will call the @link Ni_MH_param() @endlink function*/
     Ni_MH_param();
 #endif
 }
@@ -99,6 +102,9 @@ void fIDLE()
     Start_state_machine();
     /**Then, it will call the @link Converter_settings() @endlink function.*/
     Converter_settings(); 
+    /**Then, it will enable the USART reception interrupts to give the posibility to the user to press
+    @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
+    UART_interrupt_enable();
 }
 
 /**@brief This function define the IDLE state of the state machine.
@@ -126,7 +132,7 @@ void fCHARGE()
         }else EOCD_count--;
     }
     #elif (NI_MH_CHEM)
-    if (vprom < (vmax - 10) || minute >= 60)
+    if (vprom < (vmax - 10) || minute >= timeout)
     {
         if (!EOCD_count)
         { //NEED CHANGES
@@ -191,6 +197,7 @@ void fDC_res() //can be improved a lot!!
         UART_send_char(comma);
         UART_send_char(R_str);
         display_value((int)dc_res_val);
+        UART_send_char('<');
         LINEBREAK;
         LOG_OFF();   ///I dont like this 
         prev_state = state;
@@ -207,9 +214,9 @@ void fWAIT()
     if (wait_count)
     {   
         LINEBREAK;
-        UART_send_string((char*)in_wait_str);
+        UART_send_char(W_str);
         display_value(wait_count);
-        UART_send_string((char*)end_wait_str);
+        UART_send_char(W_str);
         wait_count--;             
     }
     if(!wait_count)
@@ -380,6 +387,8 @@ void Converter_settings()
         case CHARGE:
             /**> The current setpoint (@p iref) is defined as @p i_char*/
             iref = i_char; 
+            /**> Time out is calculated*/
+            timeout = ((capacity / iref) * 66); //10% more than an hour 
             /**> The charge/discharge relay (@p RA0) will be set to the charge position (low)*/
             RA0 = 0;
             break;
@@ -401,9 +410,6 @@ void Converter_settings()
             break;
     }
     __delay_ms(10);
-    /**Then, it will enable the USART reception interrupts to give the posibility to the user to press
-    @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
-    RCIE = 1;
     /**The timing counter @p count will be intialized to @p COUNTER, to start a full control loop cycle.*/    
     count = 0;
 }

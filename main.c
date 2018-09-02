@@ -74,7 +74,7 @@ void interrupt serial_interrupt(void)
             RC1STAbits.CREN = 0; //If error -> Reset 
             RC1STAbits.CREN = 1; //If error -> Reset 
         }
-        
+
         while(RCIF) esc = RC1REG; //receive the value and put it to esc
 
         if (esc == 0x1B)
@@ -95,5 +95,5 @@ void interrupt serial_interrupt(void)
         {
             esc = 0;
         }
-    }    
+    }  
 }
