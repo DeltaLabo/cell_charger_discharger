@@ -55,7 +55,7 @@
 
     //Ni-MH definitions
     #define Ni_MH_CV            1700
-    #define Ni_MH_CAP           2500
+    #define Ni_MH_CAP           2000
     #define Ni_MH_EOC_DV        10
     #define Ni_MH_EOD_volt      1000
 
