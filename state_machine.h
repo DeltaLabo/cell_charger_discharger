@@ -13,7 +13,21 @@
 
 #ifndef STATE_MACHINE_H
     #define STATE_MACHINE_H
-	enum states { STANDBY = 0, IDLE = 1, FAULT = 2, ISDONE = 3, WAIT = 4, PRECHARGE = 5, DISCHARGE = 6, CHARGE = 7, POSTDISCHARGE = 8, DS_DC_res = 9, CS_DC_res = 10};
+    /** This is the State Machine enum*/
+	enum states { 
+        STANDBY = 0, ///< "Stand by" state, defined by function @link fSTANDBY() @endlink
+        IDLE = 1, ///< "Idle" state, defined by function @link fIDLE() @endlink
+        FAULT = 2, ///< "Fault" state, defined by function @link fFAULT() @endlink
+        ISDONE = 3, ///< "Is done" state, defined by function @link fISDONE() @endlink
+        WAIT = 4, ///< "Wait" state, defined by function @link fWAIT() @endlink
+        PRE = 5, ///< "Precharge or Predischarge" state, defined by function @link fCHARGE() @endlink or @link fDISCHARGE @endlink depending on the chemistry
+        DISCHARGE = 6, 
+        CHARGE = 7, 
+        POST = 8, 
+        DS_DC_res = 9, 
+        CS_DC_res = 10,
+        PS_DC_res = 11
+    };
     
     void fSTANDBY(void);
     void fIDLE(void);

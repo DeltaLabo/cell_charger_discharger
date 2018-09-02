@@ -14,7 +14,7 @@
 #include "state_machine.h"
 #include "hardware.h"
 
-/**@brief This function contain the main switching between the states of the main state machine.
+/**@brief This function contain the transition definition for the states of the machine.
 */
 void State_machine()
 {
@@ -27,18 +27,35 @@ void State_machine()
             case IDLE:
                 fIDLE();  
                 break;
-    /**The @c PRECHARGE and @c CHARGE states go to the @link fCHARGE() @endlink function.*/  
-            case PRECHARGE:  
+    /**If the chemistry is Li Ion*/
+        #if (LI_ION_CHEM)
+    /**The @c PRE and @c CHARGE states go to the @link fCHARGE() @endlink function.*/  
+            case PRE:  
             case CHARGE:   
                 fCHARGE();  
                 break;
-    /**The @c DISCHARGE state goes to the @link fDISCHARGE() @endlink function.*/ 
+    /**And the @c POST and @c DISCHARGE states go to the @link fDISCHARGE() @endlink function.*/ 
+            case POST:
             case DISCHARGE:
                 fDISCHARGE();
                 break;
-    /**The @c CS_DC_res and @c DS_DC_res states go to the @link fDC_res() @endlink function.*/
+    /**If the chemistry is Ni MH.*/
+        #elif (NI_MH_CHEM)
+    /**The @c PRE and @c DISCHARGE states go to the @link fDISCHARGE() @endlink function.*/ 
+            case PRE:
+            case DISCHARGE:
+                fDISCHARGE();
+                break;
+    /**And the @c POST and @c CHARGE states go to the @link fCHARGE() @endlink function.*/  
+            case POST:  
+            case CHARGE:   
+                fCHARGE();  
+                break;
+        #endif
+    /**The @c CS_DC_res, @c DS_DC_res and @c PS_DC_res states go to the @link fDC_res() @endlink function.*/
             case CS_DC_res:
             case DS_DC_res:
+            case PS_DC_res:
                 fDC_res();
                 break;
     /**The @c WAIT state goes to the @link fWAIT() @endlink function.*/
@@ -56,7 +73,7 @@ void State_machine()
     }
 }
 
-/**@brief This function define the @c STANDBY state of the state machine.
+/**@brief This function define the @link STANDBY @endlink state of the state machine.
 */
 void fSTANDBY()
 {   
@@ -119,31 +136,41 @@ void fCHARGE()
         UART_send_string((char*)cell_below_str);
         LINEBREAK;
     }
-    #if (LI_ION_CHEM) 
-    if (iprom < EOC_current)
-    {                
-        if (!EOCD_count)
+    if (state = CHARGE){
+        #if (LI_ION_CHEM)
+        if (iprom < EOC_current)
+        {                
+            if (!EOCD_count)//evaluate this, is really needed
+            {
+                prev_state = state;
+                if (state == CHARGE && option == 51) state = ISDONE;
+                else state = WAIT;                
+                wait_count = WAIT_TIME;
+                STOP_CONVERTER();                       
+            }else EOCD_count--;
+        }
+        #elif (NI_MH_CHEM)
+        if (vprom < (vmax - 10) || minute >= timeout)
         {
+            if (!EOCD_count)//evaluate this, is really needed
+            {
+                prev_state = state;
+                if (state == CHARGE && option == 51) state = ISDONE;
+                else state = WAIT;                
+                wait_count = WAIT_TIME;
+                STOP_CONVERTER();    
+            }else EOCD_count--;
+        }
+        #endif   
+    } 
+    if (state == POST){
+        if (qprom >= (capacity/2)){
             prev_state = state;
-            if (state == CHARGE && option == 51) state = ISDONE;
-            else state = WAIT;                
+            state = WAIT;
             wait_count = WAIT_TIME;
-            STOP_CONVERTER();                       
-        }else EOCD_count--;
-    }
-    #elif (NI_MH_CHEM)
-    if (vprom < (vmax - 10) || minute >= timeout)
-    {
-        if (!EOCD_count)
-        { //NEED CHANGES
-            prev_state = state;
-            if (state == CHARGE && option == 51) state = ISDONE;
-            else state = WAIT;                
-            wait_count = WAIT_TIME;
-            STOP_CONVERTER();    
-        }else EOCD_count--;
-    }
-    #endif    
+            STOP_CONVERTER();
+        }
+    }    
 }
 
 /**@brief This function define the IDLE state of the state machine.
@@ -154,7 +181,7 @@ void fDISCHARGE()
     conv = 1;
     if (vprom < EOD_voltage)
     {
-        if (!EOCD_count)
+        if (!EOCD_count)//evaluate this, is really needed
         { 
             prev_state = state;
             if (option == 52) state = ISDONE;
@@ -223,8 +250,8 @@ void fWAIT()
     {           
         switch(prev_state)
         {
-            case PRECHARGE:
-                state = DISCHARGE;
+            case PRE:
+                state = CHARGE;
                 Converter_settings();
                 break;
             case CHARGE:
@@ -235,26 +262,37 @@ void fWAIT()
                 state = DS_DC_res; 
                 Converter_settings();
                 break;
+            case POST:
+                state = PS_DC_res;
+                Converter_settings();
+                break;
             case DS_DC_res:
-                state = CHARGE;
+                state = POST;
                 Converter_settings();
                 break;
             case CS_DC_res:
+                state = DISCHARGE;
+                Converter_settings();
+                break;
+            case PS_DC_res:
                 state = ISDONE;
                 STOP_CONVERTER();
-                break;
         }
     }
 }
 
-/**@brief This function define the IDLE state of the state machine.
+/**@brief This function is executed every time a whole test process for one cell is finished
 */
 void fISDONE()
 {
+    /**The function will check if the current cell number (@p cell_count) is smaller than the 
+    number of cells to be tested (@p cell_max)*/
     if (cell_count < cell_max)
     {
-        __delay_ms(500);       
+        __delay_ms(500);
+        /**If the condition is @b TRUE the counter will be incremented */       
         cell_count++;
+        /**And the testin process of the next cell will be started by going to the @p IDLE state*/
         state = IDLE;   
     }else
     {
@@ -281,8 +319,8 @@ void Start_state_machine()
     {
         /**Check the option (CHANGE)*/
         case '1':
-            /**> if @option is equal to @b 1 it will set the @p state as @p PRECHARGE*/
-            state = PRECHARGE;
+            /**> if @option is equal to @b 1 it will set the @p state as @p PRE*/
+            state = PRE;
             break;
         case '2':
             /**> if @option is equal to @b 2 it will set the @p state as @p DISCHARGE*/
@@ -382,8 +420,8 @@ void Converter_settings()
     Cell_ON();
     switch(state)
     {
-        /**If the current state is @p PRECHARGE or @p CHARGE*/
-        case PRECHARGE:
+        /**If the current state is @p POST or @p CHARGE*/
+        case POST:
         case CHARGE:
             /**> The current setpoint (@p iref) is defined as @p i_char*/
             iref = i_char; 
@@ -392,7 +430,8 @@ void Converter_settings()
             /**> The charge/discharge relay (@p RA0) will be set to the charge position (low)*/
             RA0 = 0;
             break;
-        /**If the current state is @p DISCHARGE*/
+        /**If the current state is @p PRE or @p DISCHARGE*/
+        case PRE:
         case DISCHARGE:
             /**> The current setpoint (@p iref) is defined as @p i_disc*/
             iref = i_disc;
@@ -402,6 +441,7 @@ void Converter_settings()
         /**If the current state is @p CS_DC_res or @p DS_DC_res*/
         case CS_DC_res:
         case DS_DC_res:
+        case PS_DC_res:
             /**> The current setpoint (@p iref) is defined as <tt> capacity / 5 </tt>*/
             iref = capacity / 5;
             dc_res_count = 14;
