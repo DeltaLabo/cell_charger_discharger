@@ -27,31 +27,16 @@ void State_machine()
             case IDLE:
                 fIDLE();  
                 break;
-    /**If the chemistry is Li Ion*/
-        #if (LI_ION_CHEM)
-    /**The @c PRE and @c CHARGE states go to the @link fCHARGE() @endlink function.*/  
-            case PRE:  
-            case CHARGE:   
-                fCHARGE();  
-                break;
-    /**And the @c POST and @c DISCHARGE states go to the @link fDISCHARGE() @endlink function.*/ 
-            case POST:
-            case DISCHARGE:
-                fDISCHARGE();
-                break;
-    /**If the chemistry is Ni MH.*/
-        #elif (NI_MH_CHEM)
     /**The @c PRE and @c DISCHARGE states go to the @link fDISCHARGE() @endlink function.*/ 
-            case PRE:
+            case PREDISCHARGE:
             case DISCHARGE:
                 fDISCHARGE();
                 break;
     /**And the @c POST and @c CHARGE states go to the @link fCHARGE() @endlink function.*/  
-            case POST:  
+            case POSTCHARGE:  
             case CHARGE:   
                 fCHARGE();  
                 break;
-        #endif
     /**The @c CS_DC_res, @c DS_DC_res and @c PS_DC_res states go to the @link fDC_res() @endlink function.*/
             case CS_DC_res:
             case DS_DC_res:
@@ -92,7 +77,7 @@ void fSTANDBY()
     UART_send_string((char*)param_def_str);
     LINEBREAK;
     /**If @link LI_ION_CHEM @endlink is set to @b 1, the folowing message will be displayed:*/
-#if (LI_ION_CHEM) 
+    #if (LI_ION_CHEM) 
     /**> Chemistry defined as Li-Ion*/
     UART_send_string((char*)chem_def_liion);
     LINEBREAK;
@@ -101,14 +86,14 @@ void fSTANDBY()
     Li_Ion_param();
     /**If @link NI_MH_CHEM @endlink is set to @b 1 and LI_ION_CHEM @endlink is set to @b 0, 
     the folowing message will be displayed:*/
-#elif (NI_MH_CHEM)
+    #elif (NI_MH_CHEM)
     /**> Chemistry defined as Ni-MH*/
     UART_send_string((char*)chem_def_nimh);
     LINEBREAK;
     LINEBREAK;  
     /** And the function will call the @link Ni_MH_param() @endlink function*/
     Ni_MH_param();
-#endif
+    #endif
 }
 
 /**@brief This function define the IDLE state of the state machine.
@@ -136,14 +121,14 @@ void fCHARGE()
         UART_send_string((char*)cell_below_str);
         LINEBREAK;
     }
-    if (state = CHARGE){
+    if (state == CHARGE){
         #if (LI_ION_CHEM)
         if (iprom < EOC_current)
         {                
             if (!EOCD_count)//evaluate this, is really needed
             {
                 prev_state = state;
-                if (state == CHARGE && option == 51) state = ISDONE;
+                if (option == '3') state = ISDONE;
                 else state = WAIT;                
                 wait_count = WAIT_TIME;
                 STOP_CONVERTER();                       
@@ -155,7 +140,7 @@ void fCHARGE()
             if (!EOCD_count)//evaluate this, is really needed
             {
                 prev_state = state;
-                if (state == CHARGE && option == 51) state = ISDONE;
+                if (option == '3') state = ISDONE;
                 else state = WAIT;                
                 wait_count = WAIT_TIME;
                 STOP_CONVERTER();    
@@ -163,7 +148,7 @@ void fCHARGE()
         }
         #endif   
     } 
-    if (state == POST){
+    if (state == POSTCHARGE){
         if (qprom >= (capacity/2)){
             prev_state = state;
             state = WAIT;
@@ -184,7 +169,7 @@ void fDISCHARGE()
         if (!EOCD_count)//evaluate this, is really needed
         { 
             prev_state = state;
-            if (option == 52) state = ISDONE;
+            if (option == '2'| option == '4') state = ISDONE;
             else state = WAIT;                
             wait_count = WAIT_TIME;
             STOP_CONVERTER();
@@ -250,7 +235,7 @@ void fWAIT()
     {           
         switch(prev_state)
         {
-            case PRE:
+            case PREDISCHARGE:
                 state = CHARGE;
                 Converter_settings();
                 break;
@@ -262,12 +247,12 @@ void fWAIT()
                 state = DS_DC_res; 
                 Converter_settings();
                 break;
-            case POST:
+            case POSTCHARGE:
                 state = PS_DC_res;
                 Converter_settings();
                 break;
             case DS_DC_res:
-                state = POST;
+                state = POSTCHARGE;
                 Converter_settings();
                 break;
             case CS_DC_res:
@@ -319,12 +304,12 @@ void Start_state_machine()
     {
         /**Check the option (CHANGE)*/
         case '1':
-            /**> if @option is equal to @b 1 it will set the @p state as @p PRE*/
-            state = PRE;
+            /**> if @option is equal to @b 1 it will set the @p state as @p PREDISCHARGE*/
+            state = PREDISCHARGE;
             break;
         case '2':
-            /**> if @option is equal to @b 2 it will set the @p state as @p DISCHARGE*/
-            state = DISCHARGE;
+            /**> if @option is equal to @b 2 it will set the @p state as @p CHARGE*/
+            state = CHARGE;
             break;
         case '3':
             /**> if @option is equal to @b 3 it will set the @p state as @p CHARGE*/
@@ -420,8 +405,8 @@ void Converter_settings()
     Cell_ON();
     switch(state)
     {
-        /**If the current state is @p POST or @p CHARGE*/
-        case POST:
+        /**If the current state is @p POSTCHARGE or @p CHARGE*/
+        case POSTCHARGE:
         case CHARGE:
             /**> The current setpoint (@p iref) is defined as @p i_char*/
             iref = i_char; 
@@ -430,15 +415,15 @@ void Converter_settings()
             /**> The charge/discharge relay (@p RA0) will be set to the charge position (low)*/
             RA0 = 0;
             break;
-        /**If the current state is @p PRE or @p DISCHARGE*/
-        case PRE:
+        /**If the current state is @p PREDISCHARGE or @p DISCHARGE*/
+        case PREDISCHARGE:
         case DISCHARGE:
             /**> The current setpoint (@p iref) is defined as @p i_disc*/
             iref = i_disc;
             /**> The charge/discharge relay (@p RA0) will be set to the discharge position (high)*/
             RA0 = 1;            
             break;
-        /**If the current state is @p CS_DC_res or @p DS_DC_res*/
+        /**If the current state is @p CS_DC_res, @p DS_DC_res or @p PS_DC_res*/
         case CS_DC_res:
         case DS_DC_res:
         case PS_DC_res:
@@ -879,16 +864,16 @@ void Ni_MH_param()
     UART_send_string((char*)cho_bet_str);
     LINEBREAK;
     /** - 1) Precharge->Discharge->Charge (includes DC resistance measure after charge and after discharge).*/
-    UART_send_string((char*)li_ion_op_1_str);
+    UART_send_string((char*)op_1_str);
     LINEBREAK;
     /** - 2) Discharge->Charge (includes DC resistance measure after charge and after discharge).*/
-    UART_send_string((char*)li_ion_op_2_str);
+    UART_send_string((char*)op_2_str);
     LINEBREAK;
     /** - 3) Only Charge*/
-    UART_send_string((char*)li_ion_op_3_str);
+    UART_send_string((char*)op_3_str);
     LINEBREAK;
     /** - 4) Only Discharge*/
-    UART_send_string((char*)li_ion_op_4_str);
+    UART_send_string((char*)op_4_str);
     LINEBREAK;
     LINEBREAK;
     /** .*/
@@ -901,22 +886,22 @@ void Ni_MH_param()
             /**After that the program will print the selected option and:*/
             case '1':
                 LINEBREAK;
-                UART_send_string((char*)li_ion_op_1_sel_str);  //Precharge->Discharge->Charge
+                UART_send_string((char*)op_1_sel_str);  //Predischarge->Charge->Discharge->Postcharge
                 LINEBREAK;
                 break;
             case '2':
                 LINEBREAK;
-                UART_send_string((char*)li_ion_op_2_sel_str);  //Discharge->Charge
+                UART_send_string((char*)op_2_sel_str);  //Charge->Discharge
                 LINEBREAK;
                 break;
             case '3':
                 LINEBREAK;
-                UART_send_string((char*)li_ion_op_3_sel_str);  //Only Charge
+                UART_send_string((char*)op_3_sel_str);  //Only Charge
                 LINEBREAK;         
                 break;
             case '4':
                 LINEBREAK;
-                UART_send_string((char*)li_ion_op_4_sel_str);  //Only Discharge
+                UART_send_string((char*)op_4_sel_str);  //Only Discharge
                 LINEBREAK;             
                 break;
             /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/

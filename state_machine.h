@@ -20,10 +20,10 @@
         FAULT = 2, ///< "Fault" state, defined by function @link fFAULT() @endlink
         ISDONE = 3, ///< "Is done" state, defined by function @link fISDONE() @endlink
         WAIT = 4, ///< "Wait" state, defined by function @link fWAIT() @endlink
-        PRE = 5, ///< "Precharge or Predischarge" state, defined by function @link fCHARGE() @endlink or @link fDISCHARGE @endlink depending on the chemistry
-        DISCHARGE = 6, 
-        CHARGE = 7, 
-        POST = 8, 
+        PREDISCHARGE = 5, ///< "Precharge or Predischarge" state, defined by function @link fCHARGE() @endlink or @link fDISCHARGE @endlink depending on the chemistry
+        CHARGE = 6,
+        DISCHARGE = 7, 
+        POSTCHARGE = 8, 
         DS_DC_res = 9, 
         CS_DC_res = 10,
         PS_DC_res = 11
@@ -137,14 +137,14 @@
     char const              two_str[] = "2";
     char const              three_str[] = "3";
     char const              four_str[] = "4";
-    char const              li_ion_op_1_str[] = "(1) Precharge->Discharge->Charge";
-    char const              li_ion_op_2_str[] = "(2) Discharge->Charge";
-    char const              li_ion_op_3_str[] = "(3) Only Charge";
-    char const              li_ion_op_4_str[] = "(4) Only Discharge";
-    char const              li_ion_op_1_sel_str[] = "Precharge->Discharge->Charge selected...";
-    char const              li_ion_op_2_sel_str[] = "Discharge->Charge selected...";
-    char const              li_ion_op_3_sel_str[] = "Only Charge selected...";
-    char const              li_ion_op_4_sel_str[] = "Only Discharge selected...";
+    char const              op_1_str[] = "(1) Predischarge->Charge->Discharge->Postcharge";
+    char const              op_2_str[] = "(2) Charge->Discharge";
+    char const              op_3_str[] = "(3) Only Charge";
+    char const              op_4_str[] = "(4) Only Discharge";
+    char const              op_1_sel_str[] = "Predischarge->Charge->Discharge->Postcharge selected...";
+    char const              op_2_sel_str[] = "Charge->Discharge selected...";
+    char const              op_3_sel_str[] = "Only Charge selected...";
+    char const              op_4_sel_str[] = "Only Discharge selected...";
     char const              cell_below_str[] = "Cell below 0.9V or not present";
 
 #endif /* STATE_MACHINE_H*/

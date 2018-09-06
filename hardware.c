@@ -356,7 +356,7 @@ void read_ADC()
     opr = (float)(1.22412 * ad_res);     //with 5014/4096
     //i = opr;
     opr = opr - 2525;
-    if (state == CHARGE | state == PRE){
+    if (state == CHARGE | state == POSTCHARGE){
         opr = -opr;
     }
     i = (float)(opr * 2.5); //HALL EFFECT ACS723LL
