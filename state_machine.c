@@ -204,7 +204,7 @@ void fDC_res() //can be improved a lot!!
         UART_send_char(cell_count);
         UART_send_char(comma);
         UART_send_char(S_str);
-        UART_send_char(state + '0');
+        display_value((int)state);
         UART_send_char(comma);
         UART_send_char(R_str);
         display_value((int)dc_res_val);
@@ -229,7 +229,7 @@ void fWAIT()
         UART_send_char(cell_count);
         UART_send_char(comma);
         UART_send_char(S_str);
-        UART_send_char(state + '0');
+        display_value((int)state);
         UART_send_char(comma);
         UART_send_char(W_str);
         display_value(wait_count);
@@ -267,6 +267,7 @@ void fWAIT()
             case PS_DC_res:
                 state = ISDONE;
                 STOP_CONVERTER();
+                break;
         }
     }
 }

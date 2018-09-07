@@ -234,106 +234,112 @@ void log_control()
             case COUNTER - 13:
                 UART_send_char(S_str);
                 break;
-            case COUNTER - 14: 
-                UART_send_char(state + 48);
-                break;
-            case COUNTER - 15:
-                UART_send_char(comma);
+            case COUNTER - 14:
+                itoa(log_buffer,(int)state,10);
                 break;
             case COUNTER - 16:
-                UART_send_char(V_str);
+                UART_send_char(log_buffer[0]);
                 break;
             case COUNTER - 17:
-                itoa(log_buffer,vp_buff,10);
-                break;
+                if (state >= 10) UART_send_char(log_buffer[1]);
+                break;   
             case COUNTER - 18:
-                UART_send_char(log_buffer[0]);
+                UART_send_char(comma);
                 break;
             case COUNTER - 19:
-                UART_send_char(log_buffer[1]);
+                UART_send_char(V_str);
                 break;
             case COUNTER - 20:
-                UART_send_char(log_buffer[2]);
+                itoa(log_buffer,vp_buff,10);
                 break;
             case COUNTER - 21:
-                if (vp_buff >= 1000) UART_send_char(log_buffer[3]);
+                UART_send_char(log_buffer[0]);
                 break;
             case COUNTER - 22:
-                UART_send_char(comma);
+                UART_send_char(log_buffer[1]);
                 break;
             case COUNTER - 23:
-                memset(log_buffer, '0', 8);
+                UART_send_char(log_buffer[2]);
                 break;
             case COUNTER - 24:
-                UART_send_char(I_str);
+                if (vp_buff >= 1000) UART_send_char(log_buffer[3]);
                 break;
             case COUNTER - 25:
-                itoa(log_buffer,ip_buff,10);
+                UART_send_char(comma);
                 break;
             case COUNTER - 26:
-                UART_send_char(log_buffer[0]);
+                memset(log_buffer, '0', 8);
                 break;
             case COUNTER - 27:
-                UART_send_char(log_buffer[1]);
+                UART_send_char(I_str);
                 break;
             case COUNTER - 28:
-                UART_send_char(log_buffer[2]);
+                itoa(log_buffer,ip_buff,10);
                 break;
             case COUNTER - 29:
-                if (ip_buff >= 1000) UART_send_char(log_buffer[3]);
+                UART_send_char(log_buffer[0]);
                 break;
             case COUNTER - 30:
-                UART_send_char(comma);
-                break;
-            case COUNTER - 31:
-                memset(log_buffer, '0', 8);
-                break;
-            case COUNTER - 32:
-                UART_send_char(T_str);
-                break;
-            case COUNTER - 33:
-                itoa(log_buffer,tp_buff,10);
-                break;
-            case COUNTER - 34:
-                UART_send_char(log_buffer[0]);
-                break;
-            case COUNTER - 35:
                 UART_send_char(log_buffer[1]);
                 break;
-            case COUNTER - 36:
+            case COUNTER - 31:
                 UART_send_char(log_buffer[2]);
                 break;
-            case COUNTER - 37:
-                if (tp_buff >= 1000) UART_send_char(log_buffer[3]);  //IT IS NEEDED ??
+            case COUNTER - 32:
+                if (ip_buff >= 1000) UART_send_char(log_buffer[3]);
                 break;
-            case COUNTER - 38:
+            case COUNTER - 33:
                 UART_send_char(comma);
                 break;
-            case COUNTER - 39:
+            case COUNTER - 34:
                 memset(log_buffer, '0', 8);
                 break;
-            case COUNTER - 40:
-                UART_send_char(Q_str);
+            case COUNTER - 35:
+                UART_send_char(T_str);
                 break;
-            case COUNTER - 41:
-                utoa(log_buffer,qp_buff,10);
+            case COUNTER - 36:
+                itoa(log_buffer,tp_buff,10);
                 break;
-            case COUNTER - 42:
+            case COUNTER - 37:
                 UART_send_char(log_buffer[0]);
                 break;
+            case COUNTER - 38:
+                UART_send_char(log_buffer[1]);
+                break;
+            case COUNTER - 39:
+                UART_send_char(log_buffer[2]);
+                break;
+            case COUNTER - 40:
+                if (tp_buff >= 1000) UART_send_char(log_buffer[3]);  //IT IS NEEDED ??
+                break;
+            case COUNTER - 41:
+                UART_send_char(comma);
+                break;
+            case COUNTER - 42:
+                memset(log_buffer, '0', 8);
+                break;
             case COUNTER - 43:
-                if (qp_buff >= 10) UART_send_char(log_buffer[1]);
+                UART_send_char(Q_str);
                 break;
             case COUNTER - 44:
-                if (qp_buff >= 100) UART_send_char(log_buffer[2]);
+                utoa(log_buffer,qp_buff,10);
                 break;
             case COUNTER - 45:
-                if (qp_buff >= 1000) UART_send_char(log_buffer[3]);
+                UART_send_char(log_buffer[0]);
                 break;
             case COUNTER - 46:
+                if (qp_buff >= 10) UART_send_char(log_buffer[1]);
+                break;
+            case COUNTER - 47:
+                if (qp_buff >= 100) UART_send_char(log_buffer[2]);
+                break;
+            case COUNTER - 48:
+                if (qp_buff >= 1000) UART_send_char(log_buffer[3]);
+                break;
+            case COUNTER - 49:
                 if (qp_buff >= 10000) UART_send_char(log_buffer[4]);
                 break;  
-            case COUNTER - 47:
+            case COUNTER - 50:
                 UART_send_char('<');
                 break;    
         } 
