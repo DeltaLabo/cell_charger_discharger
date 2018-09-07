@@ -181,7 +181,6 @@ void fDISCHARGE()
 */
 void fDC_res() //can be improved a lot!!
 {
-    
     //LOG_ON();
     conv = 1;
     if (dc_res_count == 4)  //Check all this timming
@@ -205,7 +204,7 @@ void fDC_res() //can be improved a lot!!
         UART_send_char(cell_count);
         UART_send_char(comma);
         UART_send_char(S_str);
-        UART_send_char(state + 48);
+        UART_send_char(state + '0');
         UART_send_char(comma);
         UART_send_char(R_str);
         display_value((int)dc_res_val);
@@ -226,9 +225,15 @@ void fWAIT()
     if (wait_count)
     {   
         LINEBREAK;
+        UART_send_char(C_str);
+        UART_send_char(cell_count);
+        UART_send_char(comma);
+        UART_send_char(S_str);
+        UART_send_char(state + '0');
+        UART_send_char(comma);
         UART_send_char(W_str);
         display_value(wait_count);
-        UART_send_char(W_str);
+        UART_send_char('<');
         wait_count--;             
     }
     if(!wait_count)
