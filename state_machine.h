@@ -41,19 +41,17 @@
     void Start_state_machine(void);
     void Parameter_set(void);
     void State_machine(void);
-    void option_50(void);
-    void Li_Ion_param(void);
-    void Ni_MH_param(void);
+    void param(void);
     void Converter_settings(void);
     //////*********************************/////
     /** @def LI_ION_CHEM                    ////
     Set to one to choose Li_Ion chemistry   ////
     */                                      ////
-    #define LI_ION_CHEM         0           ////
+    #define LI_ION_CHEM         1           ////
      /** @def NI_MH_CHEM                    ////
     Set to one to choose Ni-MH chemistry    ////
     */                                      ////
-    #define NI_MH_CHEM          1           ////
+    #define NI_MH_CHEM          0           ////
     //////*********************************/////
     //General definitions
     #define CV_LOOPS            2
@@ -64,14 +62,14 @@
     //Li-Ion definitions
     #define Li_Ion_CV           4200
     #define Li_Ion_CAP          3250
-    #define Li_Ion_EOC_curr     100
-    #define Li_Ion_EOD_volt     3000
+    #define Li_Ion_EOC_I        100
+    #define Li_Ion_EOD_V        3000
 
     //Ni-MH definitions
     #define Ni_MH_CV            1700
     #define Ni_MH_CAP           2000
     #define Ni_MH_EOC_DV        10
-    #define Ni_MH_EOD_volt      1000
+    #define Ni_MH_EOD_V         1000
 
     //unsigned char           chem;                         //chem = 49 -> Li-Ion, chem = 50-> Ni-MH || Other options can be included in the future  
     unsigned char           option = 0;                     //choose between four options, different for each chemistry, look into Define_Parameter for details
@@ -111,11 +109,12 @@
     char const              restarting_str[] = "Restarting...";
     char const              chem_def_liion[] = "Chemistry defined as Li-Ion";
     char const              chem_def_nimh[] = "Chemistry defined as Ni-MH";
-    char const              mv_str[] = " mV";
+    char const              mV_str[] = " mV";
     char const              mAh_str[] = " mAh";
     char const              mA_str[] = " mA";
     char const              EOD_V_str[] = "End of discharge voltage: ";
     char const              EOC_I_str[] = "End of charge current: ";
+    char const              EOC_DV_str[] = "End of charge voltage drop: ";
     char const              cho_bet_str[] = "Chose between following options: ";
     char const              quarter_c_str[] = "(1) 0.25C";
     char const              half_c_str[] = "(2) 0.50C";
