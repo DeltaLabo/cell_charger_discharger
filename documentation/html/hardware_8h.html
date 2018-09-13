@@ -104,6 +104,9 @@ Macros</h2></td></tr>
 <tr class="memitem:a72da0b033e023b574cca6ab663e25fca"><td class="memItemLeft" align="right" valign="top"><a id="a72da0b033e023b574cca6ab663e25fca"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>I_CHAN</b>&#160;&#160;&#160;0b01011</td></tr>
 <tr class="separator:a72da0b033e023b574cca6ab663e25fca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10ddb4ca8b21ecdf02ab19d67cb9142c"><td class="memItemLeft" align="right" valign="top"><a id="a10ddb4ca8b21ecdf02ab19d67cb9142c"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>T_CHAN</b>&#160;&#160;&#160;0b01100</td></tr>
+<tr class="separator:a10ddb4ca8b21ecdf02ab19d67cb9142c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0eaf54b864a26d51679cbcc7f3322cf9"><td class="memItemLeft" align="right" valign="top"><a id="a0eaf54b864a26d51679cbcc7f3322cf9"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>CELL1_ON</b>&#160;&#160;&#160;PORTAbits.RA7 = 1</td></tr>
 <tr class="separator:a0eaf54b864a26d51679cbcc7f3322cf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,50 +131,58 @@ Macros</h2></td></tr>
 <tr class="memitem:aa926591f10e87bb1273848225e6b316c"><td class="memItemLeft" align="right" valign="top"><a id="aa926591f10e87bb1273848225e6b316c"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>CELL4_OFF</b>&#160;&#160;&#160;PORTCbits.RC1 = 0</td></tr>
 <tr class="separator:aa926591f10e87bb1273848225e6b316c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a450cfb6cea2848f3c6459ed5c0df9eef"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef">AD_SET_CHAN</a>(x)&#160;&#160;&#160;{ ADCON0bits.CHS = x; __delay_us(5); }</td></tr>
+<tr class="memitem:a450cfb6cea2848f3c6459ed5c0df9eef"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef">AD_SET_CHAN</a>(x)&#160;&#160;&#160;{ ADCON0bits.CHS = x; __delay_us(1); }</td></tr>
 <tr class="separator:a450cfb6cea2848f3c6459ed5c0df9eef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57f8ee4c55d0b9230535c602e01dbbdc"><td class="memItemLeft" align="right" valign="top"><a id="a57f8ee4c55d0b9230535c602e01dbbdc"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>AD_CONVERT</b>()&#160;&#160;&#160;{ GO_nDONE = 1; while(GO_nDONE);}</td></tr>
 <tr class="separator:a57f8ee4c55d0b9230535c602e01dbbdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a049dca77d5e2be6f3780ce6a632a5ef3"><td class="memItemLeft" align="right" valign="top"><a id="a049dca77d5e2be6f3780ce6a632a5ef3"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>AD_RESULT</b>()&#160;&#160;&#160;{ <a class="el" href="hardware_8h.html#a0474cc065c19a2af8d2874ce3ee75ba9">ad_res</a> = 0; <a class="el" href="hardware_8h.html#a0474cc065c19a2af8d2874ce3ee75ba9">ad_res</a> = (ADRESL &amp; 0xFF)|((ADRESH &lt;&lt; 8) &amp; 0xF00);}</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>AD_RESULT</b>()&#160;&#160;&#160;{ <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> = 0; <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> = (ADRESL &amp; 0xFF)|((ADRESH &lt;&lt; 8) &amp; 0xF00);}</td></tr>
 <tr class="separator:a049dca77d5e2be6f3780ce6a632a5ef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae43ad088d4a64a9931b771c191e0e25b"><td class="memItemLeft" align="right" valign="top"><a id="ae43ad088d4a64a9931b771c191e0e25b"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>CURRENT_MODE</b>&#160;&#160;&#160;4</td></tr>
-<tr class="separator:ae43ad088d4a64a9931b771c191e0e25b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0597ae89918183de03119186d8995e75"><td class="memItemLeft" align="right" valign="top"><a id="a0597ae89918183de03119186d8995e75"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>LINEBREAK</b>&#160;&#160;&#160;UART_send_char(10)</td></tr>
-<tr class="separator:a0597ae89918183de03119186d8995e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER</a>()&#160;&#160;&#160;{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); RCIE = 0;}</td></tr>
+<tr class="memitem:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER</a>()&#160;&#160;&#160;{ conv = 0; RA1 = 1; <a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> = <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca">DC_MIN</a>; set_DC(); Cell_OFF(); <a class="el" href="hardware_8h.html#a2f57a3156036b713dc852737da390252">LOG_OFF</a>();}</td></tr>
+<tr class="memdesc:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop the converter.  <a href="#ae1cb4a0872e924cf862a97b33dd2edf0">More...</a><br /></td></tr>
 <tr class="separator:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acda4f577829f9d4ff58b9636903cbfe0"><td class="memItemLeft" align="right" valign="top"><a id="acda4f577829f9d4ff58b9636903cbfe0"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#acda4f577829f9d4ff58b9636903cbfe0">UART_INT_ON</a>()&#160;&#160;&#160;{ while(RCIF) <a class="el" href="hardware_8h.html#a2ac955a54afa8f9039b93a3f30b04acd">clear</a> = RC1REG; RCIE = 1; }</td></tr>
+<tr class="memdesc:acda4f577829f9d4ff58b9636903cbfe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear transmission buffer and turn ON UART transmission interrupts. <br /></td></tr>
+<tr class="separator:acda4f577829f9d4ff58b9636903cbfe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d26e5ca6078be961b6b42719ebca269"><td class="memItemLeft" align="right" valign="top"><a id="a4d26e5ca6078be961b6b42719ebca269"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>LOG_ON</b>()&#160;&#160;&#160;{ log_on = 1; }</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a4d26e5ca6078be961b6b42719ebca269">LOG_ON</a>()&#160;&#160;&#160;{ log_on = 1; }</td></tr>
+<tr class="memdesc:a4d26e5ca6078be961b6b42719ebca269"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn OFF logging in the terminal. <br /></td></tr>
 <tr class="separator:a4d26e5ca6078be961b6b42719ebca269"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f57a3156036b713dc852737da390252"><td class="memItemLeft" align="right" valign="top"><a id="a2f57a3156036b713dc852737da390252"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>LOG_OFF</b>()&#160;&#160;&#160;{ log_on = 0; }</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a2f57a3156036b713dc852737da390252">LOG_OFF</a>()&#160;&#160;&#160;{ log_on = 0; }</td></tr>
+<tr class="memdesc:a2f57a3156036b713dc852737da390252"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn ON logging in the terminal. <br /></td></tr>
 <tr class="separator:a2f57a3156036b713dc852737da390252"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59595b0c67a8bfb8dd65e914a18b83c7"><td class="memItemLeft" align="right" valign="top"><a id="a59595b0c67a8bfb8dd65e914a18b83c7"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a59595b0c67a8bfb8dd65e914a18b83c7">RESET_TIME</a>()&#160;&#160;&#160;{ minute = 0; second = -1; }</td></tr>
+<tr class="memdesc:a59595b0c67a8bfb8dd65e914a18b83c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset timers. <br /></td></tr>
+<tr class="separator:a59595b0c67a8bfb8dd65e914a18b83c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a998e4507851dde706a60a5b475eb27ca"><td class="memItemLeft" align="right" valign="top"><a id="a998e4507851dde706a60a5b475eb27ca"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>DC_MIN</b>&#160;&#160;&#160;25</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca">DC_MIN</a>&#160;&#160;&#160;25</td></tr>
+<tr class="memdesc:a998e4507851dde706a60a5b475eb27ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum possible duty cycle, set around <b>0.05</b>. <br /></td></tr>
 <tr class="separator:a998e4507851dde706a60a5b475eb27ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa845f7768f44631f4b54b9cde4dc2b2f"><td class="memItemLeft" align="right" valign="top"><a id="aa845f7768f44631f4b54b9cde4dc2b2f"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>DC_START</b>&#160;&#160;&#160;51</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aa845f7768f44631f4b54b9cde4dc2b2f">DC_START</a>&#160;&#160;&#160;51</td></tr>
+<tr class="memdesc:aa845f7768f44631f4b54b9cde4dc2b2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initial duty cycle, set around <b>0.1</b>. <br /></td></tr>
 <tr class="separator:aa845f7768f44631f4b54b9cde4dc2b2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a701d2222601b84faafa94cb1909df104"><td class="memItemLeft" align="right" valign="top"><a id="a701d2222601b84faafa94cb1909df104"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>DC_MAX</b>&#160;&#160;&#160;486</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a701d2222601b84faafa94cb1909df104">DC_MAX</a>&#160;&#160;&#160;486</td></tr>
+<tr class="memdesc:a701d2222601b84faafa94cb1909df104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum possible duty cycle, set around <b>0.95</b>. <br /></td></tr>
 <tr class="separator:a701d2222601b84faafa94cb1909df104"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7194053a42881b1b4bc8546b4c8713e9"><td class="memItemLeft" align="right" valign="top"><a id="a7194053a42881b1b4bc8546b4c8713e9"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9">COUNTER</a>&#160;&#160;&#160;244</td></tr>
-<tr class="memdesc:a7194053a42881b1b4bc8546b4c8713e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">COUNTER blablabla solo para ver. <br /></td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9">COUNTER</a>&#160;&#160;&#160;250</td></tr>
+<tr class="memdesc:a7194053a42881b1b4bc8546b4c8713e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter value, needed to obtained one second between counts. <br /></td></tr>
 <tr class="separator:a7194053a42881b1b4bc8546b4c8713e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0597ae89918183de03119186d8995e75"><td class="memItemLeft" align="right" valign="top"><a id="a0597ae89918183de03119186d8995e75"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a0597ae89918183de03119186d8995e75">LINEBREAK</a>&#160;&#160;&#160;UART_send_char(10)</td></tr>
+<tr class="memdesc:a0597ae89918183de03119186d8995e75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a linebreak to the terminal. <br /></td></tr>
+<tr class="separator:a0597ae89918183de03119186d8995e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:afe5a62882916614b07021662039087c7"><td class="memItemLeft" align="right" valign="top"><a id="afe5a62882916614b07021662039087c7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Init_general</b> (void)</td></tr>
-<tr class="separator:afe5a62882916614b07021662039087c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5bba3830e8e13dd307963eb7557c95f"><td class="memItemLeft" align="right" valign="top"><a id="ad5bba3830e8e13dd307963eb7557c95f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Init_registers</b> (void)</td></tr>
-<tr class="separator:ad5bba3830e8e13dd307963eb7557c95f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f34e789c6e833bd0e987f5f5cfca365"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a7f34e789c6e833bd0e987f5f5cfca365">Initialize</a> (void)</td></tr>
+<tr class="separator:a7f34e789c6e833bd0e987f5f5cfca365"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9a143056627f837b281f195ba522a7e"><td class="memItemLeft" align="right" valign="top"><a id="aa9a143056627f837b281f195ba522a7e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Shutdown_Peripherals</b> (void)</td></tr>
 <tr class="separator:aa9a143056627f837b281f195ba522a7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -202,8 +213,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>control_loop</b> (voi
 <tr class="memitem:ab2f580a1d85442504950b07e3c8f1145"><td class="memItemLeft" align="right" valign="top"><a id="ab2f580a1d85442504950b07e3c8f1145"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>calculate_avg</b> (void)</td></tr>
 <tr class="separator:ab2f580a1d85442504950b07e3c8f1145"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e99b66f9bd9b4246f46c3a08f39ce55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a8e99b66f9bd9b4246f46c3a08f39ce55">Init_UART</a> (void)</td></tr>
-<tr class="separator:a8e99b66f9bd9b4246f46c3a08f39ce55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bcf31185383adefc22f2209541c9991"><td class="memItemLeft" align="right" valign="top"><a id="a4bcf31185383adefc22f2209541c9991"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>UART_interrupt_enable</b> (void)</td></tr>
 <tr class="separator:a4bcf31185383adefc22f2209541c9991"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -228,13 +237,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>timing</b> (void)</td
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a16ff2d8e15ade4948398b0aeb80124a8"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a16ff2d8e15ade4948398b0aeb80124a8">count</a></td></tr>
-<tr class="memdesc:a16ff2d8e15ade4948398b0aeb80124a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter that should be cleared every second.  <a href="#a16ff2d8e15ade4948398b0aeb80124a8">More...</a><br /></td></tr>
-<tr class="separator:a16ff2d8e15ade4948398b0aeb80124a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0474cc065c19a2af8d2874ce3ee75ba9"><td class="memItemLeft" align="right" valign="top"><a id="a0474cc065c19a2af8d2874ce3ee75ba9"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a0474cc065c19a2af8d2874ce3ee75ba9">ad_res</a></td></tr>
-<tr class="memdesc:a0474cc065c19a2af8d2874ce3ee75ba9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Result of an ADC measurement. <br /></td></tr>
-<tr class="separator:a0474cc065c19a2af8d2874ce3ee75ba9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a9e89d63eb610dfe238b0a840979421"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421">count</a></td></tr>
+<tr class="memdesc:a6a9e89d63eb610dfe238b0a840979421"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter that should be cleared every second.  <a href="#a6a9e89d63eb610dfe238b0a840979421">More...</a><br /></td></tr>
+<tr class="separator:a6a9e89d63eb610dfe238b0a840979421"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02303eca810feb8092be2ff939a714c3"><td class="memItemLeft" align="right" valign="top"><a id="a02303eca810feb8092be2ff939a714c3"></a>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a></td></tr>
+<tr class="memdesc:a02303eca810feb8092be2ff939a714c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Result of an ADC measurement. <br /></td></tr>
+<tr class="separator:a02303eca810feb8092be2ff939a714c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48d9522e58fa05906c6dba23e5745a72"><td class="memItemLeft" align="right" valign="top"><a id="a48d9522e58fa05906c6dba23e5745a72"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72">v</a></td></tr>
 <tr class="memdesc:a48d9522e58fa05906c6dba23e5745a72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last voltage ADC measurement. <br /></td></tr>
@@ -249,16 +258,24 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="har
 <tr class="separator:afea36502e9d227ff62c5fb2719a246f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8a45b535ece3b14958359be03fa74b0"><td class="memItemLeft" align="right" valign="top"><a id="aa8a45b535ece3b14958359be03fa74b0"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0">vprom</a></td></tr>
-<tr class="memdesc:aa8a45b535ece3b14958359be03fa74b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one second average of <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72">v</a>. <br /></td></tr>
+<tr class="memdesc:aa8a45b535ece3b14958359be03fa74b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one-second-average of <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72">v</a>. <br /></td></tr>
 <tr class="separator:aa8a45b535ece3b14958359be03fa74b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afce1f09585094a8102cf627d00de6d6f"><td class="memItemLeft" align="right" valign="top"><a id="afce1f09585094a8102cf627d00de6d6f"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f">iprom</a></td></tr>
-<tr class="memdesc:afce1f09585094a8102cf627d00de6d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one second average of <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3">i</a>. <br /></td></tr>
+<tr class="memdesc:afce1f09585094a8102cf627d00de6d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one-second-average of <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3">i</a>. <br /></td></tr>
 <tr class="separator:afce1f09585094a8102cf627d00de6d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade869e001da18e227da4d9dbb0b616da"><td class="memItemLeft" align="right" valign="top"><a id="ade869e001da18e227da4d9dbb0b616da"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da">tprom</a></td></tr>
-<tr class="memdesc:ade869e001da18e227da4d9dbb0b616da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one second average of <a class="el" href="hardware_8h.html#afea36502e9d227ff62c5fb2719a246f2">t</a>. <br /></td></tr>
+<tr class="memdesc:ade869e001da18e227da4d9dbb0b616da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one-second-average of <a class="el" href="hardware_8h.html#afea36502e9d227ff62c5fb2719a246f2">t</a>. <br /></td></tr>
 <tr class="separator:ade869e001da18e227da4d9dbb0b616da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16200aa761421d421187ce19c33dfcd0"><td class="memItemLeft" align="right" valign="top"><a id="a16200aa761421d421187ce19c33dfcd0"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a16200aa761421d421187ce19c33dfcd0">qprom</a></td></tr>
+<tr class="memdesc:a16200aa761421d421187ce19c33dfcd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integration of <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3">i</a>. <br /></td></tr>
+<tr class="separator:a16200aa761421d421187ce19c33dfcd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb4eb9ad2dc148d828a7f6e270aa0f09"><td class="memItemLeft" align="right" valign="top"><a id="aeb4eb9ad2dc148d828a7f6e270aa0f09"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aeb4eb9ad2dc148d828a7f6e270aa0f09">vmax</a> = 0</td></tr>
+<tr class="memdesc:aeb4eb9ad2dc148d828a7f6e270aa0f09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum recorded average voltage. <br /></td></tr>
+<tr class="separator:aeb4eb9ad2dc148d828a7f6e270aa0f09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad984965db113bd0969498c826e23ab44"><td class="memItemLeft" align="right" valign="top"><a id="ad984965db113bd0969498c826e23ab44"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ad984965db113bd0969498c826e23ab44">proportional</a></td></tr>
 <tr class="memdesc:ad984965db113bd0969498c826e23ab44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Proportional component of PI compensator. <br /></td></tr>
@@ -275,51 +292,66 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="har
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a050993b7ca6c97e62c1020017f716b91">ki</a></td></tr>
 <tr class="memdesc:a050993b7ca6c97e62c1020017f716b91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integral compesator gain. <br /></td></tr>
 <tr class="separator:a050993b7ca6c97e62c1020017f716b91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee13c6daa3d9424e3f4d5d81beb57bd4"><td class="memItemLeft" align="right" valign="top"><a id="aee13c6daa3d9424e3f4d5d81beb57bd4"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aee13c6daa3d9424e3f4d5d81beb57bd4">vref</a></td></tr>
-<tr class="memdesc:aee13c6daa3d9424e3f4d5d81beb57bd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Voltage setpoint. <br /></td></tr>
-<tr class="separator:aee13c6daa3d9424e3f4d5d81beb57bd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a391ee908f1bdc84f0f5e80916a288881"><td class="memItemLeft" align="right" valign="top"><a id="a391ee908f1bdc84f0f5e80916a288881"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a391ee908f1bdc84f0f5e80916a288881">iref</a></td></tr>
-<tr class="memdesc:a391ee908f1bdc84f0f5e80916a288881"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current setpoint. <br /></td></tr>
-<tr class="separator:a391ee908f1bdc84f0f5e80916a288881"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12a556ee5b6e008717e9b6b8916c36a4"><td class="memItemLeft" align="right" valign="top"><a id="a12a556ee5b6e008717e9b6b8916c36a4"></a>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a12a556ee5b6e008717e9b6b8916c36a4">vref</a></td></tr>
+<tr class="memdesc:a12a556ee5b6e008717e9b6b8916c36a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Voltage setpoint. <br /></td></tr>
+<tr class="separator:a12a556ee5b6e008717e9b6b8916c36a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6bab6490e9e38ab60181b5cda64c53b"><td class="memItemLeft" align="right" valign="top"><a id="ab6bab6490e9e38ab60181b5cda64c53b"></a>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ab6bab6490e9e38ab60181b5cda64c53b">iref</a></td></tr>
+<tr class="memdesc:ab6bab6490e9e38ab60181b5cda64c53b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current setpoint. <br /></td></tr>
+<tr class="separator:ab6bab6490e9e38ab60181b5cda64c53b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa14de202054f8be3764087df08c27eda"><td class="memItemLeft" align="right" valign="top"><a id="aa14de202054f8be3764087df08c27eda"></a>
 char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aa14de202054f8be3764087df08c27eda">cmode</a></td></tr>
 <tr class="memdesc:aa14de202054f8be3764087df08c27eda"><td class="mdescLeft">&#160;</td><td class="mdescRight">CC / CV selector. CC: <code> cmode = 1 </code>. CV: <code> cmode = 0 </code> <br /></td></tr>
 <tr class="separator:aa14de202054f8be3764087df08c27eda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4915e76c096a146c74c575b138a8ee6f"><td class="memItemLeft" align="right" valign="top"><a id="a4915e76c096a146c74c575b138a8ee6f"></a>
-unsigned char&#160;</td><td class="memItemRight" valign="bottom"><b>cc_cv</b></td></tr>
-<tr class="separator:a4915e76c096a146c74c575b138a8ee6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ab95bf164c7490d2855a7efcea6784a"><td class="memItemLeft" align="right" valign="top"><a id="a7ab95bf164c7490d2855a7efcea6784a"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>second</b></td></tr>
-<tr class="separator:a7ab95bf164c7490d2855a7efcea6784a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a3a8f0bb7bac8581353cb23f3ec7f92"><td class="memItemLeft" align="right" valign="top"><a id="a9a3a8f0bb7bac8581353cb23f3ec7f92"></a>
-unsigned char&#160;</td><td class="memItemRight" valign="bottom"><b>esc</b></td></tr>
-<tr class="separator:a9a3a8f0bb7bac8581353cb23f3ec7f92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3918e6be66197371369121026305f04b"><td class="memItemLeft" align="right" valign="top"><a id="a3918e6be66197371369121026305f04b"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>dc</b> = 0</td></tr>
-<tr class="separator:a3918e6be66197371369121026305f04b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7feaae074885a9d2f57a75e0809ee4ba"><td class="memItemLeft" align="right" valign="top"><a id="a7feaae074885a9d2f57a75e0809ee4ba"></a>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> = 0</td></tr>
+<tr class="memdesc:a7feaae074885a9d2f57a75e0809ee4ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duty cycle. <br /></td></tr>
+<tr class="separator:a7feaae074885a9d2f57a75e0809ee4ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae164380501a47692b208c695e95a5311"><td class="memItemLeft" align="right" valign="top"><a id="ae164380501a47692b208c695e95a5311"></a>
 unsigned char&#160;</td><td class="memItemRight" valign="bottom"><b>spb</b></td></tr>
 <tr class="separator:ae164380501a47692b208c695e95a5311"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2f3063c21b7174689febd645870640b"><td class="memItemLeft" align="right" valign="top"><a id="ae2f3063c21b7174689febd645870640b"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>log_on</b> = 0</td></tr>
-<tr class="separator:ae2f3063c21b7174689febd645870640b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a123632309e07e1edbc0d9fa459717ee6"><td class="memItemLeft" align="right" valign="top"><a id="a123632309e07e1edbc0d9fa459717ee6"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>log_buffer</b> [5] ={0}</td></tr>
-<tr class="separator:a123632309e07e1edbc0d9fa459717ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ac955a54afa8f9039b93a3f30b04acd"><td class="memItemLeft" align="right" valign="top"><a id="a2ac955a54afa8f9039b93a3f30b04acd"></a>
+char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a2ac955a54afa8f9039b93a3f30b04acd">clear</a></td></tr>
+<tr class="memdesc:a2ac955a54afa8f9039b93a3f30b04acd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variable to clear the transmission buffer of UART. <br /></td></tr>
+<tr class="separator:a2ac955a54afa8f9039b93a3f30b04acd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c9205727cab72e65f536e9ef6445db0"><td class="memItemLeft" align="right" valign="top"><a id="a8c9205727cab72e65f536e9ef6445db0"></a>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>log_on</b> = 0</td></tr>
+<tr class="separator:a8c9205727cab72e65f536e9ef6445db0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20f2ad896b5d2be3ebe2145c7b00e033"><td class="memItemLeft" align="right" valign="top"><a id="a20f2ad896b5d2be3ebe2145c7b00e033"></a>
+char&#160;</td><td class="memItemRight" valign="bottom"><b>log_buffer</b> [8] ={0}</td></tr>
+<tr class="separator:a20f2ad896b5d2be3ebe2145c7b00e033"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a639c6c3902af09dac255279f04f0db89"><td class="memItemLeft" align="right" valign="top"><a id="a639c6c3902af09dac255279f04f0db89"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>ip_buff</b> = 0</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a639c6c3902af09dac255279f04f0db89">ip_buff</a> = 0</td></tr>
+<tr class="memdesc:a639c6c3902af09dac255279f04f0db89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current buffer to send to the terminal usign <a class="el" href="#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a>. <br /></td></tr>
 <tr class="separator:a639c6c3902af09dac255279f04f0db89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9b685d478b266b9155c576dd4da0dc0"><td class="memItemLeft" align="right" valign="top"><a id="aa9b685d478b266b9155c576dd4da0dc0"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>vp_buff</b> = 0</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aa9b685d478b266b9155c576dd4da0dc0">vp_buff</a> = 0</td></tr>
+<tr class="memdesc:aa9b685d478b266b9155c576dd4da0dc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Voltage buffer to send to the terminal usign <a class="el" href="#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a>. <br /></td></tr>
 <tr class="separator:aa9b685d478b266b9155c576dd4da0dc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f437b35570f9f0fd44ec4ba168ac115"><td class="memItemLeft" align="right" valign="top"><a id="a9f437b35570f9f0fd44ec4ba168ac115"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>tp_buff</b> = 0</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a9f437b35570f9f0fd44ec4ba168ac115">tp_buff</a> = 0</td></tr>
+<tr class="memdesc:a9f437b35570f9f0fd44ec4ba168ac115"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temperature buffer to send to the terminal usign <a class="el" href="#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a>. <br /></td></tr>
 <tr class="separator:a9f437b35570f9f0fd44ec4ba168ac115"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7319d00b273407ffe5f28b29e97a1c7"><td class="memItemLeft" align="right" valign="top"><a id="af7319d00b273407ffe5f28b29e97a1c7"></a>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#af7319d00b273407ffe5f28b29e97a1c7">qp_buff</a> = 0</td></tr>
+<tr class="memdesc:af7319d00b273407ffe5f28b29e97a1c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Capacity buffer to send to the terminal usign <a class="el" href="#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a>. <br /></td></tr>
+<tr class="separator:af7319d00b273407ffe5f28b29e97a1c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cf35be1947a62f134392fcb1b3c54d2"><td class="memItemLeft" align="right" valign="top"><a id="a6cf35be1947a62f134392fcb1b3c54d2"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>second</b> = 0</td></tr>
+<tr class="separator:a6cf35be1947a62f134392fcb1b3c54d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5edffad982a0566ad01d95005474eae3"><td class="memItemLeft" align="right" valign="top"><a id="a5edffad982a0566ad01d95005474eae3"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>minute</b> = 0</td></tr>
+<tr class="separator:a5edffad982a0566ad01d95005474eae3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bd15b1b4bbdd7329986c9c4af33d10d"><td class="memItemLeft" align="right" valign="top"><a id="a7bd15b1b4bbdd7329986c9c4af33d10d"></a>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>timeout</b> = 0</td></tr>
+<tr class="separator:a7bd15b1b4bbdd7329986c9c4af33d10d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43e0a97c0d8ad515b444eb349134d9ad"><td class="memItemLeft" align="right" valign="top"><a id="a43e0a97c0d8ad515b444eb349134d9ad"></a>
 char const&#160;</td><td class="memItemRight" valign="bottom"><b>comma</b> = ','</td></tr>
 <tr class="separator:a43e0a97c0d8ad515b444eb349134d9ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6566afc517c1e78ec8c5d1254968b8de"><td class="memItemLeft" align="right" valign="top"><a id="a6566afc517c1e78ec8c5d1254968b8de"></a>
+char const&#160;</td><td class="memItemRight" valign="bottom"><b>colons</b> = ':'</td></tr>
+<tr class="separator:a6566afc517c1e78ec8c5d1254968b8de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af22eabf79fefb1021751f5c96dba82c1"><td class="memItemLeft" align="right" valign="top"><a id="af22eabf79fefb1021751f5c96dba82c1"></a>
 char const&#160;</td><td class="memItemRight" valign="bottom"><b>S_str</b> = 'S'</td></tr>
 <tr class="separator:af22eabf79fefb1021751f5c96dba82c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -335,6 +367,15 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>I_str</b> = 'I'
 <tr class="memitem:adda72d580036fe63aca283d37a974f36"><td class="memItemLeft" align="right" valign="top"><a id="adda72d580036fe63aca283d37a974f36"></a>
 char const&#160;</td><td class="memItemRight" valign="bottom"><b>T_str</b> = 'T'</td></tr>
 <tr class="separator:adda72d580036fe63aca283d37a974f36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70c943b584242ce58c0ded2ab26abcc5"><td class="memItemLeft" align="right" valign="top"><a id="a70c943b584242ce58c0ded2ab26abcc5"></a>
+char const&#160;</td><td class="memItemRight" valign="bottom"><b>Q_str</b> = 'Q'</td></tr>
+<tr class="separator:a70c943b584242ce58c0ded2ab26abcc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5fe4dd2877e813e414fcec5a01056bd"><td class="memItemLeft" align="right" valign="top"><a id="ab5fe4dd2877e813e414fcec5a01056bd"></a>
+char const&#160;</td><td class="memItemRight" valign="bottom"><b>R_str</b> = 'R'</td></tr>
+<tr class="separator:ab5fe4dd2877e813e414fcec5a01056bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af97d1d3fa767a6ec1ac8a236112a065d"><td class="memItemLeft" align="right" valign="top"><a id="af97d1d3fa767a6ec1ac8a236112a065d"></a>
+char const&#160;</td><td class="memItemRight" valign="bottom"><b>W_str</b> = 'W'</td></tr>
+<tr class="separator:af97d1d3fa767a6ec1ac8a236112a065d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Hardware header file for Charge and Discharge System. </p>
@@ -355,7 +396,7 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>T_str</b> = 'T'
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">x</td><td>)</td>
-          <td>&#160;&#160;&#160;{ ADCON0bits.CHS = x; __delay_us(5); }</td>
+          <td>&#160;&#160;&#160;{ ADCON0bits.CHS = x; __delay_us(1); }</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -373,23 +414,25 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>T_str</b> = 'T'
           <td class="memname">#define STOP_CONVERTER</td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td>&#160;&#160;&#160;{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF(); RCIE = 0;}</td>
+          <td>&#160;&#160;&#160;{ conv = 0; RA1 = 1; <a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> = <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca">DC_MIN</a>; set_DC(); Cell_OFF(); <a class="el" href="hardware_8h.html#a2f57a3156036b713dc852737da390252">LOG_OFF</a>();}</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Set <code>conv</code> to zero, turn off the main relay (<code>RA1</code>), set the duty cycle in <code>DC_MIN</code>, turn off all the cell relays in the switcher board and disable the logging of data to the terminal and the USART reception interrupts </p>
+
+<p>Stop the converter. </p>
+<p>Set <code>conv</code> to zero, turn off the main relay (<code>RA1</code>), set the duty cycle in <code>DC_MIN</code>, turn off all the cell relays in the switcher board, disable the logging of data to the terminal and the USART reception interrupts. </p>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a8e99b66f9bd9b4246f46c3a08f39ce55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e99b66f9bd9b4246f46c3a08f39ce55">&#9670;&nbsp;</a></span>Init_UART()</h2>
+<a id="a7f34e789c6e833bd0e987f5f5cfca365"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f34e789c6e833bd0e987f5f5cfca365">&#9670;&nbsp;</a></span>Initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Init_UART </td>
+          <td class="memname">void Initialize </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -402,14 +445,14 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>T_str</b> = 'T'
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="a16ff2d8e15ade4948398b0aeb80124a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a16ff2d8e15ade4948398b0aeb80124a8">&#9670;&nbsp;</a></span>count</h2>
+<a id="a6a9e89d63eb610dfe238b0a840979421"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a9e89d63eb610dfe238b0a840979421">&#9670;&nbsp;</a></span>count</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int count</td>
+          <td class="memname">unsigned count</td>
         </tr>
       </table>
 </div><div class="memdoc">

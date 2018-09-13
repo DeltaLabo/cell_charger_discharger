@@ -14,16 +14,13 @@
 #include "hardware.h"
 #include "state_machine.h"
 
+/**@brief This is the main function of the program.
+*/
 void main(void)
-{    
-    Init_registers();
-	Init_general();
-    Init_UART(); 
+{   
+    /**initially the @link Initialize() @endlink function is called*/ 
+    Initialize();
     __delay_ms(10);
-    //UART_send_string("\r\nPCON: "); 
-    //display_value(PCON);
-    //UART_send_string(" \r\nSTATUS:");
-    //display_value(STATUS);
     //WPUE3 = 1;      //Enable pull up for MCLR
     //HACKS FOR THIS BOARD
     TRISB0 = 1;     //Set RB1 as input
@@ -37,28 +34,45 @@ void main(void)
     TRISC5 = 1;     //As input to avoid control //old position
     WPUC5 = 0;      //Disable pull up
 
+    /**Then the main loop enters*/ 
     while(1)
 	{   
+    /**If the flag of the Timer0 is set then:*/
         if(TMR0IF){
+        /** - The Timer0 period register is set to 7, which gives 252 instructions (including 2 of delay) to overflow*/
+        /** - Which gives @b Instruction @b clock {32MHz/4} / @b Prescaler {128} / @b Counter {250} = 250Hz = 4ms of period.*/
             TMR0 = 0x07;
+        /** - Then, the Timer0 flag is cleared*/
             TMR0IF = 0;
+        /** - Then, the ADC channels are read by calling the @link read_ADC() @endlink function*/
             read_ADC();
+        /** - Then, averages for the 250 values available each second are calculated by calling the @link calculate_avg() @endlink function*/
             calculate_avg();
-            log_control();      //Log control shall be before the state machine
+        /** - Then, the log is printed in the serial terminal by calling the @link log_control() @endlink function*/
+            log_control();
+        /** - If the counter in the variable @link count @endlink is cleared it means that 1 second has passed:*/
             if (!count)
-            {           
+            {
+        /**     + If the chemistry is Li Ion the @link cc_cv_mode() @endlink function is called.*/           
                 #if (LI_ION_CHEM) 
                 cc_cv_mode(vprom, vref, cmode);
                 #endif
-                State_machine();                  
+        /**     + Then the @link State_machine() @endlink function is called.*/
+                State_machine(); 
+        /**     .*/              
             }
+        /** - If the variable @link conv @endlink is set then:*/
             if (conv)
             {
+        /**     - The main relay is closed.*/
                 RA1 = 0;            //close main relay
+        /**     - Then the @link control_loop() @endlink function is called.*/
                 control_loop();     //start controlling
                 if (TMR0IF) UART_send_string((char*)"T_ERROR");
+        /**     .*/
             }else RA1 = 1;             
-            timing();            
+            timing(); 
+        /** .*/           
 		}        
 	}
 }

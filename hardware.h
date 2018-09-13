@@ -134,8 +134,7 @@ char const              Q_str = 'Q';
 char const              R_str = 'R';
 char const              W_str = 'W';
 
-void Init_general(void);
-void Init_registers(void);
+void Initialize(void);
 void Shutdown_Peripherals(void);
 void pid(float feedback, unsigned int setpoint);
 void set_DC(void);
@@ -146,7 +145,6 @@ void cc_cv_mode(float current_voltage, unsigned int reference_voltage, char CC_m
 void char_disc(void);
 void control_loop(void);
 void calculate_avg(void);
-void Init_UART(void);
 void UART_interrupt_enable(void);
 void UART_send_char(char bt);
 char UART_get_char(void); 

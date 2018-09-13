@@ -14,26 +14,7 @@
 #include "hardware.h"
 #include "state_machine.h"
 
-void Init_general()
-{
-	CLRWDT();
-	STOP_CONVERTER();
-    TMR0IF = 0;                        //Clear timer 0
-	ad_res = 0;                        //Clear ADC result variable
-	cmode = 1;                         //Start in CC mode
-	iref = 0;                  
-	vref = 0;
-    state = STANDBY;       
-    count = COUNTER; 
-    iprom = 0;
-    vprom = 0;
-    tprom = 0;
-    wait_count = 0;
-    dc_res_count = 0;
-    //esc = 0;     
-}
-
-void Init_registers()
+void Initialize()
 {
     //-----------------------GENERAL-------------------------------------------
     nWPUEN = 0;           //Allow change of individual WPU
@@ -124,6 +105,57 @@ void Init_registers()
     //---------------------INTERRUPTS----------------------------------------
     PEIE = 1;                           //Activate pehierals Interrupts
     GIE = 1;                            //Activate Global Interrupts
+
+    //---------------------UART----------------------------------------
+
+        //****Setting I/O pins for UART****//
+    TXSEL = 0;      //RC6 selected as TX
+    RXSEL = 0;      //RC7 selected as RX
+    //________I/O pins set __________//
+    
+    /**Initialize SPBRG register for required 
+    baud rate and set BRGH for fast baud_rate**/
+    SP1BRGH = 0x00; 
+    SP1BRGL = 0x8A;    
+    
+    BRGH  = 1;  // for high baud_rate
+    BRG16 = 1;  // for 16 bits timer
+    //_________End of baud_rate setting_________//
+    
+    //****Enable Asynchronous serial port*******//
+    SYNC  = 0;    // Asynchronous
+    SPEN  = 1;    // Enable serial port pins
+    //_____Asynchronous serial port enabled_______//
+
+    //**Lets prepare for transmission & reception**//
+    TXEN  = 1;    // enable transmission
+    CREN  = 1;    // enable reception
+    //__UART module up and ready for transmission and reception__//
+    
+    //**Select 8-bit mode**//  
+    TX9   = 0;    // 8-bit reception selected
+    RX9   = 0;    // 8-bit reception mode selected
+    //__8-bit mode selected__//    
+
+    //UART INTERRUPTS
+    RCIE = 0;                   //disable reception interrupts
+    TXIE = 0;                   //disable transmision interrupts
+
+    //---------------------GENERAL INITIALIZATIONS----------------------------------------
+    CLRWDT();
+    STOP_CONVERTER();
+    TMR0IF = 0;                        //Clear timer 0
+    ad_res = 0;                        //Clear ADC result variable
+    cmode = 1;                         //Start in CC mode
+    iref = 0;                  
+    vref = 0;
+    state = STANDBY;       
+    count = COUNTER; 
+    iprom = 0;
+    vprom = 0;
+    tprom = 0;
+    wait_count = 0;
+    dc_res_count = 0;
 }
 
 void pid(float feedback, unsigned int setpoint)
@@ -426,52 +458,15 @@ void calculate_avg()
     }   
 }
 
-//**Beginning of the UART related functions. 
-void Init_UART()
+void UART_interrupt_enable()
 {
-    //****Setting I/O pins for UART****//
-    TXSEL = 0;      //RC6 selected as TX
-    RXSEL = 0;      //RC7 selected as RX
-    //________I/O pins set __________//
-    
-    /**Initialize SPBRG register for required 
-    baud rate and set BRGH for fast baud_rate**/
-    SP1BRGH = 0x00; 
-    SP1BRGL = 0x8A;    
-    
-    BRGH  = 1;  // for high baud_rate
-    BRG16 = 1;  // for 16 bits timer
-    //_________End of baud_rate setting_________//
-    
-    //****Enable Asynchronous serial port*******//
-    SYNC  = 0;    // Asynchronous
-    SPEN  = 1;    // Enable serial port pins
-    //_____Asynchronous serial port enabled_______//
-
-    //**Lets prepare for transmission & reception**//
-    TXEN  = 1;    // enable transmission
-    CREN  = 1;    // enable reception
-    //__UART module up and ready for transmission and reception__//
-    
-    //**Select 8-bit mode**//  
-    TX9   = 0;    // 8-bit reception selected
-    RX9   = 0;    // 8-bit reception mode selected
-    //__8-bit mode selected__//    
-
-    //INTERRUPTS
-    RCIE = 0;                   //disable reception interrupts
-    TXIE = 0;                   //disable transmision interrupts
-}
-
- void UART_interrupt_enable()
- {
     char clear_buffer = 0;
     while(RCIF){                //clear the reception register
         clear_buffer = RC1REG;
     }
     RCIE = 1;                   //enable reception interrupts
     TXIE = 0;                   //disable transmision interrupts
- }
+}
 
 //**Function to send one byte of date to UART**//
 void UART_send_char(char bt)  

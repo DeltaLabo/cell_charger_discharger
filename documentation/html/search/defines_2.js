@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['err_5fmax',['ERR_MAX',['../hardware_8h.html#aadc49366a240cc84254d58cb455dee82',1,'hardware.h']]],
-  ['err_5fmin',['ERR_MIN',['../hardware_8h.html#a5bcad3156af59109b8ac2c78c588885a',1,'hardware.h']]]
+  ['dc_5fmax',['DC_MAX',['../hardware_8h.html#a701d2222601b84faafa94cb1909df104',1,'hardware.h']]],
+  ['dc_5fmin',['DC_MIN',['../hardware_8h.html#a998e4507851dde706a60a5b475eb27ca',1,'hardware.h']]],
+  ['dc_5fstart',['DC_START',['../hardware_8h.html#aa845f7768f44631f4b54b9cde4dc2b2f',1,'hardware.h']]]
 ];

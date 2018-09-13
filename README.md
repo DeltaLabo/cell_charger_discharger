@@ -11,10 +11,8 @@ Electrochemical Cell Charger/Discharger/Tester -- README {#mainpage}
 
 ### What is this repository for? ###
 
-* This repository was created to be used in conjuction with the integrated system known as "Charger_discharger.V4.1". It was created
-* to control the PIC16F86 installed for feedback control and serial logging.  
+* This repository was created to be used in conjuction with the integrated system known as "Charger_discharger.V4.1". It was created to control the PIC16F86 installed for feedback control and serial logging.
 * Hardware version: Charger_discharger.V4.1
-* 
 
 ### How do I get set up? ###
 
@@ -24,11 +22,10 @@ Electrochemical Cell Charger/Discharger/Tester -- README {#mainpage}
 
 ### Contribution guidelines ###
 
-* If you want to propose a review or need to modify the code for any reason
-* Code review
-* Other guidelines
+* If you want to propose a review or need to modify the code for any reason first clone this [repository](https://bitbucket.org/juanjorojash/cell_charger_discharger/src/master/) in your PC and create a new branch for your changes.  
+Once your changes are complete and fully tested ask the administrator permission to push this new branch into the source.
+* If you just want to do local changes instead you can download a zip version of the repository and do all changes locally in your PC. 
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* [Juan J. Rojas](juan.rojas@itcr.ac.cr)
+* [Juan J. Rojas](mailto:juan.rojas@itcr.ac.cr)

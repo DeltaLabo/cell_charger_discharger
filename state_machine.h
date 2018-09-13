@@ -20,13 +20,13 @@
         FAULT = 2, ///< "Fault" state, defined by function @link fFAULT() @endlink
         ISDONE = 3, ///< "Is done" state, defined by function @link fISDONE() @endlink
         WAIT = 4, ///< "Wait" state, defined by function @link fWAIT() @endlink
-        PREDISCHARGE = 5, ///< "Precharge or Predischarge" state, defined by function @link fCHARGE() @endlink or @link fDISCHARGE @endlink depending on the chemistry
-        CHARGE = 6,
-        DISCHARGE = 7, 
-        POSTCHARGE = 8, 
-        DS_DC_res = 9, 
-        CS_DC_res = 10,
-        PS_DC_res = 11
+        PREDISCHARGE = 5, ///< "Predischarge" state, defined by function @link fDISCHARGE() @endlink
+        CHARGE = 6, ///< "Charge" state, defined by function @link fCHARGE() @endlink
+        DISCHARGE = 7, ///< "Discharge" state, defined by function @link fDISCHARGE() @endlink
+        POSTCHARGE = 8, ///< "Postcharge" state, defined by function @link fCHARGE() @endlink
+        DS_DC_res = 9, ///< "Discharged state DC resistance" state, defined by function @link fDC_res() @endlink
+        CS_DC_res = 10, ///< "Charged state DC resistance" state, defined by function @link fDC_res() @endlink
+        PS_DC_res = 11 ///< "Postcharged state DC resistance" state, defined by function @link fDC_res() @endlink
     };
     
     void fSTANDBY(void);

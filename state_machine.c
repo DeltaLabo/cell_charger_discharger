@@ -19,39 +19,39 @@
 void State_machine()
 {
     switch(state){
-    /**The @c STANDBY state goes to the @link fSTANDBY() @endlink function.*/
+    /**The @link STANDBY @endlink state goes to the @link fSTANDBY() @endlink function.*/
             case STANDBY:
                 fSTANDBY();  
                 break;   
-    /**The @c IDLE state goes to the @link fIDLE() @endlink function.*/             
+    /**The @link IDLE @endlink state goes to the @link fIDLE() @endlink function.*/             
             case IDLE:
                 fIDLE();  
                 break;
-    /**The @c PRE and @c DISCHARGE states go to the @link fDISCHARGE() @endlink function.*/ 
+    /**The @link PREDISCHARGE @endlink and @link DISCHARGE @endlink states go to the @link fDISCHARGE() @endlink function.*/ 
             case PREDISCHARGE:
             case DISCHARGE:
                 fDISCHARGE();
                 break;
-    /**And the @c POST and @c CHARGE states go to the @link fCHARGE() @endlink function.*/  
+    /**And the @link POSTCHARGE @endlink and @link CHARGE @endlink states go to the @link fCHARGE() @endlink function.*/  
             case POSTCHARGE:  
             case CHARGE:   
                 fCHARGE();  
                 break;
-    /**The @c CS_DC_res, @c DS_DC_res and @c PS_DC_res states go to the @link fDC_res() @endlink function.*/
+    /**The @link CS_DC_res @endlink, @link DS_DC_res @endlink and @link PS_DC_res @endlink states go to the @link fDC_res() @endlink function.*/
             case CS_DC_res:
             case DS_DC_res:
             case PS_DC_res:
                 fDC_res();
                 break;
-    /**The @c WAIT state goes to the @link fWAIT() @endlink function.*/
+    /**The @link WAIT @endlink state goes to the @link fWAIT() @endlink function.*/
             case WAIT:    
                 fWAIT();
                 break;
-    /**The @c ISDONE state goes to the @link fISDONE() @endlink function.*/
+    /**The @link ISDONE @endlink state goes to the @link fISDONE() @endlink function.*/
             case ISDONE:    
                 fISDONE();
                 break;
-    /**The @c FAULT state goes to the @link fFAULT() @endlink function.*/
+    /**The @link FAULT @endlink state goes to the @link fFAULT() @endlink function.*/
             case FAULT:    
                 fFAULT();
                 break;
