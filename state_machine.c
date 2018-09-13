@@ -102,7 +102,7 @@ void fIDLE()
     Start_state_machine();
     /**Then, it will call the @link Converter_settings() @endlink function.*/
     Converter_settings(); 
-    /**Then, it will enable the USART reception interrupts to give the posibility to the user to press
+    /**Then, it will enable the USART reception interrupts to give the possibility to the user to press
     @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
     UART_interrupt_enable();
 }
@@ -477,7 +477,7 @@ void param()
     vref = Ni_MH_CV;
     UART_send_string((char*)cv_val_str);
     display_value(Ni_MH_CV);
-    UART_send_string((char*)mv_str);
+    UART_send_string((char*)mV_str);
     LINEBREAK;
     /** The @p capacity will be set to @p Ni_MH_CAP.*/
     capacity = Ni_MH_CAP;

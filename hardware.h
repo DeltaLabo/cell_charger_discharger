@@ -88,7 +88,8 @@ and the USART reception interrupts.
 #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
 #define 	DC_MIN         			25  ///< Minimum possible duty cycle, set around @b 0.05
 #define     DC_START       			51  ///< Initial duty cycle, set around @b 0.1
-#define 	DC_MAX         			486  ///< Maximum possible duty cycle, set around @b 0.95
+//It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function
+#define 	DC_MAX         			385  ///< Maximum possible duty cycle, set around @b 0.8
 #define     COUNTER        			250  ///< Counter value, needed to obtained one second between counts. 
 #define     LINEBREAK               UART_send_char(10)  ///< Send a linebreak to the terminal.
 unsigned     						count; ///< Counter that should be cleared every second.

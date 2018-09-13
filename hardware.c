@@ -452,8 +452,8 @@ void calculate_avg()
         default:
             iprom += i;
             vprom += v;
-            tprom += t;
-            //tprom += dc * 1.953125;
+            //tprom += t;
+            tprom += dc * 1.953125;
             break;
     }   
 }

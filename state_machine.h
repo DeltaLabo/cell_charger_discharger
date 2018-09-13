@@ -47,11 +47,11 @@
     /** @def LI_ION_CHEM                    ////
     Set to one to choose Li_Ion chemistry   ////
     */                                      ////
-    #define LI_ION_CHEM         1           ////
+    #define LI_ION_CHEM         0           ////
      /** @def NI_MH_CHEM                    ////
     Set to one to choose Ni-MH chemistry    ////
     */                                      ////
-    #define NI_MH_CHEM          0           ////
+    #define NI_MH_CHEM          1           ////
     //////*********************************/////
     //General definitions
     #define CV_LOOPS            2
