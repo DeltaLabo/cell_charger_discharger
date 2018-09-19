@@ -78,8 +78,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a6288eba0f8e8ad3ab1544ad731eb7667"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a6288eba0f8e8ad3ab1544ad731eb7667">main</a> (void)</td></tr>
 <tr class="memdesc:a6288eba0f8e8ad3ab1544ad731eb7667"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the main function of the program.  <a href="#a6288eba0f8e8ad3ab1544ad731eb7667">More...</a><br /></td></tr>
 <tr class="separator:a6288eba0f8e8ad3ab1544ad731eb7667"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab402c3c427b8d8d0ed2d6e1aac794ae7"><td class="memItemLeft" align="right" valign="top"><a id="ab402c3c427b8d8d0ed2d6e1aac794ae7"></a>
-void interrupt&#160;</td><td class="memItemRight" valign="bottom"><b>serial_interrupt</b> (void)</td></tr>
+<tr class="memitem:ab402c3c427b8d8d0ed2d6e1aac794ae7"><td class="memItemLeft" align="right" valign="top">void interrupt&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#ab402c3c427b8d8d0ed2d6e1aac794ae7">serial_interrupt</a> (void)</td></tr>
+<tr class="memdesc:ab402c3c427b8d8d0ed2d6e1aac794ae7"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the interruption service function. It will stop the process if an <b>ESC</b> or a <b>"n"</b> is pressed.  <a href="#ab402c3c427b8d8d0ed2d6e1aac794ae7">More...</a><br /></td></tr>
 <tr class="separator:ab402c3c427b8d8d0ed2d6e1aac794ae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -107,25 +107,67 @@ void interrupt&#160;</td><td class="memItemRight" valign="bottom"><b>serial_inte
 </div><div class="memdoc">
 
 <p>This is the main function of the program. </p>
-<p>initially the <a class="el" href="hardware_8c.html#a98b1050f09da390896f964fb7a892391">Initialize()</a> function is called</p>
-<p>Then the main loop enters</p>
-<p>If the flag of the Timer0 is set then:</p>
+<p>Initially the <a class="el" href="hardware_8c.html#a98b1050f09da390896f964fb7a892391">Initialize()</a> function is called</p>
+<p>Then the <code>while(1)</code> loop enters</p>
+<p>If the flag of the Timer0 is set then:.</p>
 <ul>
-<li>The Timer0 period register is set to 7, which gives 252 instructions (including 2 of delay) to overflow</li>
-<li>Which gives <b>Instruction</b> <b>clock</b> {32MHz/4} / <b>Prescaler</b> {128} / <b>Counter</b> {250} = 250Hz = 4ms of period.</li>
+<li>The Timer0 period register is set to 7, which gives 252 instructions (including 2 of delay) to overflow<br />
+That is: <b>Instruction</b> <b>clock</b> {32MHz/4} / <b>Prescaler</b> {128} / <b>Counter</b> {250} = 250Hz = 4ms of period</li>
 <li>Then, the Timer0 flag is cleared</li>
 <li>Then, the ADC channels are read by calling the <a class="el" href="#a332625a6266a8da27bc1d8919be50063">read_ADC()</a> function</li>
 <li>Then, averages for the 250 values available each second are calculated by calling the <a class="el" href="#a6f1efdf53830030b8d4b67843aad1870">calculate_avg()</a> function</li>
 <li>Then, the log is printed in the serial terminal by calling the <a class="el" href="#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a> function</li>
 <li>If the counter in the variable <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421">count</a> is cleared it means that 1 second has passed:</li>
-<li>If the chemistry is Li Ion the <a class="el" href="#a9ab308304942d68ad5733f1a0a9685a4">cc_cv_mode()</a> function is called.</li>
-<li>Then the <a class="el" href="state__machine_8c.html#a720fb40709da65800a7083dc528d4b75">State_machine()</a> function is called.</li>
 </ul>
+<ol type="1">
+<li>If the chemistry is Li Ion the <a class="el" href="#a9ab308304942d68ad5733f1a0a9685a4">cc_cv_mode()</a> function is called</li>
+<li>Then the <a class="el" href="state__machine_8c.html#a720fb40709da65800a7083dc528d4b75">State_machine()</a> function is called</li>
+</ol>
 <ul>
 <li>If the variable <a class="el" href="">conv</a> is set then:</li>
-<li>The main relay is closed.</li>
-<li>Then the <a class="el" href="#a0c80a804f63cdf1b40bca055d0b2d77d">control_loop()</a> function is called.</li>
 </ul>
+<ol type="1">
+<li>The main relay is closed</li>
+<li>Then the <a class="el" href="#a0c80a804f63cdf1b40bca055d0b2d77d">control_loop()</a> function is called</li>
+<li>If by that point the timer flag was set again and error message is printed</li>
+</ol>
+<p>-Else, the main relay is keep closed</p>
+<p>Timing control is executed by calling the <a class="el" href="#a4774aa6e41b08b4ff32010c008fa3a99">timing()</a> function </p>
+
+</div>
+</div>
+<a id="ab402c3c427b8d8d0ed2d6e1aac794ae7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab402c3c427b8d8d0ed2d6e1aac794ae7">&#9670;&nbsp;</a></span>serial_interrupt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void interrupt serial_interrupt </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This is the interruption service function. It will stop the process if an <b>ESC</b> or a <b>"n"</b> is pressed. </p>
+<p>The function first define and initialize a variable (<code>recep</code>) to store the received character</p>
+<p>If the UART reception flag is set then:.</p>
+<ul>
+<li>Check for errors and clear them.</li>
+<li>Empty the reception buffer and assign its contents to the variable <code>recep</code>.</li>
+</ul>
+<p>If <code>recep</code> received an <b>ESC</b>, then:.</p>
+<ul>
+<li>Stop the converter by calling the <a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER()</a> macro.</li>
+<li>Clear the <code>recep</code> variable.</li>
+<li>Clear the <code>wait_count</code> variable.</li>
+<li>Clear the <code>dc_res_count</code> variable.</li>
+<li>Go to the <a class="el" href="state__machine_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6">STANDBY</a> state.</li>
+</ul>
+<p>If <code>recep</code> received an <b>"n"</b>, then:. </p>
 
 </div>
 </div>

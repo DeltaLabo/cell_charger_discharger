@@ -78,9 +78,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a28a6dfc4597c4f82e81b47ca06486504"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#a28a6dfc4597c4f82e81b47ca06486504">LI_ION_CHEM</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memitem:a28a6dfc4597c4f82e81b47ca06486504"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#a28a6dfc4597c4f82e81b47ca06486504">LI_ION_CHEM</a>&#160;&#160;&#160;0</td></tr>
 <tr class="separator:a28a6dfc4597c4f82e81b47ca06486504"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80362a7f4e241d7fd6bcc19d5f21ffd7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#a80362a7f4e241d7fd6bcc19d5f21ffd7">NI_MH_CHEM</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memitem:a80362a7f4e241d7fd6bcc19d5f21ffd7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#a80362a7f4e241d7fd6bcc19d5f21ffd7">NI_MH_CHEM</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:a80362a7f4e241d7fd6bcc19d5f21ffd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acca048a5ac637dcd51b02653d2565b81"><td class="memItemLeft" align="right" valign="top"><a id="acca048a5ac637dcd51b02653d2565b81"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>CV_LOOPS</b>&#160;&#160;&#160;2</td></tr>
@@ -403,7 +403,7 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define LI_ION_CHEM&#160;&#160;&#160;1</td>
+          <td class="memname">#define LI_ION_CHEM&#160;&#160;&#160;0</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -418,7 +418,7 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define NI_MH_CHEM&#160;&#160;&#160;0</td>
+          <td class="memname">#define NI_MH_CHEM&#160;&#160;&#160;1</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -587,7 +587,7 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 <p>This function define the IDLE state of the state machine. </p>
 <p>At first, the function will call the <a class="el" href="state__machine_8c.html#aed563ae909f60360b1eaee8bcf5803e3">Start_state_machine()</a> function.</p>
 <p>Then, it will call the <a class="el" href="state__machine_8c.html#a7269099146eb3fc4fd6b7a194d55421d">Converter_settings()</a> function.</p>
-<p>Then, it will enable the USART reception interrupts to give the posibility to the user to press <b>ESC</b> to cancel or <b>n</b> to go to the next cell, at any time during the testing process </p>
+<p>Then, it will enable the USART reception interrupts to give the possibility to the user to press <b>ESC</b> to cancel or <b>n</b> to go to the next cell, at any time during the testing process </p>
 
 </div>
 </div>
@@ -636,9 +636,8 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 <p>Next, the variables related with the setting of parameters are initizalized: <code>option = 0, cell_max = 0, cell_count = '1'</code></p>
 <p>The following message will be printed</p><div class="fragment"><div class="line">---Parameter definition <span class="keywordflow">for</span> charger and discharger--- </div></div><!-- fragment --><p>If <a class="el" href="state__machine_8h.html#a28a6dfc4597c4f82e81b47ca06486504">LI_ION_CHEM</a> is set to <b>1</b>, the folowing message will be displayed:</p>
 <blockquote class="doxtable">
-<p>Chemistry defined as Li-Ion </p>
+<p>Chemistry defined as Ni-MH </p>
 </blockquote>
-<p>If <a class="el" href="state__machine_8h.html#a80362a7f4e241d7fd6bcc19d5f21ffd7">NI_MH_CHEM</a> is set to <b>1</b> and LI_ION_CHEM  is set to <b>0</b>, the folowing message will be displayed:</p>
 <p>Then the function will call the <a class="el" href="state__machine_8c.html#a54ace7ad4925a44e0b916762be282d66">param()</a> function </p>
 
 </div>
@@ -685,7 +684,7 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 <p>Then, it will show the pre-set parameters for charging that are:</p>
 <p>For Li Ion:</p>
 <div class="fragment"><div class="line">Li_Ion_CV = 4200 mV</div><div class="line">Li_Ion_CAP = 3250 mAh </div></div><!-- fragment --><p>For Ni_MH:</p>
-<div class="fragment"><div class="line">Ni_MH_CV = 1700 mV <span class="comment">//Just for protection for now, maybe is not necessary to show it</span></div><div class="line">Ni_MH_CAP = 2500 mAh</div></div><!-- fragment --><p>The <code>capacity</code> will be set to <code>Li_Ion_CAP</code>.</p>
+<div class="fragment"><div class="line">Ni_MH_CV = 1700 mV <span class="comment">//Just for protection for now, maybe is not necessary to show it</span></div><div class="line">Ni_MH_CAP = 2500 mAh</div></div><!-- fragment --><p>The <code>capacity</code> will be set to <code>Ni_MH_CAP</code>.</p>
 <p>For the charging current it will print three options:</p>
 <ul>
 <li>1) 0.25 C</li>

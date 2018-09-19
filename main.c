@@ -18,7 +18,7 @@
 */
 void main(void)
 {   
-    /**initially the @link Initialize() @endlink function is called*/ 
+/** Initially the @link Initialize() @endlink function is called*/ 
     Initialize();
     __delay_ms(10);
     //WPUE3 = 1;      //Enable pull up for MCLR
@@ -34,80 +34,96 @@ void main(void)
     TRISC5 = 1;     //As input to avoid control //old position
     WPUC5 = 0;      //Disable pull up
 
-    /**Then the main loop enters*/ 
+/** Then the @p while(1) loop enters*/ 
     while(1)
 	{   
-    /**If the flag of the Timer0 is set then:*/
+/**     If the flag of the Timer0 is set then:.*/
         if(TMR0IF){
-        /** - The Timer0 period register is set to 7, which gives 252 instructions (including 2 of delay) to overflow*/
-        /** - Which gives @b Instruction @b clock {32MHz/4} / @b Prescaler {128} / @b Counter {250} = 250Hz = 4ms of period.*/
+/**         - The Timer0 period register is set to 7, which gives 252 instructions (including 2 of delay) to overflow\n
+            That is: @b Instruction @b clock {32MHz/4} / @b Prescaler {128} / @b Counter {250} = 250Hz = 4ms of period*/
             TMR0 = 0x07;
-        /** - Then, the Timer0 flag is cleared*/
+/**         - Then, the Timer0 flag is cleared*/
             TMR0IF = 0;
-        /** - Then, the ADC channels are read by calling the @link read_ADC() @endlink function*/
+/**         - Then, the ADC channels are read by calling the @link read_ADC() @endlink function*/
             read_ADC();
-        /** - Then, averages for the 250 values available each second are calculated by calling the @link calculate_avg() @endlink function*/
+/**         - Then, averages for the 250 values available each second are calculated by calling the @link calculate_avg() @endlink function*/
             calculate_avg();
-        /** - Then, the log is printed in the serial terminal by calling the @link log_control() @endlink function*/
+/**         - Then, the log is printed in the serial terminal by calling the @link log_control() @endlink function*/
             log_control();
-        /** - If the counter in the variable @link count @endlink is cleared it means that 1 second has passed:*/
+/**         - If the counter in the variable @link count @endlink is cleared it means that 1 second has passed.\n
+            The following tasks are excuted every second:*/
             if (!count)
             {
-        /**     + If the chemistry is Li Ion the @link cc_cv_mode() @endlink function is called.*/           
+/**             -# If the chemistry is Li Ion the @link cc_cv_mode() @endlink function is called*/           
                 #if (LI_ION_CHEM) 
                 cc_cv_mode(vprom, vref, cmode);
                 #endif
-        /**     + Then the @link State_machine() @endlink function is called.*/
-                State_machine(); 
-        /**     .*/              
+/**             -# Then the @link State_machine() @endlink function is called*/
+                State_machine();  
             }
-        /** - If the variable @link conv @endlink is set then:*/
+/**         - If the variable @link conv @endlink is set it means the converter shall be stated, then:*/
             if (conv)
             {
-        /**     - The main relay is closed.*/
-                RA1 = 0;            //close main relay
-        /**     - Then the @link control_loop() @endlink function is called.*/
-                control_loop();     //start controlling
+/**             -# The main relay is closed*/
+                RA1 = 0;
+/**             -# Then the @link control_loop() @endlink function is called*/
+                control_loop();
+/**             -# If by that point the timer flag was set again and error message is printed*/
                 if (TMR0IF) UART_send_string((char*)"T_ERROR");
-        /**     .*/
+/**         - Else, the main relay is keep closed*/
             }else RA1 = 1;             
-            timing(); 
-        /** .*/           
+/**         Timing control is executed by calling the @link timing() @endlink function*/
+            timing();       
 		}        
 	}
 }
 
+/**@brief This is the interruption service function. It will stop the process if an @b ESC or a @b "n" is pressed. 
+*/
 void interrupt serial_interrupt(void) 
 {
-    volatile char esc = 0;
+/** The function first define and initialize a variable (@p recep) to store the received character*/
+    volatile char recep = 0;
+
+/** If the UART reception flag is set then:*/
     if(RCIF)
     {
-
+/**     - Check for errors and clear them*/
         if(RC1STAbits.OERR) // check for Error 
         {
             RC1STAbits.CREN = 0; //If error -> Reset 
             RC1STAbits.CREN = 1; //If error -> Reset 
         }
-
-        while(RCIF) esc = RC1REG; //receive the value and put it to esc
-
-        if (esc == 0x1B)
-        {
-            STOP_CONVERTER();
-            esc = 0;
-            wait_count = 0;
-            dc_res_count = 0;
-            __delay_ms(50);
+/**     - Empty the reception buffer and assign its contents to the variable @p recep*/
+        while(RCIF) recep = RC1REG; 
+/**     - If @p recep received an @b ESC, then:*/
+        if (recep == 0x1B)
+        {   
+/**         -# Stop the converter by calling the @link STOP_CONVERTER() @endlink macro.*/
+//            STOP_CONVERTER(); //DELETE
+/**         -# Clear the @p recep variable.*/
+//            recep = 0; //DELETE
+/**         -# Clear the @p wait_count variable.*/
+//            wait_count = 0; //DELETE
+/**         -# Clear the @p dc_res_count variable.*/
+//            dc_res_count = 0; //DELETE
+//            __delay_ms(50);
+/**         -# Go to the @link STANDBY @endlink state.*/
             state = STANDBY;
-        }else if  (esc == 'n')      //if the user press 'n' to go to next cell
+/**     - Else If @p recep received an @b "n", then:.*/
+        }else if  (recep == 'n')      //if the user press 'n' to go to next cell
         {
-            STOP_CONVERTER();
-            __delay_ms(50);
+            //STOP_CONVERTER();
+            //__delay_ms(50);
+/**         -# Increase the counter for the cells (@p cell_count)*/
             cell_count++;
+/**         -# Go to the @link IDLE @endlink state.*/
             state = IDLE;  
+/**     - Else:*/
         }else
         {
-            esc = 0;
+/**         -# Clear the @p recep variable.*/
+           recep = 0;
         }
     }  
 }
