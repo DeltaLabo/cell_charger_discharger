@@ -100,25 +100,16 @@ void interrupt serial_interrupt(void)
         if (recep == 0x1B)
         {   
 /**         -# Stop the converter by calling the @link STOP_CONVERTER() @endlink macro.*/
-//            STOP_CONVERTER(); //DELETE
-/**         -# Clear the @p recep variable.*/
-//            recep = 0; //DELETE
-/**         -# Clear the @p wait_count variable.*/
-//            wait_count = 0; //DELETE
-/**         -# Clear the @p dc_res_count variable.*/
-//            dc_res_count = 0; //DELETE
-//            __delay_ms(50);
+            STOP_CONVERTER();
 /**         -# Go to the @link STANDBY @endlink state.*/
             state = STANDBY;
 /**     - Else If @p recep received an @b "n", then:.*/
         }else if  (recep == 'n')      //if the user press 'n' to go to next cell
         {
-            //STOP_CONVERTER();
-            //__delay_ms(50);
-/**         -# Increase the counter for the cells (@p cell_count)*/
-            cell_count++;
-/**         -# Go to the @link IDLE @endlink state.*/
-            state = IDLE;  
+/**         -# Stop the converter by calling the @link STOP_CONVERTER() @endlink macro.*/
+            STOP_CONVERTER();
+/**         -# Go to the @link ISDONE @endlink state.*/
+            state = ISDONE; 
 /**     - Else:*/
         }else
         {
