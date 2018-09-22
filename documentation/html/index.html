@@ -75,19 +75,22 @@ $(function() {
 </ul>
 <h3>What is this repository for?</h3>
 <ul>
-<li>This repository was created to be used in conjuction with the integrated system known as "Charger_discharger.V4.1". It was created to control the PIC16F86 installed for feedback control and serial logging.</li>
+<li>This repository was created to be used in conjuction with the integrated system known as "Charger_discharger.V4.1". It was created to control the PIC16F1786 installed for feedback control and serial logging.</li>
 <li>Hardware version: Charger_discharger.V4.1</li>
 </ul>
 <h3>How do I get set up?</h3>
 <ul>
-<li>Connect usign serial cable model "" usign BR:19200 kbps, Data: 8 bit, Parity: none, Stop bits: 1, Flow control: none.</li>
-<li>Press "x" to restart and show the main menu.</li>
-<li>Set the desired configuration following the instructions. After resetting there is a hidden menu that can be shown pressing "h".</li>
+<li>Connect usign serial cable model "TTL-232R-5V-AJ".</li>
+<li><b>Serial terminal</b> Start with the following settings BR:19200 kbps, Data: 8 bit, Parity: none, Stop bits: 1, Flow control: none. Press "x" to restart and show the main menu. Set the desired configuration following the instructions.</li>
+<li><b>LabView logger program</b> A program for receiving, saving and plotting the test data is included in the repository, in the directory <b>labview_logger/logger.exe</b>. The following programs are needed in order to run this program in a PC that <b>does not</b> have LabView installed:<ul>
+<li><a href="http://www.ni.com/download/labview-run-time-engine-2016/6067/en/">LabVIEW Run-Time Engine 2016 - (64-bit)</a></li>
+<li><a href="http://www.ni.com/download/ni-visa-run-time-engine-16.0/6188/en/">NI-VISA Run-Time Engine 16.0</a></li>
+</ul>
+</li>
 </ul>
 <h3>Contribution guidelines</h3>
 <ul>
-<li>If you want to propose a review or need to modify the code for any reason first clone this <a href="https://bitbucket.org/juanjorojash/cell_charger_discharger/src/master/">repository</a> in your PC and create a new branch for your changes. <br />
-Once your changes are complete and fully tested ask the administrator permission to push this new branch into the source.</li>
+<li>If you want to propose a review or need to modify the code for any reason first clone this <a href="https://bitbucket.org/juanjorojash/cell_charger_discharger/src/master/">repository</a> in your PC and create a new branch for your changes. Once your changes are complete and fully tested ask the administrator permission to push this new branch into the source.</li>
 <li>If you just want to do local changes instead you can download a zip version of the repository and do all changes locally in your PC.</li>
 </ul>
 <h3>Who do I talk to?</h3>

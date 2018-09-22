@@ -433,7 +433,7 @@ void Converter_settings()
         case PS_DC_res:
             /**> The current setpoint (@p iref) is defined as <tt> capacity / 5 </tt>*/
             iref = capacity / 5;
-            dc_res_count = 14;
+            dc_res_count = DC_RES_SECS;
             /**> The charge/discharge relay (@p RA0) will be set to the discharge position (high)*/
             RA0 = 1;            
             break;

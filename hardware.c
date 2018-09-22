@@ -14,14 +14,16 @@
 #include "hardware.h"
 #include "state_machine.h"
 
+/**@brief Function to define initialize the system
+*/
 void Initialize()
 {
-    //-----------------------GENERAL-------------------------------------------
-    nWPUEN = 0;           //Allow change of individual WPU
-    //-----------------------SYSTEM CLOCK--------------------------------------
-    //PLL is always enabled because of configuration bits.
-    OSCCONbits.IRCF = 0b1111;           //Set clock to 32MHz (with PLL)
-    OSCCONbits.SCS = 0b00;              //Clear to use the result of IRCF
+    /** @b GENERAL*/
+    nWPUEN = 0; /// * Allow change of individual WPU
+    /** @b SYSTEM @b CLOCK*/
+    /** PLL is always enabled because of configuration bits*/
+    OSCCONbits.IRCF = 0b1111; /// * Set clock to 32MHz (with PLL)
+    OSCCONbits.SCS = 0b00; /// * Clear to use the result of IRCF
     OSCCONbits.SPLLEN = 1;              //Enable PLL, it gives a problem if is done in the CONFWords
     //System clock set as 32MHz
     //--------------------OUPUTS FOR RELAYS------------------------------------

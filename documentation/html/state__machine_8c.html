@@ -336,8 +336,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stat
 <p>First, this function will declare and intialize to zero a variable called <code>input</code>, which will be used to store the input of the user.</p>
 <p>Then, it will show the pre-set parameters for charging that are:</p>
 <p>For Li Ion:</p>
-<div class="fragment"><div class="line">Li_Ion_CV = 4200 mV</div><div class="line">Li_Ion_CAP = 3250 mAh </div></div><!-- fragment --><p>For Ni_MH:</p>
-<div class="fragment"><div class="line">Ni_MH_CV = 1700 mV <span class="comment">//Just for protection for now, maybe is not necessary to show it</span></div><div class="line">Ni_MH_CAP = 2500 mAh</div></div><!-- fragment --><p>The <code>capacity</code> will be set to <code>Ni_MH_CAP</code>.</p>
+<div class="fragment"><div class="line"><a class="code" href="state__machine_8h.html#a5d26458814361e1cf732df92f7dbc2d9">Li_Ion_CV</a> = 4200 mV</div><div class="line"><a class="code" href="state__machine_8h.html#adb28139964ea13e391208ea07372cace">Li_Ion_CAP</a> = 3250 mAh </div></div><!-- fragment --><p>For Ni_MH:</p>
+<div class="fragment"><div class="line"><a class="code" href="state__machine_8h.html#ac8b7523ae7285838d22d268d244e3e41">Ni_MH_CV</a> = 1700 mV <span class="comment">//Just for protection for now, maybe is not necessary to show it</span></div><div class="line"><a class="code" href="state__machine_8h.html#a94e2a4926de4ad984b884e1ea882f06a">Ni_MH_CAP</a> = 2500 mAh</div></div><!-- fragment --><p>The <code>capacity</code> will be set to <code>Ni_MH_CAP</code>.</p>
 <p>For the charging current it will print three options:</p>
 <ul>
 <li>1) 0.25 C</li>
@@ -351,8 +351,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stat
 <p>Variable <code>input</code> is cleared</p>
 <p>Next, the program will show the end-of-charge parameters that are:</p>
 <p>For Li Ion, the end-of-charge current:</p>
-<div class="fragment"><div class="line">Li_Ion_EOC_I = 100 mA</div></div><!-- fragment --><p>For Ni_MH, the end-of-charge voltage drop:</p>
-<div class="fragment"><div class="line">Ni_MH_EOC_DV = 10 mV</div></div><!-- fragment --><p>For the discharging current it will show three options:</p>
+<div class="fragment"><div class="line"><a class="code" href="state__machine_8h.html#a613a15ecc1a8e85198d8c93ce546fcf6">Li_Ion_EOC_I</a> = 100 mA</div></div><!-- fragment --><p>For Ni_MH, the end-of-charge voltage drop:</p>
+<div class="fragment"><div class="line"><a class="code" href="state__machine_8h.html#ae0f8da57c2fb3c5701f9d5fe4685bcd8">Ni_MH_EOC_DV</a> = 10 mV</div></div><!-- fragment --><p>For the discharging current it will show three options:</p>
 <ul>
 <li>1) 0.25 C</li>
 <li>2) 0.5 C</li>
@@ -365,8 +365,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stat
 <p>Varible <code>input</code> is cleared</p>
 <p>Next, the program will show the end-of-discharge voltage constant that is: ((CHANGE THIS STYLE))</p>
 <p>For Li Ion:</p>
-<div class="fragment"><div class="line">Li_Ion_EOD_V = 3000 mV</div></div><!-- fragment --><p>For Ni_MH:</p>
-<div class="fragment"><div class="line">Ni_MH_EOD_V = 1000 mV</div></div><!-- fragment --><p>For the test cycle it will show four options:</p>
+<div class="fragment"><div class="line"><a class="code" href="state__machine_8h.html#a5b5d74511caec60eedfdfbf9fe71ce94">Li_Ion_EOD_V</a> = 3000 mV</div></div><!-- fragment --><p>For Ni_MH:</p>
+<div class="fragment"><div class="line"><a class="code" href="state__machine_8h.html#a42b65399d5bd123d6001f5a0cf3353e1">Ni_MH_EOD_V</a> = 1000 mV</div></div><!-- fragment --><p>For the test cycle it will show four options:</p>
 <ul>
 <li>1) Precharge-&gt;Discharge-&gt;Charge (includes DC resistance measure after charge and after discharge).</li>
 <li>2) Discharge-&gt;Charge (includes DC resistance measure after charge and after discharge).</li>

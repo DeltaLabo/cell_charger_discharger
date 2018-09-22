@@ -76,6 +76,7 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a98b1050f09da390896f964fb7a892391"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8c.html#a98b1050f09da390896f964fb7a892391">Initialize</a> ()</td></tr>
+<tr class="memdesc:a98b1050f09da390896f964fb7a892391"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to define initialize the system.  <a href="#a98b1050f09da390896f964fb7a892391">More...</a><br /></td></tr>
 <tr class="separator:a98b1050f09da390896f964fb7a892391"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ec5a6c32a29ad24780959fcdb06fedc"><td class="memItemLeft" align="right" valign="top"><a id="a9ec5a6c32a29ad24780959fcdb06fedc"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>pid</b> (float feedback, unsigned int setpoint)</td></tr>
@@ -146,7 +147,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Cell_OFF</b> ()</td><
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Initialize SPBRG register for required baud rate and set BRGH for fast baud_rate </p>
+
+<p>Function to define initialize the system. </p>
+<p><b>GENERAL</b> </p>
+<ul>
+<li>Allow change of individual WPU</li>
+</ul>
+<p><b>SYSTEM</b> CLOCK</p>
+<p>PLL is always enabled because of configuration bits</p>
+<ul>
+<li>Set clock to 32MHz (with PLL)</li>
+<li><p class="startli">Clear to use the result of IRCF</p>
+<p class="startli">Initialize SPBRG register for required baud rate and set BRGH for fast baud_rate </p>
+</li>
+</ul>
 
 </div>
 </div>
