@@ -11,15 +11,14 @@
  * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
-#include "hardware.h"
-#include "state_machine.h"
+#include "charger_discharger.h"
 
 /**@brief This is the main function of the program.
 */
 void main(void)
 {   
 /** Initially the @link Initialize() @endlink function is called*/ 
-    Initialize();
+    initialize();
     __delay_ms(10);
     //WPUE3 = 1;      //Enable pull up for MCLR
     //HACKS FOR THIS BOARD
@@ -59,7 +58,7 @@ void main(void)
                 cc_cv_mode(vprom, vref, cmode);
                 #endif
 /**             -# Then the @link State_machine() @endlink function is called*/
-                State_machine();  
+                state_machine();  
             }
 /**         - If the variable @link conv @endlink is set it means the converter shall be stated, then:*/
             if (conv)

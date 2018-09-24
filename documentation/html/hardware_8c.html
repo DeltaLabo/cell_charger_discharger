@@ -75,9 +75,9 @@ $(function() {
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a98b1050f09da390896f964fb7a892391"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8c.html#a98b1050f09da390896f964fb7a892391">Initialize</a> ()</td></tr>
-<tr class="memdesc:a98b1050f09da390896f964fb7a892391"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to define initialize the system.  <a href="#a98b1050f09da390896f964fb7a892391">More...</a><br /></td></tr>
-<tr class="separator:a98b1050f09da390896f964fb7a892391"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25a40b6614565f755233080a384c35f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8c.html#a25a40b6614565f755233080a384c35f1">initialize</a> ()</td></tr>
+<tr class="memdesc:a25a40b6614565f755233080a384c35f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to define initialize the system.  <a href="#a25a40b6614565f755233080a384c35f1">More...</a><br /></td></tr>
+<tr class="separator:a25a40b6614565f755233080a384c35f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35df161adff36e572d40326f07d85d2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8c.html#a35df161adff36e572d40326f07d85d2b">pid</a> (float feedback, unsigned setpoint)</td></tr>
 <tr class="memdesc:a35df161adff36e572d40326f07d85d2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function defines the PI controller.  <a href="#a35df161adff36e572d40326f07d85d2b">More...</a><br /></td></tr>
 <tr class="separator:a35df161adff36e572d40326f07d85d2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -286,14 +286,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hard
 
 </div>
 </div>
-<a id="a98b1050f09da390896f964fb7a892391"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98b1050f09da390896f964fb7a892391">&#9670;&nbsp;</a></span>Initialize()</h2>
+<a id="a25a40b6614565f755233080a384c35f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25a40b6614565f755233080a384c35f1">&#9670;&nbsp;</a></span>initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Initialize </td>
+          <td class="memname">void initialize </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -694,22 +694,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hard
 <li>Calculate the error by substracting the <code>feedback</code> from the <code>setpoint</code> and store it in <code>er</code> </li>
 <li>Make sure error is never above <a class="el" href="hardware_8h.html#aadc49366a240cc84254d58cb455dee82" title="Maximum permisible error, useful to avoid ringing. ">ERR_MAX</a></li>
 <li>Make sure error is never below <a class="el" href="hardware_8h.html#a5bcad3156af59109b8ac2c78c588885a" title="Minimum permisible error, useful to avoid ringing. ">ERR_MIN</a></li>
-</ul>
-<p>Then the proportional and integral component will be calculated.</p>
-<ul>
 <li>Calculate <a class="el" href="hardware_8h.html#ad984965db113bd0969498c826e23ab44" title="Proportional component of PI compensator. ">proportional</a> component of compensator</li>
-<li>Calculate <a class="el" href="hardware_8h.html#a1174af01b8a329a6d465ea6e0951b3e5" title="Integral component of PI compensator. ">integral</a> component of compensator <br />
-<br />
-<br />
-<br />
-<br />
-</li>
+<li>Calculate <a class="el" href="hardware_8h.html#a1174af01b8a329a6d465ea6e0951b3e5" title="Integral component of PI compensator. ">integral</a> component of compensator</li>
 <li>Sum them up and store in <code>pi*/</code> </li>
-</ul>
-<p>After, the function wil define the duty cycle, and make sure that is never below <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca" title="Minimum possible duty cycle, set around 0.05. ">DC_MIN</a> or above <a class="el" href="hardware_8h.html#a701d2222601b84faafa94cb1909df104" title="Maximum possible duty cycle, set around 0.8. ">DC_MAX</a> <br />
-<br />
-<br />
-</p><ul>
 <li>Make sure duty cycle is never above <a class="el" href="hardware_8h.html#a701d2222601b84faafa94cb1909df104" title="Maximum possible duty cycle, set around 0.8. ">DC_MAX</a></li>
 <li>Make sure duty cycle is never below <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca" title="Minimum possible duty cycle, set around 0.05. ">DC_MIN</a></li>
 <li>Store the new value of the duty cycle with operation<div class="fragment"><div class="line"><a class="code" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> = <a class="code" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> + pi </div></div><!-- fragment --> </li>
@@ -735,16 +722,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hard
 
 <p>This function read the ADC and store the data in the coresponding variables. </p>
 <p>Define <code>opr</code> to store the operations inside the function</p>
-<p>Select the #V_CHAN channel usign <a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef" title="Set the ADC channel to x and wait for 5 microseconds. ">AD_SET_CHAN(x)</a></p>
+<p>Select the <a class="el" href="hardware_8h.html#a420d619b855e71d5e8d4c26e2d0a0461" title="Definition of ADC channel for voltage measurements. AN13(RB5) ">V_CHAN</a> channel usign <a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef" title="Set the ADC channel to x and wait for 5 microseconds. ">AD_SET_CHAN(x)</a></p>
 <p>Make the conversion by calling <a class="el" href="hardware_8h.html#a57f8ee4c55d0b9230535c602e01dbbdc" title="Start the conversion and wait until it is finished. ">AD_CONVERT()</a></p>
 <p>Store the result in <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3" title="Result of an ADC measurement. ">ad_res</a> with <a class="el" href="hardware_8h.html#a049dca77d5e2be6f3780ce6a632a5ef3" title="Store conversion result in ad_res. ">AD_RESULT()</a></p>
 <p>Apply the operation</p><div class="fragment"><div class="line">opr = <a class="code" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> * [(R1+R2)/(R1)] * [(Vref)/(2^12)] = <a class="code" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> * (1051/1000) * (5014/4096) </div></div><!-- fragment --><p>Make <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72" title="Last voltage ADC measurement. ">v</a> equal to <code>opr</code> </p>
-<p>Select the #I_CHAN channel usign <a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef" title="Set the ADC channel to x and wait for 5 microseconds. ">AD_SET_CHAN(x)</a></p>
+<p>Select the <a class="el" href="hardware_8h.html#a72da0b033e023b574cca6ab663e25fca" title="Definition of ADC channel for current measurements. AN11(RB4) ">I_CHAN</a> channel usign <a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef" title="Set the ADC channel to x and wait for 5 microseconds. ">AD_SET_CHAN(x)</a></p>
 <p>Make the conversion by calling <a class="el" href="hardware_8h.html#a57f8ee4c55d0b9230535c602e01dbbdc" title="Start the conversion and wait until it is finished. ">AD_CONVERT()</a></p>
 <p>Store the result in <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3" title="Result of an ADC measurement. ">ad_res</a> with <a class="el" href="hardware_8h.html#a049dca77d5e2be6f3780ce6a632a5ef3" title="Store conversion result in ad_res. ">AD_RESULT()</a></p>
 <p>Apply the operation</p><div class="fragment"><div class="line">opr = [(Vref)/(2^12)] * <a class="code" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> </div></div><!-- fragment --><p>Apply the operation</p><div class="fragment"><div class="line">opr = opr - 2525 </div></div><!-- fragment --><p>If the <a class="el" href="state__machine_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY. ">state</a> is <a class="el" href="state__machine_8h.html#aa19be6305a5a4485e1e70de70ed7d677aea7debd6c1f7cf2d27b8774acac4109f" title="&quot;Charge&quot; state, defined by function fCHARGE() ">CHARGE</a> or <a class="el" href="state__machine_8h.html#aa19be6305a5a4485e1e70de70ed7d677a90827714b4165a402681b4ce4874e5f0" title="&quot;Postcharge&quot; state, defined by function fCHARGE() ">POSTCHARGE</a> change the sign of the result</p>
 <p>Apply the operation</p><div class="fragment"><div class="line">opr = opr * 2.5 </div></div><!-- fragment --><p> which is the sensitivity of the ACS723LL</p>
-<p>Select the #T_CHAN channel usign <a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef" title="Set the ADC channel to x and wait for 5 microseconds. ">AD_SET_CHAN(x)</a></p>
+<p>Select the <a class="el" href="hardware_8h.html#a10ddb4ca8b21ecdf02ab19d67cb9142c" title="Definition of ADC channel for temperature measurements. AN12(RB0) ">T_CHAN</a> channel usign <a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef" title="Set the ADC channel to x and wait for 5 microseconds. ">AD_SET_CHAN(x)</a></p>
 <p>Make the conversion by calling <a class="el" href="hardware_8h.html#a57f8ee4c55d0b9230535c602e01dbbdc" title="Start the conversion and wait until it is finished. ">AD_CONVERT()</a></p>
 <p>Store the result in <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3" title="Result of an ADC measurement. ">ad_res</a> with <a class="el" href="hardware_8h.html#a049dca77d5e2be6f3780ce6a632a5ef3" title="Store conversion result in ad_res. ">AD_RESULT()</a></p>
 <p>Apply the operation</p><div class="fragment"><div class="line">opr = [(Vref)/(2^12)] * <a class="code" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> </div></div><!-- fragment --><p>Apply the operation</p><div class="fragment"><div class="line">opr = 1866.3 - opr </div></div><!-- fragment --><p>. Sensor STLM20 Datasheet p.6</p>
@@ -769,10 +756,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hard
 </div><div class="memdoc">
 
 <p>This function sets the desired duty cycle. </p>
-<p>This function can set the duty cycle from 0x0 to 0x1FF. <br />
-<br />
-<br />
-</p><ul>
+<p>This function can set the duty cycle from 0x0 to 0x1FF</p>
+<ul>
 <li>Lower 8 bits of <a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba" title="Duty cycle. ">dc</a> are stored in <code>PSMC1DCL</code> </li>
 <li>Higher 1 bit of <a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba" title="Duty cycle. ">dc</a> are stored in <code>PSMC1DCH</code> </li>
 <li>Set the load register. This will load all the setting as once*/ </li>
@@ -797,12 +782,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hard
 </div><div class="memdoc">
 
 <p>This function control the timing. </p>
-<p>If <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> is other than zero, then <br />
-<br />
-<br />
-<br />
-<br />
-</p><ul>
+<p>If <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> is other than zero, then</p>
+<ul>
 <li>Decrease it</li>
 </ul>
 <p>Else,</p>
@@ -832,19 +813,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hard
 
 <p>This function receive one byte of data from UART. </p>
 <dl class="section return"><dt>Returns</dt><dd>RC1REG reception register </dd></dl>
-<p>If there is error <br />
-<br />
-<br />
-<br />
-</p><ul>
-<li>Clear the error <br />
-<br />
-<br />
-</li>
+<p>If there is error</p>
+<ul>
+<li>Clear the error</li>
 <li>Restart</li>
 </ul>
-<p>Hold the program until the reception buffer is free</p>
-<p>Receive the value and return it </p>
+<p>Hold the program until the reception buffer is free <br />
+ Receive the value and return it </p>
 
 </div>
 </div>

@@ -1,7 +1,14 @@
 var searchData=
 [
-  ['dc_5fmax',['DC_MAX',['../hardware_8h.html#a701d2222601b84faafa94cb1909df104',1,'hardware.h']]],
-  ['dc_5fmin',['DC_MIN',['../hardware_8h.html#a998e4507851dde706a60a5b475eb27ca',1,'hardware.h']]],
-  ['dc_5fres_5fsecs',['DC_RES_SECS',['../state__machine_8h.html#aa2683ee4bd7cd9cdab8006368da6df09',1,'state_machine.h']]],
-  ['dc_5fstart',['DC_START',['../hardware_8h.html#aa845f7768f44631f4b54b9cde4dc2b2f',1,'hardware.h']]]
+  ['cell1_5foff',['CELL1_OFF',['../charger__discharger_8h.html#a129e4ca70087ef40f75cb1a262eedccb',1,'charger_discharger.h']]],
+  ['cell1_5fon',['CELL1_ON',['../charger__discharger_8h.html#a0eaf54b864a26d51679cbcc7f3322cf9',1,'charger_discharger.h']]],
+  ['cell2_5foff',['CELL2_OFF',['../charger__discharger_8h.html#ac1579988c69eff7ad877b1bd2a339cfb',1,'charger_discharger.h']]],
+  ['cell2_5fon',['CELL2_ON',['../charger__discharger_8h.html#a9b4e6e0b7adb4da774ac20fbff00a893',1,'charger_discharger.h']]],
+  ['cell3_5foff',['CELL3_OFF',['../charger__discharger_8h.html#a517a98dd71380fed753c3514a61be6fd',1,'charger_discharger.h']]],
+  ['cell3_5fon',['CELL3_ON',['../charger__discharger_8h.html#a4a7eac4ae4b673e22527ed52c3a84ccd',1,'charger_discharger.h']]],
+  ['cell4_5foff',['CELL4_OFF',['../charger__discharger_8h.html#aa926591f10e87bb1273848225e6b316c',1,'charger_discharger.h']]],
+  ['cell4_5fon',['CELL4_ON',['../charger__discharger_8h.html#a72e53e946d76a85cccfb0da40cb52ed4',1,'charger_discharger.h']]],
+  ['counter',['COUNTER',['../charger__discharger_8h.html#a7194053a42881b1b4bc8546b4c8713e9',1,'charger_discharger.h']]],
+  ['cv_5fki',['CV_ki',['../charger__discharger_8h.html#a57181200f8247c552f8d9751003d77c6',1,'charger_discharger.h']]],
+  ['cv_5fkp',['CV_kp',['../charger__discharger_8h.html#a31ae8362bae13f23cc6b521a7499a5ee',1,'charger_discharger.h']]]
 ];

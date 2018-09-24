@@ -1,8 +1,13 @@
 var searchData=
 [
-  ['eoc_5fcurrent',['EOC_current',['../state__machine_8h.html#a0d9cf26c168f75afbb7a381014693308',1,'state_machine.h']]],
-  ['eod_5fvoltage',['EOD_voltage',['../state__machine_8h.html#a79e7b0a74f48e181c9d3505363eb5c3e',1,'state_machine.h']]],
-  ['err_5fmax',['ERR_MAX',['../hardware_8h.html#aadc49366a240cc84254d58cb455dee82',1,'hardware.h']]],
-  ['err_5fmin',['ERR_MIN',['../hardware_8h.html#a5bcad3156af59109b8ac2c78c588885a',1,'hardware.h']]],
-  ['electrochemical_20cell_20charger_2fdischarger_2ftester_20_2d_2d_20readme',['Electrochemical Cell Charger/Discharger/Tester -- README',['../index.html',1,'']]]
+  ['dc',['dc',['../charger__discharger_8h.html#a7feaae074885a9d2f57a75e0809ee4ba',1,'charger_discharger.h']]],
+  ['dc_5fmax',['DC_MAX',['../charger__discharger_8h.html#a701d2222601b84faafa94cb1909df104',1,'charger_discharger.h']]],
+  ['dc_5fmin',['DC_MIN',['../charger__discharger_8h.html#a998e4507851dde706a60a5b475eb27ca',1,'charger_discharger.h']]],
+  ['dc_5fres_5fcount',['dc_res_count',['../charger__discharger_8h.html#a84cf4389d019b53039c0c1ce35691335',1,'charger_discharger.h']]],
+  ['dc_5fres_5fsecs',['DC_RES_SECS',['../charger__discharger_8h.html#aa2683ee4bd7cd9cdab8006368da6df09',1,'charger_discharger.h']]],
+  ['dc_5fres_5fval',['dc_res_val',['../charger__discharger_8h.html#a1e0b25759a62b1c0ee2ff911fa1aac40',1,'charger_discharger.h']]],
+  ['dc_5fstart',['DC_START',['../charger__discharger_8h.html#aa845f7768f44631f4b54b9cde4dc2b2f',1,'charger_discharger.h']]],
+  ['discharge',['DISCHARGE',['../charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677adfece03792e81dc232ae4f15fee2a423',1,'charger_discharger.h']]],
+  ['display_5fvalue',['display_value',['../charger__discharger_8c.html#a4389e5f80fbf28788f2f648f26d93fce',1,'display_value(int value):&#160;charger_discharger.c'],['../charger__discharger_8h.html#a4389e5f80fbf28788f2f648f26d93fce',1,'display_value(int value):&#160;charger_discharger.c']]],
+  ['ds_5fdc_5fres',['DS_DC_res',['../charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a5d64f3582250fabf9443c93ca77ecf9c',1,'charger_discharger.h']]]
 ];

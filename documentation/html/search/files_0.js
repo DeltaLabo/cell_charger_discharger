@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['hardware_2ec',['hardware.c',['../hardware_8c.html',1,'']]],
-  ['hardware_2eh',['hardware.h',['../hardware_8h.html',1,'']]]
+  ['charger_5fdischarger_2ec',['charger_discharger.c',['../charger__discharger_8c.html',1,'']]],
+  ['charger_5fdischarger_2eh',['charger_discharger.h',['../charger__discharger_8h.html',1,'']]]
 ];

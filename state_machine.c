@@ -11,12 +11,11 @@
  * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
-#include "state_machine.h"
-#include "hardware.h"
+#include "charger_discharger.h"
 
 /**@brief This function contain the transition definition for the states of the machine.
 */
-void State_machine()
+void state_machine()
 {
     switch(state){
     /**The @link STANDBY @endlink state goes to the @link fSTANDBY() @endlink function.*/
@@ -99,9 +98,9 @@ void fSTANDBY()
 void fIDLE()
 {
     /**At first, the function will call the @link Start_state_machine() @endlink function.*/
-    Start_state_machine();
+    start_state_machine();
     /**Then, it will call the @link Converter_settings() @endlink function.*/
-    Converter_settings(); 
+    converter_settings(); 
     /**Then, it will enable the USART reception interrupts to give the possibility to the user to press
     @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
     UART_interrupt_enable();
@@ -231,27 +230,27 @@ void fWAIT()
         {
             case PREDISCHARGE:
                 state = CHARGE;
-                Converter_settings();
+                converter_settings();
                 break;
             case CHARGE:
                 state = CS_DC_res; 
-                Converter_settings();
+                converter_settings();
                 break;
             case DISCHARGE:
                 state = DS_DC_res; 
-                Converter_settings();
+                converter_settings();
                 break;
             case POSTCHARGE:
                 state = PS_DC_res;
-                Converter_settings();
+                converter_settings();
                 break;
             case DS_DC_res:
                 state = POSTCHARGE;
-                Converter_settings();
+                converter_settings();
                 break;
             case CS_DC_res:
                 state = DISCHARGE;
-                Converter_settings();
+                converter_settings();
                 break;
             case PS_DC_res:
                 state = ISDONE;
@@ -292,7 +291,7 @@ void fFAULT()
 
 /**@brief Function to start the state machine.
 */
-void Start_state_machine()
+void start_state_machine()
 {
     /**First,*/
     switch(option)
@@ -368,7 +367,7 @@ void Start_state_machine()
 
 /**@brief Function to set the configurations of the converter.
 */
-void Converter_settings()
+void converter_settings()
 {
     /**Initially, the function set the proportional (@p kp) and integral (@p ki) constants for the PI loop.*/
     kp = 0.025;//kp = 0.025;  

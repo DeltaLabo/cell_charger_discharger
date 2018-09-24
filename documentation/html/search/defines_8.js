@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['uart_5fint_5fon',['UART_INT_ON',['../hardware_8h.html#acda4f577829f9d4ff58b9636903cbfe0',1,'hardware.h']]]
+  ['reset_5ftime',['RESET_TIME',['../charger__discharger_8h.html#a59595b0c67a8bfb8dd65e914a18b83c7',1,'charger_discharger.h']]]
 ];

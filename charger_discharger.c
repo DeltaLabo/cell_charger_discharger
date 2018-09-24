@@ -1,5 +1,5 @@
 /**
- * @file hardware.c
+ * @file charger_discharger.c
  * @author Juan J. Rojas
  * @date 7 Aug 2018
  * @brief Hardware source file for Charge and Discharge System.
@@ -11,12 +11,11 @@
  * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
-#include "hardware.h"
-#include "state_machine.h"
+#include "charger_discharger.h"
 
 /**@brief Function to define initialize the system
 */
-void Initialize()
+void initialize()
 {
     /** @b GENERAL*/
     nWPUEN = 0; /// * Allow change of individual WPU
@@ -149,11 +148,9 @@ float   pi; /// * Define @p pi for storing the PI compesator value
     er = setpoint - feedback; /// * Calculate the error by substracting the @p feedback from the @p setpoint and store it in @p er
     if(er > ERR_MAX) er = ERR_MAX; /// * Make sure error is never above #ERR_MAX
     if(er < ERR_MIN) er = ERR_MIN; /// * Make sure error is never below #ERR_MIN
-/**Then the proportional and integral component will be calculated.*/
     proportional = (kp * er); /// * Calculate #proportional component of compensator
-	integral += (ki * er)/COUNTER; /// * Calculate #integral component of compensator 
-	pi = proportional + integral; /// * Sum them up and store in @p pi*/
-/**After, the function wil define the duty cycle, and make sure that is never below #DC_MIN or above #DC_MAX */
+	integral += (ki * er)/COUNTER; /// * Calculate #integral component of compensator
+    pi = proportional + integral; /// * Sum them up and store in @p pi*/
     if (dc + pi >= DC_MAX){ /// * Make sure duty cycle is never above #DC_MAX
         dc = DC_MAX;
     }else if (dc + pi <= DC_MIN){ /// * Make sure duty cycle is never below #DC_MIN
@@ -166,7 +163,7 @@ float   pi; /// * Define @p pi for storing the PI compesator value
 */
 void set_DC()
 {
-/// This function can set the duty cycle from 0x0 to 0x1FF. 
+/// This function can set the duty cycle from 0x0 to 0x1FF
     PSMC1DCL = dc & 0x00FF; /// * Lower 8 bits of #dc are stored in @p PSMC1DCL
     PSMC1DCH = (dc >> 8) & 0x01; /// * Higher 1 bit of #dc are stored in @p PSMC1DCH
     PSMC1CONbits.PSMC1LD = 1; /// * Set the load register. This will load all the setting as once*/
@@ -409,7 +406,7 @@ void control_loop()
 */
 void timing()
 {
-    if(count) /// If #count is other than zero, then 
+    if(count) /// If #count is other than zero, then
     {
         count--; /// * Decrease it
     }else /// Else,
@@ -471,16 +468,14 @@ void UART_send_char(char bt)
 /**@brief This function receive one byte of data from UART
 * @return RC1REG reception register
 */
-char UART_get_char()   
+char UART_get_char()
 {
-    if(OERR) /// If there is error 
+    if(OERR) /// If there is error
     {
-        CREN = 0; /// * Clear the error 
+        CREN = 0; /// * Clear the error
         CREN = 1; /// * Restart
-    }
-    
-    while(!RCIF);  /// Hold the program until the reception buffer is free
-    
+    }    
+    while(!RCIF);  /// Hold the program until the reception buffer is free   
     return RC1REG; /// Receive the value and return it
 }
 /**@brief This function send a string using UART
