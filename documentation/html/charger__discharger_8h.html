@@ -188,6 +188,14 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8h.html#a7194053a42881b1b4bc8546b4c8713e9">COUNTER</a>&#160;&#160;&#160;250</td></tr>
 <tr class="memdesc:a7194053a42881b1b4bc8546b4c8713e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter value, needed to obtained one second between counts. <br /></td></tr>
 <tr class="separator:a7194053a42881b1b4bc8546b4c8713e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07e4b1149c8a3d5d22e1d62cf1ac21a8"><td class="memItemLeft" align="right" valign="top"><a id="a07e4b1149c8a3d5d22e1d62cf1ac21a8"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8h.html#a07e4b1149c8a3d5d22e1d62cf1ac21a8">CC_kp</a>&#160;&#160;&#160;0.025</td></tr>
+<tr class="memdesc:a07e4b1149c8a3d5d22e1d62cf1ac21a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Proportional constant for CC mode. <br /></td></tr>
+<tr class="separator:a07e4b1149c8a3d5d22e1d62cf1ac21a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82116df58bb08a3ea67109a434b9bd25"><td class="memItemLeft" align="right" valign="top"><a id="a82116df58bb08a3ea67109a434b9bd25"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8h.html#a82116df58bb08a3ea67109a434b9bd25">CC_ki</a>&#160;&#160;&#160;0.04</td></tr>
+<tr class="memdesc:a82116df58bb08a3ea67109a434b9bd25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integral constant for CC mode. <br /></td></tr>
+<tr class="separator:a82116df58bb08a3ea67109a434b9bd25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31ae8362bae13f23cc6b521a7499a5ee"><td class="memItemLeft" align="right" valign="top"><a id="a31ae8362bae13f23cc6b521a7499a5ee"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8h.html#a31ae8362bae13f23cc6b521a7499a5ee">CV_kp</a>&#160;&#160;&#160;0.4</td></tr>
 <tr class="memdesc:a31ae8362bae13f23cc6b521a7499a5ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Proportional constant for CV mode. <br /></td></tr>
@@ -273,7 +281,7 @@ Enumerations</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a617e0199133fdef0d3a3e6a4a4c39c7e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8h.html#a617e0199133fdef0d3a3e6a4a4c39c7e">fSTANDBY</a> (void)</td></tr>
-<tr class="memdesc:a617e0199133fdef0d3a3e6a4a4c39c7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6">STANDBY</a> state of the state machine.  <a href="#a617e0199133fdef0d3a3e6a4a4c39c7e">More...</a><br /></td></tr>
+<tr class="memdesc:a617e0199133fdef0d3a3e6a4a4c39c7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6" title="&quot;Stand by&quot; state, defined by function fSTANDBY() ">STANDBY</a> state of the state machine.  <a href="#a617e0199133fdef0d3a3e6a4a4c39c7e">More...</a><br /></td></tr>
 <tr class="separator:a617e0199133fdef0d3a3e6a4a4c39c7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af14972c8bcddf306a0cc7f7f43a5e3c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8h.html#af14972c8bcddf306a0cc7f7f43a5e3c1">fIDLE</a> (void)</td></tr>
 <tr class="memdesc:af14972c8bcddf306a0cc7f7f43a5e3c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine.  <a href="#af14972c8bcddf306a0cc7f7f43a5e3c1">More...</a><br /></td></tr>
@@ -923,40 +931,39 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 </div><div class="memdoc">
 
 <p>Function to set the configurations of the converter. </p>
-<p>Initially, the function set the proportional (<code>kp</code>) and integral (<code>ki</code>) constants for the PI loop.</p>
-<p>Then, the system is configured to start in constant current mode by setting. <code> cmode = 1 </code></p>
-<p>The integral component of the PI (<code>integral</code>) is set to zero.</p>
-<p>Capacity (<code>q_prom</code>) is set to zero.</p>
-<p>Maximum averaged voltage (<code>vmax</code>) is set to zero.</p>
-<p>Clean all the log buffers</p>
-<p>The initial <b> duty cycle </b> of the PWM is set to <code>DC_START</code> </p>
-<p>The <a class="el" href="charger__discharger_8c.html#a95853552054d1c99e8765eca54abb930">set_DC()</a> function is called.</p>
-<p>The <a class="el" href="charger__discharger_8c.html#a1d26bd6e1261ba0d776c492ad35593f4">Cell_ON()</a> function is called.</p>
+<ul>
+<li>The proportional constant, <a class="el" href="charger__discharger_8h.html#a1f7add0f84d583bc2eceb290d6c4cc06" title="Proportional compesator gain. ">kp</a> is set to <a class="el" href="charger__discharger_8h.html#a07e4b1149c8a3d5d22e1d62cf1ac21a8" title="Proportional constant for CC mode. ">CC_kp</a></li>
+<li>The proportional constant, <a class="el" href="charger__discharger_8h.html#a1f7add0f84d583bc2eceb290d6c4cc06" title="Proportional compesator gain. ">kp</a> is set to <a class="el" href="charger__discharger_8h.html#a07e4b1149c8a3d5d22e1d62cf1ac21a8" title="Proportional constant for CC mode. ">CC_kp</a></li>
+<li>Start in constant current mode by setting. <a class="el" href="charger__discharger_8h.html#aa14de202054f8be3764087df08c27eda" title="CC / CV selector. CC:  cmode = 1 . CV:  cmode = 0  ">cmode</a></li>
+<li>The <a class="el" href="charger__discharger_8h.html#a1174af01b8a329a6d465ea6e0951b3e5" title="Integral component of PI compensator. ">integral</a> component of the compensator is set to zero.*/</li>
+<li>Average capacity, #q_prom is set to zero.*/</li>
+<li>Maximum averaged voltage, <a class="el" href="charger__discharger_8h.html#aeb4eb9ad2dc148d828a7f6e270aa0f09" title="Maximum recorded average voltage. ">vmax</a> is set to zero.*/</li>
+<li>Clear <a class="el" href="charger__discharger_8h.html#a639c6c3902af09dac255279f04f0db89" title="Current buffer to send to the terminal usign log_control() ">ip_buff</a></li>
+<li>Clear <a class="el" href="charger__discharger_8h.html#aa9b685d478b266b9155c576dd4da0dc0" title="Voltage buffer to send to the terminal usign log_control() ">vp_buff</a></li>
+<li>Clear <a class="el" href="charger__discharger_8h.html#a9f437b35570f9f0fd44ec4ba168ac115" title="Temperature buffer to send to the terminal usign (). ">tp_buff</a></li>
+<li>Clear <a class="el" href="charger__discharger_8h.html#af7319d00b273407ffe5f28b29e97a1c7" title="Capacity buffer to send to the terminal usign log_control() . ">qp_buff</a></li>
+<li>The initial <b> duty cycle </b> of the PWM is set to <a class="el" href="charger__discharger_8h.html#aa845f7768f44631f4b54b9cde4dc2b2f" title="Initial duty cycle, set around 0.1. ">DC_START</a></li>
+<li>The <a class="el" href="charger__discharger_8c.html#a95853552054d1c99e8765eca54abb930" title="This function sets the desired duty cycle. ">set_DC()</a> function is called</li>
+<li>The <a class="el" href="charger__discharger_8c.html#a1d26bd6e1261ba0d776c492ad35593f4" title="This function activate the desired relay in the switcher board according to the value of cell_count...">Cell_ON()</a> function is called</li>
+</ul>
 <p>If the current state is <code>POSTCHARGE</code> or <code>CHARGE</code> </p>
-<blockquote class="doxtable">
-<p>The current setpoint (<code>iref</code>) is defined as <code>i_char</code> </p>
-</blockquote>
-<blockquote class="doxtable">
-<p>Time out is calculated </p>
-</blockquote>
-<blockquote class="doxtable">
-<p>The charge/discharge relay (<code>RA0</code>) will be set to the charge position (low) </p>
-</blockquote>
+<ul>
+<li>The current setpoint, <a class="el" href="charger__discharger_8h.html#ab6bab6490e9e38ab60181b5cda64c53b" title="Current setpoint. Initialized as 0. ">iref</a> is defined as <a class="el" href="charger__discharger_8h.html#a9f7bc04927df757f9416084659beb22b" title="Charging current in mA. ">i_char</a></li>
+<li>Charging #timeout is set to 10% more <b>only_for}_NIMH</b> </li>
+<li>The charge/discharge relay, <code>RA0</code> is cleared, charge position</li>
+</ul>
 <p>If the current state is <code>PREDISCHARGE</code> or <code>DISCHARGE</code> </p>
-<blockquote class="doxtable">
-<p>The current setpoint (<code>iref</code>) is defined as <code>i_disc</code> </p>
-</blockquote>
-<blockquote class="doxtable">
-<p>The charge/discharge relay (<code>RA0</code>) will be set to the discharge position (high) </p>
-</blockquote>
-<p>If the current state is <code>CS_DC_res</code>, <code>DS_DC_res</code> or <code>PS_DC_res</code> </p>
-<blockquote class="doxtable">
-<p>The current setpoint (<code>iref</code>) is defined as <code> capacity / 5 </code> </p>
-</blockquote>
-<blockquote class="doxtable">
-<p>The charge/discharge relay (<code>RA0</code>) will be set to the discharge position (high) </p>
-</blockquote>
-<p>The timing counter <code>count</code> will be intialized to <code>COUNTER</code>, to start a full control loop cycle. </p>
+<ul>
+<li>The current setpoint, <a class="el" href="charger__discharger_8h.html#ab6bab6490e9e38ab60181b5cda64c53b" title="Current setpoint. Initialized as 0. ">iref</a> is defined as <a class="el" href="charger__discharger_8h.html#abee5b899e99e0165d63f1e4a3b72a9dd" title="Discharging current in mA. ">i_disc</a></li>
+<li>The charge/discharge relay, <code>RA0</code> is set, discharge position</li>
+</ul>
+<p>If the current state is <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a031d03f2aee61a88f34151e0b532df5b" title="&quot;Charged state DC resistance&quot; state, defined by function fDC_res() ">CS_DC_res</a>, <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a5d64f3582250fabf9443c93ca77ecf9c" title="&quot;Discharged state DC resistance&quot; state, defined by function fDC_res() ">DS_DC_res</a> or <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a68bd1d9b6b5d032caefff13585f9d22b" title="&quot;Postcharged state DC resistance&quot; state, defined by function fDC_res() ">PS_DC_res</a></p>
+<ul>
+<li>The current setpoint, <a class="el" href="charger__discharger_8h.html#ab6bab6490e9e38ab60181b5cda64c53b" title="Current setpoint. Initialized as 0. ">iref</a> is defined as <code> capacity / 5 </code></li>
+<li>The <a class="el" href="charger__discharger_8h.html#a84cf4389d019b53039c0c1ce35691335" title="Counter for DC resistance. Initialized as DC_RES_SECS. ">dc_res_count</a> is set to <a class="el" href="charger__discharger_8h.html#aa2683ee4bd7cd9cdab8006368da6df09" title="How many seconds the DC resistance process takes. ">DC_RES_SECS</a></li>
+<li>The charge/discharge relay, <code>RA0</code> is set, discharge position <br />
+ The timing counter <a class="el" href="charger__discharger_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> will be intialized to zero, to start a full control loop cycle </li>
+</ul>
 
 </div>
 </div>
@@ -1029,7 +1036,7 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 </div><div class="memdoc">
 
 <p>This function define the FAULT state of the state machine. </p>
-<p>The function will stop the converter usign <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER()</a> macro</p>
+<p>The function will stop the converter usign <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0" title="Stop the converter. ">STOP_CONVERTER()</a> macro</p>
 <p>The <code>state</code> will be set to <code>STANDBY</code> </p>
 
 </div>
@@ -1051,8 +1058,8 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 </div><div class="memdoc">
 
 <p>This function define the IDLE state of the state machine. </p>
-<p>At first, the function will call the <a class="el" href="">Start_state_machine()</a> function.</p>
-<p>Then, it will call the <a class="el" href="">Converter_settings()</a> function.</p>
+<p>At first, the function will call the #Start_state_machine() function.</p>
+<p>Then, it will call the #Converter_settings() function.</p>
 <p>Then, it will enable the USART reception interrupts to give the possibility to the user to press <b>ESC</b> to cancel or <b>n</b> to go to the next cell, at any time during the testing process </p>
 
 </div>
@@ -1096,15 +1103,21 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
       </table>
 </div><div class="memdoc">
 
-<p>This function define the <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6">STANDBY</a> state of the state machine. </p>
-<p>First, the function will stop the converter usign <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER()</a> macro</p>
-<p>Then, it will disable the USART reception interrupts to avoid interference with the setting of parameters in the <code>STANDBY</code> state</p>
-<p>Next, the variables related with the setting of parameters are initizalized: <code>option = 0, cell_max = 0, cell_count = '1'</code></p>
-<p>The following message will be printed</p><div class="fragment"><div class="line">---Parameter definition <span class="keywordflow">for</span> charger and discharger--- </div></div><!-- fragment --><p>If <a class="el" href="charger__discharger_8h.html#a28a6dfc4597c4f82e81b47ca06486504">LI_ION_CHEM</a> is set to <b>1</b>, the folowing message will be displayed:</p>
-<blockquote class="doxtable">
-<p>Chemistry defined as Ni-MH </p>
-</blockquote>
-<p>Then the function will call the <a class="el" href="charger__discharger_8h.html#ac441c35a0d7d01f983d6b3414944d62a">param()</a> function </p>
+<p>This function define the <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6" title="&quot;Stand by&quot; state, defined by function fSTANDBY() ">STANDBY</a> state of the state machine. </p>
+<ul>
+<li>Stop the converter by calling the <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0" title="Stop the converter. ">STOP_CONVERTER()</a> macro</li>
+<li>Disable the USART reception interrupts to avoid interference with the setting of parameters in the <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6" title="&quot;Stand by&quot; state, defined by function fSTANDBY() ">STANDBY</a> state</li>
+<li>Initialize <a class="el" href="charger__discharger_8h.html#aa138b263667688f0a28af01c14f90f8a" title="Four different options, look into param() for details. ">option</a> to 0</li>
+<li>Initialize <a class="el" href="charger__discharger_8h.html#a00fd8f059b9286917da9abe7e3561aaa" title="Number of cells to be tested. Initialized as 0. ">cell_max</a> to 0</li>
+<li>Initialize <a class="el" href="charger__discharger_8h.html#a2f582152bcd11169abaab8dfb2e0ae2a" title="Cell counter from &#39;1&#39; to &#39;4&#39;. Initialized as &#39;1&#39;. ">cell_count</a> to '1'</li>
+<li>Print message: <code> &mdash;Parameter definition for charger and discharger&mdash; </code></li>
+</ul>
+<p>If <a class="el" href="charger__discharger_8h.html#a28a6dfc4597c4f82e81b47ca06486504" title="Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells. ">LI_ION_CHEM</a> is set to <b>1</b> and <a class="el" href="charger__discharger_8h.html#a80362a7f4e241d7fd6bcc19d5f21ffd7" title="Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells. ">NI_MH_CHEM</a> is set to <b>0</b>, the folowing message will be displayed:</p>
+<p>If <a class="el" href="charger__discharger_8h.html#a80362a7f4e241d7fd6bcc19d5f21ffd7" title="Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells. ">NI_MH_CHEM</a> is set to <b>1</b> and <a class="el" href="charger__discharger_8h.html#a28a6dfc4597c4f82e81b47ca06486504" title="Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells. ">LI_ION_CHEM</a> is set to <b>0</b>, the folowing message will be displayed:</p>
+<ul>
+<li><code> Chemistry defined as Ni-MH </code></li>
+</ul>
+<p>Call the <a class="el" href="state__machine_8c.html#a54ace7ad4925a44e0b916762be282d66" title="Function to define the parameters of the testing process for both chemistries. ">param()</a> function </p>
 
 </div>
 </div>
@@ -1740,14 +1753,14 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 </div><div class="memdoc">
 
 <p>This function contain the transition definition for the states of the machine. </p>
-<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6">STANDBY</a> state goes to the <a class="el" href="charger__discharger_8h.html#a617e0199133fdef0d3a3e6a4a4c39c7e">fSTANDBY()</a> function.</p>
-<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677afd6a0e4343048b10646dd2976cc5ad18">IDLE</a> state goes to the <a class="el" href="charger__discharger_8h.html#af14972c8bcddf306a0cc7f7f43a5e3c1">fIDLE()</a> function.</p>
-<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a95c89aa15e7cbe4ca2a03d955a4b067c">PREDISCHARGE</a> and <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677adfece03792e81dc232ae4f15fee2a423">DISCHARGE</a> states go to the <a class="el" href="charger__discharger_8h.html#ad25aed7556b1faba14a86a62f1dd4f89">fDISCHARGE()</a> function.</p>
-<p>And the <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a90827714b4165a402681b4ce4874e5f0">POSTCHARGE</a> and <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677aea7debd6c1f7cf2d27b8774acac4109f">CHARGE</a> states go to the <a class="el" href="charger__discharger_8h.html#a0c4e2b572b4dd0ba38a90c7721edf3d8">fCHARGE()</a> function.</p>
-<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a031d03f2aee61a88f34151e0b532df5b">CS_DC_res</a>, <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a5d64f3582250fabf9443c93ca77ecf9c">DS_DC_res</a> and <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a68bd1d9b6b5d032caefff13585f9d22b">PS_DC_res</a> states go to the <a class="el" href="charger__discharger_8h.html#a0b36b83531f2626d071ba3d1115ba83f">fDC_res()</a> function.</p>
-<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a79a322ccb4b29b85b3cab52dbccefd17">WAIT</a> state goes to the <a class="el" href="charger__discharger_8h.html#a621fb7a48066389e0889ad9f7413f6c9">fWAIT()</a> function.</p>
-<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a2df4f4d04ec310a30dd8eaac64f883a2">ISDONE</a> state goes to the <a class="el" href="charger__discharger_8h.html#a6f57fe99a95d5951b37346f2e592a033">fISDONE()</a> function.</p>
-<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ab7f3a434cd7c576917ad58613673c571">FAULT</a> state goes to the <a class="el" href="charger__discharger_8h.html#aa309f5ae96bb5d30d1097731fc373f1f">fFAULT()</a> function. </p>
+<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6" title="&quot;Stand by&quot; state, defined by function fSTANDBY() ">STANDBY</a> state goes to the <a class="el" href="state__machine_8c.html#a615d15018432f32225d7680126353f7b" title="This function define the STANDBY state of the state machine. ">fSTANDBY()</a> function.</p>
+<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677afd6a0e4343048b10646dd2976cc5ad18" title="&quot;Idle&quot; state, defined by function fIDLE() ">IDLE</a> state goes to the <a class="el" href="state__machine_8c.html#aab8843d66ed853494d05155924f4229e" title="This function define the IDLE state of the state machine. ">fIDLE()</a> function.</p>
+<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a95c89aa15e7cbe4ca2a03d955a4b067c" title="&quot;Predischarge&quot; state, defined by function fDISCHARGE() ">PREDISCHARGE</a> and <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677adfece03792e81dc232ae4f15fee2a423" title="&quot;Discharge&quot; state, defined by function fDISCHARGE() ">DISCHARGE</a> states go to the <a class="el" href="state__machine_8c.html#a472415d54e3ef78c66a3f751e4eec24c" title="This function define the IDLE state of the state machine. ">fDISCHARGE()</a> function.</p>
+<p>And the <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a90827714b4165a402681b4ce4874e5f0" title="&quot;Postcharge&quot; state, defined by function fCHARGE() ">POSTCHARGE</a> and <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677aea7debd6c1f7cf2d27b8774acac4109f" title="&quot;Charge&quot; state, defined by function fCHARGE() ">CHARGE</a> states go to the <a class="el" href="state__machine_8c.html#a2f63169934c3ee15942c859a2619e78e" title="This function define the IDLE state of the state machine. ">fCHARGE()</a> function.</p>
+<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a031d03f2aee61a88f34151e0b532df5b" title="&quot;Charged state DC resistance&quot; state, defined by function fDC_res() ">CS_DC_res</a> , <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a5d64f3582250fabf9443c93ca77ecf9c" title="&quot;Discharged state DC resistance&quot; state, defined by function fDC_res() ">DS_DC_res</a> and <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a68bd1d9b6b5d032caefff13585f9d22b" title="&quot;Postcharged state DC resistance&quot; state, defined by function fDC_res() ">PS_DC_res</a> states go to the <a class="el" href="state__machine_8c.html#abfbd54f51445d45b916ee44c9c1d24ae" title="This function define the IDLE state of the state machine. ">fDC_res()</a> function.</p>
+<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a79a322ccb4b29b85b3cab52dbccefd17" title="&quot;Wait&quot; state, defined by function fWAIT() ">WAIT</a> state goes to the <a class="el" href="state__machine_8c.html#a921708424dee13fb5c6f6f1029723cea" title="This function define the IDLE state of the state machine. ">fWAIT()</a> function.</p>
+<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a2df4f4d04ec310a30dd8eaac64f883a2" title="&quot;Is done&quot; state, defined by function fISDONE() ">ISDONE</a> state goes to the <a class="el" href="state__machine_8c.html#a7d80f4f910216189739bef97a1122ccb" title="This function is executed every time a whole test process for one cell is finished. ">fISDONE()</a> function.</p>
+<p>The <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ab7f3a434cd7c576917ad58613673c571" title="&quot;Fault&quot; state, defined by function fFAULT() ">FAULT</a> state goes to the <a class="el" href="state__machine_8c.html#a357568e00e8e69fdae90ec29d83c8f35" title="This function define the FAULT state of the state machine. ">fFAULT()</a> function. </p>
 
 </div>
 </div>

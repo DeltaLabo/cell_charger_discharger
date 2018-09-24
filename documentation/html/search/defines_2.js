@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['cc_5fki',['CC_ki',['../charger__discharger_8h.html#a82116df58bb08a3ea67109a434b9bd25',1,'charger_discharger.h']]],
+  ['cc_5fkp',['CC_kp',['../charger__discharger_8h.html#a07e4b1149c8a3d5d22e1d62cf1ac21a8',1,'charger_discharger.h']]],
   ['cell1_5foff',['CELL1_OFF',['../charger__discharger_8h.html#a129e4ca70087ef40f75cb1a262eedccb',1,'charger_discharger.h']]],
   ['cell1_5fon',['CELL1_ON',['../charger__discharger_8h.html#a0eaf54b864a26d51679cbcc7f3322cf9',1,'charger_discharger.h']]],
   ['cell2_5foff',['CELL2_OFF',['../charger__discharger_8h.html#ac1579988c69eff7ad877b1bd2a339cfb',1,'charger_discharger.h']]],

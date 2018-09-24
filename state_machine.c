@@ -18,88 +18,75 @@
 void state_machine()
 {
     switch(state){
-    /**The @link STANDBY @endlink state goes to the @link fSTANDBY() @endlink function.*/
+    /**The #STANDBY  state goes to the #fSTANDBY()  function.*/
             case STANDBY:
                 fSTANDBY();  
                 break;   
-    /**The @link IDLE @endlink state goes to the @link fIDLE() @endlink function.*/             
+    /**The #IDLE  state goes to the #fIDLE()  function.*/             
             case IDLE:
                 fIDLE();  
                 break;
-    /**The @link PREDISCHARGE @endlink and @link DISCHARGE @endlink states go to the @link fDISCHARGE() @endlink function.*/ 
+    /**The #PREDISCHARGE  and #DISCHARGE  states go to the #fDISCHARGE()  function.*/ 
             case PREDISCHARGE:
             case DISCHARGE:
                 fDISCHARGE();
                 break;
-    /**And the @link POSTCHARGE @endlink and @link CHARGE @endlink states go to the @link fCHARGE() @endlink function.*/  
+    /**And the #POSTCHARGE  and #CHARGE  states go to the #fCHARGE()  function.*/  
             case POSTCHARGE:  
             case CHARGE:   
                 fCHARGE();  
                 break;
-    /**The @link CS_DC_res @endlink, @link DS_DC_res @endlink and @link PS_DC_res @endlink states go to the @link fDC_res() @endlink function.*/
+    /**The #CS_DC_res , #DS_DC_res  and #PS_DC_res  states go to the #fDC_res()  function.*/
             case CS_DC_res:
             case DS_DC_res:
             case PS_DC_res:
                 fDC_res();
                 break;
-    /**The @link WAIT @endlink state goes to the @link fWAIT() @endlink function.*/
+    /**The #WAIT  state goes to the #fWAIT()  function.*/
             case WAIT:    
                 fWAIT();
                 break;
-    /**The @link ISDONE @endlink state goes to the @link fISDONE() @endlink function.*/
+    /**The #ISDONE  state goes to the #fISDONE()  function.*/
             case ISDONE:    
                 fISDONE();
                 break;
-    /**The @link FAULT @endlink state goes to the @link fFAULT() @endlink function.*/
+    /**The #FAULT  state goes to the #fFAULT()  function.*/
             case FAULT:    
                 fFAULT();
                 break;
     }
 }
 
-/**@brief This function define the @link STANDBY @endlink state of the state machine.
+/**@brief This function define the #STANDBY  state of the state machine.
 */
 void fSTANDBY()
 {   
-    /**First, the function will stop the converter usign @link STOP_CONVERTER() @endlink macro*/
-    STOP_CONVERTER();
-    /**Then, it will disable the USART reception interrupts to avoid interference with the setting of
-    parameters in the @p STANDBY state*/  
-    RCIE = 0;                   //disable reception interrupts
-    /**Next, the variables related with the setting of parameters are initizalized: 
-    <tt>option = 0, cell_max = 0, cell_count = '1'</tt>*/
-    option = 0;
-    cell_max = 0;
-    cell_count = '1';
-    /**The following message will be printed @code ---Parameter definition for charger and discharger--- @endcode*/
+    STOP_CONVERTER(); /// * Stop the converter by calling the #STOP_CONVERTER() macro
+    RCIE = 0; /// * Disable the USART reception interrupts to avoid interference with the setting of parameters in the #STANDBY state
+    option = 0; /// * Initialize #option to 0
+    cell_max = 0; /// * Initialize #cell_max to 0
+    cell_count = '1'; /// * Initialize #cell_count to '1'
     LINEBREAK; 
-    UART_send_string((char*)param_def_str);
+    UART_send_string((char*)param_def_str); /// * Print message: <tt> ---Parameter definition for charger and discharger--- </tt>
     LINEBREAK;
-    /**If @link LI_ION_CHEM @endlink is set to @b 1, the folowing message will be displayed:*/
-    #if (LI_ION_CHEM) 
-    /**> Chemistry defined as Li-Ion*/
-    UART_send_string((char*)chem_def_liion);
+    #if (LI_ION_CHEM) /// If #LI_ION_CHEM  is set to @b 1 and #NI_MH_CHEM  is set to @b 0, the folowing message will be displayed:
+    UART_send_string((char*)chem_def_liion); /// * <tt> Chemistry defined as Li-Ion </tt>
     LINEBREAK;
     LINEBREAK;
-    /**If @link NI_MH_CHEM @endlink is set to @b 1 and LI_ION_CHEM @endlink is set to @b 0, 
-    the folowing message will be displayed:*/
-    #elif (NI_MH_CHEM)
-    /**> Chemistry defined as Ni-MH*/
-    UART_send_string((char*)chem_def_nimh);
+    #elif (NI_MH_CHEM) /// If #NI_MH_CHEM  is set to @b 1 and #LI_ION_CHEM  is set to @b 0, the folowing message will be displayed:
+    UART_send_string((char*)chem_def_nimh); /// * <tt> Chemistry defined as Ni-MH </tt>
     LINEBREAK;
     LINEBREAK; 
     #endif
-    /** Then the function will call the @link param() @endlink function*/
-    param();
+    param(); /// Call the #param() function
 }
-
 /**@brief This function define the IDLE state of the state machine.
 */
 void fIDLE()
 {
-    /**At first, the function will call the @link Start_state_machine() @endlink function.*/
+    /**At first, the function will call the #Start_state_machine()  function.*/
     start_state_machine();
-    /**Then, it will call the @link Converter_settings() @endlink function.*/
+    /**Then, it will call the #Converter_settings()  function.*/
     converter_settings(); 
     /**Then, it will enable the USART reception interrupts to give the possibility to the user to press
     @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
@@ -283,7 +270,7 @@ void fISDONE()
 */
 void fFAULT()
 {   
-    /**The function will stop the converter usign @link STOP_CONVERTER() @endlink macro*/
+    /**The function will stop the converter usign #STOP_CONVERTER()  macro*/
     STOP_CONVERTER();
     /**The @p state will be set to @p STANDBY*/
     state = STANDBY;
@@ -369,64 +356,43 @@ void start_state_machine()
 */
 void converter_settings()
 {
-    /**Initially, the function set the proportional (@p kp) and integral (@p ki) constants for the PI loop.*/
-    kp = 0.025;//kp = 0.025;  
-    ki = 0.04;//ki = 0.02;
-    /**Then, the system is configured to start in constant current mode by setting. <tt> cmode = 1 </tt>*/        
-    cmode = 1;
-    /**The integral component of the PI (@p integral) is set to zero.*/
-    integral = 0;
-    /**Capacity (@p q_prom) is set to zero.*/
-    qprom = 0;
-    /**Maximum averaged voltage (@p vmax) is set to zero.*/
-    vmax = 0;
-    /**Clean all the log buffers*/
-    ip_buff = 0;
-    vp_buff = 0; 
-    tp_buff = 0; 
-    qp_buff = 0;
-    /**The initial <b> duty cycle </b> of the PWM is set to @p DC_START*/
-    dc = DC_START;
-    /**The @link set_DC() @endlink function is called.*/  
-    set_DC();
-    /**The @link Cell_ON() @endlink function is called.*/
-    Cell_ON();
+    kp = CC_kp; /// * The proportional constant, #kp is set to #CC_kp
+    ki = CC_ki; /// * The proportional constant, #kp is set to #CC_kp
+    cmode = 1; /// * Start in constant current mode by setting. #cmode
+    integral = 0; /// * The #integral component of the compensator is set to zero.*/
+    qprom = 0; /// * Average capacity, #q_prom is set to zero.*/
+    vmax = 0; /// * Maximum averaged voltage, #vmax is set to zero.*/
+    ip_buff = 0; /// * Clear #ip_buff
+    vp_buff = 0; /// * Clear #vp_buff
+    tp_buff = 0; /// * Clear #tp_buff
+    qp_buff = 0; /// * Clear #qp_buff
+    dc = DC_START; /// * The initial <b> duty cycle </b> of the PWM is set to #DC_START
+    set_DC();  /// * The #set_DC() function is called
+    Cell_ON(); /// * The #Cell_ON() function is called
     switch(state)
     {
-        /**If the current state is @p POSTCHARGE or @p CHARGE*/
         case POSTCHARGE:
-        case CHARGE:
-            /**> The current setpoint (@p iref) is defined as @p i_char*/
-            iref = i_char; 
-            /**> Time out is calculated*/
-            timeout = ((capacity / iref) * 66); //10% more than an hour 
-            /**> The charge/discharge relay (@p RA0) will be set to the charge position (low)*/
-            RA0 = 0;
+        case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
+            iref = i_char; /// * The current setpoint, #iref is defined as #i_char
+            timeout = ((capacity / iref) * 66); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
+            RA0 = 0; /// * The charge/discharge relay, @p RA0 is cleared, charge position
             break;
-        /**If the current state is @p PREDISCHARGE or @p DISCHARGE*/
         case PREDISCHARGE:
-        case DISCHARGE:
-            /**> The current setpoint (@p iref) is defined as @p i_disc*/
-            iref = i_disc;
-            /**> The charge/discharge relay (@p RA0) will be set to the discharge position (high)*/
-            RA0 = 1;            
+        case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE
+            iref = i_disc; /// * The current setpoint, #iref is defined as #i_disc
+            RA0 = 1; /// * The charge/discharge relay, @p RA0 is set, discharge position
             break;
-        /**If the current state is @p CS_DC_res, @p DS_DC_res or @p PS_DC_res*/
         case CS_DC_res:
         case DS_DC_res:
-        case PS_DC_res:
-            /**> The current setpoint (@p iref) is defined as <tt> capacity / 5 </tt>*/
-            iref = capacity / 5;
-            dc_res_count = DC_RES_SECS;
-            /**> The charge/discharge relay (@p RA0) will be set to the discharge position (high)*/
-            RA0 = 1;            
+        case PS_DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
+            iref = capacity / 5; /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
+            dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
+            RA0 = 1; /// * The charge/discharge relay, @p RA0 is set, discharge position          
             break;
     }
-    __delay_ms(10);
-    /**The timing counter @p count will be intialized to @p COUNTER, to start a full control loop cycle.*/    
-    count = 0;
+    __delay_ms(10);   
+    count = 0; /// The timing counter #count will be intialized to zero, to start a full control loop cycle
 }
-
 /**@brief Function to define the parameters of the testing process for both chemistries.
 */
 void param()

@@ -119,6 +119,8 @@
     //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function
     #define     DC_MAX                  385  ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 250  ///< Counter value, needed to obtained one second between counts.
+    #define     CC_kp                   0.025  ///< Proportional constant for CC mode
+    #define     CC_ki                   0.04  ///< Integral constant for CC mode 
     #define     CV_kp                   0.4  ///< Proportional constant for CV mode
     #define     CV_ki                   0.5  ///< Integral constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); } ///< Send a linebreak to the terminal
