@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['t',['t',['../hardware_8h.html#afea36502e9d227ff62c5fb2719a246f2',1,'hardware.h']]],
-  ['tp_5fbuff',['tp_buff',['../hardware_8h.html#a9f437b35570f9f0fd44ec4ba168ac115',1,'hardware.h']]],
-  ['tprom',['tprom',['../hardware_8h.html#ade869e001da18e227da4d9dbb0b616da',1,'hardware.h']]]
+  ['qp_5fbuff',['qp_buff',['../hardware_8h.html#af7319d00b273407ffe5f28b29e97a1c7',1,'hardware.h']]],
+  ['qprom',['qprom',['../hardware_8h.html#a16200aa761421d421187ce19c33dfcd0',1,'hardware.h']]]
 ];

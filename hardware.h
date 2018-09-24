@@ -67,21 +67,17 @@
 #define		CELL2_OFF				PORTAbits.RA6 = 0
 #define		CELL3_OFF				PORTCbits.RC0 = 0
 #define		CELL4_OFF				PORTCbits.RC1 = 0
-/** @def AD_SET_CHAN(x)
-Set the ADC channel to @p x and wait for 5 microseconds. 
-*/
-#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(1); }
-#define		AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);}
-#define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} 
+#define		AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(1); } ///< Set the ADC channel to @p x and wait for 5 microseconds.
+#define		AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);} ///< Start the conversion and wait until it is finished
+#define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} ///< Store conversion result in #ad_res
 //DC-DC CONVERTER RELATED DEFINITION
 #define		STOP_CONVERTER()		{ conv = 0; RA1 = 1; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF();}
 /**< @brief Stop the converter*/
 /**< Set @p conv to zero, turn off the main relay (@p RA1), set the duty cycle in @p DC_MIN, 
 turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
-and the USART reception interrupts.
+and the UART reception interrupts.
 */
-#define 	UART_INT_ON()			{ while(RCIF) clear = RC1REG; RCIE = 1; }  
-///< Clear transmission buffer and turn ON UART transmission interrupts.
+#define 	UART_INT_ON()			{ while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
 //#define 	UART_INT_OFF()			{ log_on = 0; }  ///< Turn OFF UART transmission interrupts. //CHECK THIS
 #define 	LOG_ON()				{ log_on = 1; }  ///< Turn OFF logging in the terminal.
 #define 	LOG_OFF()				{ log_on = 0; }  ///< Turn ON logging in the terminal.
@@ -90,19 +86,21 @@ and the USART reception interrupts.
 #define     DC_START       			51  ///< Initial duty cycle, set around @b 0.1
 //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function
 #define 	DC_MAX         			385  ///< Maximum possible duty cycle, set around @b 0.8
-#define     COUNTER        			250  ///< Counter value, needed to obtained one second between counts. 
+#define     COUNTER        			250  ///< Counter value, needed to obtained one second between counts.
+#define  	CV_kp					0.4  ///< Proportional constant for CV mode
+#define  	CV_ki					0.5  ///< Integral constant for CV mode 
 #define     LINEBREAK               UART_send_char(10)  ///< Send a linebreak to the terminal.
-unsigned     						count = COUNTER; ///< Counter that should be cleared every second. Initialized as @link COUNTER @endlink
+unsigned     						count = COUNTER; ///< Counter that should be cleared every second. Initialized as #COUNTER 
 /**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
 all the events that are done every second.*/
 unsigned        					ad_res; ///< Result of an ADC measurement.
 float                               v;  ///< Last voltage ADC measurement.
 float                               i;  ///< Last current ADC measurement.
 float                               t;  ///<  Last temperature ADC measurement.
-float                               vprom = 0;  ///< Last one-second-average of @link v @endlink. Initialized as 0
-float                               iprom = 0;  ///< Last one-second-average of @link i @endlink. Initialized as 0
-float                               tprom = 0;  ///< Last one-second-average of @link t @endlink. Initialized as 0
-float                               qprom = 0;  ///< Integration of @link i @endlink. Initialized as 0
+float                               vprom = 0;  ///< Last one-second-average of #v . Initialized as 0
+float                               iprom = 0;  ///< Last one-second-average of #i . Initialized as 0
+float                               tprom = 0;  ///< Last one-second-average of #t . Initialized as 0
+float                               qprom = 0;  ///< Integration of #i . Initialized as 0
 int                                 vmax = 0;   ///< Maximum recorded average voltage. 
 float 								proportional;  ///< Proportional component of PI compensator
 float 								integral;  ///< Integral component of PI compensator
@@ -112,16 +110,15 @@ unsigned    						vref = 0;  ///< Voltage setpoint. Initialized as 0
 unsigned     						iref = 0;  ///< Current setpoint. Initialized as 0
 char 								cmode;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt> 	
 unsigned                            dc = 0;  ///< Duty cycle
-unsigned char 						spb;						//Baud rate set
 char 								clear;  ///< Variable to clear the transmission buffer of UART
-unsigned                			log_on = 0;					//Variable to indicate if the log is activated  
-char                                log_buffer[8]={0};   		//for printing data in the log
-int                                 ip_buff = 0;  ///< Current buffer to send to the terminal usign @link log_control() @endlink.
-int                                 vp_buff = 0;  ///< Voltage buffer to send to the terminal usign @link log_control() @endlink.
-int                                 tp_buff = 0;  ///< Temperature buffer to send to the terminal usign @link log_control() @endlink.
-unsigned                            qp_buff = 0;  ///< Capacity buffer to send to the terminal usign @link log_control() @endlink.
-int         		                second = 0;
-int     			                minute = 0;
+unsigned                			log_on = 0; ///< Variable to indicate if the log is activated 
+char                                log_buffer[8]={0}; ///< Temporary buffer used between loops of #log_control()  
+int                                 ip_buff = 0;  ///< Current buffer to send to the terminal usign #log_control()
+int                                 vp_buff = 0;  ///< Voltage buffer to send to the terminal usign #log_control()
+int                                 tp_buff = 0;  ///< Temperature buffer to send to the terminal usign @log_control().
+unsigned                            qp_buff = 0;  ///< Capacity buffer to send to the terminal usign #log_control() .
+int         		                second = 0; ///< Seconds counter, resetted after 59 seconds.
+int     			                minute = 0; ///< Minutes counter, only manually reset
 unsigned                            timeout = 0;
 
 char const              comma = ',';

@@ -114,14 +114,14 @@ Functions</h2></td></tr>
 <li>The Timer0 period register is set to 7, which gives 252 instructions (including 2 of delay) to overflow<br />
 That is: <b>Instruction</b> <b>clock</b> {32MHz/4} / <b>Prescaler</b> {128} / <b>Counter</b> {250} = 250Hz = 4ms of period</li>
 <li>Then, the Timer0 flag is cleared</li>
-<li>Then, the ADC channels are read by calling the <a class="el" href="#a332625a6266a8da27bc1d8919be50063">read_ADC()</a> function</li>
-<li>Then, averages for the 250 values available each second are calculated by calling the <a class="el" href="#a6f1efdf53830030b8d4b67843aad1870">calculate_avg()</a> function</li>
-<li>Then, the log is printed in the serial terminal by calling the <a class="el" href="#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a> function</li>
+<li>Then, the ADC channels are read by calling the <a class="el" href="hardware_8c.html#a332625a6266a8da27bc1d8919be50063">read_ADC()</a> function</li>
+<li>Then, averages for the 250 values available each second are calculated by calling the <a class="el" href="hardware_8c.html#a6f1efdf53830030b8d4b67843aad1870">calculate_avg()</a> function</li>
+<li>Then, the log is printed in the serial terminal by calling the <a class="el" href="hardware_8c.html#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a> function</li>
 <li>If the counter in the variable <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421">count</a> is cleared it means that 1 second has passed.<br />
 The following tasks are excuted every second:</li>
 </ul>
 <ol type="1">
-<li>If the chemistry is Li Ion the <a class="el" href="#a9ab308304942d68ad5733f1a0a9685a4">cc_cv_mode()</a> function is called</li>
+<li>If the chemistry is Li Ion the <a class="el" href="hardware_8c.html#a9ab308304942d68ad5733f1a0a9685a4">cc_cv_mode()</a> function is called</li>
 <li>Then the <a class="el" href="state__machine_8c.html#a720fb40709da65800a7083dc528d4b75">State_machine()</a> function is called</li>
 </ol>
 <ul>
@@ -129,13 +129,13 @@ The following tasks are excuted every second:</li>
 </ul>
 <ol type="1">
 <li>The main relay is closed</li>
-<li>Then the <a class="el" href="#a0c80a804f63cdf1b40bca055d0b2d77d">control_loop()</a> function is called</li>
+<li>Then the <a class="el" href="hardware_8c.html#a0c80a804f63cdf1b40bca055d0b2d77d">control_loop()</a> function is called</li>
 <li>If by that point the timer flag was set again and error message is printed</li>
 </ol>
 <ul>
 <li>Else, the main relay is keep closed</li>
 </ul>
-<p>Timing control is executed by calling the <a class="el" href="#a4774aa6e41b08b4ff32010c008fa3a99">timing()</a> function </p>
+<p>Timing control is executed by calling the <a class="el" href="hardware_8c.html#a4774aa6e41b08b4ff32010c008fa3a99">timing()</a> function </p>
 
 </div>
 </div>

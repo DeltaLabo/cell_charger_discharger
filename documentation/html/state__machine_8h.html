@@ -86,14 +86,6 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#a80362a7f4e241d7fd6bcc19d5f21ffd7">NI_MH_CHEM</a>&#160;&#160;&#160;1</td></tr>
 <tr class="memdesc:a80362a7f4e241d7fd6bcc19d5f21ffd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells. <br /></td></tr>
 <tr class="separator:a80362a7f4e241d7fd6bcc19d5f21ffd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acca048a5ac637dcd51b02653d2565b81"><td class="memItemLeft" align="right" valign="top"><a id="acca048a5ac637dcd51b02653d2565b81"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#acca048a5ac637dcd51b02653d2565b81">CV_LOOPS</a>&#160;&#160;&#160;2</td></tr>
-<tr class="memdesc:acca048a5ac637dcd51b02653d2565b81"><td class="mdescLeft">&#160;</td><td class="mdescRight">(MAYBE IS GOING TO DISSAPEAR) How many loops the value of the voltage shall be equal to the set CV value to switch to CV mode <br /></td></tr>
-<tr class="separator:acca048a5ac637dcd51b02653d2565b81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a8726e3a25442d0aeb20dafc1283706"><td class="memItemLeft" align="right" valign="top"><a id="a5a8726e3a25442d0aeb20dafc1283706"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#a5a8726e3a25442d0aeb20dafc1283706">EOCD_LOOPS</a>&#160;&#160;&#160;2</td></tr>
-<tr class="memdesc:a5a8726e3a25442d0aeb20dafc1283706"><td class="mdescLeft">&#160;</td><td class="mdescRight">(MAYBE IS GOING TO DISSAPEAR) How many loops the EOC set voltage of current shall be equal to the set value to finish the charge process <br /></td></tr>
-<tr class="separator:a5a8726e3a25442d0aeb20dafc1283706"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7676cdfa371dfdcf6fb0687737c29a6"><td class="memItemLeft" align="right" valign="top"><a id="ae7676cdfa371dfdcf6fb0687737c29a6"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#ae7676cdfa371dfdcf6fb0687737c29a6">WAIT_TIME</a>&#160;&#160;&#160;600</td></tr>
 <tr class="memdesc:ae7676cdfa371dfdcf6fb0687737c29a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time to wait before states, set to 10 minutes. <br /></td></tr>
@@ -223,14 +215,6 @@ unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#a00fd8f059b9286917da9abe7e3561aaa">cell_max</a> = 0</td></tr>
 <tr class="memdesc:a00fd8f059b9286917da9abe7e3561aaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of cells to be tested. Initialized as 0. <br /></td></tr>
 <tr class="separator:a00fd8f059b9286917da9abe7e3561aaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ba00066b6d2cec925e277e2515bc4e0"><td class="memItemLeft" align="right" valign="top"><a id="a9ba00066b6d2cec925e277e2515bc4e0"></a>
-unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#a9ba00066b6d2cec925e277e2515bc4e0">EOCD_count</a> = <a class="el" href="state__machine_8h.html#a5a8726e3a25442d0aeb20dafc1283706">EOCD_LOOPS</a></td></tr>
-<tr class="memdesc:a9ba00066b6d2cec925e277e2515bc4e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter for end-of-charge loops. Initialized as <a class="el" href="state__machine_8h.html#a5a8726e3a25442d0aeb20dafc1283706">EOCD_LOOPS</a>. <br /></td></tr>
-<tr class="separator:a9ba00066b6d2cec925e277e2515bc4e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52abd5fc6ce18d77f474abea61bf5570"><td class="memItemLeft" align="right" valign="top"><a id="a52abd5fc6ce18d77f474abea61bf5570"></a>
-unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#a52abd5fc6ce18d77f474abea61bf5570">CV_count</a> = <a class="el" href="state__machine_8h.html#acca048a5ac637dcd51b02653d2565b81">CV_LOOPS</a></td></tr>
-<tr class="memdesc:a52abd5fc6ce18d77f474abea61bf5570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter for CV loops. Initialized as <a class="el" href="state__machine_8h.html#acca048a5ac637dcd51b02653d2565b81">CV_LOOPS</a>. <br /></td></tr>
-<tr class="separator:a52abd5fc6ce18d77f474abea61bf5570"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6565850a0af535f87ce6e6fcb0b8c76"><td class="memItemLeft" align="right" valign="top"><a id="ab6565850a0af535f87ce6e6fcb0b8c76"></a>
 unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="state__machine_8h.html#ab6565850a0af535f87ce6e6fcb0b8c76">wait_count</a> = <a class="el" href="state__machine_8h.html#ae7676cdfa371dfdcf6fb0687737c29a6">WAIT_TIME</a></td></tr>
 <tr class="memdesc:ab6565850a0af535f87ce6e6fcb0b8c76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter for waiting time between states. Initialized as <a class="el" href="state__machine_8h.html#ae7676cdfa371dfdcf6fb0687737c29a6">WAIT_TIME</a>. <br /></td></tr>
@@ -491,11 +475,9 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 <p>Capacity (<code>q_prom</code>) is set to zero.</p>
 <p>Maximum averaged voltage (<code>vmax</code>) is set to zero.</p>
 <p>Clean all the log buffers</p>
-<p><code>EOCD_count</code> is defined as <code>EOCD_LOOPS</code>. That is, after the system is in EOC condition, the condition needs to be mantained for <code>EOCD_LOOPS</code> loop cycles before the system stop the charge process.</p>
-<p><code>CV_count</code> is defined as <code>CV_LOOPS</code>. That is, after the system reach the CV voltage, the condition needs to be mantained for <code>CV_LOOPS</code> loop cycles before the system change to <b> constant voltage mode </b>.</p>
 <p>The initial <b> duty cycle </b> of the PWM is set to <code>DC_START</code> </p>
-<p>The <a class="el" href="#a95853552054d1c99e8765eca54abb930">set_DC()</a> function is called.</p>
-<p>The <a class="el" href="#a1d26bd6e1261ba0d776c492ad35593f4">Cell_ON()</a> function is called.</p>
+<p>The <a class="el" href="hardware_8c.html#a95853552054d1c99e8765eca54abb930">set_DC()</a> function is called.</p>
+<p>The <a class="el" href="hardware_8c.html#a1d26bd6e1261ba0d776c492ad35593f4">Cell_ON()</a> function is called.</p>
 <p>If the current state is <code>POSTCHARGE</code> or <code>CHARGE</code> </p>
 <blockquote class="doxtable">
 <p>The current setpoint (<code>iref</code>) is defined as <code>i_char</code> </p>

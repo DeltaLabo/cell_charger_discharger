@@ -130,8 +130,8 @@ void Initialize()
     RCIE = 0; /// * Disable UART reception interrupts
     TXIE = 0; /// * Disable UART transmision interrupts
     /** @bFINAL CHECK ALL!!*/
-    CLRWDT(); /// * Clear WDT by calling @link CLRWDT() @endlink
-    STOP_CONVERTER(); ///* Call @link STOP_CONVERTER() @endlink
+    CLRWDT(); /// * Clear WDT by calling @p CLRWDT()
+    STOP_CONVERTER(); ///* Call #STOP_CONVERTER()
     TMR0IF = 0; /// * Clear Timer0 flag
     ad_res = 0; /// * Clear ADC result variable
     cmode = 1; /// * Start in CC mode    
@@ -143,387 +143,400 @@ void Initialize()
 *  @param   setpoint desire controlled output for the variable
 */
 void pid(float feedback, unsigned setpoint)
-{
-/**First, this function will declare two variables, @p er and @p pi, which will be used
-to store the error and the proportional+integral value.*/ 
-float 	er;
-float   pi;
-/**Then, it will calculate the error by substraction the @p feedback from the @p setpoint and store it in @p er*/
-    er = setpoint - feedback;
-/**After, it will make sure that the error is never below @link ERR_MIN @endlink or above @link ERR_MAX @endlink*/
-    if(er > ERR_MAX) er = ERR_MAX;
-    if(er < ERR_MIN) er = ERR_MIN;
+{ 
+float 	er; /// * Define @p er for calculating the error
+float   pi; /// * Define @p pi for storing the PI compesator value
+    er = setpoint - feedback; /// * Calculate the error by substracting the @p feedback from the @p setpoint and store it in @p er
+    if(er > ERR_MAX) er = ERR_MAX; /// * Make sure error is never above #ERR_MAX
+    if(er < ERR_MIN) er = ERR_MIN; /// * Make sure error is never below #ERR_MIN
 /**Then the proportional and integral component will be calculated.*/
-    proportional = (kp * er);
-	integral += (ki * er)/COUNTER; //time base is 0.5Khz 
-/**They will be summed up and stored in @p pi*/
-	pi = proportional + integral;
-/**After, the function wil define the duty cycle, and make sure that is never below @link DC_MIN @endlink or above @link DC_MAX @endlink */
-    if (dc + pi >= DC_MAX){
+    proportional = (kp * er); /// * Calculate #proportional component of compensator
+	integral += (ki * er)/COUNTER; /// * Calculate #integral component of compensator 
+	pi = proportional + integral; /// * Sum them up and store in @p pi*/
+/**After, the function wil define the duty cycle, and make sure that is never below #DC_MIN or above #DC_MAX */
+    if (dc + pi >= DC_MAX){ /// * Make sure duty cycle is never above #DC_MAX
         dc = DC_MAX;
-    }else if (dc + pi <= DC_MIN){
+    }else if (dc + pi <= DC_MIN){ /// * Make sure duty cycle is never below #DC_MIN
         dc = DC_MIN;
     }else{
-        dc += (int)(pi + 0.5); //This is the point in which a mix the PWM with the PID, the 0.5 is for rounding purposes
+        dc += (int)(pi + 0.5); /// * Store the new value of the duty cycle with operation @code dc = dc + pi @endcode
     }   
 }
 /**@brief This function sets the desired duty cycle
 */
 void set_DC()
 {
-/**The 16 bits of the duty cycle variable @p dc will be masked and distributed in the low and high register of the PSMC1*/
-    PSMC1DCL = dc & 0x00FF;
-    PSMC1DCH = (dc >> 8) & 0x01;
-/**After setting the variables, the load register will be set. This will load all the setting as once*/
-    PSMC1CONbits.PSMC1LD = 1; //Load Buffer
+/// This function can set the duty cycle from 0x0 to 0x1FF. 
+    PSMC1DCL = dc & 0x00FF; /// * Lower 8 bits of #dc are stored in @p PSMC1DCL
+    PSMC1DCH = (dc >> 8) & 0x01; /// * Higher 1 bit of #dc are stored in @p PSMC1DCH
+    PSMC1CONbits.PSMC1LD = 1; /// * Set the load register. This will load all the setting as once*/
 }
-
+/**@brief This function switches between CC and CV mode.
+* @param current_voltage average of current voltage
+* @param referece_voltage voltage setpoint
+* @param CC_mode_status current condition of #cmode variable
+*/
 void cc_cv_mode(float current_voltage, unsigned int reference_voltage, char CC_mode_status)
 {
+/// If the current voltage is bigger than the voltage setpoint and the system is in CC mode, then:
     if(current_voltage > reference_voltage && CC_mode_status == 1)
     {        
-            proportional = 0;
-            integral = 0;       
-            cmode = 0;
-            kp = 0.4;  //0.4 with 0.3 produces a very good regulation at the end
-            ki = 0.5;
+            proportional = 0; /// * The #proportional is set to zero
+            integral = 0; /// * The #integral is set to zero
+            cmode = 0; /// * The system is set in CV mode by clearing the #cmode variable
+            kp = CV_kp; /// * The proportional constant, #kp is set to #CV_kp 
+            ki = CV_ki; /// * The integral constant, #ki is set to #CV_ki 
     }     
 }
-
+/**@brief This function takes care of printing the test data using the UART
+*/
 void log_control()
-{  
+{
+/**The code in this function is only excecuted if the #log_on variable is set*/
+/**This funtion takes care of sending the logging data in pieces to avoid disturbing the control loop. 
+This problem can be avoided with the use of interruptions for the control loop; however this was not implemented
+and could be considered as some future improvement*/  
     if (log_on)
     {
         switch (count){
-            case 0:
-                ip_buff = (int) iprom;
-                vp_buff = (int) vprom; 
-                tp_buff = (int) tprom;  
-                qp_buff = (unsigned) ((qprom * 10) + 0.05);
+            case 0: /// #count = 0
+                ip_buff = (int) iprom; /// * Define @p ip_buff for storing #i_prom
+                vp_buff = (int) vprom; /// * Define @p vp_buff for storing #v_prom
+                tp_buff = (int) tprom; /// * Define @p tp_buff for storing #tprom
+                qp_buff = (unsigned) ((qprom * 10) + 0.05); /// Define @p qp_buff for storing #qprom @c * @c 10*/
                 LINEBREAK;
                 break;
-            case COUNTER:
-                itoa(log_buffer,minute,10);
+            case COUNTER: /// #count = #COUNTER
+                itoa(log_buffer,minute,10); /// * Convert #minute into a string and store it in #log_buffer
                 break;
-            case COUNTER - 1:
-                if (minute < 10) UART_send_char('0');
-                else UART_send_char(log_buffer[0]);
+            case COUNTER - 1: /// Next cycle
+                if (minute < 10) UART_send_char('0'); /// * If #minute is smaller than 10 send a '0'
+                else UART_send_char(log_buffer[0]); /// * Else, send #log_buffer[0]
                 break;
-            case COUNTER - 2:
-                if (minute < 10) UART_send_char(log_buffer[0]);
-                else UART_send_char(log_buffer[1]);
+            case COUNTER - 2: /// Next cycle
+                if (minute < 10) UART_send_char(log_buffer[0]); /// * If #minute is smaller than 10 send #log_buffer[0]
+                else UART_send_char(log_buffer[1]); /// * Else, send #log_buffer[1]
                 break;
-            case COUNTER - 3:
-                UART_send_char(colons);
+            case COUNTER - 3: /// Next cycle
+                UART_send_char(colons); /// * Send a colons character
                 break;
-            case COUNTER - 4:
-                memset(log_buffer, '0', 8);
+            case COUNTER - 4: /// Next cycle
+                memset(log_buffer, '0', 8); /// * Clear #log_buffer
                 break;
-            case COUNTER - 5:
-                itoa(log_buffer,second,10);
+            case COUNTER - 5: /// Next cycle
+                itoa(log_buffer,second,10); /// * Convert #second into a string and store it in #log_buffer
                 break;
-            case COUNTER - 6:
-                if (second < 10) UART_send_char('0');
-                else UART_send_char(log_buffer[0]);
+            case COUNTER - 6: /// Next cycle
+                if (second < 10) UART_send_char('0'); /// * If #second is smaller than 10 send a '0'
+                else UART_send_char(log_buffer[0]); /// * Else, send #log_buffer[0]
                 break;
-            case COUNTER - 7:
-                if (second < 10) UART_send_char(log_buffer[0]);
-                else UART_send_char(log_buffer[1]);
+            case COUNTER - 7: /// Next cycle
+                if (second < 10) UART_send_char(log_buffer[0]); /// * If #second is smaller than 10 send #log_buffer[0]
+                else UART_send_char(log_buffer[1]); /// * Else, send #log_buffer[1]
                 break;
-            case COUNTER - 8:
-                UART_send_char(comma);
+            case COUNTER - 8: /// Next cycle
+                UART_send_char(comma); /// * Send a comma character
                 break;
-            case COUNTER - 9:
-                memset(log_buffer, '0', 8);
+            case COUNTER - 9: /// Next cycle
+                memset(log_buffer, '0', 8); /// * Clear #log_buffer
+                break;
+                case COUNTER - 10: /// Next cycle
+                UART_send_char(C_str); /// * Send a 'C'
+                break;
+            case COUNTER - 11: /// Next cycle
+                UART_send_char(cell_count); /// * Send a #cell_count variable
+                break;
+            case COUNTER - 12: /// Next cycle
+                UART_send_char(comma); /// * Send a comma character
+                break;
+            case COUNTER - 13: /// Next cycle
+                UART_send_char(S_str); /// * Send an 'S'
+                break;
+            case COUNTER - 14: /// Next cycle
+                itoa(log_buffer,(int)state,10); /// * Convert #state into a string and store it in #log_buffer
+                break;
+            case COUNTER - 16: /// Next cycle
+                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
+                break;
+            case COUNTER - 17: /// Next cycle
+                if (state >= 10) UART_send_char(log_buffer[1]); /// * If #state is bigger than 10, send #log_buffer[0]
                 break;   
-            case COUNTER - 10:    
-                UART_send_char(C_str);
+            case COUNTER - 18: /// Next cycle
+                UART_send_char(comma); /// * Send a comma character
                 break;
-            case COUNTER - 11:
-                UART_send_char(cell_count);
+            case COUNTER - 19: /// Next cycle
+                UART_send_char(V_str); /// * Send a 'V'
                 break;
-            case COUNTER - 12:
-                UART_send_char(comma);
+            case COUNTER - 20: /// Next cycle
+                itoa(log_buffer,vp_buff,10); /// * Convert @p vp_buff into a string and store it in #log_buffer
                 break;
-            case COUNTER - 13:
-                UART_send_char(S_str);
+            case COUNTER - 21: /// Next cycle
+                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
                 break;
-            case COUNTER - 14:
-                itoa(log_buffer,(int)state,10);
+            case COUNTER - 22: /// Next cycle
+                UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
                 break;
-            case COUNTER - 16:
-                UART_send_char(log_buffer[0]);
+            case COUNTER - 23: /// Next cycle
+                UART_send_char(log_buffer[2]); /// * Send #log_buffer[2]
                 break;
-            case COUNTER - 17:
-                if (state >= 10) UART_send_char(log_buffer[1]);
-                break;   
-            case COUNTER - 18:
-                UART_send_char(comma);
+            case COUNTER - 24: /// Next cycle
+                if (vp_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p vp_buff is bigger than 1000, send #log_buffer[3]
                 break;
-            case COUNTER - 19:
-                UART_send_char(V_str);
+            case COUNTER - 25: /// Next cycle
+                UART_send_char(comma); ///* Send a comma character
                 break;
-            case COUNTER - 20:
-                itoa(log_buffer,vp_buff,10);
+            case COUNTER - 26: /// Next cycle
+                memset(log_buffer, '0', 8);  /// * Clear #log_buffer
                 break;
-            case COUNTER - 21:
-                UART_send_char(log_buffer[0]);
+            case COUNTER - 27: /// Next cycle
+                UART_send_char(I_str); /// * Send an 'I'
                 break;
-            case COUNTER - 22:
-                UART_send_char(log_buffer[1]);
+            case COUNTER - 28: /// Next cycle
+                itoa(log_buffer,ip_buff,10); /// * Convert @p ip_buff into a string and store it in #log_buffer
                 break;
-            case COUNTER - 23:
-                UART_send_char(log_buffer[2]);
+            case COUNTER - 29: /// Next cycle
+                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
                 break;
-            case COUNTER - 24:
-                if (vp_buff >= 1000) UART_send_char(log_buffer[3]);
+            case COUNTER - 30: /// Next cycle
+                UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
                 break;
-            case COUNTER - 25:
-                UART_send_char(comma);
+            case COUNTER - 31: /// Next cycle
+                UART_send_char(log_buffer[2]); /// * Send #log_buffer[2]
                 break;
-            case COUNTER - 26:
-                memset(log_buffer, '0', 8);
+            case COUNTER - 32: /// Next cycle
+                if (ip_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p ip_buff is bigger or equal to 1000, send #log_buffer[3]
                 break;
-            case COUNTER - 27:
-                UART_send_char(I_str);
+            case COUNTER - 33: /// Next cycle
+                UART_send_char(comma); ///* Send a comma character
                 break;
-            case COUNTER - 28:
-                itoa(log_buffer,ip_buff,10);
+            case COUNTER - 34: /// Next cycle
+                memset(log_buffer, '0', 8);  /// * Clear #log_buffer
                 break;
-            case COUNTER - 29:
-                UART_send_char(log_buffer[0]);
+            case COUNTER - 35: /// Next cyclev
+                UART_send_char(T_str); /// * Send a 'T'
                 break;
-            case COUNTER - 30:
-                UART_send_char(log_buffer[1]);
+            case COUNTER - 36: /// Next cycle
+                itoa(log_buffer,tp_buff,10); /// * Convert @p tp_buff into a string and store it in #log_buffer
                 break;
-            case COUNTER - 31:
-                UART_send_char(log_buffer[2]);
+            case COUNTER - 37: /// Next cycle
+                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
                 break;
-            case COUNTER - 32:
-                if (ip_buff >= 1000) UART_send_char(log_buffer[3]);
+            case COUNTER - 38: /// Next cycle
+                UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
                 break;
-            case COUNTER - 33:
-                UART_send_char(comma);
+            case COUNTER - 39: /// Next cycle
+                UART_send_char(log_buffer[2]); /// * Send #log_buffer[1]
                 break;
-            case COUNTER - 34:
-                memset(log_buffer, '0', 8);
+            case COUNTER - 40: /// Next cycle
+                if (tp_buff >= 1000) UART_send_char(log_buffer[3]);  // * If @p tp_buff is bigger or equal to 1000, send #log_buffer[3]
                 break;
-            case COUNTER - 35:
-                UART_send_char(T_str);
+            case COUNTER - 41: /// Next cycle
+                UART_send_char(comma); ///* Send a comma character
                 break;
-            case COUNTER - 36:
-                itoa(log_buffer,tp_buff,10);
+            case COUNTER - 42: /// Next cycle
+                memset(log_buffer, '0', 8);  /// * Clear #log_buffer
                 break;
-            case COUNTER - 37:
-                UART_send_char(log_buffer[0]);
+            case COUNTER - 43: /// Next cycle
+                UART_send_char(Q_str); /// * Send a 'Q'
                 break;
-            case COUNTER - 38:
-                UART_send_char(log_buffer[1]);
+            case COUNTER - 44: /// Next cycle
+                utoa(log_buffer,qp_buff,10); /// * Convert @p qp_buff into a string and store it in #log_buffer
                 break;
-            case COUNTER - 39:
-                UART_send_char(log_buffer[2]);
+            case COUNTER - 45: /// Next cycle
+                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
                 break;
-            case COUNTER - 40:
-                if (tp_buff >= 1000) UART_send_char(log_buffer[3]);  //IT IS NEEDED ??
+            case COUNTER - 46: /// Next cycle
+                if (qp_buff >= 10) UART_send_char(log_buffer[1]); /// * If @p qp_buff is bigger or equal to 10, send #log_buffer[1]
                 break;
-            case COUNTER - 41:
-                UART_send_char(comma);
+            case COUNTER - 47: /// Next cycle
+                if (qp_buff >= 100) UART_send_char(log_buffer[2]); /// * If @p qp_buff is bigger or equal to 100, send #log_buffer[2]
                 break;
-            case COUNTER - 42:
-                memset(log_buffer, '0', 8);
+            case COUNTER - 48: /// Next cycle
+                if (qp_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p qp_buff is bigger or equal to 1000, send #log_buffer[3]
                 break;
-            case COUNTER - 43:
-                UART_send_char(Q_str);
-                break;
-            case COUNTER - 44:
-                utoa(log_buffer,qp_buff,10);
-                break;
-            case COUNTER - 45:
-                UART_send_char(log_buffer[0]);
-                break;
-            case COUNTER - 46:
-                if (qp_buff >= 10) UART_send_char(log_buffer[1]);
-                break;
-            case COUNTER - 47:
-                if (qp_buff >= 100) UART_send_char(log_buffer[2]);
-                break;
-            case COUNTER - 48:
-                if (qp_buff >= 1000) UART_send_char(log_buffer[3]);
-                break;
-            case COUNTER - 49:
-                if (qp_buff >= 10000) UART_send_char(log_buffer[4]);
+            case COUNTER - 49: /// Next cycle
+                if (qp_buff >= 10000) UART_send_char(log_buffer[4]); /// * If @p qp_buff is bigger or equal to 10000, send #log_buffer[4]
                 break;  
-            case COUNTER - 50:
-                UART_send_char('<');
+            case COUNTER - 50: /// Next cycle
+                UART_send_char('<'); /// * Send a '<'
                 break;    
         } 
     }
-    if (!log_on) RESET_TIME();
+    if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
 }
-//THIS ADC IS WORKING NOW
+/**@brief This function read the ADC and store the data in the coresponding variables
+*/
 void read_ADC()
 {
-    float opr = 0;
-    AD_SET_CHAN(V_CHAN);
-    AD_CONVERT();
-    AD_RESULT();
+    float opr = 0; /// Define @p opr to store the operations inside the function
+    AD_SET_CHAN(V_CHAN); /// Select the #V_CHAN channel usign #AD_SET_CHAN(x)
+    AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
+    AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()
     //v = ad_res * 1.23779; //* 1.2207;    
-    opr = (float)(1.28655 * ad_res);   //1051/1000 with 5014/4096
-    v = opr;    //0 as offset
-    AD_SET_CHAN(I_CHAN);
-    AD_CONVERT();
-    AD_RESULT();
-    opr = (float)(1.22412 * ad_res);     //with 5014/4096
+    opr = (float)(1.28655 * ad_res); /// Apply the operation @code opr = ad_res * [(R1+R2)/(R1)] * [(Vref)/(2^12)] = ad_res * (1051/1000) * (5014/4096) @endcode
+    v = opr; /// Make #v equal to @p opr
+    AD_SET_CHAN(I_CHAN); /// Select the #I_CHAN channel usign #AD_SET_CHAN(x)
+    AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
+    AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()
+    opr = (float)(1.22412 * ad_res); /// Apply the operation @code opr = [(Vref)/(2^12)] * ad_res @endcode
     //i = opr;
-    opr = opr - 2525;
+    opr = opr - 2525; /// Apply the operation @code opr = opr - 2525 @endcode
     if (state == CHARGE | state == POSTCHARGE){
-        opr = -opr;
+        opr = -opr; ///If the #state is #CHARGE or #POSTCHARGE change the sign of the result
     }
-    i = (float)(opr * 2.5); //HALL EFFECT ACS723LL
-    AD_SET_CHAN(T_CHAN);
-    AD_CONVERT();
-    AD_RESULT();     
-    opr = (float)(1.22412 * ad_res);
-    opr = (float)(1866.3 - opr);
-    t = (float) (opr/1.169);
+    i = (float)(opr * 2.5); /// Apply the operation @code opr = opr * 2.5 @endcode which is the sensitivity of the ACS723LL
+    AD_SET_CHAN(T_CHAN); /// Select the #T_CHAN channel usign #AD_SET_CHAN(x)
+    AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
+    AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()
+    opr = (float)(1.22412 * ad_res); /// Apply the operation @code opr = [(Vref)/(2^12)] * ad_res @endcode
+    opr = (float)(1866.3 - opr); /// Apply the operation @code opr = 1866.3 - opr @endcode. Sensor STLM20 Datasheet p.6
+    t = (float) (opr/1.169); /// Apply the operation @code t = opr/1.169 @endcode. Sensor STLM20 Datasheet p.6
 }
-
+/**@brief This function is the PI control loop
+*/
 void control_loop()
-{
-    if(!cmode)
+{   
+    if(!cmode) /// If #cmode is cleared then
     {
-        pid(v, vref + 18);  //offset of 18
-    }else
+        pid(v, vref + 18);  /// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
+    }else /// Else,
     {
-        pid(i, iref);
+        pid(i, iref); /// * The #pid() function is called with @p feedback = #i and @p setpoint = #iref
     }
-    set_DC();
+    set_DC(); /// The duty cycle is set by calling the #set_DC() function
 }
-
+/**@brief This function control the timing
+*/
 void timing()
 {
-    if(count)
+    if(count) /// If #count is other than zero, then 
     {
-        count--;
-    }else
+        count--; /// * Decrease it
+    }else /// Else,
     {
-        count = COUNTER;
-        if(second < 59) second++;
-        else{second = 0; minute++;}
+        count = COUNTER; /// * Make #count equal to #COUNTER
+        if(second < 59) second++; /// * If #second is smaller than 59 then increase it
+        else{second = 0; minute++;} /// * Else, make #second zero and increase #minute
     }
 }
-//THIS NEXT FUNCTION SEEMS LIKE A GOOD SOLUTION I TESTED IT AGAINST OTHERS AND STILL THE BEST
+/**@brief This function calculate the averages
+*/
 void calculate_avg()
 {
     switch(count)
     {
-        case COUNTER:
-            iprom = 0;
-            vprom = 0;
-            tprom = 0;
+        case COUNTER: /// If #count = #COUNTER
+            iprom = 0; /// * Make #iprom zero
+            vprom = 0; /// * Make #vprom zero
+            tprom = 0; /// * Make #tprom zero
             break;
-        case 0:
-            iprom /= COUNTER;
-            vprom /= COUNTER;
-            tprom /= COUNTER;
-            #if (NI_MH_CHEM) 
-            if ((int) vprom > vmax) vmax = (int) vprom;
+        case 0: /// If #count = 0
+            iprom /= COUNTER; /// * Divide the value stored in #iprom between COUNTER to obtain the average
+            vprom /= COUNTER; /// * Divide the value stored in #vprom between COUNTER to obtain the average
+            tprom /= COUNTER; /// * Divide the value stored in #tprom between COUNTER to obtain the average
+            qprom += (iprom/3600); /// * Divide #iprom between 3600 and add it to #qprom to integrate the current over time
+            #if (NI_MH_CHEM)  
+            if ((int) vprom > vmax) vmax = (int) vprom; /// * If is the chemistry is Ni-MH and #vprom is bigger than #vmax then set #vmax = #vprom
             #endif
-            qprom += (iprom/3600);
             break;
-        default:
-            iprom += i;
-            vprom += v;
-            //tprom += t;
-            tprom += dc * 1.953125;
+        default: /// If #count is not any of the previous cases then
+            iprom += i; /// * Accumulate #i in #iprom
+            vprom += v; /// * Accumulate #v in #vprom
+            //tprom += t; /// * Accumulate #t in #tprom
+            tprom += dc * 1.953125; // TEST FOR DC
             break;
     }   
 }
-
+/**@brief This function activate the UART reception interruption 
+*/
 void UART_interrupt_enable()
 {
-    char clear_buffer = 0;
-    while(RCIF){                //clear the reception register
-        clear_buffer = RC1REG;
+    char clear_buffer = 0; /// * Define the variable @p clear_buffer, used to empty the UART buffer
+    while(RCIF){
+        clear_buffer = RC1REG; /// * Clear the reception buffer and store it in @p clear_buffer
     }
-    RCIE = 1;                   //enable reception interrupts
-    TXIE = 0;                   //disable transmision interrupts
+    RCIE = 1; /// * Enable reception interrupts
+    TXIE = 0; // * Disable transmision interrupts
 }
-
-//**Function to send one byte of date to UART**//
+/**@brief This function send one byte of data to UART
+* @param bt character to be send
+*/
 void UART_send_char(char bt)  
 {
     while(0 == TXIF)
     {
-    }// hold the program till TX buffer is free
-    TX1REG = bt; //Load the transmitter buffer with the received value
+    }/// * Hold the program until the transmission buffer is free
+    TX1REG = bt; /// * Load the transmission buffer with @p bt
 }
-//_____________End of function________________//
-
-//**Function to get one byte of date from UART**//
+/**@brief This function receive one byte of data from UART
+* @return RC1REG reception register
+*/
 char UART_get_char()   
 {
-    if(OERR) // check for Error 
+    if(OERR) /// If there is error 
     {
-        CREN = 0; //If error -> Reset 
-        CREN = 1; //If error -> Reset 
+        CREN = 0; /// * Clear the error 
+        CREN = 1; /// * Restart
     }
     
-    while(!RCIF);  // hold the program till RX buffer is free
+    while(!RCIF);  /// Hold the program until the reception buffer is free
     
-    return RC1REG; //receive the value and send it to main function
+    return RC1REG; /// Receive the value and return it
 }
-//_____________End of function________________//
-
-//**Function to convert string to byte**//
+/**@brief This function send a string using UART
+* @param st_pt pointer to string to be send
+*/
 void UART_send_string(char* st_pt)
 {
-    while(*st_pt) //if there is a char
-        UART_send_char(*st_pt++); //process it as a byte data
+    while(*st_pt) /// While there is a byte to send
+        UART_send_char(*st_pt++); /// * Send it usign #UART_send_char() and then increase the pointer possition
 }
-
+/**@brief This function convert a number to string and then send it using UART
+* @param value integer to be send
+*/
 void display_value(int value)
 {   
-    char buffer[6]; 
-  
-    itoa(buffer,value,10);  
-  
-    UART_send_string((char*)buffer);
+    char buffer[6]; /// * Define @p buffer to used it for store character storage
+    itoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
+    UART_send_string((char*)buffer); /// * Send @p buffer using #UART_send_string()
 }
-
+/**@brief This function activate the desired relay in the switcher board according to the value
+* of #cell_count
+*/
 void Cell_ON()
 {
-//    if (cell_count == 49)
+//    if (cell_count == '1') /// If cell_count = '1'
 //    {
-//        CELL1_ON;
-//        CELL2_OFF;
-//        CELL3_OFF;
-//        CELL4_OFF;
-//    }else if (cell_count == 50)
+//        CELL1_ON; /// * Turn ON cell #1 by calling #CELL1_ON
+//        CELL2_OFF; /// * Turn OFF cell #2 by calling #CELL2_OFF
+//        CELL3_OFF; /// * Turn OFF cell #3 by calling #CELL3_OFF
+//        CELL4_OFF; /// * Turn OFF cell #4 by calling #CELL4_OFF
+//    }else if (cell_count == '2')
 //    {
-//        CELL1_OFF;
-//        CELL2_ON;
-//        CELL3_OFF;
-//        CELL4_OFF;        
-//    }else if (cell_count == 51)
+//        CELL1_OFF; /// * Turn OFF cell #1 by calling #CELL1_OFF
+//        CELL2_ON; /// * Turn ON cell #2 by calling #CELL2_ON
+//        CELL3_OFF; /// * Turn OFF cell #3 by calling #CELL3_OFF
+//        CELL4_OFF; /// * Turn OFF cell #4 by calling #CELL4_OFF 
+//    }else if (cell_count == '3')
 //    {
-//        CELL1_OFF;
-//        CELL2_OFF;
-//        CELL3_ON;
-//        CELL4_OFF;        
-//    }else if (cell_count == 52)
+//        CELL1_OFF; /// * Turn OFF cell #1 by calling #CELL1_OFF
+//        CELL2_OFF; /// * Turn OFF cell #2 by calling #CELL2_OFF
+//        CELL3_ON; /// * Turn ON cell #3 by calling #CELL3_ON
+//        CELL4_OFF; /// * Turn OFF cell #4 by calling #CELL4_OFF    
+//    }else if (cell_count == '4')
 //    {
-//        CELL1_OFF;
-//        CELL2_OFF;
-//        CELL3_OFF;
-//        CELL4_ON;        
+//        CELL1_OFF; /// * Turn OFF cell #1 by calling #CELL1_OFF
+//        CELL2_OFF; /// * Turn OFF cell #2 by calling #CELL2_OFF
+//        CELL3_OFF; /// * Turn OFF cell #3 by calling #CELL3_OFF
+//        CELL4_ON; /// * Turn ON cell #4 by calling #CELL4_ON    
 //    }
 }
-
+/**@brief This function deactivate all relays in the switcher board
+*/
 void Cell_OFF()
 {
-//    CELL1_OFF;
-//    CELL2_OFF;
-//    CELL3_OFF;
-//    CELL4_OFF;
+//    CELL1_OFF; /// * Turn OFF cell #1 by calling #CELL1_OFF
+//    CELL2_OFF; /// * Turn OFF cell #2 by calling #CELL2_OFF
+//    CELL3_OFF; /// * Turn OFF cell #3 by calling #CELL3_OFF
+//    CELL4_OFF; /// * Turn OFF cell #4 by calling #CELL4_OFF  
 }

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['qp_5fbuff',['qp_buff',['../hardware_8h.html#af7319d00b273407ffe5f28b29e97a1c7',1,'hardware.h']]],
-  ['qprom',['qprom',['../hardware_8h.html#a16200aa761421d421187ce19c33dfcd0',1,'hardware.h']]]
+  ['option',['option',['../state__machine_8h.html#aa138b263667688f0a28af01c14f90f8a',1,'state_machine.h']]]
 ];

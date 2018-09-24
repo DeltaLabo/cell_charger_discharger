@@ -131,15 +131,19 @@ Macros</h2></td></tr>
 <tr class="memitem:aa926591f10e87bb1273848225e6b316c"><td class="memItemLeft" align="right" valign="top"><a id="aa926591f10e87bb1273848225e6b316c"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>CELL4_OFF</b>&#160;&#160;&#160;PORTCbits.RC1 = 0</td></tr>
 <tr class="separator:aa926591f10e87bb1273848225e6b316c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a450cfb6cea2848f3c6459ed5c0df9eef"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef">AD_SET_CHAN</a>(x)&#160;&#160;&#160;{ ADCON0bits.CHS = x; __delay_us(1); }</td></tr>
+<tr class="memitem:a450cfb6cea2848f3c6459ed5c0df9eef"><td class="memItemLeft" align="right" valign="top"><a id="a450cfb6cea2848f3c6459ed5c0df9eef"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef">AD_SET_CHAN</a>(x)&#160;&#160;&#160;{ ADCON0bits.CHS = x; __delay_us(1); }</td></tr>
+<tr class="memdesc:a450cfb6cea2848f3c6459ed5c0df9eef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the ADC channel to <code>x</code> and wait for 5 microseconds. <br /></td></tr>
 <tr class="separator:a450cfb6cea2848f3c6459ed5c0df9eef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57f8ee4c55d0b9230535c602e01dbbdc"><td class="memItemLeft" align="right" valign="top"><a id="a57f8ee4c55d0b9230535c602e01dbbdc"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>AD_CONVERT</b>()&#160;&#160;&#160;{ GO_nDONE = 1; while(GO_nDONE);}</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a57f8ee4c55d0b9230535c602e01dbbdc">AD_CONVERT</a>()&#160;&#160;&#160;{ GO_nDONE = 1; while(GO_nDONE);}</td></tr>
+<tr class="memdesc:a57f8ee4c55d0b9230535c602e01dbbdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the conversion and wait until it is finished. <br /></td></tr>
 <tr class="separator:a57f8ee4c55d0b9230535c602e01dbbdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a049dca77d5e2be6f3780ce6a632a5ef3"><td class="memItemLeft" align="right" valign="top"><a id="a049dca77d5e2be6f3780ce6a632a5ef3"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>AD_RESULT</b>()&#160;&#160;&#160;{ <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> = 0; <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> = (ADRESL &amp; 0xFF)|((ADRESH &lt;&lt; 8) &amp; 0xF00);}</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a049dca77d5e2be6f3780ce6a632a5ef3">AD_RESULT</a>()&#160;&#160;&#160;{ <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> = 0; <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> = (ADRESL &amp; 0xFF)|((ADRESH &lt;&lt; 8) &amp; 0xF00);}</td></tr>
+<tr class="memdesc:a049dca77d5e2be6f3780ce6a632a5ef3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store conversion result in <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3" title="Result of an ADC measurement. ">ad_res</a>. <br /></td></tr>
 <tr class="separator:a049dca77d5e2be6f3780ce6a632a5ef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER</a>()&#160;&#160;&#160;{ <a class="el" href="state__machine_8h.html#a0cc5d179fc4afa584f15244b35b01521">conv</a> = 0; RA1 = 1; <a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> = <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca">DC_MIN</a>; set_DC(); Cell_OFF(); <a class="el" href="hardware_8h.html#a2f57a3156036b713dc852737da390252">LOG_OFF</a>();}</td></tr>
+<tr class="memitem:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER</a>()&#160;&#160;&#160;{ <a class="el" href="state__machine_8h.html#a0cc5d179fc4afa584f15244b35b01521">conv</a> = 0; RA1 = 1; <a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> = <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca">DC_MIN</a>; <a class="el" href="hardware_8h.html#a93f3630c962d9bcafd71e4c4a03547c1">set_DC</a>(); <a class="el" href="hardware_8h.html#a5bbc85db8cf08142e0984d07b97e722b">Cell_OFF</a>(); <a class="el" href="hardware_8h.html#a2f57a3156036b713dc852737da390252">LOG_OFF</a>();}</td></tr>
 <tr class="memdesc:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop the converter.  <a href="#ae1cb4a0872e924cf862a97b33dd2edf0">More...</a><br /></td></tr>
 <tr class="separator:ae1cb4a0872e924cf862a97b33dd2edf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acda4f577829f9d4ff58b9636903cbfe0"><td class="memItemLeft" align="right" valign="top"><a id="acda4f577829f9d4ff58b9636903cbfe0"></a>
@@ -147,15 +151,15 @@ Macros</h2></td></tr>
 <tr class="memdesc:acda4f577829f9d4ff58b9636903cbfe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear transmission buffer and turn ON UART transmission interrupts. <br /></td></tr>
 <tr class="separator:acda4f577829f9d4ff58b9636903cbfe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d26e5ca6078be961b6b42719ebca269"><td class="memItemLeft" align="right" valign="top"><a id="a4d26e5ca6078be961b6b42719ebca269"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a4d26e5ca6078be961b6b42719ebca269">LOG_ON</a>()&#160;&#160;&#160;{ log_on = 1; }</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a4d26e5ca6078be961b6b42719ebca269">LOG_ON</a>()&#160;&#160;&#160;{ <a class="el" href="hardware_8h.html#a8c9205727cab72e65f536e9ef6445db0">log_on</a> = 1; }</td></tr>
 <tr class="memdesc:a4d26e5ca6078be961b6b42719ebca269"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn OFF logging in the terminal. <br /></td></tr>
 <tr class="separator:a4d26e5ca6078be961b6b42719ebca269"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f57a3156036b713dc852737da390252"><td class="memItemLeft" align="right" valign="top"><a id="a2f57a3156036b713dc852737da390252"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a2f57a3156036b713dc852737da390252">LOG_OFF</a>()&#160;&#160;&#160;{ log_on = 0; }</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a2f57a3156036b713dc852737da390252">LOG_OFF</a>()&#160;&#160;&#160;{ <a class="el" href="hardware_8h.html#a8c9205727cab72e65f536e9ef6445db0">log_on</a> = 0; }</td></tr>
 <tr class="memdesc:a2f57a3156036b713dc852737da390252"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn ON logging in the terminal. <br /></td></tr>
 <tr class="separator:a2f57a3156036b713dc852737da390252"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59595b0c67a8bfb8dd65e914a18b83c7"><td class="memItemLeft" align="right" valign="top"><a id="a59595b0c67a8bfb8dd65e914a18b83c7"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a59595b0c67a8bfb8dd65e914a18b83c7">RESET_TIME</a>()&#160;&#160;&#160;{ minute = 0; second = -1; }</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a59595b0c67a8bfb8dd65e914a18b83c7">RESET_TIME</a>()&#160;&#160;&#160;{ <a class="el" href="hardware_8h.html#a5edffad982a0566ad01d95005474eae3">minute</a> = 0; <a class="el" href="hardware_8h.html#a6cf35be1947a62f134392fcb1b3c54d2">second</a> = -1; }</td></tr>
 <tr class="memdesc:a59595b0c67a8bfb8dd65e914a18b83c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset timers. <br /></td></tr>
 <tr class="separator:a59595b0c67a8bfb8dd65e914a18b83c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a998e4507851dde706a60a5b475eb27ca"><td class="memItemLeft" align="right" valign="top"><a id="a998e4507851dde706a60a5b475eb27ca"></a>
@@ -174,8 +178,16 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9">COUNTER</a>&#160;&#160;&#160;250</td></tr>
 <tr class="memdesc:a7194053a42881b1b4bc8546b4c8713e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter value, needed to obtained one second between counts. <br /></td></tr>
 <tr class="separator:a7194053a42881b1b4bc8546b4c8713e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31ae8362bae13f23cc6b521a7499a5ee"><td class="memItemLeft" align="right" valign="top"><a id="a31ae8362bae13f23cc6b521a7499a5ee"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a31ae8362bae13f23cc6b521a7499a5ee">CV_kp</a>&#160;&#160;&#160;0.4</td></tr>
+<tr class="memdesc:a31ae8362bae13f23cc6b521a7499a5ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Proportional constant for CV mode. <br /></td></tr>
+<tr class="separator:a31ae8362bae13f23cc6b521a7499a5ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57181200f8247c552f8d9751003d77c6"><td class="memItemLeft" align="right" valign="top"><a id="a57181200f8247c552f8d9751003d77c6"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a57181200f8247c552f8d9751003d77c6">CV_ki</a>&#160;&#160;&#160;0.5</td></tr>
+<tr class="memdesc:a57181200f8247c552f8d9751003d77c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integral constant for CV mode. <br /></td></tr>
+<tr class="separator:a57181200f8247c552f8d9751003d77c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0597ae89918183de03119186d8995e75"><td class="memItemLeft" align="right" valign="top"><a id="a0597ae89918183de03119186d8995e75"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a0597ae89918183de03119186d8995e75">LINEBREAK</a>&#160;&#160;&#160;UART_send_char(10)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a0597ae89918183de03119186d8995e75">LINEBREAK</a>&#160;&#160;&#160;<a class="el" href="hardware_8h.html#abf92d1a230db7234bdf5119716a0cf5f">UART_send_char</a>(10)</td></tr>
 <tr class="memdesc:a0597ae89918183de03119186d8995e75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a linebreak to the terminal. <br /></td></tr>
 <tr class="separator:a0597ae89918183de03119186d8995e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -188,58 +200,60 @@ Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Shutdown_Peripherals</b> (void)</td></tr>
 <tr class="separator:aa9a143056627f837b281f195ba522a7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35df161adff36e572d40326f07d85d2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a35df161adff36e572d40326f07d85d2b">pid</a> (float feedback, unsigned setpoint)</td></tr>
-<tr class="memdesc:a35df161adff36e572d40326f07d85d2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for the PI controller.  <a href="#a35df161adff36e572d40326f07d85d2b">More...</a><br /></td></tr>
+<tr class="memdesc:a35df161adff36e572d40326f07d85d2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function defines the PI controller.  <a href="#a35df161adff36e572d40326f07d85d2b">More...</a><br /></td></tr>
 <tr class="separator:a35df161adff36e572d40326f07d85d2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93f3630c962d9bcafd71e4c4a03547c1"><td class="memItemLeft" align="right" valign="top"><a id="a93f3630c962d9bcafd71e4c4a03547c1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_DC</b> (void)</td></tr>
+<tr class="memitem:a93f3630c962d9bcafd71e4c4a03547c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a93f3630c962d9bcafd71e4c4a03547c1">set_DC</a> (void)</td></tr>
+<tr class="memdesc:a93f3630c962d9bcafd71e4c4a03547c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function sets the desired duty cycle.  <a href="#a93f3630c962d9bcafd71e4c4a03547c1">More...</a><br /></td></tr>
 <tr class="separator:a93f3630c962d9bcafd71e4c4a03547c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1402bbcb4580b6798483c7821e6106d2"><td class="memItemLeft" align="right" valign="top"><a id="a1402bbcb4580b6798483c7821e6106d2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>read_ADC</b> (void)</td></tr>
+<tr class="memitem:a1402bbcb4580b6798483c7821e6106d2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a1402bbcb4580b6798483c7821e6106d2">read_ADC</a> (void)</td></tr>
+<tr class="memdesc:a1402bbcb4580b6798483c7821e6106d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function read the ADC and store the data in the coresponding variables.  <a href="#a1402bbcb4580b6798483c7821e6106d2">More...</a><br /></td></tr>
 <tr class="separator:a1402bbcb4580b6798483c7821e6106d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b8b498532d1d667c624601a3cf715bc"><td class="memItemLeft" align="right" valign="top"><a id="a0b8b498532d1d667c624601a3cf715bc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>log_control</b> (void)</td></tr>
+<tr class="memitem:a0b8b498532d1d667c624601a3cf715bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a0b8b498532d1d667c624601a3cf715bc">log_control</a> (void)</td></tr>
+<tr class="memdesc:a0b8b498532d1d667c624601a3cf715bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function takes care of printing the test data using the UART.  <a href="#a0b8b498532d1d667c624601a3cf715bc">More...</a><br /></td></tr>
 <tr class="separator:a0b8b498532d1d667c624601a3cf715bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4389e5f80fbf28788f2f648f26d93fce"><td class="memItemLeft" align="right" valign="top"><a id="a4389e5f80fbf28788f2f648f26d93fce"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>display_value</b> (int value)</td></tr>
+<tr class="memitem:a4389e5f80fbf28788f2f648f26d93fce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a4389e5f80fbf28788f2f648f26d93fce">display_value</a> (int value)</td></tr>
+<tr class="memdesc:a4389e5f80fbf28788f2f648f26d93fce"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function convert a number to string and then send it using UART.  <a href="#a4389e5f80fbf28788f2f648f26d93fce">More...</a><br /></td></tr>
 <tr class="separator:a4389e5f80fbf28788f2f648f26d93fce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ab308304942d68ad5733f1a0a9685a4"><td class="memItemLeft" align="right" valign="top"><a id="a9ab308304942d68ad5733f1a0a9685a4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>cc_cv_mode</b> (float current_voltage, unsigned int reference_voltage, char CC_mode_status)</td></tr>
+<tr class="memitem:a9ab308304942d68ad5733f1a0a9685a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a9ab308304942d68ad5733f1a0a9685a4">cc_cv_mode</a> (float current_voltage, unsigned int reference_voltage, char CC_mode_status)</td></tr>
+<tr class="memdesc:a9ab308304942d68ad5733f1a0a9685a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function switches between CC and CV mode.  <a href="#a9ab308304942d68ad5733f1a0a9685a4">More...</a><br /></td></tr>
 <tr class="separator:a9ab308304942d68ad5733f1a0a9685a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4819615331bcb65942c83dd61447059"><td class="memItemLeft" align="right" valign="top"><a id="ae4819615331bcb65942c83dd61447059"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>char_disc</b> (void)</td></tr>
 <tr class="separator:ae4819615331bcb65942c83dd61447059"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f05187afaedd0cd35e9137eaf557ef8"><td class="memItemLeft" align="right" valign="top"><a id="a4f05187afaedd0cd35e9137eaf557ef8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>control_loop</b> (void)</td></tr>
+<tr class="memitem:a4f05187afaedd0cd35e9137eaf557ef8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a4f05187afaedd0cd35e9137eaf557ef8">control_loop</a> (void)</td></tr>
+<tr class="memdesc:a4f05187afaedd0cd35e9137eaf557ef8"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is the PI control loop.  <a href="#a4f05187afaedd0cd35e9137eaf557ef8">More...</a><br /></td></tr>
 <tr class="separator:a4f05187afaedd0cd35e9137eaf557ef8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2f580a1d85442504950b07e3c8f1145"><td class="memItemLeft" align="right" valign="top"><a id="ab2f580a1d85442504950b07e3c8f1145"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>calculate_avg</b> (void)</td></tr>
+<tr class="memitem:ab2f580a1d85442504950b07e3c8f1145"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ab2f580a1d85442504950b07e3c8f1145">calculate_avg</a> (void)</td></tr>
+<tr class="memdesc:ab2f580a1d85442504950b07e3c8f1145"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function calculate the averages.  <a href="#ab2f580a1d85442504950b07e3c8f1145">More...</a><br /></td></tr>
 <tr class="separator:ab2f580a1d85442504950b07e3c8f1145"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4bcf31185383adefc22f2209541c9991"><td class="memItemLeft" align="right" valign="top"><a id="a4bcf31185383adefc22f2209541c9991"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>UART_interrupt_enable</b> (void)</td></tr>
+<tr class="memitem:a4bcf31185383adefc22f2209541c9991"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a4bcf31185383adefc22f2209541c9991">UART_interrupt_enable</a> (void)</td></tr>
+<tr class="memdesc:a4bcf31185383adefc22f2209541c9991"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function activate the UART reception interruption.  <a href="#a4bcf31185383adefc22f2209541c9991">More...</a><br /></td></tr>
 <tr class="separator:a4bcf31185383adefc22f2209541c9991"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf92d1a230db7234bdf5119716a0cf5f"><td class="memItemLeft" align="right" valign="top"><a id="abf92d1a230db7234bdf5119716a0cf5f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>UART_send_char</b> (char bt)</td></tr>
+<tr class="memitem:abf92d1a230db7234bdf5119716a0cf5f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#abf92d1a230db7234bdf5119716a0cf5f">UART_send_char</a> (char bt)</td></tr>
+<tr class="memdesc:abf92d1a230db7234bdf5119716a0cf5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function send one byte of data to UART.  <a href="#abf92d1a230db7234bdf5119716a0cf5f">More...</a><br /></td></tr>
 <tr class="separator:abf92d1a230db7234bdf5119716a0cf5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae033bb8a9289af391aef3cc3bd57a0e9"><td class="memItemLeft" align="right" valign="top"><a id="ae033bb8a9289af391aef3cc3bd57a0e9"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>UART_get_char</b> (void)</td></tr>
+<tr class="memitem:ae033bb8a9289af391aef3cc3bd57a0e9"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ae033bb8a9289af391aef3cc3bd57a0e9">UART_get_char</a> (void)</td></tr>
+<tr class="memdesc:ae033bb8a9289af391aef3cc3bd57a0e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function receive one byte of data from UART.  <a href="#ae033bb8a9289af391aef3cc3bd57a0e9">More...</a><br /></td></tr>
 <tr class="separator:ae033bb8a9289af391aef3cc3bd57a0e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac27ccd7f2eb1f5e96bb091338acc1e7f"><td class="memItemLeft" align="right" valign="top"><a id="ac27ccd7f2eb1f5e96bb091338acc1e7f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>UART_send_string</b> (char *st_pt)</td></tr>
+<tr class="memitem:ac27ccd7f2eb1f5e96bb091338acc1e7f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ac27ccd7f2eb1f5e96bb091338acc1e7f">UART_send_string</a> (char *st_pt)</td></tr>
+<tr class="memdesc:ac27ccd7f2eb1f5e96bb091338acc1e7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function send a string using UART.  <a href="#ac27ccd7f2eb1f5e96bb091338acc1e7f">More...</a><br /></td></tr>
 <tr class="separator:ac27ccd7f2eb1f5e96bb091338acc1e7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75740b5600396316399a5608fe2cb4d3"><td class="memItemLeft" align="right" valign="top"><a id="a75740b5600396316399a5608fe2cb4d3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Cell_ON</b> (void)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a75740b5600396316399a5608fe2cb4d3">Cell_ON</a> (void)</td></tr>
+<tr class="memdesc:a75740b5600396316399a5608fe2cb4d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function activate the desired relay in the switcher board according to the value of <a class="el" href="state__machine_8h.html#a2f582152bcd11169abaab8dfb2e0ae2a" title="Cell counter from &#39;1&#39; to &#39;4&#39;. Initialized as &#39;1&#39;. ">cell_count</a>. <br /></td></tr>
 <tr class="separator:a75740b5600396316399a5608fe2cb4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bbc85db8cf08142e0984d07b97e722b"><td class="memItemLeft" align="right" valign="top"><a id="a5bbc85db8cf08142e0984d07b97e722b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Cell_OFF</b> (void)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a5bbc85db8cf08142e0984d07b97e722b">Cell_OFF</a> (void)</td></tr>
+<tr class="memdesc:a5bbc85db8cf08142e0984d07b97e722b"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function deactivate all relays in the switcher board. <br /></td></tr>
 <tr class="separator:a5bbc85db8cf08142e0984d07b97e722b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2a34e3f615b83a0c9d721b76899b2a4"><td class="memItemLeft" align="right" valign="top"><a id="ad2a34e3f615b83a0c9d721b76899b2a4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>timing</b> (void)</td></tr>
+<tr class="memitem:ad2a34e3f615b83a0c9d721b76899b2a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ad2a34e3f615b83a0c9d721b76899b2a4">timing</a> (void)</td></tr>
+<tr class="memdesc:ad2a34e3f615b83a0c9d721b76899b2a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function control the timing.  <a href="#ad2a34e3f615b83a0c9d721b76899b2a4">More...</a><br /></td></tr>
 <tr class="separator:ad2a34e3f615b83a0c9d721b76899b2a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a6a9e89d63eb610dfe238b0a840979421"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421">count</a> = <a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9">COUNTER</a></td></tr>
-<tr class="memdesc:a6a9e89d63eb610dfe238b0a840979421"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter that should be cleared every second. Initialized as <a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9">COUNTER</a>.  <a href="#a6a9e89d63eb610dfe238b0a840979421">More...</a><br /></td></tr>
+<tr class="memdesc:a6a9e89d63eb610dfe238b0a840979421"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter that should be cleared every second. Initialized as <a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9" title="Counter value, needed to obtained one second between counts. ">COUNTER</a>.  <a href="#a6a9e89d63eb610dfe238b0a840979421">More...</a><br /></td></tr>
 <tr class="separator:a6a9e89d63eb610dfe238b0a840979421"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02303eca810feb8092be2ff939a714c3"><td class="memItemLeft" align="right" valign="top"><a id="a02303eca810feb8092be2ff939a714c3"></a>
 unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a></td></tr>
@@ -259,19 +273,19 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="har
 <tr class="separator:afea36502e9d227ff62c5fb2719a246f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8a45b535ece3b14958359be03fa74b0"><td class="memItemLeft" align="right" valign="top"><a id="aa8a45b535ece3b14958359be03fa74b0"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0">vprom</a> = 0</td></tr>
-<tr class="memdesc:aa8a45b535ece3b14958359be03fa74b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one-second-average of <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72">v</a>. Initialized as 0. <br /></td></tr>
+<tr class="memdesc:aa8a45b535ece3b14958359be03fa74b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one-second-average of <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72" title="Last voltage ADC measurement. ">v</a> . Initialized as 0. <br /></td></tr>
 <tr class="separator:aa8a45b535ece3b14958359be03fa74b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afce1f09585094a8102cf627d00de6d6f"><td class="memItemLeft" align="right" valign="top"><a id="afce1f09585094a8102cf627d00de6d6f"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f">iprom</a> = 0</td></tr>
-<tr class="memdesc:afce1f09585094a8102cf627d00de6d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one-second-average of <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3">i</a>. Initialized as 0. <br /></td></tr>
+<tr class="memdesc:afce1f09585094a8102cf627d00de6d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one-second-average of <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3" title="Last current ADC measurement. ">i</a> . Initialized as 0. <br /></td></tr>
 <tr class="separator:afce1f09585094a8102cf627d00de6d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade869e001da18e227da4d9dbb0b616da"><td class="memItemLeft" align="right" valign="top"><a id="ade869e001da18e227da4d9dbb0b616da"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da">tprom</a> = 0</td></tr>
-<tr class="memdesc:ade869e001da18e227da4d9dbb0b616da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one-second-average of <a class="el" href="hardware_8h.html#afea36502e9d227ff62c5fb2719a246f2">t</a>. Initialized as 0. <br /></td></tr>
+<tr class="memdesc:ade869e001da18e227da4d9dbb0b616da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last one-second-average of <a class="el" href="hardware_8h.html#afea36502e9d227ff62c5fb2719a246f2" title="Last temperature ADC measurement. ">t</a> . Initialized as 0. <br /></td></tr>
 <tr class="separator:ade869e001da18e227da4d9dbb0b616da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a16200aa761421d421187ce19c33dfcd0"><td class="memItemLeft" align="right" valign="top"><a id="a16200aa761421d421187ce19c33dfcd0"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a16200aa761421d421187ce19c33dfcd0">qprom</a> = 0</td></tr>
-<tr class="memdesc:a16200aa761421d421187ce19c33dfcd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integration of <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3">i</a>. Initialized as 0. <br /></td></tr>
+<tr class="memdesc:a16200aa761421d421187ce19c33dfcd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integration of <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3" title="Last current ADC measurement. ">i</a> . Initialized as 0. <br /></td></tr>
 <tr class="separator:a16200aa761421d421187ce19c33dfcd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb4eb9ad2dc148d828a7f6e270aa0f09"><td class="memItemLeft" align="right" valign="top"><a id="aeb4eb9ad2dc148d828a7f6e270aa0f09"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aeb4eb9ad2dc148d828a7f6e270aa0f09">vmax</a> = 0</td></tr>
@@ -309,40 +323,41 @@ char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hard
 unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> = 0</td></tr>
 <tr class="memdesc:a7feaae074885a9d2f57a75e0809ee4ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duty cycle. <br /></td></tr>
 <tr class="separator:a7feaae074885a9d2f57a75e0809ee4ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae164380501a47692b208c695e95a5311"><td class="memItemLeft" align="right" valign="top"><a id="ae164380501a47692b208c695e95a5311"></a>
-unsigned char&#160;</td><td class="memItemRight" valign="bottom"><b>spb</b></td></tr>
-<tr class="separator:ae164380501a47692b208c695e95a5311"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ac955a54afa8f9039b93a3f30b04acd"><td class="memItemLeft" align="right" valign="top"><a id="a2ac955a54afa8f9039b93a3f30b04acd"></a>
 char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a2ac955a54afa8f9039b93a3f30b04acd">clear</a></td></tr>
 <tr class="memdesc:a2ac955a54afa8f9039b93a3f30b04acd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variable to clear the transmission buffer of UART. <br /></td></tr>
 <tr class="separator:a2ac955a54afa8f9039b93a3f30b04acd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c9205727cab72e65f536e9ef6445db0"><td class="memItemLeft" align="right" valign="top"><a id="a8c9205727cab72e65f536e9ef6445db0"></a>
-unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>log_on</b> = 0</td></tr>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a8c9205727cab72e65f536e9ef6445db0">log_on</a> = 0</td></tr>
+<tr class="memdesc:a8c9205727cab72e65f536e9ef6445db0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variable to indicate if the log is activated. <br /></td></tr>
 <tr class="separator:a8c9205727cab72e65f536e9ef6445db0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20f2ad896b5d2be3ebe2145c7b00e033"><td class="memItemLeft" align="right" valign="top"><a id="a20f2ad896b5d2be3ebe2145c7b00e033"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>log_buffer</b> [8] ={0}</td></tr>
+char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033">log_buffer</a> [8] ={0}</td></tr>
+<tr class="memdesc:a20f2ad896b5d2be3ebe2145c7b00e033"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temporary buffer used between loops of <a class="el" href="hardware_8h.html#a0b8b498532d1d667c624601a3cf715bc" title="This function takes care of printing the test data using the UART. ">log_control()</a> <br /></td></tr>
 <tr class="separator:a20f2ad896b5d2be3ebe2145c7b00e033"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a639c6c3902af09dac255279f04f0db89"><td class="memItemLeft" align="right" valign="top"><a id="a639c6c3902af09dac255279f04f0db89"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a639c6c3902af09dac255279f04f0db89">ip_buff</a> = 0</td></tr>
-<tr class="memdesc:a639c6c3902af09dac255279f04f0db89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current buffer to send to the terminal usign <a class="el" href="#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a>. <br /></td></tr>
+<tr class="memdesc:a639c6c3902af09dac255279f04f0db89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current buffer to send to the terminal usign <a class="el" href="hardware_8h.html#a0b8b498532d1d667c624601a3cf715bc" title="This function takes care of printing the test data using the UART. ">log_control()</a> <br /></td></tr>
 <tr class="separator:a639c6c3902af09dac255279f04f0db89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9b685d478b266b9155c576dd4da0dc0"><td class="memItemLeft" align="right" valign="top"><a id="aa9b685d478b266b9155c576dd4da0dc0"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#aa9b685d478b266b9155c576dd4da0dc0">vp_buff</a> = 0</td></tr>
-<tr class="memdesc:aa9b685d478b266b9155c576dd4da0dc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Voltage buffer to send to the terminal usign <a class="el" href="#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a>. <br /></td></tr>
+<tr class="memdesc:aa9b685d478b266b9155c576dd4da0dc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Voltage buffer to send to the terminal usign <a class="el" href="hardware_8h.html#a0b8b498532d1d667c624601a3cf715bc" title="This function takes care of printing the test data using the UART. ">log_control()</a> <br /></td></tr>
 <tr class="separator:aa9b685d478b266b9155c576dd4da0dc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f437b35570f9f0fd44ec4ba168ac115"><td class="memItemLeft" align="right" valign="top"><a id="a9f437b35570f9f0fd44ec4ba168ac115"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a9f437b35570f9f0fd44ec4ba168ac115">tp_buff</a> = 0</td></tr>
-<tr class="memdesc:a9f437b35570f9f0fd44ec4ba168ac115"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temperature buffer to send to the terminal usign <a class="el" href="#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a>. <br /></td></tr>
+<tr class="memdesc:a9f437b35570f9f0fd44ec4ba168ac115"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temperature buffer to send to the terminal usign (). <br /></td></tr>
 <tr class="separator:a9f437b35570f9f0fd44ec4ba168ac115"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7319d00b273407ffe5f28b29e97a1c7"><td class="memItemLeft" align="right" valign="top"><a id="af7319d00b273407ffe5f28b29e97a1c7"></a>
 unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#af7319d00b273407ffe5f28b29e97a1c7">qp_buff</a> = 0</td></tr>
-<tr class="memdesc:af7319d00b273407ffe5f28b29e97a1c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Capacity buffer to send to the terminal usign <a class="el" href="#a76c124e0fe411cb223495b945f9e7b6d">log_control()</a>. <br /></td></tr>
+<tr class="memdesc:af7319d00b273407ffe5f28b29e97a1c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Capacity buffer to send to the terminal usign <a class="el" href="hardware_8h.html#a0b8b498532d1d667c624601a3cf715bc" title="This function takes care of printing the test data using the UART. ">log_control()</a> . <br /></td></tr>
 <tr class="separator:af7319d00b273407ffe5f28b29e97a1c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cf35be1947a62f134392fcb1b3c54d2"><td class="memItemLeft" align="right" valign="top"><a id="a6cf35be1947a62f134392fcb1b3c54d2"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>second</b> = 0</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a6cf35be1947a62f134392fcb1b3c54d2">second</a> = 0</td></tr>
+<tr class="memdesc:a6cf35be1947a62f134392fcb1b3c54d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seconds counter, resetted after 59 seconds. <br /></td></tr>
 <tr class="separator:a6cf35be1947a62f134392fcb1b3c54d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5edffad982a0566ad01d95005474eae3"><td class="memItemLeft" align="right" valign="top"><a id="a5edffad982a0566ad01d95005474eae3"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>minute</b> = 0</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8h.html#a5edffad982a0566ad01d95005474eae3">minute</a> = 0</td></tr>
+<tr class="memdesc:a5edffad982a0566ad01d95005474eae3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes counter, only manually reset. <br /></td></tr>
 <tr class="separator:a5edffad982a0566ad01d95005474eae3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bd15b1b4bbdd7329986c9c4af33d10d"><td class="memItemLeft" align="right" valign="top"><a id="a7bd15b1b4bbdd7329986c9c4af33d10d"></a>
 unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>timeout</b> = 0</td></tr>
@@ -386,25 +401,6 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>W_str</b> = 'W'
 <dl class="section user"><dt>Mail (after leaving Kyutech):</dt><dd><a href="#" onclick="location.href='mai'+'lto:'+'jua'+'n.'+'roj'+'as'+'@te'+'c.'+'ac.'+'cr'; return false;">juan.<span style="display: none;">.nosp@m.</span>roja<span style="display: none;">.nosp@m.</span>s@tec<span style="display: none;">.nosp@m.</span>.ac.<span style="display: none;">.nosp@m.</span>cr</a> </dd></dl>
 <dl class="section user"><dt>Git repository:</dt><dd><a href="https://bitbucket.org/juanjorojash/cell_charger_discharger">https://bitbucket.org/juanjorojash/cell_charger_discharger</a> </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="a450cfb6cea2848f3c6459ed5c0df9eef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a450cfb6cea2848f3c6459ed5c0df9eef">&#9670;&nbsp;</a></span>AD_SET_CHAN</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define AD_SET_CHAN</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">x</td><td>)</td>
-          <td>&#160;&#160;&#160;{ ADCON0bits.CHS = x; __delay_us(1); }</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Set the ADC channel to <code>x</code> and wait for 5 microseconds. </p>
-
-</div>
-</div>
 <a id="ae1cb4a0872e924cf862a97b33dd2edf0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae1cb4a0872e924cf862a97b33dd2edf0">&#9670;&nbsp;</a></span>STOP_CONVERTER</h2>
 
@@ -415,17 +411,169 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>W_str</b> = 'W'
           <td class="memname">#define STOP_CONVERTER</td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td>&#160;&#160;&#160;{ <a class="el" href="state__machine_8h.html#a0cc5d179fc4afa584f15244b35b01521">conv</a> = 0; RA1 = 1; <a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> = <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca">DC_MIN</a>; set_DC(); Cell_OFF(); <a class="el" href="hardware_8h.html#a2f57a3156036b713dc852737da390252">LOG_OFF</a>();}</td>
+          <td>&#160;&#160;&#160;{ <a class="el" href="state__machine_8h.html#a0cc5d179fc4afa584f15244b35b01521">conv</a> = 0; RA1 = 1; <a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> = <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca">DC_MIN</a>; <a class="el" href="hardware_8h.html#a93f3630c962d9bcafd71e4c4a03547c1">set_DC</a>(); <a class="el" href="hardware_8h.html#a5bbc85db8cf08142e0984d07b97e722b">Cell_OFF</a>(); <a class="el" href="hardware_8h.html#a2f57a3156036b713dc852737da390252">LOG_OFF</a>();}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Stop the converter. </p>
-<p>Set <code>conv</code> to zero, turn off the main relay (<code>RA1</code>), set the duty cycle in <code>DC_MIN</code>, turn off all the cell relays in the switcher board, disable the logging of data to the terminal and the USART reception interrupts. </p>
+<p>Set <code>conv</code> to zero, turn off the main relay (<code>RA1</code>), set the duty cycle in <code>DC_MIN</code>, turn off all the cell relays in the switcher board, disable the logging of data to the terminal and the UART reception interrupts. </p>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="ab2f580a1d85442504950b07e3c8f1145"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2f580a1d85442504950b07e3c8f1145">&#9670;&nbsp;</a></span>calculate_avg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void calculate_avg </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function calculate the averages. </p>
+<p>If <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> = <a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9" title="Counter value, needed to obtained one second between counts. ">COUNTER</a></p>
+<ul>
+<li>Make <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iprom</a> zero</li>
+<li>Make <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a> zero</li>
+<li>Make <a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da" title="Last one-second-average of t . Initialized as 0. ">tprom</a> zero</li>
+</ul>
+<p>If <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> = 0</p>
+<ul>
+<li>Divide the value stored in <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iprom</a> between COUNTER to obtain the average</li>
+<li>Divide the value stored in <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a> between COUNTER to obtain the average</li>
+<li>Divide the value stored in <a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da" title="Last one-second-average of t . Initialized as 0. ">tprom</a> between COUNTER to obtain the average</li>
+<li>Divide <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iprom</a> between 3600 and add it to <a class="el" href="hardware_8h.html#a16200aa761421d421187ce19c33dfcd0" title="Integration of i . Initialized as 0. ">qprom</a> to integrate the current over time</li>
+<li>If is the chemistry is Ni-MH and <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a> is bigger than <a class="el" href="hardware_8h.html#aeb4eb9ad2dc148d828a7f6e270aa0f09" title="Maximum recorded average voltage. ">vmax</a> then set <a class="el" href="hardware_8h.html#aeb4eb9ad2dc148d828a7f6e270aa0f09" title="Maximum recorded average voltage. ">vmax</a> = <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a></li>
+</ul>
+<p>If <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> is not any of the previous cases then</p>
+<ul>
+<li>Accumulate <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3" title="Last current ADC measurement. ">i</a> in <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iprom</a></li>
+<li>Accumulate <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72" title="Last voltage ADC measurement. ">v</a> in <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a> </li>
+</ul>
+
+</div>
+</div>
+<a id="a9ab308304942d68ad5733f1a0a9685a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ab308304942d68ad5733f1a0a9685a4">&#9670;&nbsp;</a></span>cc_cv_mode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cc_cv_mode </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>current_voltage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>reference_voltage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>CC_mode_status</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function switches between CC and CV mode. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">current_voltage</td><td>average of current voltage </td></tr>
+    <tr><td class="paramname">referece_voltage</td><td>voltage setpoint </td></tr>
+    <tr><td class="paramname">CC_mode_status</td><td>current condition of <a class="el" href="hardware_8h.html#aa14de202054f8be3764087df08c27eda" title="CC / CV selector. CC:  cmode = 1 . CV:  cmode = 0  ">cmode</a> variable </td></tr>
+  </table>
+  </dd>
+</dl>
+<p>If the current voltage is bigger than the voltage setpoint and the system is in CC mode, then:</p>
+<ul>
+<li>The <a class="el" href="hardware_8h.html#ad984965db113bd0969498c826e23ab44" title="Proportional component of PI compensator. ">proportional</a> is set to zero</li>
+<li>The <a class="el" href="hardware_8h.html#a1174af01b8a329a6d465ea6e0951b3e5" title="Integral component of PI compensator. ">integral</a> is set to zero</li>
+<li>The system is set in CV mode by clearing the <a class="el" href="hardware_8h.html#aa14de202054f8be3764087df08c27eda" title="CC / CV selector. CC:  cmode = 1 . CV:  cmode = 0  ">cmode</a> variable</li>
+<li>The proportional constant, <a class="el" href="hardware_8h.html#a1f7add0f84d583bc2eceb290d6c4cc06" title="Proportional compesator gain. ">kp</a> is set to <a class="el" href="hardware_8h.html#a31ae8362bae13f23cc6b521a7499a5ee" title="Proportional constant for CV mode. ">CV_kp</a> <br />
+</li>
+<li>The integral constant, <a class="el" href="hardware_8h.html#a050993b7ca6c97e62c1020017f716b91" title="Integral compesator gain. ">ki</a> is set to <a class="el" href="hardware_8h.html#a57181200f8247c552f8d9751003d77c6" title="Integral constant for CV mode. ">CV_ki</a> </li>
+</ul>
+
+</div>
+</div>
+<a id="a4f05187afaedd0cd35e9137eaf557ef8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f05187afaedd0cd35e9137eaf557ef8">&#9670;&nbsp;</a></span>control_loop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void control_loop </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function is the PI control loop. </p>
+<p>If <a class="el" href="hardware_8h.html#aa14de202054f8be3764087df08c27eda" title="CC / CV selector. CC:  cmode = 1 . CV:  cmode = 0  ">cmode</a> is cleared then</p>
+<ul>
+<li>The <a class="el" href="hardware_8c.html#a35df161adff36e572d40326f07d85d2b" title="This function defines the PI controller. ">pid()</a> function is called with <code>feedback</code> = <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72" title="Last voltage ADC measurement. ">v</a> and <code>setpoint</code> = <a class="el" href="hardware_8h.html#a12a556ee5b6e008717e9b6b8916c36a4" title="Voltage setpoint. Initialized as 0. ">vref</a></li>
+</ul>
+<p>Else,</p>
+<ul>
+<li>The <a class="el" href="hardware_8c.html#a35df161adff36e572d40326f07d85d2b" title="This function defines the PI controller. ">pid()</a> function is called with <code>feedback</code> = <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3" title="Last current ADC measurement. ">i</a> and <code>setpoint</code> = <a class="el" href="hardware_8h.html#ab6bab6490e9e38ab60181b5cda64c53b" title="Current setpoint. Initialized as 0. ">iref</a></li>
+</ul>
+<p>The duty cycle is set by calling the <a class="el" href="hardware_8c.html#a95853552054d1c99e8765eca54abb930" title="This function sets the desired duty cycle. ">set_DC()</a> function </p>
+
+</div>
+</div>
+<a id="a4389e5f80fbf28788f2f648f26d93fce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4389e5f80fbf28788f2f648f26d93fce">&#9670;&nbsp;</a></span>display_value()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void display_value </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function convert a number to string and then send it using UART. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>integer to be send </td></tr>
+  </table>
+  </dd>
+</dl>
+<ul>
+<li>Define <code>buffer</code> to used it for store character storage</li>
+<li>Convert <code>value</code> into a string and store it in <code>buffer</code> </li>
+<li>Send <code>buffer</code> using <a class="el" href="hardware_8c.html#ac27ccd7f2eb1f5e96bb091338acc1e7f" title="This function send a string using UART. ">UART_send_string()</a> </li>
+</ul>
+
+</div>
+</div>
 <a id="a7f34e789c6e833bd0e987f5f5cfca365"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7f34e789c6e833bd0e987f5f5cfca365">&#9670;&nbsp;</a></span>Initialize()</h2>
 
@@ -550,8 +698,8 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>W_str</b> = 'W'
 </ul>
 <p>CHECK ALL!!</p>
 <ul>
-<li>Clear WDT by calling <a class="el" href="">CLRWDT()</a></li>
-<li>Call <a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER()</a></li>
+<li>Clear WDT by calling <code>CLRWDT()</code> </li>
+<li>Call <a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0" title="Stop the converter. ">STOP_CONVERTER()</a></li>
 <li>Clear Timer0 flag</li>
 <li>Clear ADC result variable</li>
 <li>Start in CC mode <br />
@@ -560,6 +708,237 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>W_str</b> = 'W'
 <li>CHECK!!!</li>
 <li>CHECK!! </li>
 </ul>
+
+</div>
+</div>
+<a id="a0b8b498532d1d667c624601a3cf715bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b8b498532d1d667c624601a3cf715bc">&#9670;&nbsp;</a></span>log_control()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void log_control </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function takes care of printing the test data using the UART. </p>
+<p>The code in this function is only excecuted if the <a class="el" href="hardware_8h.html#a8c9205727cab72e65f536e9ef6445db0" title="Variable to indicate if the log is activated. ">log_on</a> variable is set</p>
+<p>This funtion takes care of sending the logging data in pieces to avoid disturbing the control loop. This problem can be avoided with the use of interruptions for the control loop; however this was not implemented and could be considered as some future improvement</p>
+<p><a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> = 0</p>
+<ul>
+<li>Define <code>ip_buff</code> for storing #i_prom</li>
+<li>Define <code>vp_buff</code> for storing #v_prom</li>
+<li>Define <code>tp_buff</code> for storing <a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da" title="Last one-second-average of t . Initialized as 0. ">tprom</a></li>
+</ul>
+<p>Define <code>qp_buff</code> for storing <a class="el" href="hardware_8h.html#a16200aa761421d421187ce19c33dfcd0" title="Integration of i . Initialized as 0. ">qprom</a> <code>*</code> <code>10*/</code> </p>
+<p><a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> = <a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9" title="Counter value, needed to obtained one second between counts. ">COUNTER</a></p>
+<ul>
+<li>Convert <a class="el" href="hardware_8h.html#a5edffad982a0566ad01d95005474eae3" title="Minutes counter, only manually reset. ">minute</a> into a string and store it in <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <a class="el" href="hardware_8h.html#a5edffad982a0566ad01d95005474eae3" title="Minutes counter, only manually reset. ">minute</a> is smaller than 10 send a '0'</li>
+<li>Else, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[0]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <a class="el" href="hardware_8h.html#a5edffad982a0566ad01d95005474eae3" title="Minutes counter, only manually reset. ">minute</a> is smaller than 10 send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[0]</li>
+<li>Else, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[1]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a colons character</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Clear <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Convert <a class="el" href="hardware_8h.html#a6cf35be1947a62f134392fcb1b3c54d2" title="Seconds counter, resetted after 59 seconds. ">second</a> into a string and store it in <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <a class="el" href="hardware_8h.html#a6cf35be1947a62f134392fcb1b3c54d2" title="Seconds counter, resetted after 59 seconds. ">second</a> is smaller than 10 send a '0'</li>
+<li>Else, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[0]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <a class="el" href="hardware_8h.html#a6cf35be1947a62f134392fcb1b3c54d2" title="Seconds counter, resetted after 59 seconds. ">second</a> is smaller than 10 send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[0]</li>
+<li>Else, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[1]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a comma character</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Clear <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a 'C'</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a <a class="el" href="state__machine_8h.html#a2f582152bcd11169abaab8dfb2e0ae2a" title="Cell counter from &#39;1&#39; to &#39;4&#39;. Initialized as &#39;1&#39;. ">cell_count</a> variable</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a comma character</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send an 'S'</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Convert <a class="el" href="state__machine_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY. ">state</a> into a string and store it in <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[0]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <a class="el" href="state__machine_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY. ">state</a> is bigger than 10, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[0]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a comma character</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a 'V'</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Convert <code>vp_buff</code> into a string and store it in <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[0]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[1]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[2]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <code>vp_buff</code> is bigger than 1000, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[3]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a comma character</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Clear <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send an 'I'</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Convert <code>ip_buff</code> into a string and store it in <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[0]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[1]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[2]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <code>ip_buff</code> is bigger or equal to 1000, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[3]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a comma character</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Clear <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cyclev</p>
+<ul>
+<li>Send a 'T'</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Convert <code>tp_buff</code> into a string and store it in <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[0]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[1]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[1]</li>
+</ul>
+<p>Next cycle</p>
+<p>Next cycle</p>
+<ul>
+<li>Send a comma character</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Clear <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a 'Q'</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Convert <code>qp_buff</code> into a string and store it in <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[0]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <code>qp_buff</code> is bigger or equal to 10, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[1]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <code>qp_buff</code> is bigger or equal to 100, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[2]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <code>qp_buff</code> is bigger or equal to 1000, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[3]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>If <code>qp_buff</code> is bigger or equal to 10000, send <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a>[4]</li>
+</ul>
+<p>Next cycle</p>
+<ul>
+<li>Send a '&lt;'</li>
+</ul>
+<p>If <a class="el" href="hardware_8h.html#a8c9205727cab72e65f536e9ef6445db0" title="Variable to indicate if the log is activated. ">log_on</a> is cleared, call <a class="el" href="hardware_8h.html#a59595b0c67a8bfb8dd65e914a18b83c7" title="Reset timers. ">RESET_TIME()</a> </p>
 
 </div>
 </div>
@@ -589,7 +968,7 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>W_str</b> = 'W'
       </table>
 </div><div class="memdoc">
 
-<p>Function for the PI controller. </p>
+<p>This function defines the PI controller. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">feedback</td><td>average of measured values for the control variable </td></tr>
@@ -597,18 +976,248 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>W_str</b> = 'W'
   </table>
   </dd>
 </dl>
-<p>First, this function will declare two variables, <code>er</code> and <code>pi</code>, which will be used to store the error and the proportional+integral value.</p>
-<p>Then, it will calculate the error by substraction the <code>feedback</code> from the <code>setpoint</code> and store it in <code>er</code> <br />
+<ul>
+<li>Define <code>er</code> for calculating the error</li>
+<li>Define <code>pi</code> for storing the PI compesator value</li>
+<li>Calculate the error by substracting the <code>feedback</code> from the <code>setpoint</code> and store it in <code>er</code> </li>
+<li>Make sure error is never above <a class="el" href="hardware_8h.html#aadc49366a240cc84254d58cb455dee82" title="Maximum permisible error, useful to avoid ringing. ">ERR_MAX</a></li>
+<li>Make sure error is never below <a class="el" href="hardware_8h.html#a5bcad3156af59109b8ac2c78c588885a" title="Minimum permisible error, useful to avoid ringing. ">ERR_MIN</a></li>
+</ul>
+<p>Then the proportional and integral component will be calculated.</p>
+<ul>
+<li>Calculate <a class="el" href="hardware_8h.html#ad984965db113bd0969498c826e23ab44" title="Proportional component of PI compensator. ">proportional</a> component of compensator</li>
+<li>Calculate <a class="el" href="hardware_8h.html#a1174af01b8a329a6d465ea6e0951b3e5" title="Integral component of PI compensator. ">integral</a> component of compensator <br />
 <br />
 <br />
 <br />
- After, it will make sure that the error is never below <a class="el" href="hardware_8h.html#a5bcad3156af59109b8ac2c78c588885a">ERR_MIN</a> or above <a class="el" href="hardware_8h.html#aadc49366a240cc84254d58cb455dee82">ERR_MAX</a> <br />
+<br />
+</li>
+<li>Sum them up and store in <code>pi*/</code> </li>
+</ul>
+<p>After, the function wil define the duty cycle, and make sure that is never below <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca" title="Minimum possible duty cycle, set around 0.05. ">DC_MIN</a> or above <a class="el" href="hardware_8h.html#a701d2222601b84faafa94cb1909df104" title="Maximum possible duty cycle, set around 0.8. ">DC_MAX</a> <br />
 <br />
 <br />
- Then the proportional and integral component will be calculated. <br />
+</p><ul>
+<li>Make sure duty cycle is never above <a class="el" href="hardware_8h.html#a701d2222601b84faafa94cb1909df104" title="Maximum possible duty cycle, set around 0.8. ">DC_MAX</a></li>
+<li>Make sure duty cycle is never below <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca" title="Minimum possible duty cycle, set around 0.05. ">DC_MIN</a></li>
+<li>Store the new value of the duty cycle with operation<div class="fragment"><div class="line"><a class="code" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> = <a class="code" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba">dc</a> + pi </div></div><!-- fragment --> </li>
+</ul>
+
+</div>
+</div>
+<a id="a1402bbcb4580b6798483c7821e6106d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1402bbcb4580b6798483c7821e6106d2">&#9670;&nbsp;</a></span>read_ADC()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void read_ADC </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function read the ADC and store the data in the coresponding variables. </p>
+<p>Define <code>opr</code> to store the operations inside the function</p>
+<p>Select the #V_CHAN channel usign <a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef" title="Set the ADC channel to x and wait for 5 microseconds. ">AD_SET_CHAN(x)</a></p>
+<p>Make the conversion by calling <a class="el" href="hardware_8h.html#a57f8ee4c55d0b9230535c602e01dbbdc" title="Start the conversion and wait until it is finished. ">AD_CONVERT()</a></p>
+<p>Store the result in <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3" title="Result of an ADC measurement. ">ad_res</a> with <a class="el" href="hardware_8h.html#a049dca77d5e2be6f3780ce6a632a5ef3" title="Store conversion result in ad_res. ">AD_RESULT()</a></p>
+<p>Apply the operation</p><div class="fragment"><div class="line">opr = <a class="code" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> * [(R1+R2)/(R1)] * [(Vref)/(2^12)] = <a class="code" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> * (1051/1000) * (5014/4096) </div></div><!-- fragment --><p>Make <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72" title="Last voltage ADC measurement. ">v</a> equal to <code>opr</code> </p>
+<p>Select the #I_CHAN channel usign <a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef" title="Set the ADC channel to x and wait for 5 microseconds. ">AD_SET_CHAN(x)</a></p>
+<p>Make the conversion by calling <a class="el" href="hardware_8h.html#a57f8ee4c55d0b9230535c602e01dbbdc" title="Start the conversion and wait until it is finished. ">AD_CONVERT()</a></p>
+<p>Store the result in <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3" title="Result of an ADC measurement. ">ad_res</a> with <a class="el" href="hardware_8h.html#a049dca77d5e2be6f3780ce6a632a5ef3" title="Store conversion result in ad_res. ">AD_RESULT()</a></p>
+<p>Apply the operation</p><div class="fragment"><div class="line">opr = [(Vref)/(2^12)] * <a class="code" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> </div></div><!-- fragment --><p>Apply the operation</p><div class="fragment"><div class="line">opr = opr - 2525 </div></div><!-- fragment --><p>If the <a class="el" href="state__machine_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY. ">state</a> is <a class="el" href="state__machine_8h.html#aa19be6305a5a4485e1e70de70ed7d677aea7debd6c1f7cf2d27b8774acac4109f" title="&quot;Charge&quot; state, defined by function fCHARGE() ">CHARGE</a> or <a class="el" href="state__machine_8h.html#aa19be6305a5a4485e1e70de70ed7d677a90827714b4165a402681b4ce4874e5f0" title="&quot;Postcharge&quot; state, defined by function fCHARGE() ">POSTCHARGE</a> change the sign of the result</p>
+<p>Apply the operation</p><div class="fragment"><div class="line">opr = opr * 2.5 </div></div><!-- fragment --><p> which is the sensitivity of the ACS723LL</p>
+<p>Select the #T_CHAN channel usign <a class="el" href="hardware_8h.html#a450cfb6cea2848f3c6459ed5c0df9eef" title="Set the ADC channel to x and wait for 5 microseconds. ">AD_SET_CHAN(x)</a></p>
+<p>Make the conversion by calling <a class="el" href="hardware_8h.html#a57f8ee4c55d0b9230535c602e01dbbdc" title="Start the conversion and wait until it is finished. ">AD_CONVERT()</a></p>
+<p>Store the result in <a class="el" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3" title="Result of an ADC measurement. ">ad_res</a> with <a class="el" href="hardware_8h.html#a049dca77d5e2be6f3780ce6a632a5ef3" title="Store conversion result in ad_res. ">AD_RESULT()</a></p>
+<p>Apply the operation</p><div class="fragment"><div class="line">opr = [(Vref)/(2^12)] * <a class="code" href="hardware_8h.html#a02303eca810feb8092be2ff939a714c3">ad_res</a> </div></div><!-- fragment --><p>Apply the operation</p><div class="fragment"><div class="line">opr = 1866.3 - opr </div></div><!-- fragment --><p>. Sensor STLM20 Datasheet p.6</p>
+<p>Apply the operation</p><div class="fragment"><div class="line"><a class="code" href="hardware_8h.html#afea36502e9d227ff62c5fb2719a246f2">t</a> = opr/1.169 </div></div><!-- fragment --><p>. Sensor STLM20 Datasheet p.6 </p>
+
+</div>
+</div>
+<a id="a93f3630c962d9bcafd71e4c4a03547c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93f3630c962d9bcafd71e4c4a03547c1">&#9670;&nbsp;</a></span>set_DC()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void set_DC </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function sets the desired duty cycle. </p>
+<p>This function can set the duty cycle from 0x0 to 0x1FF. <br />
 <br />
- They will be summed up and stored in <code>pi</code> </p>
-<p>After, the function wil define the duty cycle, and make sure that is never below <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca">DC_MIN</a> or above <a class="el" href="hardware_8h.html#a701d2222601b84faafa94cb1909df104">DC_MAX</a> </p>
+<br />
+</p><ul>
+<li>Lower 8 bits of <a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba" title="Duty cycle. ">dc</a> are stored in <code>PSMC1DCL</code> </li>
+<li>Higher 1 bit of <a class="el" href="hardware_8h.html#a7feaae074885a9d2f57a75e0809ee4ba" title="Duty cycle. ">dc</a> are stored in <code>PSMC1DCH</code> </li>
+<li>Set the load register. This will load all the setting as once*/ </li>
+</ul>
+
+</div>
+</div>
+<a id="ad2a34e3f615b83a0c9d721b76899b2a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2a34e3f615b83a0c9d721b76899b2a4">&#9670;&nbsp;</a></span>timing()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void timing </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function control the timing. </p>
+<p>If <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> is other than zero, then <br />
+<br />
+<br />
+<br />
+<br />
+</p><ul>
+<li>Decrease it</li>
+</ul>
+<p>Else,</p>
+<ul>
+<li>Make <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> equal to <a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9" title="Counter value, needed to obtained one second between counts. ">COUNTER</a></li>
+<li>If <a class="el" href="hardware_8h.html#a6cf35be1947a62f134392fcb1b3c54d2" title="Seconds counter, resetted after 59 seconds. ">second</a> is smaller than 59 then increase it</li>
+<li>Else, make <a class="el" href="hardware_8h.html#a6cf35be1947a62f134392fcb1b3c54d2" title="Seconds counter, resetted after 59 seconds. ">second</a> zero and increase <a class="el" href="hardware_8h.html#a5edffad982a0566ad01d95005474eae3" title="Minutes counter, only manually reset. ">minute</a> </li>
+</ul>
+
+</div>
+</div>
+<a id="ae033bb8a9289af391aef3cc3bd57a0e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae033bb8a9289af391aef3cc3bd57a0e9">&#9670;&nbsp;</a></span>UART_get_char()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char UART_get_char </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function receive one byte of data from UART. </p>
+<dl class="section return"><dt>Returns</dt><dd>RC1REG reception register </dd></dl>
+<p>If there is error <br />
+<br />
+<br />
+<br />
+</p><ul>
+<li>Clear the error <br />
+<br />
+<br />
+</li>
+<li>Restart</li>
+</ul>
+<p>Hold the program until the reception buffer is free</p>
+<p>Receive the value and return it </p>
+
+</div>
+</div>
+<a id="a4bcf31185383adefc22f2209541c9991"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4bcf31185383adefc22f2209541c9991">&#9670;&nbsp;</a></span>UART_interrupt_enable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void UART_interrupt_enable </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function activate the UART reception interruption. </p>
+<ul>
+<li>Define the variable <code>clear_buffer</code>, used to empty the UART buffer</li>
+<li>Clear the reception buffer and store it in <code>clear_buffer</code> </li>
+<li>Enable reception interrupts </li>
+</ul>
+
+</div>
+</div>
+<a id="abf92d1a230db7234bdf5119716a0cf5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf92d1a230db7234bdf5119716a0cf5f">&#9670;&nbsp;</a></span>UART_send_char()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void UART_send_char </td>
+          <td>(</td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>bt</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function send one byte of data to UART. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bt</td><td>character to be send </td></tr>
+  </table>
+  </dd>
+</dl>
+<ul>
+<li>Hold the program until the transmission buffer is free</li>
+<li>Load the transmission buffer with <code>bt</code> </li>
+</ul>
+
+</div>
+</div>
+<a id="ac27ccd7f2eb1f5e96bb091338acc1e7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac27ccd7f2eb1f5e96bb091338acc1e7f">&#9670;&nbsp;</a></span>UART_send_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void UART_send_string </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>st_pt</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function send a string using UART. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">st_pt</td><td>pointer to string to be send </td></tr>
+  </table>
+  </dd>
+</dl>
+<p>While there is a byte to send</p>
+<ul>
+<li>Send it usign <a class="el" href="hardware_8c.html#abf92d1a230db7234bdf5119716a0cf5f" title="This function send one byte of data to UART. ">UART_send_char()</a> and then increase the pointer possition </li>
+</ul>
 
 </div>
 </div>
@@ -625,7 +1234,7 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>W_str</b> = 'W'
       </table>
 </div><div class="memdoc">
 
-<p>Counter that should be cleared every second. Initialized as <a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9">COUNTER</a>. </p>
+<p>Counter that should be cleared every second. Initialized as <a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9" title="Counter value, needed to obtained one second between counts. ">COUNTER</a>. </p>
 <p>Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger all the events that are done every second. </p>
 
 </div>

@@ -1,6 +1,8 @@
 var searchData=
 [
+  ['second',['second',['../hardware_8h.html#a6cf35be1947a62f134392fcb1b3c54d2',1,'hardware.h']]],
   ['serial_5finterrupt',['serial_interrupt',['../main_8c.html#ab402c3c427b8d8d0ed2d6e1aac794ae7',1,'main.c']]],
+  ['set_5fdc',['set_DC',['../hardware_8c.html#a95853552054d1c99e8765eca54abb930',1,'set_DC():&#160;hardware.c'],['../hardware_8h.html#a93f3630c962d9bcafd71e4c4a03547c1',1,'set_DC(void):&#160;hardware.c']]],
   ['standby',['STANDBY',['../state__machine_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6',1,'state_machine.h']]],
   ['start_5fstate_5fmachine',['Start_state_machine',['../state__machine_8c.html#aed563ae909f60360b1eaee8bcf5803e3',1,'Start_state_machine():&#160;state_machine.c'],['../state__machine_8h.html#aeac0a5594a4b61dc230b3a3a87cabbbc',1,'Start_state_machine(void):&#160;state_machine.c']]],
   ['state',['state',['../state__machine_8h.html#ab12828525693568ae9c217805bea1ef9',1,'state_machine.h']]],

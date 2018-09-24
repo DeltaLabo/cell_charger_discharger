@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['option',['option',['../state__machine_8h.html#aa138b263667688f0a28af01c14f90f8a',1,'state_machine.h']]]
+  ['log_5fbuffer',['log_buffer',['../hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033',1,'hardware.h']]],
+  ['log_5fon',['log_on',['../hardware_8h.html#a8c9205727cab72e65f536e9ef6445db0',1,'hardware.h']]]
 ];
