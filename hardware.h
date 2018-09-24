@@ -92,24 +92,24 @@ and the USART reception interrupts.
 #define 	DC_MAX         			385  ///< Maximum possible duty cycle, set around @b 0.8
 #define     COUNTER        			250  ///< Counter value, needed to obtained one second between counts. 
 #define     LINEBREAK               UART_send_char(10)  ///< Send a linebreak to the terminal.
-unsigned     						count; ///< Counter that should be cleared every second.
+unsigned     						count = COUNTER; ///< Counter that should be cleared every second. Initialized as @link COUNTER @endlink
 /**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
 all the events that are done every second.*/
 unsigned        					ad_res; ///< Result of an ADC measurement.
 float                               v;  ///< Last voltage ADC measurement.
 float                               i;  ///< Last current ADC measurement.
 float                               t;  ///<  Last temperature ADC measurement.
-float                               vprom;  ///< Last one-second-average of @link v @endlink.
-float                               iprom;  ///< Last one-second-average of @link i @endlink.
-float                               tprom;  ///< Last one-second-average of @link t @endlink. 
-float                               qprom;  ///< Integration of @link i @endlink.
+float                               vprom = 0;  ///< Last one-second-average of @link v @endlink. Initialized as 0
+float                               iprom = 0;  ///< Last one-second-average of @link i @endlink. Initialized as 0
+float                               tprom = 0;  ///< Last one-second-average of @link t @endlink. Initialized as 0
+float                               qprom = 0;  ///< Integration of @link i @endlink. Initialized as 0
 int                                 vmax = 0;   ///< Maximum recorded average voltage. 
 float 								proportional;  ///< Proportional component of PI compensator
 float 								integral;  ///< Integral component of PI compensator
 float 								kp;  ///< Proportional compesator gain
 float 								ki;  ///< Integral compesator gain		
-unsigned    						vref;  ///< Voltage setpoint
-unsigned     						iref;  ///< Current setpoint
+unsigned    						vref = 0;  ///< Voltage setpoint. Initialized as 0
+unsigned     						iref = 0;  ///< Current setpoint. Initialized as 0
 char 								cmode;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt> 	
 unsigned                            dc = 0;  ///< Duty cycle
 unsigned char 						spb;						//Baud rate set
@@ -137,7 +137,7 @@ char const              W_str = 'W';
 
 void Initialize(void);
 void Shutdown_Peripherals(void);
-void pid(float feedback, unsigned int setpoint);
+void pid(float feedback, unsigned setpoint);
 void set_DC(void);
 void read_ADC(void);
 void log_control(void);

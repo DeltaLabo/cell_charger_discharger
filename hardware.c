@@ -23,96 +23,82 @@ void Initialize()
     /** @b SYSTEM @b CLOCK*/
     /** PLL is always enabled because of configuration bits*/
     OSCCONbits.IRCF = 0b1111; /// * Set clock to 32MHz (with PLL)
-    OSCCONbits.SCS = 0b00; /// * Clear to use the result of IRCF
-    OSCCONbits.SPLLEN = 1;              //Enable PLL, it gives a problem if is done in the CONFWords
-    //System clock set as 32MHz
-    //--------------------OUPUTS FOR RELAYS------------------------------------
-    TRISA0 = 0;                         //Set RA0 as output. C/D relay
-    ANSA0 = 0;                          //Digital
-    TRISA1 = 0;                         //Set RA3 as output.ON/OFF relay
-    ANSA1 = 0;                          //Digital   
-//    //----------------OUTPUTS FOR CELL SWITCHER------------------------------
-//    TRISAbits.TRISA7 = 0;               //Set RA7 as output. Cell #1
-//    ANSELAbits.ANSA7 = 0;               //Digital
-//    TRISAbits.TRISA6 = 0;               //Set RA6 as output. Cell #2
-//    ANSELAbits.ANSA6 = 0;               //Digital   //DOES NOT EXIST
-//    TRISCbits.TRISC0 = 0;               //Set RC0 as output. Cell #3
-//    ANSELCbits.ANSC0 = 0;               //Digital   //DOES NOT EXIST
-//    TRISCbits.TRISC1 = 0;               //Set RC1 as output. Cell #4
-//    ANSELCbits.ANSC1 = 0;               //Digital   //DOES NOT EXIST
-    //-----------TIMER0 FOR CONTROL AND MEASURING LOOP-------------------------
-    TMR0IE = 0;                         //Disable timer interruptions
-    TMR0CS = 0;                         //Timer set to internal instruction cycle
-    OPTION_REGbits.PS = 0b110;          //Prescaler set to 128
-    OPTION_REGbits.PSA = 0;             //Prescaler activated
-    TMR0IF = 0;                         //Clear timer flag
-    TMR0 = 0x07;                        //Counter set to 255 - 250 + 2 (delay for sync) = 7
-    //Timer set to 32/4/128/250 = 250Hz
-    
-    //---------------------PSMC/PWM SETTING------------------------------------
-    TRISA4 = 1;                         //[Temporary]Set RA4 as input to let it drive from RB3. 
-    WPUA4 = 0;                          //Disable WPU for RA4.  
-    WPUC0 = 0;                          //Disable WPU for RC0.  //SEE IF THIS SOLVE THE ERROR
-   
-    PSMC1CON = 0x00;                    //Clear configuration to start 
-    PSMC1MDL = 0x00;                    //No modulation
-    PSMC1CLK = 0x01;                    //Driven by 64MHz system clock
-    //PSMC1CLKbits.P1CSRC = 0b01;         //Driven by 64MHz system clock
-    //PSMC1CLKbits.P1CPRE = 0b00;         //No prescaler (64MHz)
-    //Period
-    PSMC1PRH = 0x01;                    //0x01
-    PSMC1PRL = 0xFF;                    //0xFF
-    //511 + 1 clock cycles for period that is 8us (125KHz)
-    //This set the PWM with 9 bit of resolution
-    //Duty cycle
-    PSMC1DCH = 0x00;                    //Duty cycle starts in 0   
-    PSMC1DCL = 0x00;                    //Duty cycle starts in 0   
-    //Phase or rising event
-    PSMC1PHH = 0x00;                    //Rising event starts from the beginning
-    PSMC1PHL = 0x00;                    //Rising event starts from the beginning
-    
-    PSMC1STR0bits.P1STRA = 1;           //Single PWM activated in PSMC1A (RCO))
-    PSMC1POLbits.P1POLA = 0;            //Active high
-    PSMC1OENbits.P1OEA = 1;             //PSMC1A activated in PSMC1A (RC0)
-    
-    PSMC1PRSbits.P1PRST = 1;            //Period event occurs when PSMC1TMR = PSMC1PR
-    PSMC1PHSbits.P1PHST = 1;            //Rising edge event occurs when PSMC1TMR = PSMC1PH
-    PSMC1DCSbits.P1DCST = 1;            //Falling edge event occurs when PSMC1TMR = PSMC1DC
-    
-    PSMC1CON = 0x80;                    //Enable|Load Buffer|Dead band disabled|Single PWM
+    OSCCONbits.SCS = 0b00; /// * Clock determined by FOSC<2:0> in Configuration Words
+    OSCCONbits.SPLLEN = 1; /// * Enable PLL. According to Errata this shall not be done in the Configuration Words
+    /** @b RELAY @b OUPUTS*/
+    TRISA0 = 0; /// * Set RA0 as output. Charge/Discharge relay
+    ANSA0 = 0; /// * Set RA0 as digital
+    TRISA1 = 0; /// * Set RA3 as output. ON/OFF relay
+    ANSA1 = 0; /// * Set RA3 as digital
+    /** @b CELL @b SWITCHER @b OUPUTS*/
+//    TRISA7 = 0; /// * Set RA7 as output. Cell #1
+//    ANSA7 = 0; /// * Set RA7 as digital
+//    TRISA6 = 0; /// * Set RA6 as output. Cell #2
+//    ANSA6 = 0; /// * Set RA6 as digital   //DOES NOT EXIST
+//    TRISC0 = 0; /// * Set RC0 as output. Cell #3
+//    ANSC0 = 0; /// * Set RC0 as digital  //DOES NOT EXIST
+//    TRISC1 = 0; /// * Set RC1 as output. Cell #4
+//    ANSC1 = 0; /// * Set RC1 as digital  //DOES NOT EXIST
+    /** @b TIMER0 for control and measuring loop*/
+    TMR0IE = 0; /// * Disable timer interruptions
+    TMR0CS = 0; /// * Timer set to internal instruction cycle
+    OPTION_REGbits.PS = 0b110; /// * Prescaler set to 128
+    OPTION_REGbits.PSA = 0; /// * Prescaler activated
+    TMR0IF = 0; /// * Timer flag cleared
+    TMR0 = 0x07; /// * Counter set to 255 - @b 250 + 2 (delay for sync) = 7
+    /** Timer set to 32Mhz/4/128/250 = 250Hz*/
+    /** @b PSMC/PWM @b SETTINGS*/
+    /** Outputs*/
+    TRISA4 = 1; /// * [Temporary] Set RA4 as input to let it drive from RB3.
+    WPUA4 = 0; /// * [Temporary] Disable WPU for RA4.
+    WPUC0 = 0; /// * [Temporary] Disable WPU for RC0.
+    /** Programmable switch mode control (PSMC)*/
+    PSMC1CON = 0x00; /// * Clear PSMC1 configuration to start
+    PSMC1MDL = 0x00; /// * No modulation
+    PSMC1CLK = 0x01; /// * Driven by 64MHz PLL system clock
+    PSMC1PRH = 0x01; /// * Set period high register to 0x01
+    PSMC1PRL = 0xFF; /// * Set period low register to 0xFF
+    /** 511 + 1 clock cycles for period that is 8us (125KHz)*/
+    /** This set the PWM with 9 bit of resolution*/
+    /** Duty cycle*/
+    PSMC1DCH = 0x00;                    // * Set duty cycle high register to 0x00   
+    PSMC1DCL = 0x00;                    // * Set duty cycle low register to 0x00
+    /* Duty cycle starts in 0 */  
+    /** Phase or rising event*/
+    PSMC1PHH = 0x00;                    /// * Rising event starts from the beginning
+    PSMC1PHL = 0x00;                    /// * Rising event starts from the beginning
+    PSMC1STR0bits.P1STRA = 1;           /// * Single PWM activated in PSMC1A (RCO))
+    PSMC1POLbits.P1POLA = 0;            /// * Active high
+    PSMC1OENbits.P1OEA = 1;             /// * PSMC1A activated in PSMC1A (RC0)
+    PSMC1PRSbits.P1PRST = 1;            /// * Period event occurs when PSMC1TMR = PSMC1PR
+    PSMC1PHSbits.P1PHST = 1;            /// * Rising edge event occurs when PSMC1TMR = PSMC1PH
+    PSMC1DCSbits.P1DCST = 1;            /// * Falling edge event occurs when PSMC1TMR = PSMC1DC
+    PSMC1CON = 0x80;                    /// * Enable|Load Buffer|Dead band disabled|Single PWM
     //PSMC1TIE = 1;                       //Enable interrupts for Time Based 
-    TRISC0 = 0;                         //Set RC0 as output
-    
-    //---------------------ADC SETTINGS----------------------------------------
-   
-    //ADC INPUTS//check this after final design
-    TRISA3 = 1;                         //RA3, Positive voltage reference 
-    ANSA3 = 0;                          //RA3 analog
-    WPUA3 = 0;                          //Weak pull up Deactivated
-    TRISB4 = 1;                         //RB4, current sensing input    
-    ANSB4 = 1;                          //RB4 analog      
-    WPUB4 = 0;                          //Weak pull up Deactivated
-    TRISB5 = 1;                         //RB5, voltage sensing input
-    ANSB5 = 1;                          //RB5 analog
-    WPUB5 = 0;                          //Weak pull up Deactivated
-    //TEMP SENSING IS MISSING
-    ADCON0bits.ADRMD = 0;               //12 bits result
-    ADCON1bits.ADCS = 0b010;            //Clock selected as FOSC/32
-    ADCON1bits.ADNREF = 0;              //Connected to Vss
-    ADCON1bits.ADPREF = 0b00;           //Connected to VDD, change after to Connected to Vref+ (01)
-    ADCON1bits.ADFM = 1;                //2's compliment result
-    ADCON2bits.CHSN = 0b1111;           //Negative differential input as ADNREF
-    ADCON0bits.ADON = 1;                //Turn on the ADC
-
-    //---------------------INTERRUPTS----------------------------------------
-    PEIE = 1;                           //Activate pehierals Interrupts
-    GIE = 1;                            //Activate Global Interrupts
-
-    //---------------------UART----------------------------------------
-
-        //****Setting I/O pins for UART****//
-    TXSEL = 0;      //RC6 selected as TX
-    RXSEL = 0;      //RC7 selected as RX
+    TRISC0 = 0;                         /// * Set RC0 as output
+    /** @b ADC*/
+    /** ADC INPUTS*///check this after final design
+    TRISA3 = 1; /// * RA3, Positive voltage reference
+    ANSA3 = 0; /// * RA3 analog
+    WPUA3 = 0; /// * Weak pull up Deactivated
+    TRISB4 = 1; /// * RB4, current sensing input
+    ANSB4 = 1; /// * RB4 analog
+    WPUB4 = 0; /// * Weak pull up Deactivated
+    TRISB5 = 1; /// * RB5, voltage sensing input
+    ANSB5 = 1; /// * RB5 analog
+    WPUB5 = 0; /// * Weak pull up Deactivated
+    /** Configs*/
+    ADCON0bits.ADRMD = 0; /// * 12 bits result
+    ADCON1bits.ADCS = 0b010; /// * Clock selected as FOSC/32
+    ADCON1bits.ADNREF = 0; /// * Connected to Vss
+    ADCON1bits.ADPREF = 0b00; /// * Connected to VDD, change after to Connected to Vref+ (01)
+    ADCON1bits.ADFM = 1; /// * 2's compliment result
+    ADCON2bits.CHSN = 0b1111; /// * Negative differential input as ADNREF
+    ADCON0bits.ADON = 1; /// * Turn on the ADC
+    /** @b UART*/
+    //**Setting I/O pins for UART*/
+    TXSEL = 0;      /// * RC6 selected as TX
+    RXSEL = 0;      /// * RC7 selected as RX
     //________I/O pins set __________//
     
     /**Initialize SPBRG register for required 
@@ -120,73 +106,75 @@ void Initialize()
     SP1BRGH = 0x00; 
     SP1BRGL = 0x8A;    
     
-    BRGH  = 1;  // for high baud_rate
-    BRG16 = 1;  // for 16 bits timer
+    BRGH  = 1;  /// * for high baud_rate
+    BRG16 = 1;  /// * for 16 bits timer
     //_________End of baud_rate setting_________//
     
     //****Enable Asynchronous serial port*******//
-    SYNC  = 0;    // Asynchronous
-    SPEN  = 1;    // Enable serial port pins
+    SYNC  = 0;    /// * Asynchronous
+    SPEN  = 1;    /// * Enable serial port pins
     //_____Asynchronous serial port enabled_______//
 
     //**Lets prepare for transmission & reception**//
-    TXEN  = 1;    // enable transmission
-    CREN  = 1;    // enable reception
+    TXEN  = 1;    /// * enable transmission
+    CREN  = 1;    /// * enable reception
     //__UART module up and ready for transmission and reception__//
     
     //**Select 8-bit mode**//  
-    TX9   = 0;    // 8-bit reception selected
-    RX9   = 0;    // 8-bit reception mode selected
+    TX9   = 0;    /// * 8-bit reception selected
+    RX9   = 0;    /// * 8-bit reception mode selected
     //__8-bit mode selected__//    
-
-    //UART INTERRUPTS
-    RCIE = 0;                   //disable reception interrupts
-    TXIE = 0;                   //disable transmision interrupts
-
-    //---------------------GENERAL INITIALIZATIONS----------------------------------------
-    CLRWDT();
-    STOP_CONVERTER();
-    TMR0IF = 0;                        //Clear timer 0
-    ad_res = 0;                        //Clear ADC result variable
-    cmode = 1;                         //Start in CC mode
-    iref = 0;                  
-    vref = 0;
-    state = STANDBY;       
-    count = COUNTER; 
-    iprom = 0;
-    vprom = 0;
-    tprom = 0;
-    wait_count = 0;
-    dc_res_count = 0;
+    /** @b INTERRUPTS*/
+    PEIE = 1; /// * Activate pehierals Interrupts
+    GIE = 1; /// * Activate Global Interrupts
+    RCIE = 0; /// * Disable UART reception interrupts
+    TXIE = 0; /// * Disable UART transmision interrupts
+    /** @bFINAL CHECK ALL!!*/
+    CLRWDT(); /// * Clear WDT by calling @link CLRWDT() @endlink
+    STOP_CONVERTER(); ///* Call @link STOP_CONVERTER() @endlink
+    TMR0IF = 0; /// * Clear Timer0 flag
+    ad_res = 0; /// * Clear ADC result variable
+    cmode = 1; /// * Start in CC mode    
+    wait_count = 0; /// * CHECK!!!
+    dc_res_count = 0; /// * CHECK!!
 }
-
-void pid(float feedback, unsigned int setpoint)
+/**@brief This function defines the PI controller
+*  @param   feedback average of measured values for the control variable
+*  @param   setpoint desire controlled output for the variable
+*/
+void pid(float feedback, unsigned setpoint)
 {
+/**First, this function will declare two variables, @p er and @p pi, which will be used
+to store the error and the proportional+integral value.*/ 
 float 	er;
 float   pi;
-	er = setpoint - feedback;
-
-	if(er > ERR_MAX) er = ERR_MAX;
-	if(er < ERR_MIN) er = ERR_MIN;
-    
-	proportional = (kp * er);
+/**Then, it will calculate the error by substraction the @p feedback from the @p setpoint and store it in @p er*/
+    er = setpoint - feedback;
+/**After, it will make sure that the error is never below @link ERR_MIN @endlink or above @link ERR_MAX @endlink*/
+    if(er > ERR_MAX) er = ERR_MAX;
+    if(er < ERR_MIN) er = ERR_MIN;
+/**Then the proportional and integral component will be calculated.*/
+    proportional = (kp * er);
 	integral += (ki * er)/COUNTER; //time base is 0.5Khz 
-
-	pi = proportional + integral; 
-    
+/**They will be summed up and stored in @p pi*/
+	pi = proportional + integral;
+/**After, the function wil define the duty cycle, and make sure that is never below @link DC_MIN @endlink or above @link DC_MAX @endlink */
     if (dc + pi >= DC_MAX){
         dc = DC_MAX;
     }else if (dc + pi <= DC_MIN){
         dc = DC_MIN;
     }else{
-        dc += (int)(pi + 0.5); //This is the point in which a mix the PWM with the PID
+        dc += (int)(pi + 0.5); //This is the point in which a mix the PWM with the PID, the 0.5 is for rounding purposes
     }   
 }
-
+/**@brief This function sets the desired duty cycle
+*/
 void set_DC()
 {
+/**The 16 bits of the duty cycle variable @p dc will be masked and distributed in the low and high register of the PSMC1*/
     PSMC1DCL = dc & 0x00FF;
     PSMC1DCH = (dc >> 8) & 0x01;
+/**After setting the variables, the load register will be set. This will load all the setting as once*/
     PSMC1CONbits.PSMC1LD = 1; //Load Buffer
 }
 
@@ -194,19 +182,11 @@ void cc_cv_mode(float current_voltage, unsigned int reference_voltage, char CC_m
 {
     if(current_voltage > reference_voltage && CC_mode_status == 1)
     {        
-//        if (!CV_count)
-//        {
             proportional = 0;
-            integral = 0;
-//            if (cmode){
-//                ki = 0.001;
-//                kp = 0.1;
-//            }               
+            integral = 0;       
             cmode = 0;
             kp = 0.4;  //0.4 with 0.3 produces a very good regulation at the end
             ki = 0.5;
-            //if (ki < 0.04) ki = ki + 0.001;
-//        }else CV_count--;
     }     
 }
 

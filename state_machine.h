@@ -45,8 +45,6 @@
     #define LI_ION_CHEM         0 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells   
     #define NI_MH_CHEM          1 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
     //General definitions
-    #define CV_LOOPS            2 ///< (MAYBE IS GOING TO DISSAPEAR) How many loops the value of the voltage shall be equal to the set CV value to switch to CV mode 
-    #define EOCD_LOOPS          2 ///< (MAYBE IS GOING TO DISSAPEAR) How many loops the EOC set voltage of current shall be equal to the set value to finish the charge process 
     #define WAIT_TIME           600 ///< Time to wait before states, set to 10 minutes
     #define DC_RES_SECS         14 ///< How many seconds the DC resistance process takes
     //Li-Ion definitions
@@ -66,8 +64,6 @@
     unsigned                    i_disc; ///< Discharging current in mA
     unsigned char               cell_count = 49; ///< Cell counter from '1' to '4'. Initialized as '1'
     unsigned char               cell_max = 0; ///< Number of cells to be tested. Initialized as 0
-    unsigned                    EOCD_count = EOCD_LOOPS; ///< Counter for end-of-charge loops. Initialized as @link EOCD_LOOPS @endlink 
-    unsigned char               CV_count = CV_LOOPS; ///< Counter for CV loops. Initialized as @link CV_LOOPS @endlink 
     unsigned                    wait_count = WAIT_TIME; ///< Counter for waiting time between states. Initialized as @link WAIT_TIME @endlink
     unsigned                    dc_res_count = DC_RES_SECS; ///< Counter for DC resistance. Initialized as @link DC_RES_SECS @endlink
     unsigned char               state = STANDBY; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink

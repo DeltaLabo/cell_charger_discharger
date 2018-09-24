@@ -78,9 +78,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a98b1050f09da390896f964fb7a892391"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8c.html#a98b1050f09da390896f964fb7a892391">Initialize</a> ()</td></tr>
 <tr class="memdesc:a98b1050f09da390896f964fb7a892391"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to define initialize the system.  <a href="#a98b1050f09da390896f964fb7a892391">More...</a><br /></td></tr>
 <tr class="separator:a98b1050f09da390896f964fb7a892391"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ec5a6c32a29ad24780959fcdb06fedc"><td class="memItemLeft" align="right" valign="top"><a id="a9ec5a6c32a29ad24780959fcdb06fedc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>pid</b> (float feedback, unsigned int setpoint)</td></tr>
-<tr class="separator:a9ec5a6c32a29ad24780959fcdb06fedc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35df161adff36e572d40326f07d85d2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hardware_8c.html#a35df161adff36e572d40326f07d85d2b">pid</a> (float feedback, unsigned setpoint)</td></tr>
+<tr class="memdesc:a35df161adff36e572d40326f07d85d2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function for the PI controller.  <a href="#a35df161adff36e572d40326f07d85d2b">More...</a><br /></td></tr>
+<tr class="separator:a35df161adff36e572d40326f07d85d2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95853552054d1c99e8765eca54abb930"><td class="memItemLeft" align="right" valign="top"><a id="a95853552054d1c99e8765eca54abb930"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>set_DC</b> ()</td></tr>
 <tr class="separator:a95853552054d1c99e8765eca54abb930"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,14 +153,168 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>Cell_OFF</b> ()</td><
 <ul>
 <li>Allow change of individual WPU</li>
 </ul>
-<p><b>SYSTEM</b> CLOCK</p>
+<p><b>SYSTEM</b> <b>CLOCK</b> </p>
 <p>PLL is always enabled because of configuration bits</p>
 <ul>
 <li>Set clock to 32MHz (with PLL)</li>
-<li><p class="startli">Clear to use the result of IRCF</p>
-<p class="startli">Initialize SPBRG register for required baud rate and set BRGH for fast baud_rate </p>
-</li>
+<li>Clock determined by FOSC&lt;2:0&gt; in Configuration Words</li>
+<li>Enable PLL. According to Errata this shall not be done in the Configuration Words</li>
 </ul>
+<p><b>RELAY</b> <b>OUPUTS</b> </p>
+<ul>
+<li>Set RA0 as output. Charge/Discharge relay</li>
+<li>Set RA0 as digital</li>
+<li>Set RA3 as output. ON/OFF relay</li>
+<li>Set RA3 as digital</li>
+</ul>
+<p><b>CELL</b> <b>SWITCHER</b> <b>OUPUTS</b> </p>
+<p><b>TIMER0</b> for control and measuring loop</p>
+<ul>
+<li>Disable timer interruptions</li>
+<li>Timer set to internal instruction cycle</li>
+<li>Prescaler set to 128</li>
+<li>Prescaler activated</li>
+<li>Timer flag cleared</li>
+<li>Counter set to 255 - <b>250</b> + 2 (delay for sync) = 7</li>
+</ul>
+<p>Timer set to 32Mhz/4/128/250 = 250Hz</p>
+<p><b>PSMC/PWM</b> <b>SETTINGS</b> </p>
+<p>Outputs</p>
+<ul>
+<li>[Temporary] Set RA4 as input to let it drive from RB3.</li>
+<li>[Temporary] Disable WPU for RA4.</li>
+<li>[Temporary] Disable WPU for RC0.</li>
+</ul>
+<p>Programmable switch mode control (PSMC)</p>
+<ul>
+<li>Clear PSMC1 configuration to start</li>
+<li>No modulation</li>
+<li>Driven by 64MHz PLL system clock</li>
+<li>Set period high register to 0x01</li>
+<li>Set period low register to 0xFF</li>
+</ul>
+<p>511 + 1 clock cycles for period that is 8us (125KHz)</p>
+<p>This set the PWM with 9 bit of resolution</p>
+<p>Duty cycle</p>
+<p>Phase or rising event</p>
+<ul>
+<li>Rising event starts from the beginning</li>
+<li>Rising event starts from the beginning</li>
+<li>Single PWM activated in PSMC1A (RCO))</li>
+<li>Active high</li>
+<li>PSMC1A activated in PSMC1A (RC0)</li>
+<li>Period event occurs when PSMC1TMR = PSMC1PR</li>
+<li>Rising edge event occurs when PSMC1TMR = PSMC1PH</li>
+<li>Falling edge event occurs when PSMC1TMR = PSMC1DC</li>
+<li>Enable|Load Buffer|Dead band disabled|Single PWM</li>
+<li>Set RC0 as output</li>
+</ul>
+<p><b>ADC</b> </p>
+<p>ADC INPUTS</p>
+<ul>
+<li>RA3, Positive voltage reference</li>
+<li>RA3 analog</li>
+<li>Weak pull up Deactivated</li>
+<li>RB4, current sensing input</li>
+<li>RB4 analog</li>
+<li>Weak pull up Deactivated</li>
+<li>RB5, voltage sensing input</li>
+<li>RB5 analog</li>
+<li>Weak pull up Deactivated</li>
+</ul>
+<p>Configs</p>
+<ul>
+<li>12 bits result</li>
+<li>Clock selected as FOSC/32</li>
+<li>Connected to Vss</li>
+<li>Connected to VDD, change after to Connected to Vref+ (01)</li>
+<li>2's compliment result</li>
+<li>Negative differential input as ADNREF</li>
+<li>Turn on the ADC</li>
+</ul>
+<p><b>UART</b> </p>
+<ul>
+<li>RC6 selected as TX</li>
+<li><p class="startli">RC7 selected as RX</p>
+<p class="startli">Initialize SPBRG register for required baud rate and set BRGH for fast baud_rate</p>
+</li>
+<li>for high baud_rate</li>
+<li>for 16 bits timer</li>
+<li>Asynchronous</li>
+<li>Enable serial port pins</li>
+<li>enable transmission</li>
+<li>enable reception</li>
+<li>8-bit reception selected</li>
+<li>8-bit reception mode selected</li>
+</ul>
+<p><b>INTERRUPTS</b> </p>
+<ul>
+<li>Activate pehierals Interrupts</li>
+<li>Activate Global Interrupts</li>
+<li>Disable UART reception interrupts</li>
+<li>Disable UART transmision interrupts</li>
+</ul>
+<p>CHECK ALL!!</p>
+<ul>
+<li>Clear WDT by calling <a class="el" href="">CLRWDT()</a></li>
+<li>Call <a class="el" href="hardware_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0">STOP_CONVERTER()</a></li>
+<li>Clear Timer0 flag</li>
+<li>Clear ADC result variable</li>
+<li>Start in CC mode <br />
+<br />
+</li>
+<li>CHECK!!!</li>
+<li>CHECK!! </li>
+</ul>
+
+</div>
+</div>
+<a id="a35df161adff36e572d40326f07d85d2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35df161adff36e572d40326f07d85d2b">&#9670;&nbsp;</a></span>pid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pid </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>feedback</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned&#160;</td>
+          <td class="paramname"><em>setpoint</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Function for the PI controller. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">feedback</td><td>average of measured values for the control variable </td></tr>
+    <tr><td class="paramname">setpoint</td><td>desire controlled output for the variable </td></tr>
+  </table>
+  </dd>
+</dl>
+<p>First, this function will declare two variables, <code>er</code> and <code>pi</code>, which will be used to store the error and the proportional+integral value.</p>
+<p>Then, it will calculate the error by substraction the <code>feedback</code> from the <code>setpoint</code> and store it in <code>er</code> <br />
+<br />
+<br />
+<br />
+ After, it will make sure that the error is never below <a class="el" href="hardware_8h.html#a5bcad3156af59109b8ac2c78c588885a">ERR_MIN</a> or above <a class="el" href="hardware_8h.html#aadc49366a240cc84254d58cb455dee82">ERR_MAX</a> <br />
+<br />
+<br />
+ Then the proportional and integral component will be calculated. <br />
+<br />
+ They will be summed up and stored in <code>pi</code> </p>
+<p>After, the function wil define the duty cycle, and make sure that is never below <a class="el" href="hardware_8h.html#a998e4507851dde706a60a5b475eb27ca">DC_MIN</a> or above <a class="el" href="hardware_8h.html#a701d2222601b84faafa94cb1909df104">DC_MAX</a> </p>
 
 </div>
 </div>

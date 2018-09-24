@@ -21,6 +21,7 @@ Electrochemical Cell Charger/Discharger/Tester -- README {#mainpage}
 * **LabView logger program** A program for receiving, saving and plotting the test data is included in the repository, in the directory **labview_logger/logger.exe**. The following programs are needed in order to run this program in a PC that **does not** have LabView installed:
 	* [LabVIEW Run-Time Engine 2016 - (64-bit)](http://www.ni.com/download/labview-run-time-engine-2016/6067/en/) 
 	* [NI-VISA Run-Time Engine 16.0](http://www.ni.com/download/ni-visa-run-time-engine-16.0/6188/en/)
+The program creates the directory **c:/logger_data** to store the data.
 
 ### Contribution guidelines ###
 

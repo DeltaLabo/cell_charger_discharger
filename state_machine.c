@@ -123,26 +123,20 @@ void fCHARGE()
         #if (LI_ION_CHEM)
         if (iprom < EOC_current)
         {                
-            if (!EOCD_count)//evaluate this, is really needed
-            {
-                prev_state = state;
-                if (option == '3') state = ISDONE;
-                else state = WAIT;                
-                wait_count = WAIT_TIME;
-                STOP_CONVERTER();                       
-            }else EOCD_count--;
+            prev_state = state;
+            if (option == '3') state = ISDONE;
+            else state = WAIT;                
+            wait_count = WAIT_TIME;
+            STOP_CONVERTER();                       
         }
         #elif (NI_MH_CHEM)
         if (vprom < (vmax - Ni_MH_EOC_DV) || minute >= timeout)
         {
-            if (!EOCD_count)//evaluate this, is really needed
-            {
-                prev_state = state;
-                if (option == '3') state = ISDONE;
-                else state = WAIT;                
-                wait_count = WAIT_TIME;
-                STOP_CONVERTER();    
-            }else EOCD_count--;
+            prev_state = state;
+            if (option == '3') state = ISDONE;
+            else state = WAIT;                
+            wait_count = WAIT_TIME;
+            STOP_CONVERTER();    
         }
         #endif   
     } 
@@ -164,14 +158,11 @@ void fDISCHARGE()
     conv = 1;
     if (vprom < EOD_voltage)
     {
-        if (!EOCD_count)//evaluate this, is really needed
-        { 
-            prev_state = state;
-            if (option == '2'| option == '4') state = ISDONE;
-            else state = WAIT;                
-            wait_count = WAIT_TIME;
-            STOP_CONVERTER();
-        }else EOCD_count--;
+        prev_state = state;
+        if (option == '2'| option == '4') state = ISDONE;
+        else state = WAIT;                
+        wait_count = WAIT_TIME;
+        STOP_CONVERTER();
     }
 }
 
@@ -395,12 +386,6 @@ void Converter_settings()
     vp_buff = 0; 
     tp_buff = 0; 
     qp_buff = 0;
-    /**@p EOCD_count is defined as @p EOCD_LOOPS. That is, after the system is in EOC condition, the condition 
-    needs to be mantained for @p EOCD_LOOPS loop cycles before the system stop the charge process.*/
-    EOCD_count = EOCD_LOOPS;
-    /**@p CV_count is defined as @p CV_LOOPS. That is, after the system reach the CV voltage, the condition 
-    needs to be mantained for @p CV_LOOPS loop cycles before the system change to <b> constant voltage mode </b>.*/
-    CV_count = CV_LOOPS;
     /**The initial <b> duty cycle </b> of the PWM is set to @p DC_START*/
     dc = DC_START;
     /**The @link set_DC() @endlink function is called.*/  
