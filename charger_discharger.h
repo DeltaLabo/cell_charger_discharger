@@ -125,16 +125,26 @@
     #define     CV_ki                   0.5  ///< Integral constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); } ///< Send a linebreak to the terminal
     //Chemistry definition
-    #define     LI_ION_CHEM             0 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
-    #define     NI_MH_CHEM              1 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
+    #define     LI_ION_CHEM             1 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
+    #define     NI_MH_CHEM              0 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
     //General definitions
     #define     WAIT_TIME               600 ///< Time to wait before states, set to 10 minutes
     #define     DC_RES_SECS             14 ///< How many seconds the DC resistance process takes
-    //Li-Ion definitions
+//    //Li-Ion definitions
+//    #define     Li_Ion_CV               4200 ///< Li-Ion constant voltage setting in mV
+//    #define     Li_Ion_CAP              3250 ///< Li-Ion capacity setting in mAh
+//    #define     Li_Ion_EOC_I            100 ///< Li-Ion end-of-charge current in mA
+//    #define     Li_Ion_EOD_V            3000 ///< Li_Ion end-of-discharge voltage in mV
+    //HACK FOR LI-PO (make system thinks it is Li-Ion)
     #define     Li_Ion_CV               4200 ///< Li-Ion constant voltage setting in mV
-    #define     Li_Ion_CAP              3250 ///< Li-Ion capacity setting in mAh
-    #define     Li_Ion_EOC_I            100 ///< Li-Ion end-of-charge current in mA
+    #define     Li_Ion_CAP              1200 ///< Li-Ion capacity setting in mAh
+    #define     Li_Ion_EOC_I            60 ///< Li-Ion end-of-charge current in mA
     #define     Li_Ion_EOD_V            3000 ///< Li_Ion end-of-discharge voltage in mV
+    //Li-Po definitions
+    #define     Li_Po_CV                4200 ///< Li-Ion constant voltage setting in mV
+    #define     Li_Po_CAP               1200 ///< Li-Ion capacity setting in mAh
+    #define     Li_Po_EOC_I             60 ///< Li-Ion end-of-charge current in mA
+    #define     Li_Po_EOD_V             3000 ///< Li_Ion end-of-discharge voltage in mV
     //Ni-MH definitions
     #define     Ni_MH_CV                1700 ///< Ni-MH constant voltage setting in mV
     #define     Ni_MH_CAP               2000 ///< Ni-MH capacity setting in mAh

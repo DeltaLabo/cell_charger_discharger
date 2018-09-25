@@ -439,8 +439,8 @@ void calculate_avg()
         default: /// If #count is not any of the previous cases then
             iprom += i; /// * Accumulate #i in #iprom
             vprom += v; /// * Accumulate #v in #vprom
-            //tprom += t; /// * Accumulate #t in #tprom
-            tprom += dc * 1.953125; // TEST FOR DC
+            tprom += t; /// * Accumulate #t in #tprom
+            //tprom += dc * 1.953125; // TEST FOR DC
             break;
     }   
 }
