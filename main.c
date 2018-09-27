@@ -17,8 +17,7 @@
 */
 void main(void)
 {   
-/** Initially the @link Initialize() @endlink function is called*/ 
-    initialize();
+    initialize(); /// * Call the #initialize() function
     __delay_ms(10);
     //WPUE3 = 1;      //Enable pull up for MCLR
     //HACKS FOR THIS BOARD
@@ -33,45 +32,44 @@ void main(void)
     TRISC5 = 1;     //As input to avoid control //old position
     WPUC5 = 0;      //Disable pull up
 
-/** Then the @p while(1) loop enters*/ 
-    while(1)
+
+    while(1) /// <b> Repeat the following steps forever </b> 
 	{   
-/**     If the flag of the Timer0 is set then:.*/
-        if(TMR0IF){
+        if(TMR0IF){ /// If the flag of the Timer0 is set then:
 /**         - The Timer0 period register is set to 7, which gives 252 instructions (including 2 of delay) to overflow\n
             That is: @b Instruction @b clock {32MHz/4} / @b Prescaler {128} / @b Counter {250} = 250Hz = 4ms of period*/
             TMR0 = 0x07;
 /**         - Then, the Timer0 flag is cleared*/
             TMR0IF = 0;
-/**         - Then, the ADC channels are read by calling the @link read_ADC() @endlink function*/
+/**         - Then, the ADC channels are read by calling the #read_ADC() function*/
             read_ADC();
-/**         - Then, averages for the 250 values available each second are calculated by calling the @link calculate_avg() @endlink function*/
+/**         - Then, averages for the 250 values available each second are calculated by calling the #calculate_avg() function*/
             calculate_avg();
-/**         - Then, the log is printed in the serial terminal by calling the @link log_control() @endlink function*/
+/**         - Then, the log is printed in the serial terminal by calling the #log_control() function*/
             log_control();
-/**         - If the counter in the variable @link count @endlink is cleared it means that 1 second has passed.\n
+/**         - If the counter in the variable #count is cleared it means that 1 second has passed.\n
             The following tasks are excuted every second:*/
             if (!count)
             {
-/**             -# If the chemistry is Li Ion the @link cc_cv_mode() @endlink function is called*/           
+/**             -# If the chemistry is Li Ion the #cc_cv_mode() function is called*/           
                 #if (LI_ION_CHEM) 
                 cc_cv_mode(vprom, vref, cmode);
                 #endif
-/**             -# Then the @link State_machine() @endlink function is called*/
+/**             -# Then the #state_machine() function is called*/
                 state_machine();  
             }
-/**         - If the variable @link conv @endlink is set it means the converter shall be stated, then:*/
+/**         - If the variable #conv is set it means the converter shall be stated, then:*/
             if (conv)
             {
 /**             -# The main relay is closed*/
                 RA1 = 0;
-/**             -# Then the @link control_loop() @endlink function is called*/
+/**             -# Then the #control_loop() function is called*/
                 control_loop();
 /**             -# If by that point the timer flag was set again and error message is printed*/
                 if (TMR0IF) UART_send_string((char*)"T_ERROR");
 /**         - Else, the main relay is keep closed*/
             }else RA1 = 1;             
-/**         Timing control is executed by calling the @link timing() @endlink function*/
+/**         Timing control is executed by calling the #timing() function*/
             timing();       
 		}        
 	}
@@ -98,16 +96,16 @@ void interrupt serial_interrupt(void)
 /**     - If @p recep received an @b ESC, then:*/
         if (recep == 0x1B)
         {   
-/**         -# Stop the converter by calling the @link STOP_CONVERTER() @endlink macro.*/
+/**         -# Stop the converter by calling the #STOP_CONVERTER() macro.*/
             STOP_CONVERTER();
-/**         -# Go to the @link STANDBY @endlink state.*/
+/**         -# Go to the #STANDBY state.*/
             state = STANDBY;
 /**     - Else If @p recep received an @b "n", then:.*/
         }else if  (recep == 'n')      //if the user press 'n' to go to next cell
         {
-/**         -# Stop the converter by calling the @link STOP_CONVERTER() @endlink macro.*/
+/**         -# Stop the converter by calling the #STOP_CONVERTER() macro.*/
             STOP_CONVERTER();
-/**         -# Go to the @link ISDONE @endlink state.*/
+/**         -# Go to the #ISDONE state.*/
             state = ISDONE; 
 /**     - Else:*/
         }else

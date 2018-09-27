@@ -97,32 +97,34 @@ void fIDLE()
 */
 void fCHARGE()
 {
-    LOG_ON();
-    conv = 1;
-    if (vprom < 900)
+    LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
+    conv = 1; /// * Activate control loop by setting #conv
+    if (vprom < 900) /// If #vprom is below 0.9V
     {
-        state = FAULT;
-        UART_send_string((char*)cell_below_str);
+        state = FAULT; /// * Go to #FAULT state
+        UART_send_string((char*)cell_below_str); /// * Send a warning message
         LINEBREAK;
     }
-    if (state == CHARGE){
-        #if (LI_ION_CHEM)
-        if (iprom < EOC_current)
+    if (state == CHARGE){ /// If the #state is #CHARGE
+        #if (LI_ION_CHEM) 
+        /// If the chemistry is Li-Ion
+        if (iprom < EOC_current) /// * If #iprom is below #EOC_current then
         {                
-            prev_state = state;
-            if (option == '3') state = ISDONE;
-            else state = WAIT;                
-            wait_count = WAIT_TIME;
-            STOP_CONVERTER();                       
+            prev_state = state; /// -# Set #prev_state equal to #state
+            if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #DONE state
+            else state = WAIT; /// -# Else, go to #WAIT state              
+            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
+            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro                      
         }
-        #elif (NI_MH_CHEM)
-        if (vprom < (vmax - Ni_MH_EOC_DV) || minute >= timeout)
+        #elif (NI_MH_CHEM) 
+        /// If the chemistry is Ni-MH
+        if (vprom < (vmax - Ni_MH_EOC_DV) || minute >= timeout) /// * If #vprom is 10mV below the maximum recorded voltage or the #timeout was reached then
         {
-            prev_state = state;
-            if (option == '3') state = ISDONE;
-            else state = WAIT;                
-            wait_count = WAIT_TIME;
-            STOP_CONVERTER();    
+            prev_state = state; /// -# Set #prev_state equal to #state
+            if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #DONE state
+            else state = WAIT; /// -# Else, go to #WAIT state                  
+            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
+            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro     
         }
         #endif   
     } 
