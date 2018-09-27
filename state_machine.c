@@ -376,19 +376,19 @@ void converter_settings()
         case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
             iref = i_char; /// * The current setpoint, #iref is defined as #i_char
             timeout = ((capacity / iref) * 66); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
-            RA0 = 0; /// * The charge/discharge relay, @p RA0 is cleared, charge position
+            SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
             break;
         case PREDISCHARGE:
         case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE
             iref = i_disc; /// * The current setpoint, #iref is defined as #i_disc
-            RA0 = 1; /// * The charge/discharge relay, @p RA0 is set, discharge position
+            SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;
         case CS_DC_res:
         case DS_DC_res:
         case PS_DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
             iref = capacity / 5; /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
             dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
-            RA0 = 1; /// * The charge/discharge relay, @p RA0 is set, discharge position          
+            SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;
     }
     __delay_ms(10);   

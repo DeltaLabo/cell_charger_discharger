@@ -25,19 +25,19 @@ void initialize()
     OSCCONbits.SCS = 0b00; /// * Clock determined by FOSC<2:0> in Configuration Words
     OSCCONbits.SPLLEN = 1; /// * Enable PLL. According to Errata this shall not be done in the Configuration Words
     /** @b RELAY @b OUPUTS*/
-    TRISA0 = 0; /// * Set RA0 as output. Charge/Discharge relay
-    ANSA0 = 0; /// * Set RA0 as digital
-    TRISA1 = 0; /// * Set RA3 as output. ON/OFF relay
-    ANSA1 = 0; /// * Set RA3 as digital
+    //PORTC doesn't have ANSELC
+    TRISC3 = 0; /// * Set RC3 as output. Discharge set
+    TRISC4 = 0; /// * Set RC4 as output. Charge set
+    TRISC5 = 0; /// * Set RC5 as output. ON/OFF relay
     /** @b CELL @b SWITCHER @b OUPUTS*/
-//    TRISA7 = 0; /// * Set RA7 as output. Cell #1
-//    ANSA7 = 0; /// * Set RA7 as digital
-//    TRISA6 = 0; /// * Set RA6 as output. Cell #2
-//    ANSA6 = 0; /// * Set RA6 as digital   //DOES NOT EXIST
-//    TRISC0 = 0; /// * Set RC0 as output. Cell #3
-//    ANSC0 = 0; /// * Set RC0 as digital  //DOES NOT EXIST
-//    TRISC1 = 0; /// * Set RC1 as output. Cell #4
-//    ANSC1 = 0; /// * Set RC1 as digital  //DOES NOT EXIST
+    TRISB2 = 0; /// * Set RB2 as output. Cell #1
+    ANSB2 = 0; /// * Set RB2 as digital
+    TRISB3 = 0; /// * Set RB3 as output. Cell #2
+    ANSB3 = 0; /// * Set RB3 as digital   //DOES NOT EXIST
+    TRISB4 = 0; /// * Set RB4 as output. Cell #3
+    ANSB4 = 0; /// * Set RB4 as digital  //DOES NOT EXIST
+    TRISB5 = 0; /// * Set RB5 as output. Cell #4
+    ANSB5 = 0; /// * Set RB% as digital  //DOES NOT EXIST
     /** @b TIMER0 for control and measuring loop*/
     TMR0IE = 0; /// * Disable timer interruptions
     TMR0CS = 0; /// * Timer set to internal instruction cycle
@@ -47,10 +47,6 @@ void initialize()
     TMR0 = 0x07; /// * Counter set to 255 - @b 250 + 2 (delay for sync) = 7
     /** Timer set to 32Mhz/4/128/250 = 250Hz*/
     /** @b PSMC/PWM @b SETTINGS*/
-    /** Outputs*/
-    TRISA4 = 1; /// * [Temporary] Set RA4 as input to let it drive from RB3.
-    WPUA4 = 0; /// * [Temporary] Disable WPU for RA4.
-    WPUC0 = 0; /// * [Temporary] Disable WPU for RC0.
     /** Programmable switch mode control (PSMC)*/
     PSMC1CON = 0x00; /// * Clear PSMC1 configuration to start
     PSMC1MDL = 0x00; /// * No modulation
@@ -66,31 +62,35 @@ void initialize()
     /** Phase or rising event*/
     PSMC1PHH = 0x00;                    /// * Rising event starts from the beginning
     PSMC1PHL = 0x00;                    /// * Rising event starts from the beginning
-    PSMC1STR0bits.P1STRA = 1;           /// * Single PWM activated in PSMC1A (RCO))
-    PSMC1POLbits.P1POLA = 0;            /// * Active high
-    PSMC1OENbits.P1OEA = 1;             /// * PSMC1A activated in PSMC1A (RC0)
+    PSMC1STR0bits.P1STRC = 1;           /// * Single PWM activated in PSMC1C (RC2)
+    PSMC1POLbits.P1POLC = 0;            /// * Active high (RC2)
+    PSMC1OENbits.P1OEC = 1;             /// * PSMC activated in PSMC1C (RC2)
     PSMC1PRSbits.P1PRST = 1;            /// * Period event occurs when PSMC1TMR = PSMC1PR
     PSMC1PHSbits.P1PHST = 1;            /// * Rising edge event occurs when PSMC1TMR = PSMC1PH
     PSMC1DCSbits.P1DCST = 1;            /// * Falling edge event occurs when PSMC1TMR = PSMC1DC
     PSMC1CON = 0x80;                    /// * Enable|Load Buffer|Dead band disabled|Single PWM
     //PSMC1TIE = 1;                       //Enable interrupts for Time Based 
-    TRISC0 = 0;                         /// * Set RC0 as output
+    WPUC2 = 0; /// * Disable WPU for RC0.
+    TRISC2 = 0;                         /// * Set RC2 as output
     /** @b ADC*/
     /** ADC INPUTS*///check this after final design
     TRISA3 = 1; /// * RA3, Positive voltage reference
     ANSA3 = 0; /// * RA3 analog
-    WPUA3 = 0; /// * Weak pull up Deactivated
-    TRISB4 = 1; /// * RB4, current sensing input
-    ANSB4 = 1; /// * RB4 analog
-    WPUB4 = 0; /// * Weak pull up Deactivated
-    TRISB5 = 1; /// * RB5, voltage sensing input
-    ANSB5 = 1; /// * RB5 analog
-    WPUB5 = 0; /// * Weak pull up Deactivated
+    WPUA3 = 0; /// * Weak pull up deactivated
+    TRISB1 = 1; /// * RB1, voltage sensing input
+    ANSB1 = 1; /// * RB1 analog
+    WPUB1 = 0; /// * RB1 weak pull up deactivated
+    TRISB0 = 1; /// * RB0, current sensing input
+    ANSB0 = 1; /// * RB0 analog
+    WPUB0 = 0; /// * RB0 weak pull up deactivated
+    TRISA5 = 1; /// * RA5, temperature sensing input
+    ANSA5 = 1; /// * RA5 analog
+    WPUA5 = 0; /// * RA5 weak pull up deactivated   
     /** Configs*/
     ADCON0bits.ADRMD = 0; /// * 12 bits result
     ADCON1bits.ADCS = 0b010; /// * Clock selected as FOSC/32
     ADCON1bits.ADNREF = 0; /// * Connected to Vss
-    ADCON1bits.ADPREF = 0b00; /// * Connected to VDD, change after to Connected to Vref+ (01)
+    ADCON1bits.ADPREF = 0b01; /// * Connected to Vref+
     ADCON1bits.ADFM = 1; /// * 2's compliment result
     ADCON2bits.CHSN = 0b1111; /// * Negative differential input as ADNREF
     ADCON0bits.ADON = 1; /// * Turn on the ADC
