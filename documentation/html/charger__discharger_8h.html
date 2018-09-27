@@ -289,9 +289,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a0c4e2b572b4dd0ba38a90c7721edf3d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8h.html#a0c4e2b572b4dd0ba38a90c7721edf3d8">fCHARGE</a> (void)</td></tr>
 <tr class="memdesc:a0c4e2b572b4dd0ba38a90c7721edf3d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine.  <a href="#a0c4e2b572b4dd0ba38a90c7721edf3d8">More...</a><br /></td></tr>
 <tr class="separator:a0c4e2b572b4dd0ba38a90c7721edf3d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad25aed7556b1faba14a86a62f1dd4f89"><td class="memItemLeft" align="right" valign="top"><a id="ad25aed7556b1faba14a86a62f1dd4f89"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8h.html#ad25aed7556b1faba14a86a62f1dd4f89">fDISCHARGE</a> (void)</td></tr>
-<tr class="memdesc:ad25aed7556b1faba14a86a62f1dd4f89"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine. <br /></td></tr>
+<tr class="memitem:ad25aed7556b1faba14a86a62f1dd4f89"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8h.html#ad25aed7556b1faba14a86a62f1dd4f89">fDISCHARGE</a> (void)</td></tr>
+<tr class="memdesc:ad25aed7556b1faba14a86a62f1dd4f89"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine.  <a href="#ad25aed7556b1faba14a86a62f1dd4f89">More...</a><br /></td></tr>
 <tr class="separator:ad25aed7556b1faba14a86a62f1dd4f89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b36b83531f2626d071ba3d1115ba83f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8h.html#a0b36b83531f2626d071ba3d1115ba83f">fDC_res</a> (void)</td></tr>
 <tr class="memdesc:a0b36b83531f2626d071ba3d1115ba83f"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function define the IDLE state of the state machine.  <a href="#a0b36b83531f2626d071ba3d1115ba83f">More...</a><br /></td></tr>
@@ -1030,10 +1029,18 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 </ul>
 <ol type="1">
 <li>Set <a class="el" href="charger__discharger_8h.html#ad24a7209740a83b880691380fbe8e0e9" title="Used to store the previous state. Initialized as STANDBY. ">prev_state</a> equal to <a class="el" href="charger__discharger_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY. ">state</a></li>
-<li>If <a class="el" href="charger__discharger_8h.html#aa138b263667688f0a28af01c14f90f8a" title="Four different options, look into param() for details. ">option</a> is '3' then go to #DONE state</li>
-<li>Else, go to <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a79a322ccb4b29b85b3cab52dbccefd17" title="&quot;Wait&quot; state, defined by function fWAIT() ">WAIT</a> state <br />
-<br />
-</li>
+<li>If <a class="el" href="charger__discharger_8h.html#aa138b263667688f0a28af01c14f90f8a" title="Four different options, look into param() for details. ">option</a> is '3' then go to <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a2df4f4d04ec310a30dd8eaac64f883a2" title="&quot;Is done&quot; state, defined by function fISDONE() ">ISDONE</a> state</li>
+<li>Else, go to <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a79a322ccb4b29b85b3cab52dbccefd17" title="&quot;Wait&quot; state, defined by function fWAIT() ">WAIT</a> state</li>
+<li>Set <a class="el" href="charger__discharger_8h.html#ab6565850a0af535f87ce6e6fcb0b8c76" title="Counter for waiting time between states. Initialized as WAIT_TIME. ">wait_count</a> equal to <a class="el" href="charger__discharger_8h.html#ae7676cdfa371dfdcf6fb0687737c29a6" title="Time to wait before states, set to 10 minutes. ">WAIT_TIME</a></li>
+<li>Stop the converter by calling <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0" title="Stop the converter. ">STOP_CONVERTER()</a> macro</li>
+</ol>
+<p>If the <a class="el" href="charger__discharger_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY. ">state</a> is <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a90827714b4165a402681b4ce4874e5f0" title="&quot;Postcharge&quot; state, defined by function fCHARGE() ">POSTCHARGE</a></p>
+<ul>
+<li>If <a class="el" href="charger__discharger_8h.html#a16200aa761421d421187ce19c33dfcd0" title="Integration of i . Initialized as 0. ">qprom</a> is bigger than half of <a class="el" href="charger__discharger_8h.html#ab1bf8d3dc7c9a3ba66f0ee8e88885ca9" title="Definition of capacity per cell according to each chemistry. ">capacity</a> then</li>
+</ul>
+<ol type="1">
+<li>Set <a class="el" href="charger__discharger_8h.html#ad24a7209740a83b880691380fbe8e0e9" title="Used to store the previous state. Initialized as STANDBY. ">prev_state</a> equal to <a class="el" href="charger__discharger_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY. ">state</a></li>
+<li>Go to <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a79a322ccb4b29b85b3cab52dbccefd17" title="&quot;Wait&quot; state, defined by function fWAIT() ">WAIT</a> state</li>
 <li>Set <a class="el" href="charger__discharger_8h.html#ab6565850a0af535f87ce6e6fcb0b8c76" title="Counter for waiting time between states. Initialized as WAIT_TIME. ">wait_count</a> equal to <a class="el" href="charger__discharger_8h.html#ae7676cdfa371dfdcf6fb0687737c29a6" title="Time to wait before states, set to 10 minutes. ">WAIT_TIME</a></li>
 <li>Stop the converter by calling <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0" title="Stop the converter. ">STOP_CONVERTER()</a> macro </li>
 </ol>
@@ -1057,7 +1064,45 @@ char const&#160;</td><td class="memItemRight" valign="bottom"><b>cell_below_str<
 </div><div class="memdoc">
 
 <p>This function define the IDLE state of the state machine. </p>
+<ul>
+<li>Activate control loop by setting <a class="el" href="charger__discharger_8h.html#a0cc5d179fc4afa584f15244b35b01521" title="Turn controller ON(1) or OFF(0). Initialized as 0. ">conv</a></li>
+<li>If <a class="el" href="charger__discharger_8h.html#a84cf4389d019b53039c0c1ce35691335" title="Counter for DC resistance. Initialized as DC_RES_SECS. ">dc_res_count</a> is equal to 4 (CHANGE), then:</li>
+</ul>
 <p>I dont like this </p>
+
+</div>
+</div>
+<a id="ad25aed7556b1faba14a86a62f1dd4f89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad25aed7556b1faba14a86a62f1dd4f89">&#9670;&nbsp;</a></span>fDISCHARGE()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void fDISCHARGE </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function define the IDLE state of the state machine. </p>
+<ul>
+<li>Activate the logging by calling <a class="el" href="charger__discharger_8h.html#a4d26e5ca6078be961b6b42719ebca269" title="Turn OFF logging in the terminal. ">LOG_ON()</a> macro</li>
+<li>Activate control loop by setting <a class="el" href="charger__discharger_8h.html#a0cc5d179fc4afa584f15244b35b01521" title="Turn controller ON(1) or OFF(0). Initialized as 0. ">conv</a></li>
+<li>If <a class="el" href="charger__discharger_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a> is below <a class="el" href="charger__discharger_8h.html#a79e7b0a74f48e181c9d3505363eb5c3e" title="End-of-dischage voltage in mV. ">EOD_voltage</a> then</li>
+</ul>
+<ol type="1">
+<li>Set <a class="el" href="charger__discharger_8h.html#ad24a7209740a83b880691380fbe8e0e9" title="Used to store the previous state. Initialized as STANDBY. ">prev_state</a> equal to <a class="el" href="charger__discharger_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY. ">state</a></li>
+<li>If <a class="el" href="charger__discharger_8h.html#aa138b263667688f0a28af01c14f90f8a" title="Four different options, look into param() for details. ">option</a> is '2' or '4' then go to <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a2df4f4d04ec310a30dd8eaac64f883a2" title="&quot;Is done&quot; state, defined by function fISDONE() ">ISDONE</a> state</li>
+<li>Else, go to <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a79a322ccb4b29b85b3cab52dbccefd17" title="&quot;Wait&quot; state, defined by function fWAIT() ">WAIT</a> state <br />
+<br />
+</li>
+<li>Set <a class="el" href="charger__discharger_8h.html#ab6565850a0af535f87ce6e6fcb0b8c76" title="Counter for waiting time between states. Initialized as WAIT_TIME. ">wait_count</a> equal to <a class="el" href="charger__discharger_8h.html#ae7676cdfa371dfdcf6fb0687737c29a6" title="Time to wait before states, set to 10 minutes. ">WAIT_TIME</a></li>
+<li>Stop the converter by calling <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0" title="Stop the converter. ">STOP_CONVERTER()</a> macro </li>
+</ol>
 
 </div>
 </div>

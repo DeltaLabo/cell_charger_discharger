@@ -33,44 +33,28 @@ void main(void)
     WPUC5 = 0;      //Disable pull up
 
 
-    while(1) /// <b> Repeat the following steps forever </b> 
-	{   
+    while(1) /// <b> Repeat the following steps forever </b>
+    {
         if(TMR0IF){ /// If the flag of the Timer0 is set then:
-/**         - The Timer0 period register is set to 7, which gives 252 instructions (including 2 of delay) to overflow\n
-            That is: @b Instruction @b clock {32MHz/4} / @b Prescaler {128} / @b Counter {250} = 250Hz = 4ms of period*/
-            TMR0 = 0x07;
-/**         - Then, the Timer0 flag is cleared*/
-            TMR0IF = 0;
-/**         - Then, the ADC channels are read by calling the #read_ADC() function*/
-            read_ADC();
-/**         - Then, averages for the 250 values available each second are calculated by calling the #calculate_avg() function*/
-            calculate_avg();
-/**         - Then, the log is printed in the serial terminal by calling the #log_control() function*/
-            log_control();
-/**         - If the counter in the variable #count is cleared it means that 1 second has passed.\n
-            The following tasks are excuted every second:*/
-            if (!count)
-            {
-/**             -# If the chemistry is Li Ion the #cc_cv_mode() function is called*/           
-                #if (LI_ION_CHEM) 
+            TMR0 = 0x07; /// * The Timer0 period register is set to 7, which gives 252 instructions (including 2 of delay) to overflow
+            TMR0IF = 0; /// * Then, the Timer0 flag is cleared
+            read_ADC(); /// * Then, the ADC channels are read by calling the #read_ADC() function
+            calculate_avg(); /// * Then, averages for the 250 values available each second are calculated by calling the #calculate_avg() function
+            log_control(); /// *  Then, the log is printed in the serial terminal by calling the #log_control() function
+            if (!count) /// * The following tasks are excuted every second:
+            {          
+                #if (LI_ION_CHEM) /// -# If the chemistry is Li Ion the #cc_cv_mode() function is called
                 cc_cv_mode(vprom, vref, cmode);
                 #endif
-/**             -# Then the #state_machine() function is called*/
-                state_machine();  
+                state_machine(); /// -# Then the #state_machine() function is called
             }
-/**         - If the variable #conv is set it means the converter shall be stated, then:*/
-            if (conv)
+            if (conv) /// * If the variable #conv is set it means the converter shall be started, then:
             {
-/**             -# The main relay is closed*/
-                RA1 = 0;
-/**             -# Then the #control_loop() function is called*/
-                control_loop();
-/**             -# If by that point the timer flag was set again and error message is printed*/
-                if (TMR0IF) UART_send_string((char*)"T_ERROR");
-/**         - Else, the main relay is keep closed*/
-            }else RA1 = 1;             
-/**         Timing control is executed by calling the #timing() function*/
-            timing();       
+                RA1 = 0; /// -# The main relay is closed
+                control_loop(); /// -# The #control_loop() function is called*/
+                if (TMR0IF) UART_send_string((char*)"T_ERROR"); /// -# If by that point the timer flag was set again and error message is printed
+            }else RA1 = 1; /// Else, the main relay is keep closed         
+            timing(); /// * Timing control is executed by calling the #timing() function    
 		}        
 	}
 }
@@ -79,39 +63,28 @@ void main(void)
 */
 void interrupt serial_interrupt(void) 
 {
-/** The function first define and initialize a variable (@p recep) to store the received character*/
-    volatile char recep = 0;
+    volatile char recep = 0; /// Define and initialize @p recep variable to store the received character
 
-/** If the UART reception flag is set then:*/
-    if(RCIF)
+
+    if(RCIF)/// If the UART reception flag is set then:
     {
-/**     - Check for errors and clear them*/
-        if(RC1STAbits.OERR) // check for Error 
+        if(RC1STAbits.OERR) /// * Check for errors and clear them
         {
-            RC1STAbits.CREN = 0; //If error -> Reset 
-            RC1STAbits.CREN = 1; //If error -> Reset 
+            RC1STAbits.CREN = 0;  
+            RC1STAbits.CREN = 1; 
         }
-/**     - Empty the reception buffer and assign its contents to the variable @p recep*/
-        while(RCIF) recep = RC1REG; 
-/**     - If @p recep received an @b ESC, then:*/
-        if (recep == 0x1B)
+        while(RCIF) recep = RC1REG; /// * Empty the reception buffer and assign its contents to the variable @p recep
+        if (recep == 0x1B) /// * If @p recep received an @b ESC, then:
         {   
-/**         -# Stop the converter by calling the #STOP_CONVERTER() macro.*/
-            STOP_CONVERTER();
-/**         -# Go to the #STANDBY state.*/
-            state = STANDBY;
-/**     - Else If @p recep received an @b "n", then:.*/
-        }else if  (recep == 'n')      //if the user press 'n' to go to next cell
+            STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
+            state = STANDBY; /// -# Go to the #STANDBY state.
+        }else if  (recep == 'n') /// * Else If @p recep received an @b "n", then:
         {
-/**         -# Stop the converter by calling the #STOP_CONVERTER() macro.*/
-            STOP_CONVERTER();
-/**         -# Go to the #ISDONE state.*/
-            state = ISDONE; 
-/**     - Else:*/
-        }else
+            STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
+            state = ISDONE; /// -# Go to the #ISDONE state.
+        }else /// * Else:
         {
-/**         -# Clear the @p recep variable.*/
-           recep = 0;
+           recep = 0; /// -# Clear the @p recep variable.
         }
     }  
 }

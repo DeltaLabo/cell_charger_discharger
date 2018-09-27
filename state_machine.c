@@ -112,28 +112,28 @@ void fCHARGE()
         {                
             prev_state = state; /// -# Set #prev_state equal to #state
             if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #DONE state
-            else state = WAIT; /// -# Else, go to #WAIT state              
+            else state = WAIT; /// -# Else, go to #WAIT state
             wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
-            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro                      
+            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
         }
         #elif (NI_MH_CHEM) 
         /// If the chemistry is Ni-MH
         if (vprom < (vmax - Ni_MH_EOC_DV) || minute >= timeout) /// * If #vprom is 10mV below the maximum recorded voltage or the #timeout was reached then
         {
             prev_state = state; /// -# Set #prev_state equal to #state
-            if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #DONE state
-            else state = WAIT; /// -# Else, go to #WAIT state                  
+            if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #ISDONE state
+            else state = WAIT; /// -# Else, go to #WAIT state
             wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
-            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro     
+            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
         }
-        #endif   
-    } 
-    if (state == POSTCHARGE){
-        if (qprom >= (capacity/2)){
-            prev_state = state;
-            state = WAIT;
-            wait_count = WAIT_TIME;
-            STOP_CONVERTER();
+        #endif
+    }
+    if (state == POSTCHARGE){ /// If the #state is #POSTCHARGE
+        if (qprom >= (capacity/2)){ /// * If #qprom is bigger than half of #capacity then
+            prev_state = state; /// -# Set #prev_state equal to #state
+            state = WAIT; /// -# Go to #WAIT state
+            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
+            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro  
         }
     }    
 }
@@ -142,15 +142,15 @@ void fCHARGE()
 */
 void fDISCHARGE()
 {
-    LOG_ON();
-    conv = 1;
-    if (vprom < EOD_voltage)
+    LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
+    conv = 1; /// * Activate control loop by setting #conv
+    if (vprom < EOD_voltage) /// * If #vprom is below #EOD_voltage then
     {
-        prev_state = state;
-        if (option == '2'| option == '4') state = ISDONE;
-        else state = WAIT;                
-        wait_count = WAIT_TIME;
-        STOP_CONVERTER();
+        prev_state = state; /// -# Set #prev_state equal to #state
+        if (option == '2'| option == '4') state = ISDONE; /// -# If #option is '2' or '4' then go to #ISDONE state
+        else state = WAIT; /// -# Else, go to #WAIT state                  
+        wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
+        STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro  
     }
 }
 
@@ -158,9 +158,8 @@ void fDISCHARGE()
 */
 void fDC_res() //can be improved a lot!!
 {
-    //LOG_ON();
-    conv = 1;
-    if (dc_res_count == 4)  //Check all this timming
+    conv = 1; /// * Activate control loop by setting #conv
+    if (dc_res_count == 4)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
     {
         v_1_dcres = vprom;
         i_1_dcres = iprom;
