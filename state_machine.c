@@ -107,16 +107,18 @@ void fCHARGE()
     }
     if (state == CHARGE){
         #if (LI_ION_CHEM)
-        if (iprom < EOC_current)
+        if ((iprom < EOC_current) && ((minute + second) >= 1))
         {                
             prev_state = state;
             if (option == '3') state = ISDONE;
             else state = WAIT;                
             wait_count = WAIT_TIME;
-            STOP_CONVERTER();                       
+            STOP_CONVERTER();
+            UART_send_string("iprom = ");
+            display_value((int)iprom);
         }
         #elif (NI_MH_CHEM)
-        if (vprom < (vmax - Ni_MH_EOC_DV) || minute >= timeout)
+        if (((vprom < (vmax - Ni_MH_EOC_DV)) && ((minute + second) >= 1)) || minute >= timeout)
         {
             prev_state = state;
             if (option == '3') state = ISDONE;
@@ -127,7 +129,7 @@ void fCHARGE()
         #endif   
     } 
     if (state == POSTCHARGE){
-        if (qprom >= (capacity/2)){
+        if (qprom >= (capacity/2) && ((minute + second) >= 1)){
             prev_state = state;
             state = WAIT;
             wait_count = WAIT_TIME;

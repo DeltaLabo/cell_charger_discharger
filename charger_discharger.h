@@ -121,8 +121,8 @@
     #define     COUNTER                 250  ///< Counter value, needed to obtained one second between counts.
     #define     CC_kp                   0.025  ///< Proportional constant for CC mode
     #define     CC_ki                   0.04  ///< Integral constant for CC mode 
-    #define     CV_kp                   0.4  ///< Proportional constant for CV mode
-    #define     CV_ki                   0.5  ///< Integral constant for CV mode 
+    #define     CV_kp                   0.2  ///< Proportional constant for CV mode
+    #define     CV_ki                   0.4  ///< Integral constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); } ///< Send a linebreak to the terminal
     //Chemistry definition
     #define     LI_ION_CHEM             1 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
