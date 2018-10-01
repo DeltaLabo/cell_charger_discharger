@@ -107,7 +107,7 @@ void fCHARGE()
     }
     if (state == CHARGE){
         #if (LI_ION_CHEM)
-        if ((iprom < EOC_current) && ((minute + second) >= 1))
+        if ((iprom < EOC_current) && (qprom > 0))
         {                
             prev_state = state;
             if (option == '3') state = ISDONE;
@@ -118,7 +118,7 @@ void fCHARGE()
             display_value((int)iprom);
         }
         #elif (NI_MH_CHEM)
-        if (((vprom < (vmax - Ni_MH_EOC_DV)) && ((minute + second) >= 1)) || minute >= timeout)
+        if (((vprom < (vmax - Ni_MH_EOC_DV)) && (qprom > 0)) || minute >= timeout)
         {
             prev_state = state;
             if (option == '3') state = ISDONE;
