@@ -27,17 +27,20 @@ void initialize()
     /** @b RELAY @b OUPUTS*/
     //PORTC doesn't have ANSELC
     TRISC3 = 0; /// * Set RC3 as output. Discharge set
+    WPUC3 = 0; /// * Weak pull up deactivated
     TRISC4 = 0; /// * Set RC4 as output. Charge set
+    WPUC4 = 0; /// * Weak pull up deactivated    
     TRISC5 = 0; /// * Set RC5 as output. ON/OFF relay
+    WPUC5 = 0; /// * Weak pull up deactivated
     /** @b CELL @b SWITCHER @b OUPUTS*/
     TRISB2 = 0; /// * Set RB2 as output. Cell #1
     ANSB2 = 0; /// * Set RB2 as digital
     TRISB3 = 0; /// * Set RB3 as output. Cell #2
-    ANSB3 = 0; /// * Set RB3 as digital   //DOES NOT EXIST
+    ANSB3 = 0; /// * Set RB3 as digital   
     TRISB4 = 0; /// * Set RB4 as output. Cell #3
-    ANSB4 = 0; /// * Set RB4 as digital  //DOES NOT EXIST
+    ANSB4 = 0; /// * Set RB4 as digital  
     TRISB5 = 0; /// * Set RB5 as output. Cell #4
-    ANSB5 = 0; /// * Set RB% as digital  //DOES NOT EXIST
+    ANSB5 = 0; /// * Set RB% as digital  
     /** @b TIMER0 for control and measuring loop*/
     TMR0IE = 0; /// * Disable timer interruptions
     TMR0CS = 0; /// * Timer set to internal instruction cycle
@@ -369,9 +372,8 @@ void read_ADC()
     float opr = 0; /// Define @p opr to store the operations inside the function
     AD_SET_CHAN(V_CHAN); /// Select the #V_CHAN channel usign #AD_SET_CHAN(x)
     AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
-    AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()
-    //v = ad_res * 1.23779; //* 1.2207;    
-    opr = (float)(1.28655 * ad_res); /// Apply the operation @code opr = ad_res * [(R1+R2)/(R1)] * [(Vref)/(2^12)] = ad_res * (1051/1000) * (5014/4096) @endcode
+    AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()   
+    opr = (float)(1.28296 * ad_res); /// Apply the operation @code opr = ad_res * [(R1+R2)/(R1)] * [(Vref)/(2^12)] = ad_res * (1051/1000) * (5000/4096) @endcode
     v = opr; /// Make #v equal to @p opr
     AD_SET_CHAN(I_CHAN); /// Select the #I_CHAN channel usign #AD_SET_CHAN(x)
     AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
@@ -396,7 +398,7 @@ void control_loop()
 {   
     if(!cmode) /// If #cmode is cleared then
     {
-        pid(v, vref + 18);  /// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
+        pid(v, vref);  /// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
     }else /// Else,
     {
         pid(i, iref); /// * The #pid() function is called with @p feedback = #i and @p setpoint = #iref
@@ -440,8 +442,8 @@ void calculate_avg()
         default: /// If #count is not any of the previous cases then
             iprom += i; /// * Accumulate #i in #iprom
             vprom += v; /// * Accumulate #v in #vprom
-            tprom += t; /// * Accumulate #t in #tprom
-            //tprom += dc * 1.953125; // TEST FOR DC
+            //tprom += t; /// * Accumulate #t in #tprom
+            tprom += dc * 1.953125; // TEST FOR DC
             break;
     }   
 }

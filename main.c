@@ -20,18 +20,6 @@ void main(void)
     initialize(); /// * Call the #initialize() function
     __delay_ms(10);
     //WPUE3 = 1;      //Enable pull up for MCLR
-    //HACKS FOR THIS BOARD
-    TRISB0 = 1;     //Set RB1 as input
-    WPUB0 = 0;      //Disable pull up
-    TRISB1 = 1;     //Set RB1 as input
-    WPUB1 = 0;      //Disable pull up
-    TRISC3 = 1;     //As input to avoid control //old position
-    WPUC3 = 0;      //Disable pull up
-    TRISC4 = 1;     //As input to avoid control //old position
-    WPUC4 = 0;      //Disable pull up
-    TRISC5 = 1;     //As input to avoid control //old position
-    WPUC5 = 0;      //Disable pull up
-
 
     while(1) /// <b> Repeat the following steps forever </b>
     {
@@ -50,10 +38,10 @@ void main(void)
             }
             if (conv) /// * If the variable #conv is set it means the converter shall be started, then:
             {
-                RA1 = 0; /// -# The main relay is closed
+                RC5 = 1; /// -# The main relay is closed
                 control_loop(); /// -# The #control_loop() function is called*/
                 if (TMR0IF) UART_send_string((char*)"T_ERROR"); /// -# If by that point the timer flag was set again and error message is printed
-            }else RA1 = 1; /// Else, the main relay is keep closed         
+            }else RC5 = 0; /// Else, the main relay is keep closed         
             timing(); /// * Timing control is executed by calling the #timing() function    
 		}        
 	}
