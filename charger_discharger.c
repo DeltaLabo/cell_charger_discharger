@@ -207,49 +207,50 @@ and could be considered as some future improvement*/
                 itoa(log_buffer,minute,10); /// * Convert #minute into a string and store it in #log_buffer
                 break;
             case COUNTER - 1: /// Next cycle
-                if (minute < 10) UART_send_char('0'); /// * If #minute is smaller than 10 send a '0'
-                else UART_send_char(log_buffer[0]); /// * Else, send #log_buffer[0]
+                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
                 break;
             case COUNTER - 2: /// Next cycle
-                if (minute < 10) UART_send_char(log_buffer[0]); /// * If #minute is smaller than 10 send #log_buffer[0]
-                else UART_send_char(log_buffer[1]); /// * Else, send #log_buffer[1]
+                if (minute >= 10) UART_send_char(log_buffer[1]); /// * If #minute is bigger than 10 send #log_buffer[1]
                 break;
             case COUNTER - 3: /// Next cycle
-                UART_send_char(colons); /// * Send a colons character
+                if (minute >= 100) UART_send_char(log_buffer[2]); /// * If #minute is bigger than 100 send #log_buffer[2]
                 break;
             case COUNTER - 4: /// Next cycle
-                memset(log_buffer, '0', 8); /// * Clear #log_buffer
+                UART_send_char(colons); /// * Send a colons character
                 break;
             case COUNTER - 5: /// Next cycle
-                itoa(log_buffer,second,10); /// * Convert #second into a string and store it in #log_buffer
+                memset(log_buffer, '0', 8); /// * Clear #log_buffer
                 break;
             case COUNTER - 6: /// Next cycle
+                itoa(log_buffer,second,10); /// * Convert #second into a string and store it in #log_buffer
+                break;
+            case COUNTER - 7: /// Next cycle
                 if (second < 10) UART_send_char('0'); /// * If #second is smaller than 10 send a '0'
                 else UART_send_char(log_buffer[0]); /// * Else, send #log_buffer[0]
                 break;
-            case COUNTER - 7: /// Next cycle
+            case COUNTER - 8: /// Next cycle
                 if (second < 10) UART_send_char(log_buffer[0]); /// * If #second is smaller than 10 send #log_buffer[0]
                 else UART_send_char(log_buffer[1]); /// * Else, send #log_buffer[1]
                 break;
-            case COUNTER - 8: /// Next cycle
+            case COUNTER - 9: /// Next cycle
                 UART_send_char(comma); /// * Send a comma character
                 break;
-            case COUNTER - 9: /// Next cycle
+            case COUNTER - 10: /// Next cycle
                 memset(log_buffer, '0', 8); /// * Clear #log_buffer
                 break;
-                case COUNTER - 10: /// Next cycle
+            case COUNTER - 11: /// Next cycle
                 UART_send_char(C_str); /// * Send a 'C'
                 break;
-            case COUNTER - 11: /// Next cycle
+            case COUNTER - 12: /// Next cycle
                 UART_send_char(cell_count); /// * Send a #cell_count variable
                 break;
-            case COUNTER - 12: /// Next cycle
+            case COUNTER - 13: /// Next cycle
                 UART_send_char(comma); /// * Send a comma character
                 break;
-            case COUNTER - 13: /// Next cycle
+            case COUNTER - 14: /// Next cycle
                 UART_send_char(S_str); /// * Send an 'S'
                 break;
-            case COUNTER - 14: /// Next cycle
+            case COUNTER - 15: /// Next cycle
                 itoa(log_buffer,(int)state,10); /// * Convert #state into a string and store it in #log_buffer
                 break;
             case COUNTER - 16: /// Next cycle
@@ -298,7 +299,7 @@ and could be considered as some future improvement*/
                 UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
                 break;
             case COUNTER - 31: /// Next cycle
-                UART_send_char(log_buffer[2]); /// * Send #log_buffer[2]
+                if (ip_buff >= 100) UART_send_char(log_buffer[2]); /// * Send #log_buffer[2]
                 break;
             case COUNTER - 32: /// Next cycle
                 if (ip_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p ip_buff is bigger or equal to 1000, send #log_buffer[3]
@@ -439,8 +440,8 @@ void calculate_avg()
         default: /// If #count is not any of the previous cases then
             iprom += i; /// * Accumulate #i in #iprom
             vprom += v; /// * Accumulate #v in #vprom
-            //tprom += t; /// * Accumulate #t in #tprom
-            tprom += dc * 1.953125; // TEST FOR DC
+            tprom += t; /// * Accumulate #t in #tprom
+            //tprom += dc * 1.953125; // TEST FOR DC
             break;
     }   
 }

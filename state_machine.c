@@ -118,7 +118,7 @@ void fCHARGE()
         }
         #elif (NI_MH_CHEM) 
         /// If the chemistry is Ni-MH
-        if (vprom < (vmax - Ni_MH_EOC_DV) || minute >= timeout) /// * If #vprom is 10mV below the maximum recorded voltage or the #timeout was reached then
+        if (((vprom < (vmax - Ni_MH_EOC_DV)) && (qprom > 0)) || minute >= timeout)
         {
             prev_state = state; /// -# Set #prev_state equal to #state
             if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #ISDONE state
@@ -126,14 +126,14 @@ void fCHARGE()
             wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
             STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
         }
-        #endif
-    }
-    if (state == POSTCHARGE){ /// If the #state is #POSTCHARGE
-        if (qprom >= (capacity/2)){ /// * If #qprom is bigger than half of #capacity then
-            prev_state = state; /// -# Set #prev_state equal to #state
-            state = WAIT; /// -# Go to #WAIT state
-            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
-            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro  
+        #endif   
+    } 
+    if (state == POSTCHARGE){
+        if (qprom >= (capacity/2) && ((minute + second) >= 1)){
+            prev_state = state;
+            state = WAIT;
+            wait_count = WAIT_TIME;
+            STOP_CONVERTER();
         }
     }    
 }
