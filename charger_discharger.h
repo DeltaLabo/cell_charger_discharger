@@ -22,8 +22,8 @@
     #pragma config MCLRE = ON       // MCLR Pin Function Select (MCLR/VPP pin function is MCLR)//If this is enabled, the Timer0 module will not work properly.
     #pragma config CP = OFF         // Flash Program Memory Code Protection (Program memory code protection is disabled)
     #pragma config CPD = OFF        // Data Memory Code Protection (Data memory code protection is disabled)
-    #pragma config BOREN = OFF       // Brown-out Reset Enable (Brown-out Reset enabled)
-    #pragma config CLKOUTEN = OFF   // Clock Out Enable (CLKOUT function is disabled. I/O or oscillator function on the CLKOUT pin)
+    #pragma config BOREN = OFF      // Brown-out Reset Enable (Brown-out Reset enabled)
+    #pragma config CLKOUTEN = ON    // Clock Out Negative Enable (CLKOUT function is disabled. I/O or oscillator function on the CLKOUT pin)
     #pragma config IESO = ON        // Internal/External Switchover (Internal/External Switchover mode is enabled)
     #pragma config FCMEN = ON       // Fail-Safe Clock Monitor Enable (Fail-Safe Clock Monitor is enabled)
 
@@ -83,6 +83,7 @@
     void UART_send_char(char bt);
     char UART_get_char(void); 
     void UART_send_string(char* st_pt);
+    void temp_protection(void);
     void Cell_ON(void);
     void Cell_OFF(void);
     void timing(void);
@@ -92,14 +93,14 @@
     #define     V_CHAN                  0b01010 ///< Definition of ADC channel for voltage measurements. AN10(RB1) 
     #define     I_CHAN                  0b01100 ///< Definition of ADC channel for current measurements. AN12(RB0)
     #define     T_CHAN                  0b00100 ///< Definition of ADC channel for temperature measurements. AN4(RA5)
-    #define     CELL1_ON                PORTAbits.RB2 = 1 ///< Turn on Cell #1
-    #define     CELL2_ON                PORTAbits.RB3 = 1 ///< Turn on Cell #2
-    #define     CELL3_ON                PORTCbits.RB4 = 1 ///< Turn on Cell #3
-    #define     CELL4_ON                PORTCbits.RB5 = 1 ///< Turn on Cell #4
-    #define     CELL1_OFF               PORTAbits.RB2 = 0 ///< Turn off Cell #1
-    #define     CELL2_OFF               PORTAbits.RB3 = 0 ///< Turn off Cell #2
-    #define     CELL3_OFF               PORTCbits.RB4 = 0 ///< Turn off Cell #3
-    #define     CELL4_OFF               PORTCbits.RB5 = 0 ///< Turn off Cell #4
+    #define     CELL1_ON()              { RB2 = 1; } ///< Turn on Cell #1
+    #define     CELL2_ON()              { RB3 = 1; } ///< Turn on Cell #2
+    #define     CELL3_ON()              { RB4 = 1; } ///< Turn on Cell #3
+    #define     CELL4_ON()              { RB5 = 1; } ///< Turn on Cell #4
+    #define     CELL1_OFF()             { RB2 = 0; } ///< Turn off Cell #1
+    #define     CELL2_OFF()             { RB3 = 0; } ///< Turn off Cell #2
+    #define     CELL3_OFF()             { RB4 = 0; } ///< Turn off Cell #3
+    #define     CELL4_OFF()             { RB5 = 0; } ///< Turn off Cell #4
     #define     AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(1); } ///< Set the ADC channel to @p x and wait for 5 microseconds.
     #define     AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);} ///< Start the conversion and wait until it is finished
     #define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} ///< Store conversion result in #ad_res
@@ -123,8 +124,9 @@
     #define     COUNTER                 250  ///< Counter value, needed to obtained one second between counts.
     #define     CC_kp                   0.025  ///< Proportional constant for CC mode
     #define     CC_ki                   0.04  ///< Integral constant for CC mode 
-    #define     CV_kp                   0.2  ///< Proportional constant for CV mode
-    #define     CV_ki                   0.4  ///< Integral constant for CV mode 
+    // last test with LI_ION gave this constants
+    #define     CV_kp                   0.1  ///< Proportional constant for CV mode
+    #define     CV_ki                   0.01  ///< Integral constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); } ///< Send a linebreak to the terminal
     //////////////////////////Chemistry definition///////////////////////////////////////
     #define     LI_ION_CHEM             1 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
@@ -204,7 +206,7 @@
     unsigned                            timeout = 0;
     //Strings       
     char const                          comma = ',';
-    char const                                  colons = ':'; 
+    char const                          colons = ':'; 
     char const                          S_str = 'S';
     char const                          C_str = 'C';
     char const                          V_str = 'V';

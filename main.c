@@ -29,12 +29,13 @@ void main(void)
             read_ADC(); /// * Then, the ADC channels are read by calling the #read_ADC() function
             calculate_avg(); /// * Then, averages for the 250 values available each second are calculated by calling the #calculate_avg() function
             log_control(); /// *  Then, the log is printed in the serial terminal by calling the #log_control() function
-            if (!count) /// * The following tasks are excuted every second:
+            if (!count) /// * The following tasks are executed every second:
             {          
                 #if (LI_ION_CHEM) /// -# If the chemistry is Li Ion the #cc_cv_mode() function is called
                 cc_cv_mode(vprom, vref, cmode);
                 #endif
                 state_machine(); /// -# Then the #state_machine() function is called
+                temp_protection(); /// -# If at any point the temperature is higher than 35 degrees the process is stopped
             }
             if (conv) /// * If the variable #conv is set it means the converter shall be started, then:
             {

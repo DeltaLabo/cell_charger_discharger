@@ -35,12 +35,17 @@ void initialize()
     /** @b CELL @b SWITCHER @b OUPUTS*/
     TRISB2 = 0; /// * Set RB2 as output. Cell #1
     ANSB2 = 0; /// * Set RB2 as digital
+    WPUB2 = 0; /// * Weak pull up deactivated
     TRISB3 = 0; /// * Set RB3 as output. Cell #2
-    ANSB3 = 0; /// * Set RB3 as digital   
+    ANSB3 = 0; /// * Set RB3 as digital
+    WPUB3 = 0; /// * Weak pull up deactivated
     TRISB4 = 0; /// * Set RB4 as output. Cell #3
     ANSB4 = 0; /// * Set RB4 as digital  
+    WPUB4 = 0; /// * Weak pull up deactivated
     TRISB5 = 0; /// * Set RB5 as output. Cell #4
     ANSB5 = 0; /// * Set RB% as digital  
+    WPUB5 = 0; /// * Weak pull up deactivated
+    Cell_OFF();
     /** @b TIMER0 for control and measuring loop*/
     TMR0IE = 0; /// * Disable timer interruptions
     TMR0CS = 0; /// * Timer set to internal instruction cycle
@@ -139,6 +144,8 @@ void initialize()
     cmode = 1; /// * Start in CC mode    
     wait_count = 0; /// * CHECK!!!
     dc_res_count = 0; /// * CHECK!!
+    RC3 = 0; /// * RELAY OUTPUT DOWN 
+    RC4 = 0; /// * RELAY OUTPUT DOWN 
 }
 /**@brief This function defines the PI controller
 *  @param   feedback average of measured values for the control variable
@@ -373,7 +380,7 @@ void read_ADC()
     AD_SET_CHAN(V_CHAN); /// Select the #V_CHAN channel usign #AD_SET_CHAN(x)
     AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
     AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()   
-    opr = (float)(1.28296 * ad_res); /// Apply the operation @code opr = ad_res * [(R1+R2)/(R1)] * [(Vref)/(2^12)] = ad_res * (1051/1000) * (5000/4096) @endcode
+    opr = (float)(1.2207 * ad_res); /// Apply the operation @code opr = ad_res * [(Vref)/(2^12)] = ad_res * (5000/4096) @endcode
     v = opr; /// Make #v equal to @p opr
     AD_SET_CHAN(I_CHAN); /// Select the #I_CHAN channel usign #AD_SET_CHAN(x)
     AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
@@ -431,9 +438,9 @@ void calculate_avg()
             tprom = 0; /// * Make #tprom zero
             break;
         case 0: /// If #count = 0
-            iprom /= COUNTER; /// * Divide the value stored in #iprom between COUNTER to obtain the average
-            vprom /= COUNTER; /// * Divide the value stored in #vprom between COUNTER to obtain the average
-            tprom /= COUNTER; /// * Divide the value stored in #tprom between COUNTER to obtain the average
+            iprom /= (COUNTER - 1); /// * Divide the value stored in #iprom between COUNTER to obtain the average
+            vprom /= (COUNTER - 1); /// * Divide the value stored in #vprom between COUNTER to obtain the average
+            tprom /= (COUNTER - 1); /// * Divide the value stored in #tprom between COUNTER to obtain the average
             qprom += (iprom/3600); /// * Divide #iprom between 3600 and add it to #qprom to integrate the current over time
             #if (NI_MH_CHEM)  
             if ((int) vprom > vmax) vmax = (int) vprom; /// * If is the chemistry is Ni-MH and #vprom is bigger than #vmax then set #vmax = #vprom
@@ -442,8 +449,8 @@ void calculate_avg()
         default: /// If #count is not any of the previous cases then
             iprom += i; /// * Accumulate #i in #iprom
             vprom += v; /// * Accumulate #v in #vprom
-            //tprom += t; /// * Accumulate #t in #tprom
-            tprom += dc * 1.953125; // TEST FOR DC
+            tprom += t; /// * Accumulate #t in #tprom
+            //tprom += dc * 1.953125; // TEST FOR DC
             break;
     }   
 }
@@ -498,43 +505,71 @@ void display_value(int value)
     itoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
     UART_send_string((char*)buffer); /// * Send @p buffer using #UART_send_string()
 }
+
+void temp_protection()
+{
+    if (tprom > 350){
+        UART_send_string((char*)"HIGH_TEMP");
+        STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
+        state = STANDBY; /// -# Go to the #STANDBY state.
+    }
+}
 /**@brief This function activate the desired relay in the switcher board according to the value
 * of #cell_count
 */
 void Cell_ON()
 {
-//    if (cell_count == '1') /// If cell_count = '1'
-//    {
-//        CELL1_ON; /// * Turn ON cell #1 by calling #CELL1_ON
-//        CELL2_OFF; /// * Turn OFF cell #2 by calling #CELL2_OFF
-//        CELL3_OFF; /// * Turn OFF cell #3 by calling #CELL3_OFF
-//        CELL4_OFF; /// * Turn OFF cell #4 by calling #CELL4_OFF
-//    }else if (cell_count == '2')
-//    {
-//        CELL1_OFF; /// * Turn OFF cell #1 by calling #CELL1_OFF
-//        CELL2_ON; /// * Turn ON cell #2 by calling #CELL2_ON
-//        CELL3_OFF; /// * Turn OFF cell #3 by calling #CELL3_OFF
-//        CELL4_OFF; /// * Turn OFF cell #4 by calling #CELL4_OFF 
-//    }else if (cell_count == '3')
-//    {
-//        CELL1_OFF; /// * Turn OFF cell #1 by calling #CELL1_OFF
-//        CELL2_OFF; /// * Turn OFF cell #2 by calling #CELL2_OFF
-//        CELL3_ON; /// * Turn ON cell #3 by calling #CELL3_ON
-//        CELL4_OFF; /// * Turn OFF cell #4 by calling #CELL4_OFF    
-//    }else if (cell_count == '4')
-//    {
-//        CELL1_OFF; /// * Turn OFF cell #1 by calling #CELL1_OFF
-//        CELL2_OFF; /// * Turn OFF cell #2 by calling #CELL2_OFF
-//        CELL3_OFF; /// * Turn OFF cell #3 by calling #CELL3_OFF
-//        CELL4_ON; /// * Turn ON cell #4 by calling #CELL4_ON    
-//    }
+    if (cell_count == '1') /// If cell_count = '1'
+    {
+        CELL1_ON(); /// * Turn ON cell #1 by calling #CELL1_ON
+        __delay_ms(10);
+        CELL2_OFF(); /// * Turn OFF cell #2 by calling #CELL2_OFF
+        __delay_ms(10);        
+        CELL3_OFF(); /// * Turn OFF cell #3 by calling #CELL3_OFF
+        __delay_ms(10);
+        CELL4_OFF(); /// * Turn OFF cell #4 by calling #CELL4_OFF
+        __delay_ms(10);
+    }else if (cell_count == '2')
+    {
+        CELL1_OFF(); /// * Turn OFF cell #1 by calling #CELL1_OFF
+        __delay_ms(10);
+        CELL2_ON(); /// * Turn ON cell #2 by calling #CELL2_ON
+        __delay_ms(10);
+        CELL3_OFF(); /// * Turn OFF cell #3 by calling #CELL3_OFF
+        __delay_ms(10);
+        CELL4_OFF(); /// * Turn OFF cell #4 by calling #CELL4_OFF
+        __delay_ms(10);
+    }else if (cell_count == '3')
+    {
+        CELL1_OFF(); /// * Turn OFF cell #1 by calling #CELL1_OFF
+        __delay_ms(10);
+        CELL2_OFF(); /// * Turn OFF cell #2 by calling #CELL2_OFF
+        __delay_ms(10);
+        CELL3_ON(); /// * Turn ON cell #3 by calling #CELL3_ON
+        __delay_ms(10);
+        CELL4_OFF(); /// * Turn OFF cell #4 by calling #CELL4_OFF    
+    }else if (cell_count == '4')
+    {
+        CELL1_OFF(); /// * Turn OFF cell #1 by calling #CELL1_OFF
+        __delay_ms(10);
+        CELL2_OFF(); /// * Turn OFF cell #2 by calling #CELL2_OFF
+        __delay_ms(10);
+        CELL3_OFF(); /// * Turn OFF cell #3 by calling #CELL3_OFF
+        __delay_ms(10);
+        CELL4_ON(); /// * Turn ON cell #4 by calling #CELL4_ON
+        __delay_ms(10);
+    }
 }
 /**@brief This function deactivate all relays in the switcher board
 */
 void Cell_OFF()
 {
-//    CELL1_OFF; /// * Turn OFF cell #1 by calling #CELL1_OFF
-//    CELL2_OFF; /// * Turn OFF cell #2 by calling #CELL2_OFF
-//    CELL3_OFF; /// * Turn OFF cell #3 by calling #CELL3_OFF
-//    CELL4_OFF; /// * Turn OFF cell #4 by calling #CELL4_OFF  
+    CELL1_OFF(); /// * Turn OFF cell #1 by calling #CELL1_OFF
+    __delay_ms(10);
+    CELL2_OFF(); /// * Turn OFF cell #2 by calling #CELL2_OFF
+    __delay_ms(10);
+    CELL3_OFF(); /// * Turn OFF cell #3 by calling #CELL3_OFF
+    __delay_ms(10);
+    CELL4_OFF(); /// * Turn OFF cell #4 by calling #CELL4_OFF  
+    __delay_ms(10);
 }

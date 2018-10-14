@@ -108,7 +108,7 @@ void fCHARGE()
     if (state == CHARGE){ /// If the #state is #CHARGE
         #if (LI_ION_CHEM) 
         /// If the chemistry is Li-Ion
-        if (iprom < EOC_current) /// * If #iprom is below #EOC_current then
+        if ((iprom < EOC_current)  && (qprom > 2)) /// * If #iprom is below #EOC_current then
         {                
             prev_state = state; /// -# Set #prev_state equal to #state
             if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #DONE state
@@ -118,7 +118,7 @@ void fCHARGE()
         }
         #elif (NI_MH_CHEM) 
         /// If the chemistry is Ni-MH
-        if (((vprom < (vmax - Ni_MH_EOC_DV)) && (qprom > 0)) || minute >= timeout)
+        if (((vprom < (vmax - Ni_MH_EOC_DV)) && (qprom > 2)) || minute >= timeout)
         {
             prev_state = state; /// -# Set #prev_state equal to #state
             if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #ISDONE state
