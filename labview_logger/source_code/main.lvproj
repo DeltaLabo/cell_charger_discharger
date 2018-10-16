@@ -67,6 +67,7 @@
 			<Item Name="create_files.vi" Type="VI" URL="../create_files.vi"/>
 			<Item Name="current.vi" Type="VI" URL="../current.vi"/>
 			<Item Name="DC_res.vi" Type="VI" URL="../DC_res.vi"/>
+			<Item Name="end_of_cell.vi" Type="VI" URL="../end_of_cell.vi"/>
 			<Item Name="enum_setting_states.ctl" Type="VI" URL="../enum_setting_states.ctl"/>
 			<Item Name="global.vi" Type="VI" URL="../global.vi"/>
 			<Item Name="log_in_file.vi" Type="VI" URL="../log_in_file.vi"/>
@@ -97,20 +98,20 @@
 				<Property Name="Bld_excludeInlineSubVIs" Type="Bool">true</Property>
 				<Property Name="Bld_excludeLibraryItems" Type="Bool">true</Property>
 				<Property Name="Bld_excludePolymorphicVIs" Type="Bool">true</Property>
-				<Property Name="Bld_localDestDir" Type="Path">../builds/NI_AB_PROJECTNAME/main</Property>
+				<Property Name="Bld_localDestDir" Type="Path">../builds</Property>
 				<Property Name="Bld_localDestDirType" Type="Str">relativeToCommon</Property>
 				<Property Name="Bld_modifyLibraryFile" Type="Bool">true</Property>
 				<Property Name="Bld_previewCacheID" Type="Str">{7CEC3792-1D44-4686-B90D-CF909E896C95}</Property>
-				<Property Name="Bld_version.build" Type="Int">3</Property>
+				<Property Name="Bld_version.build" Type="Int">5</Property>
 				<Property Name="Bld_version.major" Type="Int">1</Property>
 				<Property Name="Destination[0].destName" Type="Str">logger.exe</Property>
-				<Property Name="Destination[0].path" Type="Path">../builds/NI_AB_PROJECTNAME/main/logger.exe</Property>
+				<Property Name="Destination[0].path" Type="Path">../builds/logger.exe</Property>
 				<Property Name="Destination[0].preserveHierarchy" Type="Bool">true</Property>
 				<Property Name="Destination[0].type" Type="Str">App</Property>
 				<Property Name="Destination[1].destName" Type="Str">Support Directory</Property>
-				<Property Name="Destination[1].path" Type="Path">../builds/NI_AB_PROJECTNAME/main/data</Property>
+				<Property Name="Destination[1].path" Type="Path">../builds/data</Property>
 				<Property Name="DestinationCount" Type="Int">2</Property>
-				<Property Name="Source[0].itemID" Type="Str">{F01580CA-3C4E-4198-863C-6A63F61F595F}</Property>
+				<Property Name="Source[0].itemID" Type="Str">{07F24EC6-A4FF-4548-8680-B57FD1CBE367}</Property>
 				<Property Name="Source[0].type" Type="Str">Container</Property>
 				<Property Name="Source[1].destinationIndex" Type="Int">0</Property>
 				<Property Name="Source[1].itemID" Type="Ref">/My Computer/main.vi</Property>
