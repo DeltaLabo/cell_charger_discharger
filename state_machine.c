@@ -256,6 +256,7 @@ void fISDONE()
     number of cells to be tested (@p cell_max)*/
     if (cell_count < cell_max)
     {
+        UART_send_string((char*)">END<");
         __delay_ms(500);
         /**If the condition is @b TRUE the counter will be incremented */       
         cell_count++;
@@ -263,6 +264,7 @@ void fISDONE()
         state = IDLE;   
     }else
     {
+        UART_send_string((char*)">END<");
         state = STANDBY;
     }    
 }
