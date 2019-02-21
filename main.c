@@ -31,9 +31,7 @@ void main(void)
             log_control(); /// *  Then, the log is printed in the serial terminal by calling the #log_control() function
             if (!count) /// * The following tasks are executed every second:
             {          
-                #if (LI_ION_CHEM) /// -# If the chemistry is Li Ion the #cc_cv_mode() function is called
                 cc_cv_mode(vprom, vref, cmode);
-                #endif
                 state_machine(); /// -# Then the #state_machine() function is called
                 temp_protection(); /// -# If at any point the temperature is higher than 35 degrees the process is stopped
             }

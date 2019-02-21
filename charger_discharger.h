@@ -120,7 +120,7 @@
     #define     DC_MIN                  25  ///< Minimum possible duty cycle, set around @b 0.05
     #define     DC_START                51  ///< Initial duty cycle, set around @b 0.1
     //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function
-    #define     DC_MAX                  385  ///< Maximum possible duty cycle, set around @b 0.8
+    #define     DC_MAX                  410  ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 250  ///< Counter value, needed to obtained one second between counts.
     #define     CC_kp                   0.025  ///< Proportional constant for CC mode
     #define     CC_ki                   0.04  ///< Integral constant for CC mode 
@@ -129,8 +129,8 @@
     #define     CV_ki                   0.01  ///< Integral constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); } ///< Send a linebreak to the terminal
     //////////////////////////Chemistry definition///////////////////////////////////////
-    #define     LI_ION_CHEM             1 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
-    #define     NI_MH_CHEM              0 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
+    #define     LI_ION_CHEM             0 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
+    #define     NI_MH_CHEM              1 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
     ////////////////////////////////////////////////////////////////////////////////////
     //General definitions
     #define     WAIT_TIME               600 ///< Time to wait before states, set to 10 minutes

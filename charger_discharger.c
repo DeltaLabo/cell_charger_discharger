@@ -193,7 +193,7 @@ void cc_cv_mode(float current_voltage, unsigned int reference_voltage, char CC_m
             cmode = 0; /// * The system is set in CV mode by clearing the #cmode variable
             kp = CV_kp; /// * The proportional constant, #kp is set to #CV_kp 
             ki = CV_ki; /// * The integral constant, #ki is set to #CV_ki 
-    }     
+    }    
 }
 /**@brief This function takes care of printing the test data using the UART
 */
@@ -450,7 +450,7 @@ void calculate_avg()
             iprom += i; /// * Accumulate #i in #iprom
             vprom += v; /// * Accumulate #v in #vprom
             tprom += t; /// * Accumulate #t in #tprom
-            //tprom += dc * 1.953125; // TEST FOR DC
+            //tprom += dc * 1.953125; // TEST FOR DC Is required to deactivate temperature protection
             break;
     }   
 }
