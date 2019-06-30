@@ -37,10 +37,9 @@ void main(void)
             }
             if (conv) /// * If the variable #conv is set it means the converter shall be started, then:
             {
-                RC5 = 1; /// -# The main relay is closed
                 control_loop(); /// -# The #control_loop() function is called*/
                 if (TMR0IF) UART_send_string((char*)"T_ERROR"); /// -# If by that point the timer flag was set again and error message is printed
-            }else RC5 = 0; /// Else, the main relay is keep closed         
+            }        
             timing(); /// * Timing control is executed by calling the #timing() function    
 		}        
 	}

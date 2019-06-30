@@ -108,7 +108,7 @@ void fCHARGE()
     if (state == CHARGE){ /// If the #state is #CHARGE
         #if (LI_ION_CHEM) 
         /// If the chemistry is Li-Ion
-        if ((iprom < EOC_current)  && (qprom > 2)) /// * If #iprom is below #EOC_current then
+        if ((iprom < EOC_current)  && (qprom > 100)) /// * If #iprom is below #EOC_current then
         {                
             prev_state = state; /// -# Set #prev_state equal to #state
             if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #DONE state
@@ -118,7 +118,7 @@ void fCHARGE()
         }
         #elif (NI_MH_CHEM) 
         /// If the chemistry is Ni-MH
-        if (((vprom < (vmax - Ni_MH_EOC_DV)) && (qprom > 2)) || minute >= timeout)
+        if (((vprom < (vmax - Ni_MH_EOC_DV)) && (qprom > 100)) || minute >= timeout)
         {
             prev_state = state; /// -# Set #prev_state equal to #state
             if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #ISDONE state
@@ -129,12 +129,20 @@ void fCHARGE()
         #endif   
     } 
     if (state == POSTCHARGE){
-        if (qprom >= (capacity/2) && ((minute + second) >= 1)){
+        #if (LI_ION_CHEM) 
+        if (qprom >= (0.5*capacity) && ((minute + second) >= 1)){
+            prev_state = state;
+            state = WAIT;
+            wait_count = WAIT_TIME;
+            STOP_CONVERTER();
+        #elif (NI_MH_CHEM)
+        if (qprom >= (0.5*capacity) || minute >= timeout){
             prev_state = state;
             state = WAIT;
             wait_count = WAIT_TIME;
             STOP_CONVERTER();
         }
+        #endif  
     }    
 }
 
@@ -369,25 +377,31 @@ void converter_settings()
     vp_buff = 0; /// * Clear #vp_buff
     tp_buff = 0; /// * Clear #tp_buff
     qp_buff = 0; /// * Clear #qp_buff
-    dc = DC_START; /// * The initial <b> duty cycle </b> of the PWM is set to #DC_START
+    dc = DC_START;
     set_DC();  /// * The #set_DC() function is called
     Cell_ON(); /// * The #Cell_ON() function is called
     switch(state)
     {
         case POSTCHARGE:
         case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
+            dcmax = DC_MAX_CHAR;
+            dcmin = DC_MIN_CHAR;
             iref = i_char; /// * The current setpoint, #iref is defined as #i_char
             timeout = ((capacity / iref) * 66); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
             SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
             break;
         case PREDISCHARGE:
         case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE
+            dcmax = DC_MAX_DISC;
+            dcmin = DC_MIN_DISC;
             iref = i_disc; /// * The current setpoint, #iref is defined as #i_disc
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;
         case CS_DC_res:
         case DS_DC_res:
         case PS_DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
+            dcmax = DC_MAX_DISC;
+            dcmin = DC_MIN_DISC;
             iref = capacity / 5; /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
             dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro

@@ -88,8 +88,8 @@
     void Cell_OFF(void);
     void timing(void);
     #define     _XTAL_FREQ              32000000 ///< Frequency to coordinate delays, 32 MHz
-    #define     ERR_MAX                 250 ///< Maximum permisible error, useful to avoid ringing
-    #define     ERR_MIN                 -250 ///< Minimum permisible error, useful to avoid ringing
+    #define     ERR_MAX                 150 ///< Maximum permisible error, useful to avoid ringing
+    #define     ERR_MIN                 -150 ///< Minimum permisible error, useful to avoid ringing
     #define     V_CHAN                  0b01010 ///< Definition of ADC channel for voltage measurements. AN10(RB1) 
     #define     I_CHAN                  0b01100 ///< Definition of ADC channel for current measurements. AN12(RB0)
     #define     T_CHAN                  0b00100 ///< Definition of ADC channel for temperature measurements. AN4(RA5)
@@ -101,7 +101,7 @@
     #define     CELL2_OFF()             { RB3 = 0; } ///< Turn off Cell #2
     #define     CELL3_OFF()             { RB4 = 0; } ///< Turn off Cell #3
     #define     CELL4_OFF()             { RB5 = 0; } ///< Turn off Cell #4
-    #define     AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(1); } ///< Set the ADC channel to @p x and wait for 5 microseconds.
+    #define     AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(5); } ///< Set the ADC channel to @p x and wait for 5 microseconds.
     #define     AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);} ///< Start the conversion and wait until it is finished
     #define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} ///< Store conversion result in #ad_res
     /** @brief Stop the converter*/
@@ -109,18 +109,20 @@
     turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
     and the UART reception interrupts.
     */
-    #define     STOP_CONVERTER()        { conv = 0; RC5 = 0; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF();}
-    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(500); RC3 = 1; __delay_ms(500); RC3 = 0;}
-    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(500); RC4 = 1; __delay_ms(500); RC4 = 0;}
+    #define     STOP_CONVERTER()        { conv = 0; RC5 = 0; dc = DC_START; set_DC(); Cell_OFF(); LOG_OFF();}
+    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(500); RC3 = 1; __delay_ms(500); RC3 = 0; __delay_ms(200); RC5 = 1; __delay_ms(200);}
+    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(500); RC4 = 1; __delay_ms(500); RC4 = 0; __delay_ms(200); RC5 = 1; __delay_ms(200);}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
     //#define   UART_INT_OFF()          { log_on = 0; }  ///< Turn OFF UART transmission interrupts. //CHECK THIS
     #define     LOG_ON()                { log_on = 1; }  ///< Turn OFF logging in the terminal.
     #define     LOG_OFF()               { log_on = 0; }  ///< Turn ON logging in the terminal.
     #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
-    #define     DC_MIN                  25  ///< Minimum possible duty cycle, set around @b 0.05
-    #define     DC_START                51  ///< Initial duty cycle, set around @b 0.1
-    //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function
-    #define     DC_MAX                  410  ///< Maximum possible duty cycle, set around @b 0.8
+   //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function 
+    #define     DC_MIN_CHAR             50  ///< Minimum possible duty cycle, set around @b 0.05
+    #define     DC_MAX_CHAR             150  ///< Maximum possible duty cycle, set around @b 0.8
+    #define     DC_MIN_DISC             50  ///< Minimum possible duty cycle, set around @b 0.05
+    #define     DC_MAX_DISC             358  ///< Maximum possible duty cycle, set around @b 0.8 
+    #define     DC_START                50 ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 250  ///< Counter value, needed to obtained one second between counts.
     #define     CC_kp                   0.025  ///< Proportional constant for CC mode
     #define     CC_ki                   0.04  ///< Integral constant for CC mode 
@@ -151,7 +153,7 @@
     #define     Li_Po_EOC_I             60 ///< Li-Ion end-of-charge current in mA
     #define     Li_Po_EOD_V             3000 ///< Li_Ion end-of-discharge voltage in mV
     //Ni-MH definitions
-    #define     Ni_MH_CV                1700 ///< Ni-MH constant voltage setting in mV
+    #define     Ni_MH_CV                1750 ///< Ni-MH constant voltage setting in mV
     #define     Ni_MH_CAP               2000 ///< Ni-MH capacity setting in mAh
     #define     Ni_MH_EOC_DV            10 ///< Ni-MH end-fo-charge voltage drop in mV
     #define     Ni_MH_EOD_V             1000 ///< Ni-MH end-of-discharge voltage in mV
@@ -204,6 +206,8 @@
     int                                 second = 0; ///< Seconds counter, resetted after 59 seconds.
     int                                 minute = 0; ///< Minutes counter, only manually reset
     unsigned                            timeout = 0;
+    unsigned                            dcmax = 0; ///<To put the maximum duty cycle according to the operation mode
+    unsigned                            dcmin = 0; ///<To put the minimum duty cycle according to the operation mode
     //Strings       
     char const                          comma = ',';
     char const                          colons = ':'; 

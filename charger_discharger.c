@@ -83,7 +83,7 @@ void initialize()
     /** @b ADC*/
     /** ADC INPUTS*///check this after final design
     TRISA3 = 1; /// * RA3, Positive voltage reference
-    ANSA3 = 0; /// * RA3 analog
+    ANSA3 = 1; /// * RA3 analog
     WPUA3 = 0; /// * Weak pull up deactivated
     TRISB1 = 1; /// * RB1, voltage sensing input
     ANSB1 = 1; /// * RB1 analog
@@ -161,10 +161,10 @@ float   pi; /// * Define @p pi for storing the PI compesator value
     proportional = (kp * er); /// * Calculate #proportional component of compensator
 	integral += (ki * er)/COUNTER; /// * Calculate #integral component of compensator
     pi = proportional + integral; /// * Sum them up and store in @p pi*/
-    if (dc + pi >= DC_MAX){ /// * Make sure duty cycle is never above #DC_MAX
-        dc = DC_MAX;
-    }else if (dc + pi <= DC_MIN){ /// * Make sure duty cycle is never below #DC_MIN
-        dc = DC_MIN;
+    if (dc + pi >= dcmax){ /// * Make sure duty cycle is never above #DC_MAX
+        dc = dcmax;
+    }else if (dc + pi <= dcmin){ /// * Make sure duty cycle is never below #DC_MIN
+        dc = dcmin;
     }else{
         dc += (int)(pi + 0.5); /// * Store the new value of the duty cycle with operation @code dc = dc + pi @endcode
     }   
@@ -441,7 +441,8 @@ void calculate_avg()
             iprom /= (COUNTER - 1); /// * Divide the value stored in #iprom between COUNTER to obtain the average
             vprom /= (COUNTER - 1); /// * Divide the value stored in #vprom between COUNTER to obtain the average
             tprom /= (COUNTER - 1); /// * Divide the value stored in #tprom between COUNTER to obtain the average
-            qprom += (iprom/3600); /// * Divide #iprom between 3600 and add it to #qprom to integrate the current over time
+            if (iprom > 0) qprom += (iprom/3600); /// * Divide #iprom between 3600 and add it to #qprom to integrate the current over time
+            else qprom += 0;
             #if (NI_MH_CHEM)  
             if ((int) vprom > vmax) vmax = (int) vprom; /// * If is the chemistry is Ni-MH and #vprom is bigger than #vmax then set #vmax = #vprom
             #endif
