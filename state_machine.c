@@ -408,7 +408,7 @@ void converter_settings()
             break;
     }
     __delay_ms(10);   
-    count = 0; /// The timing counter #count will be intialized to zero, to start a full control loop cycle
+    //count = 0; /// The timing counter #count will be intialized to zero, to start a full control loop cycle
 }
 /**@brief Function to define the parameters of the testing process for both chemistries.
 */

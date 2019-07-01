@@ -123,12 +123,12 @@
     #define     DC_MIN_DISC             50  ///< Minimum possible duty cycle, set around @b 0.05
     #define     DC_MAX_DISC             358  ///< Maximum possible duty cycle, set around @b 0.8 
     #define     DC_START                50 ///< Maximum possible duty cycle, set around @b 0.8
-    #define     COUNTER                 250  ///< Counter value, needed to obtained one second between counts.
+    #define     COUNTER                 999  ///< Counter value, needed to obtained one second between counts.
     #define     CC_kp                   0.025  ///< Proportional constant for CC mode
-    #define     CC_ki                   0.04  ///< Integral constant for CC mode 
+    #define     CC_ki                   0.01  ///< Integral constant for CC mode 
     // last test with LI_ION gave this constants
     #define     CV_kp                   0.1  ///< Proportional constant for CV mode
-    #define     CV_ki                   0.01  ///< Integral constant for CV mode 
+    #define     CV_ki                   0.0025  ///< Integral constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); } ///< Send a linebreak to the terminal
     //////////////////////////Chemistry definition///////////////////////////////////////
     #define     LI_ION_CHEM             0 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  

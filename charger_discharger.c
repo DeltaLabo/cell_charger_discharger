@@ -54,6 +54,19 @@ void initialize()
     TMR0IF = 0; /// * Timer flag cleared
     TMR0 = 0x07; /// * Counter set to 255 - @b 250 + 2 (delay for sync) = 7
     /** Timer set to 32Mhz/4/128/250 = 250Hz*/
+    /** @b TIMER 1 for control and measuring loop using interruption
+    /* Preload TMR1 register pair for 1us overflow */
+    /* T1OSCEN = 1, nT1SYNC = 1, TMR1CS = 0 and TMR1ON = 1*/
+    T1CONbits.nT1SYNC = 1;     //Synchronized
+    T1CONbits.T1OSCEN = 1;
+    T1CONbits.TMR1ON = 1;       //ON
+    T1GCONbits.TMR1GE = 0;      //Dont care about gate
+    T1CONbits.TMR1CS = 0b00;       //FOSC/4
+    T1CONbits.T1CKPS0 = 0;
+    T1CONbits.T1CKPS1 = 0;
+    TMR1H = 0xE0;//TMR1 Fosc/4= 8Mhz (Tosc= 0.125us)
+    TMR1L = 0xC0;//TMR1 counts: 8000 x 0.125us = 1ms
+    PIR1bits.TMR1IF= 0; //Clear timer1 interrupt flag
     /** @b PSMC/PWM @b SETTINGS*/
     /** Programmable switch mode control (PSMC)*/
     PSMC1CON = 0x00; /// * Clear PSMC1 configuration to start
@@ -132,10 +145,11 @@ void initialize()
     RX9   = 0;    /// * 8-bit reception mode selected
     //__8-bit mode selected__//    
     /** @b INTERRUPTS*/
-    PEIE = 1; /// * Activate pehierals Interrupts
+    TMR1IF = 0;        //clear timer1 flag
+    PEIE = 1; /// * Activate peripherals Interrupts
     GIE = 1; /// * Activate Global Interrupts
     RCIE = 0; /// * Disable UART reception interrupts
-    TXIE = 0; /// * Disable UART transmision interrupts
+    TXIE = 0; /// * Disable UART transmission interrupts
     /** @bFINAL CHECK ALL!!*/
     CLRWDT(); /// * Clear WDT by calling @p CLRWDT()
     STOP_CONVERTER(); ///* Call #STOP_CONVERTER()
@@ -205,170 +219,94 @@ This problem can be avoided with the use of interruptions for the control loop; 
 and could be considered as some future improvement*/  
     if (log_on)
     {
-        switch (count){
-            case 0: /// #count = 0
                 ip_buff = (int) iprom; /// * Define @p ip_buff for storing #i_prom
                 vp_buff = (int) vprom; /// * Define @p vp_buff for storing #v_prom
                 tp_buff = (int) tprom; /// * Define @p tp_buff for storing #tprom
                 qp_buff = (unsigned) ((qprom * 10) + 0.05); /// Define @p qp_buff for storing #qprom @c * @c 10*/
                 LINEBREAK;
-                break;
-            case COUNTER: /// #count = #COUNTER
                 itoa(log_buffer,minute,10); /// * Convert #minute into a string and store it in #log_buffer
-                break;
-            case COUNTER - 1: /// Next cycle
                 UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                break;
-            case COUNTER - 2: /// Next cycle
                 if (minute >= 10) UART_send_char(log_buffer[1]); /// * If #minute is bigger than 10 send #log_buffer[1]
-                break;
-            case COUNTER - 3: /// Next cycle
                 if (minute >= 100) UART_send_char(log_buffer[2]); /// * If #minute is bigger than 100 send #log_buffer[2]
-                break;
-            case COUNTER - 4: /// Next cycle
                 UART_send_char(colons); /// * Send a colons character
-                break;
-            case COUNTER - 5: /// Next cycle
                 memset(log_buffer, '0', 8); /// * Clear #log_buffer
-                break;
-            case COUNTER - 6: /// Next cycle
                 itoa(log_buffer,second,10); /// * Convert #second into a string and store it in #log_buffer
-                break;
-            case COUNTER - 7: /// Next cycle
                 if (second < 10) UART_send_char('0'); /// * If #second is smaller than 10 send a '0'
                 else UART_send_char(log_buffer[0]); /// * Else, send #log_buffer[0]
-                break;
-            case COUNTER - 8: /// Next cycle
                 if (second < 10) UART_send_char(log_buffer[0]); /// * If #second is smaller than 10 send #log_buffer[0]
                 else UART_send_char(log_buffer[1]); /// * Else, send #log_buffer[1]
-                break;
-            case COUNTER - 9: /// Next cycle
                 UART_send_char(comma); /// * Send a comma character
-                break;
-            case COUNTER - 10: /// Next cycle
                 memset(log_buffer, '0', 8); /// * Clear #log_buffer
-                break;
-            case COUNTER - 11: /// Next cycle
                 UART_send_char(C_str); /// * Send a 'C'
-                break;
-            case COUNTER - 12: /// Next cycle
                 UART_send_char(cell_count); /// * Send a #cell_count variable
-                break;
-            case COUNTER - 13: /// Next cycle
                 UART_send_char(comma); /// * Send a comma character
-                break;
-            case COUNTER - 14: /// Next cycle
                 UART_send_char(S_str); /// * Send an 'S'
-                break;
-            case COUNTER - 15: /// Next cycle
                 itoa(log_buffer,(int)state,10); /// * Convert #state into a string and store it in #log_buffer
-                break;
-            case COUNTER - 16: /// Next cycle
                 UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                break;
-            case COUNTER - 17: /// Next cycle
-                if (state >= 10) UART_send_char(log_buffer[1]); /// * If #state is bigger than 10, send #log_buffer[0]
-                break;   
-            case COUNTER - 18: /// Next cycle
+                if (state >= 10) UART_send_char(log_buffer[1]); /// * If #state is bigger than 10, send #log_buffer[0]   
                 UART_send_char(comma); /// * Send a comma character
-                break;
-            case COUNTER - 19: /// Next cycle
                 UART_send_char(V_str); /// * Send a 'V'
-                break;
-            case COUNTER - 20: /// Next cycle
                 itoa(log_buffer,vp_buff,10); /// * Convert @p vp_buff into a string and store it in #log_buffer
-                break;
-            case COUNTER - 21: /// Next cycle
                 UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                break;
-            case COUNTER - 22: /// Next cycle
                 UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
-                break;
-            case COUNTER - 23: /// Next cycle
                 UART_send_char(log_buffer[2]); /// * Send #log_buffer[2]
-                break;
-            case COUNTER - 24: /// Next cycle
                 if (vp_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p vp_buff is bigger than 1000, send #log_buffer[3]
-                break;
-            case COUNTER - 25: /// Next cycle
                 UART_send_char(comma); ///* Send a comma character
-                break;
-            case COUNTER - 26: /// Next cycle
                 memset(log_buffer, '0', 8);  /// * Clear #log_buffer
-                break;
-            case COUNTER - 27: /// Next cycle
                 UART_send_char(I_str); /// * Send an 'I'
-                break;
-            case COUNTER - 28: /// Next cycle
                 itoa(log_buffer,ip_buff,10); /// * Convert @p ip_buff into a string and store it in #log_buffer
-                break;
-            case COUNTER - 29: /// Next cycle
                 UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                break;
-            case COUNTER - 30: /// Next cycle
                 UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
-                break;
-            case COUNTER - 31: /// Next cycle
                 if (ip_buff >= 100) UART_send_char(log_buffer[2]); /// * Send #log_buffer[2]
-                break;
-            case COUNTER - 32: /// Next cycle
                 if (ip_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p ip_buff is bigger or equal to 1000, send #log_buffer[3]
-                break;
-            case COUNTER - 33: /// Next cycle
                 UART_send_char(comma); ///* Send a comma character
-                break;
-            case COUNTER - 34: /// Next cycle
                 memset(log_buffer, '0', 8);  /// * Clear #log_buffer
-                break;
-            case COUNTER - 35: /// Next cyclev
-                UART_send_char(T_str); /// * Send a 'T'
-                break;
-            case COUNTER - 36: /// Next cycle
-                itoa(log_buffer,tp_buff,10); /// * Convert @p tp_buff into a string and store it in #log_buffer
-                break;
-            case COUNTER - 37: /// Next cycle
-                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                break;
-            case COUNTER - 38: /// Next cycle
-                UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
-                break;
-            case COUNTER - 39: /// Next cycle
-                UART_send_char(log_buffer[2]); /// * Send #log_buffer[1]
-                break;
-            case COUNTER - 40: /// Next cycle
-                if (tp_buff >= 1000) UART_send_char(log_buffer[3]);  // * If @p tp_buff is bigger or equal to 1000, send #log_buffer[3]
-                break;
-            case COUNTER - 41: /// Next cycle
-                UART_send_char(comma); ///* Send a comma character
-                break;
-            case COUNTER - 42: /// Next cycle
-                memset(log_buffer, '0', 8);  /// * Clear #log_buffer
-                break;
-            case COUNTER - 43: /// Next cycle
-                UART_send_char(Q_str); /// * Send a 'Q'
-                break;
-            case COUNTER - 44: /// Next cycle
-                utoa(log_buffer,qp_buff,10); /// * Convert @p qp_buff into a string and store it in #log_buffer
-                break;
-            case COUNTER - 45: /// Next cycle
-                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                break;
-            case COUNTER - 46: /// Next cycle
-                if (qp_buff >= 10) UART_send_char(log_buffer[1]); /// * If @p qp_buff is bigger or equal to 10, send #log_buffer[1]
-                break;
-            case COUNTER - 47: /// Next cycle
-                if (qp_buff >= 100) UART_send_char(log_buffer[2]); /// * If @p qp_buff is bigger or equal to 100, send #log_buffer[2]
-                break;
-            case COUNTER - 48: /// Next cycle
-                if (qp_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p qp_buff is bigger or equal to 1000, send #log_buffer[3]
-                break;
-            case COUNTER - 49: /// Next cycle
-                if (qp_buff >= 10000) UART_send_char(log_buffer[4]); /// * If @p qp_buff is bigger or equal to 10000, send #log_buffer[4]
-                break;  
-            case COUNTER - 50: /// Next cycle
-                UART_send_char('<'); /// * Send a '<'
-                break;    
-        } 
+//            case COUNTER - 35: /// Next cyclev
+//                UART_send_char(T_str); /// * Send a 'T'
+//                break;
+//            case COUNTER - 36: /// Next cycle
+//                itoa(log_buffer,tp_buff,10); /// * Convert @p tp_buff into a string and store it in #log_buffer
+//                break;
+//            case COUNTER - 37: /// Next cycle
+//                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
+//                break;
+//            case COUNTER - 38: /// Next cycle
+//                UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
+//                break;
+//            case COUNTER - 39: /// Next cycle
+//                UART_send_char(log_buffer[2]); /// * Send #log_buffer[1]
+//                break;
+//            case COUNTER - 40: /// Next cycle
+//                if (tp_buff >= 1000) UART_send_char(log_buffer[3]);  // * If @p tp_buff is bigger or equal to 1000, send #log_buffer[3]
+//                break;
+//            case COUNTER - 41: /// Next cycle
+//                UART_send_char(comma); ///* Send a comma character
+//                break;
+//            case COUNTER - 42: /// Next cycle
+//                memset(log_buffer, '0', 8);  /// * Clear #log_buffer
+//                break;
+//            case COUNTER - 43: /// Next cycle
+//                UART_send_char(Q_str); /// * Send a 'Q'
+//                break;
+//            case COUNTER - 44: /// Next cycle
+//                utoa(log_buffer,qp_buff,10); /// * Convert @p qp_buff into a string and store it in #log_buffer
+//                break;
+//            case COUNTER - 45: /// Next cycle
+//                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
+//                break;
+//            case COUNTER - 46: /// Next cycle
+//                if (qp_buff >= 10) UART_send_char(log_buffer[1]); /// * If @p qp_buff is bigger or equal to 10, send #log_buffer[1]
+//                break;
+//            case COUNTER - 47: /// Next cycle
+//                if (qp_buff >= 100) UART_send_char(log_buffer[2]); /// * If @p qp_buff is bigger or equal to 100, send #log_buffer[2]
+//                break;
+//            case COUNTER - 48: /// Next cycle
+//                if (qp_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p qp_buff is bigger or equal to 1000, send #log_buffer[3]
+//                break;
+//            case COUNTER - 49: /// Next cycle
+//                if (qp_buff >= 10000) UART_send_char(log_buffer[4]); /// * If @p qp_buff is bigger or equal to 10000, send #log_buffer[4]
+//                break;  
+                UART_send_char('<'); /// * Send a '<'  
     }
     if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
 }
@@ -463,8 +401,8 @@ void UART_interrupt_enable()
     while(RCIF){
         clear_buffer = RC1REG; /// * Clear the reception buffer and store it in @p clear_buffer
     }
-    RCIE = 1; /// * Enable reception interrupts
-    TXIE = 0; // * Disable transmision interrupts
+    RCIE = 0; /// * Disable UART reception interrupts
+    TXIE = 0; /// * Disable UART transmission interrupts
 }
 /**@brief This function send one byte of data to UART
 * @param bt character to be send
