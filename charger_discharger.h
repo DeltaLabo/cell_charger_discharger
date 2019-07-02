@@ -79,7 +79,7 @@
     void cc_cv_mode(float current_voltage, unsigned int reference_voltage, char CC_mode_status);
     void control_loop(void);
     void calculate_avg(void);
-    void UART_interrupt_enable(void);
+    void interrupt_enable(void);
     void UART_send_char(char bt);
     char UART_get_char(void); 
     void UART_send_string(char* st_pt);
@@ -158,6 +158,7 @@
     #define     Ni_MH_EOC_DV            10 ///< Ni-MH end-fo-charge voltage drop in mV
     #define     Ni_MH_EOD_V             1000 ///< Ni-MH end-of-discharge voltage in mV
     //Variables
+    unsigned char                       SECF = 1; ///< 1 second flag
     unsigned char                       option = 0; ///< Four different options, look into @link param() @endlink for details
     unsigned                            capacity; ///< Definition of capacity per cell according to each chemistry
     unsigned                            i_char; ///< Charging current in mA

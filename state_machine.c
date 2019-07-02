@@ -20,11 +20,13 @@ void state_machine()
     switch(state){
     /**The #STANDBY  state goes to the #fSTANDBY()  function.*/
             case STANDBY:
-                fSTANDBY();  
+                fSTANDBY();
+                SECF = 1; //THis makes the thing go inside the state machine
                 break;   
     /**The #IDLE  state goes to the #fIDLE()  function.*/             
             case IDLE:
-                fIDLE();  
+                fIDLE();
+                SECF = 1; //THis makes the thing go inside the state machine
                 break;
     /**The #PREDISCHARGE  and #DISCHARGE  states go to the #fDISCHARGE()  function.*/ 
             case PREDISCHARGE:
@@ -63,6 +65,7 @@ void fSTANDBY()
 {   
     STOP_CONVERTER(); /// * Stop the converter by calling the #STOP_CONVERTER() macro
     RCIE = 0; /// * Disable the USART reception interrupts to avoid interference with the setting of parameters in the #STANDBY state
+    TMR1ON = 0; ///* Disable the Timer1 to avoid interference
     option = 0; /// * Initialize #option to 0
     cell_max = 0; /// * Initialize #cell_max to 0
     cell_count = '1'; /// * Initialize #cell_count to '1'
@@ -90,7 +93,7 @@ void fIDLE()
     converter_settings(); 
     /**Then, it will enable the USART reception interrupts to give the possibility to the user to press
     @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
-    UART_interrupt_enable();
+    interrupt_enable();
 }
 
 /**@brief This function define the IDLE state of the state machine.
@@ -408,7 +411,7 @@ void converter_settings()
             break;
     }
     __delay_ms(10);   
-    //count = 0; /// The timing counter #count will be intialized to zero, to start a full control loop cycle
+    count = COUNTER; /// The timing counter #count will be intialized to zero, to start a full control loop cycle
 }
 /**@brief Function to define the parameters of the testing process for both chemistries.
 */
