@@ -46,27 +46,28 @@ void initialize()
     ANSB5 = 0; /// * Set RB% as digital  
     WPUB5 = 0; /// * Weak pull up deactivated
     Cell_OFF();
-    /** @b TIMER0 for control and measuring loop*/
-    TMR0IE = 0; /// * Disable timer interruptions
-    TMR0CS = 0; /// * Timer set to internal instruction cycle
-    OPTION_REGbits.PS = 0b110; /// * Prescaler set to 128
-    OPTION_REGbits.PSA = 0; /// * Prescaler activated
-    TMR0IF = 0; /// * Timer flag cleared
-    TMR0 = 0x07; /// * Counter set to 255 - @b 250 + 2 (delay for sync) = 7
-    /** Timer set to 32Mhz/4/128/250 = 250Hz*/
+//    /** @b TIMER0 for control and measuring loop*/
+//    TMR0IE = 0; /// * Disable timer interruptions
+//    TMR0CS = 0; /// * Timer set to internal instruction cycle
+//    OPTION_REGbits.PS = 0b110; /// * Prescaler set to 128
+//    OPTION_REGbits.PSA = 0; /// * Prescaler activated
+//    TMR0IF = 0; /// * Timer flag cleared
+//    TMR0 = 0x07; /// * Counter set to 255 - @b 250 + 2 (delay for sync) = 7
+//    /** Timer set to 32Mhz/4/128/250 = 250Hz*/
     /** @b TIMER 1 for control and measuring loop using interruption
     /* Preload TMR1 register pair for 1us overflow */
     /* T1OSCEN = 1, nT1SYNC = 1, TMR1CS = 0 and TMR1ON = 1*/
-    T1CONbits.nT1SYNC = 1;     //Synchronized
-    T1CONbits.T1OSCEN = 1;
-    T1CONbits.TMR1ON = 1;       //ON
-    T1GCONbits.TMR1GE = 0;      //Dont care about gate
-    T1CONbits.TMR1CS = 0b00;       //FOSC/4
-    T1CONbits.T1CKPS0 = 0;
-    T1CONbits.T1CKPS1 = 0;
+    nT1SYNC = 1;     //Synchronized
+    T1OSCEN = 1;
+    TMR1ON = 0;       //ON
+    TMR1GE = 0;      //Dont care about gate
+    TMR1CS0 = 0;       
+    TMR1CS1 = 0;    //FOSC/4
+    T1CKPS0 = 0;
+    T1CKPS1 = 0;
     TMR1H = 0xE0;//TMR1 Fosc/4= 8Mhz (Tosc= 0.125us)
     TMR1L = 0xC0;//TMR1 counts: 8000 x 0.125us = 1ms
-    PIR1bits.TMR1IF= 0; //Clear timer1 interrupt flag
+    TMR1IF = 0; //Clear timer1 interrupt flag
     /** @b PSMC/PWM @b SETTINGS*/
     /** Programmable switch mode control (PSMC)*/
     PSMC1CON = 0x00; /// * Clear PSMC1 configuration to start
@@ -83,12 +84,12 @@ void initialize()
     /** Phase or rising event*/
     PSMC1PHH = 0x00;                    /// * Rising event starts from the beginning
     PSMC1PHL = 0x00;                    /// * Rising event starts from the beginning
-    PSMC1STR0bits.P1STRC = 1;           /// * Single PWM activated in PSMC1C (RC2)
-    PSMC1POLbits.P1POLC = 0;            /// * Active high (RC2)
-    PSMC1OENbits.P1OEC = 1;             /// * PSMC activated in PSMC1C (RC2)
-    PSMC1PRSbits.P1PRST = 1;            /// * Period event occurs when PSMC1TMR = PSMC1PR
-    PSMC1PHSbits.P1PHST = 1;            /// * Rising edge event occurs when PSMC1TMR = PSMC1PH
-    PSMC1DCSbits.P1DCST = 1;            /// * Falling edge event occurs when PSMC1TMR = PSMC1DC
+    P1STRC = 1;           /// * Single PWM activated in PSMC1C (RC2)
+    P1POLC = 0;            /// * Active high (RC2)
+    P1OEC = 1;             /// * PSMC activated in PSMC1C (RC2)
+    P1PRST = 1;            /// * Period event occurs when PSMC1TMR = PSMC1PR
+    P1PHST = 1;            /// * Rising edge event occurs when PSMC1TMR = PSMC1PH
+    P1DCST = 1;            /// * Falling edge event occurs when PSMC1TMR = PSMC1DC
     PSMC1CON = 0x80;                    /// * Enable|Load Buffer|Dead band disabled|Single PWM
     //PSMC1TIE = 1;                       //Enable interrupts for Time Based 
     WPUC2 = 0; /// * Disable WPU for RC0.
@@ -139,21 +140,15 @@ void initialize()
     TXEN  = 1;    /// * enable transmission
     CREN  = 1;    /// * enable reception
     //__UART module up and ready for transmission and reception__//
-    
     //**Select 8-bit mode**//  
     TX9   = 0;    /// * 8-bit reception selected
     RX9   = 0;    /// * 8-bit reception mode selected
-    //__8-bit mode selected__//    
-    /** @b INTERRUPTS*/
-    TMR1IF = 0;        //clear timer1 flag
-    PEIE = 1; /// * Activate peripherals Interrupts
-    GIE = 1; /// * Activate Global Interrupts
+    //__8-bit mode selected__/
     RCIE = 0; /// * Disable UART reception interrupts
     TXIE = 0; /// * Disable UART transmission interrupts
     /** @bFINAL CHECK ALL!!*/
     CLRWDT(); /// * Clear WDT by calling @p CLRWDT()
     STOP_CONVERTER(); ///* Call #STOP_CONVERTER()
-    TMR0IF = 0; /// * Clear Timer0 flag
     ad_res = 0; /// * Clear ADC result variable
     cmode = 1; /// * Start in CC mode    
     wait_count = 0; /// * CHECK!!!
@@ -261,51 +256,21 @@ and could be considered as some future improvement*/
                 if (ip_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p ip_buff is bigger or equal to 1000, send #log_buffer[3]
                 UART_send_char(comma); ///* Send a comma character
                 memset(log_buffer, '0', 8);  /// * Clear #log_buffer
-//            case COUNTER - 35: /// Next cyclev
-//                UART_send_char(T_str); /// * Send a 'T'
-//                break;
-//            case COUNTER - 36: /// Next cycle
-//                itoa(log_buffer,tp_buff,10); /// * Convert @p tp_buff into a string and store it in #log_buffer
-//                break;
-//            case COUNTER - 37: /// Next cycle
-//                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-//                break;
-//            case COUNTER - 38: /// Next cycle
-//                UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
-//                break;
-//            case COUNTER - 39: /// Next cycle
-//                UART_send_char(log_buffer[2]); /// * Send #log_buffer[1]
-//                break;
-//            case COUNTER - 40: /// Next cycle
-//                if (tp_buff >= 1000) UART_send_char(log_buffer[3]);  // * If @p tp_buff is bigger or equal to 1000, send #log_buffer[3]
-//                break;
-//            case COUNTER - 41: /// Next cycle
-//                UART_send_char(comma); ///* Send a comma character
-//                break;
-//            case COUNTER - 42: /// Next cycle
-//                memset(log_buffer, '0', 8);  /// * Clear #log_buffer
-//                break;
-//            case COUNTER - 43: /// Next cycle
-//                UART_send_char(Q_str); /// * Send a 'Q'
-//                break;
-//            case COUNTER - 44: /// Next cycle
-//                utoa(log_buffer,qp_buff,10); /// * Convert @p qp_buff into a string and store it in #log_buffer
-//                break;
-//            case COUNTER - 45: /// Next cycle
-//                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-//                break;
-//            case COUNTER - 46: /// Next cycle
-//                if (qp_buff >= 10) UART_send_char(log_buffer[1]); /// * If @p qp_buff is bigger or equal to 10, send #log_buffer[1]
-//                break;
-//            case COUNTER - 47: /// Next cycle
-//                if (qp_buff >= 100) UART_send_char(log_buffer[2]); /// * If @p qp_buff is bigger or equal to 100, send #log_buffer[2]
-//                break;
-//            case COUNTER - 48: /// Next cycle
-//                if (qp_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p qp_buff is bigger or equal to 1000, send #log_buffer[3]
-//                break;
-//            case COUNTER - 49: /// Next cycle
-//                if (qp_buff >= 10000) UART_send_char(log_buffer[4]); /// * If @p qp_buff is bigger or equal to 10000, send #log_buffer[4]
-//                break;  
+                UART_send_char(T_str); /// * Send a 'T'
+                itoa(log_buffer,tp_buff,10); /// * Convert @p tp_buff into a string and store it in #log_buffer
+                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
+                UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
+                UART_send_char(log_buffer[2]); /// * Send #log_buffer[1]
+                if (tp_buff >= 1000) UART_send_char(log_buffer[3]);  // * If @p tp_buff is bigger or equal to 1000, send #log_buffer[3]
+                UART_send_char(comma); ///* Send a comma character
+                memset(log_buffer, '0', 8);  /// * Clear #log_buffer
+                UART_send_char(Q_str); /// * Send a 'Q'
+                utoa(log_buffer,qp_buff,10); /// * Convert @p qp_buff into a string and store it in #log_buffer
+                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
+                if (qp_buff >= 10) UART_send_char(log_buffer[1]); /// * If @p qp_buff is bigger or equal to 10, send #log_buffer[1]
+                if (qp_buff >= 100) UART_send_char(log_buffer[2]); /// * If @p qp_buff is bigger or equal to 100, send #log_buffer[2]
+                if (qp_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p qp_buff is bigger or equal to 1000, send #log_buffer[3]
+                if (qp_buff >= 10000) UART_send_char(log_buffer[4]); /// * If @p qp_buff is bigger or equal to 10000, send #log_buffer[4]
                 UART_send_char('<'); /// * Send a '<'  
     }
     if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
@@ -360,6 +325,7 @@ void timing()
     }else /// Else,
     {
         count = COUNTER; /// * Make #count equal to #COUNTER
+        SECF = 1;
         if(second < 59) second++; /// * If #second is smaller than 59 then increase it
         else{second = 0; minute++;} /// * Else, make #second zero and increase #minute
     }
@@ -395,14 +361,18 @@ void calculate_avg()
 }
 /**@brief This function activate the UART reception interruption 
 */
-void UART_interrupt_enable()
+void interrupt_enable()
 {
-    char clear_buffer = 0; /// * Define the variable @p clear_buffer, used to empty the UART buffer
+    volatile char clear_buffer = 0; /// * Define the variable @p clear_buffer, used to empty the UART buffer
     while(RCIF){
         clear_buffer = RC1REG; /// * Clear the reception buffer and store it in @p clear_buffer
     }
-    RCIE = 0; /// * Disable UART reception interrupts
+    TMR1IF = 0; //Clear timer1 interrupt flag
+    RCIE = 1; /// * Enable UART reception interrupts
     TXIE = 0; /// * Disable UART transmission interrupts
+    PEIE = 1;                   //enable peripherals interrupts
+    GIE = 1;                    //enable global interrupts
+    TMR1ON = 1; //Turn ON the timer
 }
 /**@brief This function send one byte of data to UART
 * @param bt character to be send
