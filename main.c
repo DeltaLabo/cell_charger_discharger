@@ -20,9 +20,7 @@ void main(void)
 {   
     initialize(); /// * Call the #initialize() function
     __delay_ms(10);
-    count=COUNTER;
     //WPUE3 = 1;      //Enable pull up for MCLR
-
     while(1) /// <b> Repeat the following steps forever </b>
     {
 //        if(TMR0IF){ /// If the flag of the Timer0 is set then:
@@ -31,7 +29,6 @@ void main(void)
             //read_ADC(); /// * Then, the ADC channels are read by calling the #read_ADC() function
             //calculate_avg(); /// * Then, averages for the 250 values available each second are calculated by calling the #calculate_avg() function
             //log_control(); /// *  Then, the log is printed in the serial terminal by calling the #log_control() function
-            
             if (SECF) /// * The following tasks are executed every second:
             {     
                 SECF = 0;
@@ -59,17 +56,13 @@ void interrupt ISR(void)
     if(TMR1IF)
     {
         TMR1H = 0xE0;//TMR1 Fosc/4= 8Mhz (Tosc= 0.125us)
-        TMR1L = 0xC0;//TMR1 counts: 8000 x 0.125us = 1ms
+        TMR1L = 0xC0;//TMR1 counts: 8000 x 0.125us x 4 = 4ms
         TMR1IF = 0; //Clear timer1 interrupt flag
         read_ADC(); /// * Then, the ADC channels are read by calling the #read_ADC() function
         calculate_avg(); /// * Then, averages for the 250 values available each second are calculated by calling the #calculate_avg() function
-        if (conv) /// * If the variable #conv is set it means the converter shall be started, then:
-        {
-            control_loop(); /// -# The #control_loop() function is called*/
-            if (TMR1IF) UART_send_string((char*)"T_ERROR2"); /// -# If by that point the timer flag was set again and error message is printed
-        }
+        if (conv) control_loop(); /// -# The #control_loop() function is called*/
         timing(); /// * Timing control is executed by calling the #timing() function 
-        if (TMR1IF) UART_send_string((char*)"T_ERROR1");
+        //if (TMR1IF) UART_send_string((char*)"T_ERROR1");
     }
 
     if(RCIF)/// If the UART reception flag is set then:

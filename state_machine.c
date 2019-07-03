@@ -102,7 +102,7 @@ void fCHARGE()
 {
     LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
     conv = 1; /// * Activate control loop by setting #conv
-    if (vprom < 900) /// If #vprom is below 0.9V
+    if ((vprom < 900) && (qprom > 1)) /// If #vprom is below 0.9V
     {
         state = FAULT; /// * Go to #FAULT state
         UART_send_string((char*)cell_below_str); /// * Send a warning message
@@ -411,7 +411,6 @@ void converter_settings()
             break;
     }
     __delay_ms(10);   
-    count = COUNTER; /// The timing counter #count will be intialized to zero, to start a full control loop cycle
 }
 /**@brief Function to define the parameters of the testing process for both chemistries.
 */

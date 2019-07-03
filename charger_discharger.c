@@ -18,6 +18,7 @@
 void initialize()
 {
     /** @b GENERAL*/
+    CLRWDT(); /// * Clear WDT by calling @p CLRWDT()
     nWPUEN = 0; /// * Allow change of individual WPU
     /** @b SYSTEM @b CLOCK*/
     /** PLL is always enabled because of configuration bits*/
@@ -46,28 +47,27 @@ void initialize()
     ANSB5 = 0; /// * Set RB% as digital  
     WPUB5 = 0; /// * Weak pull up deactivated
     Cell_OFF();
-//    /** @b TIMER0 for control and measuring loop*/
-//    TMR0IE = 0; /// * Disable timer interruptions
+   /** @b TIMER0 for control and measuring loop*/
+   TMR0IE = 0; /// * Disable timer0 interruptions
 //    TMR0CS = 0; /// * Timer set to internal instruction cycle
 //    OPTION_REGbits.PS = 0b110; /// * Prescaler set to 128
 //    OPTION_REGbits.PSA = 0; /// * Prescaler activated
 //    TMR0IF = 0; /// * Timer flag cleared
 //    TMR0 = 0x07; /// * Counter set to 255 - @b 250 + 2 (delay for sync) = 7
-//    /** Timer set to 32Mhz/4/128/250 = 250Hz*/
+   /** Timer set to 32Mhz/4/128/250 = 250Hz*/
     /** @b TIMER 1 for control and measuring loop using interruption
     /* Preload TMR1 register pair for 1us overflow */
     /* T1OSCEN = 1, nT1SYNC = 1, TMR1CS = 0 and TMR1ON = 1*/
-    nT1SYNC = 1;     //Synchronized
-    T1OSCEN = 1;
+    nT1SYNC = 0;     //Synchronized
+    T1OSCEN = 0;
     TMR1ON = 0;       //ON
     TMR1GE = 0;      //Dont care about gate
     TMR1CS0 = 0;       
     TMR1CS1 = 0;    //FOSC/4
     T1CKPS0 = 0;
-    T1CKPS1 = 0;
+    T1CKPS1 = 1;
     TMR1H = 0xE0;//TMR1 Fosc/4= 8Mhz (Tosc= 0.125us)
     TMR1L = 0xC0;//TMR1 counts: 8000 x 0.125us = 1ms
-    TMR1IF = 0; //Clear timer1 interrupt flag
     /** @b PSMC/PWM @b SETTINGS*/
     /** Programmable switch mode control (PSMC)*/
     PSMC1CON = 0x00; /// * Clear PSMC1 configuration to start
@@ -147,7 +147,6 @@ void initialize()
     RCIE = 0; /// * Disable UART reception interrupts
     TXIE = 0; /// * Disable UART transmission interrupts
     /** @bFINAL CHECK ALL!!*/
-    CLRWDT(); /// * Clear WDT by calling @p CLRWDT()
     STOP_CONVERTER(); ///* Call #STOP_CONVERTER()
     ad_res = 0; /// * Clear ADC result variable
     cmode = 1; /// * Start in CC mode    
@@ -319,15 +318,15 @@ void control_loop()
 */
 void timing()
 {
-    if(count) /// If #count is other than zero, then
+    if(!count) /// If #count is other than zero, then
     {
-        count--; /// * Decrease it
-    }else /// Else,
-    {
-        count = COUNTER; /// * Make #count equal to #COUNTER
         SECF = 1;
+        count = COUNTER; /// * Make #count equal to #COUNTER
         if(second < 59) second++; /// * If #second is smaller than 59 then increase it
         else{second = 0; minute++;} /// * Else, make #second zero and increase #minute
+    }else /// Else,
+    {
+        count--; /// * Decrease it
     }
 }
 /**@brief This function calculate the averages
@@ -363,16 +362,18 @@ void calculate_avg()
 */
 void interrupt_enable()
 {
-    volatile char clear_buffer = 0; /// * Define the variable @p clear_buffer, used to empty the UART buffer
+    char clear_buffer = 0; /// * Define the variable @p clear_buffer, used to empty the UART buffer
     while(RCIF){
         clear_buffer = RC1REG; /// * Clear the reception buffer and store it in @p clear_buffer
     }
-    TMR1IF = 0; //Clear timer1 interrupt flag
     RCIE = 1; /// * Enable UART reception interrupts
     TXIE = 0; /// * Disable UART transmission interrupts
-    PEIE = 1;                   //enable peripherals interrupts
-    GIE = 1;                    //enable global interrupts
-    TMR1ON = 1; //Turn ON the timer
+    TMR1IE = 1;   //enable T1 interrpt
+    PEIE = 1;       //enable peripherals interrupts
+    GIE = 1;        //enable global interrupts
+    TMR1ON = 1;    //turn on timer
+    TMR1IF = 0; //Clear timer1 interrupt flag
+    count = 0; /// The timing counter #count will be intialized to zero, to start a full control loop cycle
 }
 /**@brief This function send one byte of data to UART
 * @param bt character to be send
@@ -417,7 +418,7 @@ void display_value(int value)
 
 void temp_protection()
 {
-    if (tprom > 350){
+    if (conv && tprom > 350){
         UART_send_string((char*)"HIGH_TEMP");
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
         state = STANDBY; /// -# Go to the #STANDBY state.
