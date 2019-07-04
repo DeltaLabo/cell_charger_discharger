@@ -212,63 +212,29 @@ This problem can be avoided with the use of interruptions for the control loop; 
 and could be considered as some future improvement*/  
     if (log_on)
     {
-                ip_buff = (int) iprom; /// * Define @p ip_buff for storing #i_prom
-                vp_buff = (int) vprom; /// * Define @p vp_buff for storing #v_prom
-                tp_buff = (int) tprom; /// * Define @p tp_buff for storing #tprom
-                qp_buff = (unsigned) ((qprom * 10) + 0.05); /// Define @p qp_buff for storing #qprom @c * @c 10*/
                 LINEBREAK;
-                itoa(log_buffer,minute,10); /// * Convert #minute into a string and store it in #log_buffer
-                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                if (minute >= 10) UART_send_char(log_buffer[1]); /// * If #minute is bigger than 10 send #log_buffer[1]
-                if (minute >= 100) UART_send_char(log_buffer[2]); /// * If #minute is bigger than 100 send #log_buffer[2]
+                display_value_s((int) minute);
                 UART_send_char(colons); /// * Send a colons character
-                memset(log_buffer, '0', 8); /// * Clear #log_buffer
-                itoa(log_buffer,second,10); /// * Convert #second into a string and store it in #log_buffer
                 if (second < 10) UART_send_char('0'); /// * If #second is smaller than 10 send a '0'
-                else UART_send_char(log_buffer[0]); /// * Else, send #log_buffer[0]
-                if (second < 10) UART_send_char(log_buffer[0]); /// * If #second is smaller than 10 send #log_buffer[0]
-                else UART_send_char(log_buffer[1]); /// * Else, send #log_buffer[1]
+                display_value_s((int) second);
                 UART_send_char(comma); /// * Send a comma character
-                memset(log_buffer, '0', 8); /// * Clear #log_buffer
                 UART_send_char(C_str); /// * Send a 'C'
                 UART_send_char(cell_count); /// * Send a #cell_count variable
                 UART_send_char(comma); /// * Send a comma character
                 UART_send_char(S_str); /// * Send an 'S'
-                itoa(log_buffer,(int)state,10); /// * Convert #state into a string and store it in #log_buffer
-                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                if (state >= 10) UART_send_char(log_buffer[1]); /// * If #state is bigger than 10, send #log_buffer[0]   
+                display_value_s((int)state);
                 UART_send_char(comma); /// * Send a comma character
                 UART_send_char(V_str); /// * Send a 'V'
-                itoa(log_buffer,vp_buff,10); /// * Convert @p vp_buff into a string and store it in #log_buffer
-                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
-                UART_send_char(log_buffer[2]); /// * Send #log_buffer[2]
-                if (vp_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p vp_buff is bigger than 1000, send #log_buffer[3]
+                display_value_s((int)vprom);
                 UART_send_char(comma); ///* Send a comma character
-                memset(log_buffer, '0', 8);  /// * Clear #log_buffer
                 UART_send_char(I_str); /// * Send an 'I'
-                itoa(log_buffer,ip_buff,10); /// * Convert @p ip_buff into a string and store it in #log_buffer
-                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
-                if (ip_buff >= 100) UART_send_char(log_buffer[2]); /// * Send #log_buffer[2]
-                if (ip_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p ip_buff is bigger or equal to 1000, send #log_buffer[3]
+                display_value_s((int)iprom);
                 UART_send_char(comma); ///* Send a comma character
-                memset(log_buffer, '0', 8);  /// * Clear #log_buffer
                 UART_send_char(T_str); /// * Send a 'T'
-                itoa(log_buffer,tp_buff,10); /// * Convert @p tp_buff into a string and store it in #log_buffer
-                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                UART_send_char(log_buffer[1]); /// * Send #log_buffer[1]
-                UART_send_char(log_buffer[2]); /// * Send #log_buffer[1]
-                if (tp_buff >= 1000) UART_send_char(log_buffer[3]);  // * If @p tp_buff is bigger or equal to 1000, send #log_buffer[3]
+                display_value_s((int)tprom);
                 UART_send_char(comma); ///* Send a comma character
-                memset(log_buffer, '0', 8);  /// * Clear #log_buffer
                 UART_send_char(Q_str); /// * Send a 'Q'
-                utoa(log_buffer,qp_buff,10); /// * Convert @p qp_buff into a string and store it in #log_buffer
-                UART_send_char(log_buffer[0]); /// * Send #log_buffer[0]
-                if (qp_buff >= 10) UART_send_char(log_buffer[1]); /// * If @p qp_buff is bigger or equal to 10, send #log_buffer[1]
-                if (qp_buff >= 100) UART_send_char(log_buffer[2]); /// * If @p qp_buff is bigger or equal to 100, send #log_buffer[2]
-                if (qp_buff >= 1000) UART_send_char(log_buffer[3]); /// * If @p qp_buff is bigger or equal to 1000, send #log_buffer[3]
-                if (qp_buff >= 10000) UART_send_char(log_buffer[4]); /// * If @p qp_buff is bigger or equal to 10000, send #log_buffer[4]
+                display_value_u((unsigned)((qprom * 10) + 0.05));
                 UART_send_char('<'); /// * Send a '<'  
     }
     if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
@@ -367,12 +333,12 @@ void interrupt_enable()
     }
     RCIE = 1; /// * Enable UART reception interrupts
     TXIE = 0; /// * Disable UART transmission interrupts
-    TMR1IE = 1;   //enable T1 interrpt
+    TMR1IE = 1;   //enable T1 interrupt
     PEIE = 1;       //enable peripherals interrupts
     GIE = 1;        //enable global interrupts
     TMR1ON = 1;    //turn on timer
     TMR1IF = 0; //Clear timer1 interrupt flag
-    count = 0; /// The timing counter #count will be intialized to zero, to start a full control loop cycle
+    count = COUNTER; /// The timing counter #count will be initialized to zero, to start a full control loop cycle
 }
 /**@brief This function send one byte of data to UART
 * @param bt character to be send
@@ -408,18 +374,26 @@ void UART_send_string(char* st_pt)
 /**@brief This function convert a number to string and then send it using UART
 * @param value integer to be send
 */
-void display_value(int value)
+void display_value_s(int value)
 {   
     char buffer[6]; /// * Define @p buffer to used it for store character storage
     itoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
     UART_send_string((char*)buffer); /// * Send @p buffer using #UART_send_string()
 }
-
+/**@brief This function convert a number to string and then send it using UART
+* @param value integer to be send
+*/
+void display_value_u(unsigned value)
+{   
+    char buffer[6]; /// * Define @p buffer to used it for store character storage
+    utoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
+    UART_send_string((char*)buffer); /// * Send @p buffer using #UART_send_string()
+}
 void temp_protection()
 {
     if ((conv == 1) && (tprom > 350)){
         UART_send_string((char*)"HIGH_TEMP:");
-        display_value((int)tprom);
+        display_value_s((int)tprom);
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
         state = STANDBY; /// -# Go to the #STANDBY state.
     }

@@ -75,7 +75,8 @@
     void set_DC(void);
     void read_ADC(void);
     void log_control(void);
-    void display_value(int value);
+    void display_value_s(int value);
+    void display_value_u(unsigned value);
     void cc_cv_mode(float current_voltage, unsigned int reference_voltage, char CC_mode_status);
     void control_loop(void);
     void calculate_avg(void);
@@ -110,8 +111,8 @@
     and the UART reception interrupts.
     */
     #define     STOP_CONVERTER()        { conv = 0; RC5 = 0; dc = DC_START; set_DC(); Cell_OFF(); LOG_OFF();}
-    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(500); RC3 = 1; __delay_ms(500); RC3 = 0; __delay_ms(200); RC5 = 1; __delay_ms(200);}
-    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(500); RC4 = 1; __delay_ms(500); RC4 = 0; __delay_ms(200); RC5 = 1; __delay_ms(200);}
+    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100);}
+    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100);}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
     //#define   UART_INT_OFF()          { log_on = 0; }  ///< Turn OFF UART transmission interrupts. //CHECK THIS
     #define     LOG_ON()                { log_on = 1; }  ///< Turn OFF logging in the terminal.
@@ -203,11 +204,6 @@
     unsigned                            dc = 0;  ///< Duty cycle
     char                                clear;  ///< Variable to clear the transmission buffer of UART
     unsigned                            log_on = 0; ///< Variable to indicate if the log is activated 
-    char                                log_buffer[8]={0}; ///< Temporary buffer used between loops of #log_control()  
-    int                                 ip_buff = 0;  ///< Current buffer to send to the terminal usign #log_control()
-    int                                 vp_buff = 0;  ///< Voltage buffer to send to the terminal usign #log_control()
-    int                                 tp_buff = 0;  ///< Temperature buffer to send to the terminal usign @log_control().
-    unsigned                            qp_buff = 0;  ///< Capacity buffer to send to the terminal usign #log_control() .
     int                                 second = 0; ///< Seconds counter, resetted after 59 seconds.
     int                                 minute = 0; ///< Minutes counter, only manually reset
     unsigned                            timeout = 0;

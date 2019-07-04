@@ -190,10 +190,10 @@ void fDC_res() //can be improved a lot!!
         UART_send_char(cell_count);
         UART_send_char(comma);
         UART_send_char(S_str);
-        display_value((int)state);
+        display_value_s((int)state);
         UART_send_char(comma);
         UART_send_char(R_str);
-        display_value((int)dc_res_val);
+        display_value_s((int)dc_res_val);
         UART_send_char('<');
         LINEBREAK;
         LOG_OFF();   ///I dont like this 
@@ -215,10 +215,10 @@ void fWAIT()
         UART_send_char(cell_count);
         UART_send_char(comma);
         UART_send_char(S_str);
-        display_value((int)state);
+        display_value_s((int)state);
         UART_send_char(comma);
         UART_send_char(W_str);
-        display_value(wait_count);
+        display_value_s(wait_count);
         UART_send_char('<');
         wait_count--;             
     }
@@ -360,7 +360,7 @@ void start_state_machine()
     LINEBREAK;
     /**Cell {1,2,3 or 4}*/
     UART_send_string((char*)cell_str);
-    display_value((int)(cell_count - '0'));
+    display_value_s((int)(cell_count - '0'));
     LINEBREAK; 
     NOSTART: ;  //label to goto the end of the function 
 }
@@ -375,10 +375,6 @@ void converter_settings()
     integral = 0; /// * The #integral component of the compensator is set to zero.*/
     qprom = 0; /// * Average capacity, #q_prom is set to zero.*/
     vmax = 0; /// * Maximum averaged voltage, #vmax is set to zero.*/
-    ip_buff = 0; /// * Clear #ip_buff
-    vp_buff = 0; /// * Clear #vp_buff
-    tp_buff = 0; /// * Clear #tp_buff
-    qp_buff = 0; /// * Clear #qp_buff
     dc = DC_START;
     set_DC();  /// * The #set_DC() function is called
     Cell_ON(); /// * The #Cell_ON() function is called
@@ -444,13 +440,13 @@ void param()
     #elif (NI_MH_CHEM) 
     vref = Ni_MH_CV;
     UART_send_string((char*)cv_val_str);
-    display_value(Ni_MH_CV);
+    display_value_s(Ni_MH_CV);
     UART_send_string((char*)mV_str);
     LINEBREAK;
     /** The @p capacity will be set to @p Ni_MH_CAP.*/
     capacity = Ni_MH_CAP;
     UART_send_string((char*)nom_cap_str);
-    display_value(capacity);
+    display_value_s(capacity);
     UART_send_string((char*)mAh_str);
     #endif
     LINEBREAK;
@@ -526,7 +522,7 @@ void param()
     UART_send_string((char*)mA_str);
     #elif (NI_MH_CHEM) 
     UART_send_string((char*)EOC_DV_str);
-    display_value(Ni_MH_EOC_DV);
+    display_value_s(Ni_MH_EOC_DV);
     UART_send_string((char*)mV_str);
     #endif    
     LINEBREAK; 
@@ -602,7 +598,7 @@ void param()
     EOD_voltage = Ni_MH_EOD_V;
     UART_send_string((char*)EOD_V_str);
     #endif
-    display_value(EOD_voltage);
+    display_value_s(EOD_voltage);
     UART_send_string((char*)mV_str);
     LINEBREAK;
     /**For the test cycle it will show four options:*/
