@@ -73,17 +73,18 @@ void interrupt ISR(void)
             RC1STAbits.CREN = 1; 
         }
         while(RCIF) recep = RC1REG; /// * Empty the reception buffer and assign its contents to the variable @p recep
-        if (recep == 0x1B) /// * If @p recep received an @b ESC, then:
-        {   
+        switch (recep)
+        {
+        case 0x63: /// * If @p recep received a @b "c", then:
             STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
             state = STANDBY; /// -# Go to the #STANDBY state.
-        }else if  (recep == 'n') /// * Else If @p recep received an @b "n", then:
-        {
+            break;
+        case 0x6E: /// * If @p recep received an @b "n", then:
             STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
             state = ISDONE; /// -# Go to the #ISDONE state.
-        }else /// * Else:
-        {
-           recep = 0; /// -# Clear the @p recep variable.
+        default:
+            recep = 0;
+            break;
         }
     }  
 }

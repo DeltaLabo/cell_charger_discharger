@@ -147,11 +147,11 @@
 //    #define     Li_Ion_CAP              1200 ///< Li-Ion capacity setting in mAh
 //    #define     Li_Ion_EOC_I            60 ///< Li-Ion end-of-charge current in mA
 //    #define     Li_Ion_EOD_V            3000 ///< Li_Ion end-of-discharge voltage in mV
-    //Li-Po definitions
-    #define     Li_Po_CV                4200 ///< Li-Ion constant voltage setting in mV
-    #define     Li_Po_CAP               1200 ///< Li-Ion capacity setting in mAh
-    #define     Li_Po_EOC_I             60 ///< Li-Ion end-of-charge current in mA
-    #define     Li_Po_EOD_V             3000 ///< Li_Ion end-of-discharge voltage in mV
+//    //Li-Po definitions
+//    #define     Li_Po_CV                4200 ///< Li-Ion constant voltage setting in mV
+//    #define     Li_Po_CAP               1200 ///< Li-Ion capacity setting in mAh
+//    #define     Li_Po_EOC_I             60 ///< Li-Ion end-of-charge current in mA
+//    #define     Li_Po_EOD_V             3000 ///< Li_Ion end-of-discharge voltage in mV
     //Ni-MH definitions
     #define     Ni_MH_CV                1750 ///< Ni-MH constant voltage setting in mV
     #define     Ni_MH_CAP               2000 ///< Ni-MH capacity setting in mAh
@@ -184,6 +184,10 @@
     float                               v;  ///< Last voltage ADC measurement.
     float                               i;  ///< Last current ADC measurement.
     float                               t;  ///<  Last temperature ADC measurement.
+    float                               vacum = 0; ///< accumulator dor v
+    float                               iacum = 0;
+    float                               tacum = 0;
+    //qprom does not need accumulator
     float                               vprom = 0;  ///< Last one-second-average of #v . Initialized as 0
     float                               iprom = 0;  ///< Last one-second-average of #i . Initialized as 0
     float                               tprom = 0;  ///< Last one-second-average of #t . Initialized as 0

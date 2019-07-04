@@ -26,7 +26,6 @@ void state_machine()
     /**The #IDLE  state goes to the #fIDLE()  function.*/             
             case IDLE:
                 fIDLE();
-                SECF = 1; //THis makes the thing go inside the state machine
                 break;
     /**The #PREDISCHARGE  and #DISCHARGE  states go to the #fDISCHARGE()  function.*/ 
             case PREDISCHARGE:
@@ -284,7 +283,7 @@ void fISDONE()
 */
 void fFAULT()
 {   
-    /**The function will stop the converter usign #STOP_CONVERTER()  macro*/
+    /**The function will stop the converter using #STOP_CONVERTER()  macro*/
     STOP_CONVERTER();
     /**The @p state will be set to @p STANDBY*/
     state = STANDBY;

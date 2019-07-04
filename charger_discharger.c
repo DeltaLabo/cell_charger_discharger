@@ -47,8 +47,8 @@ void initialize()
     ANSB5 = 0; /// * Set RB% as digital  
     WPUB5 = 0; /// * Weak pull up deactivated
     Cell_OFF();
-   /** @b TIMER0 for control and measuring loop*/
-   TMR0IE = 0; /// * Disable timer0 interruptions
+    /** @b TIMER0 for control and measuring loop*/
+    TMR0IE = 0; /// * Disable timer0 interruptions
 //    TMR0CS = 0; /// * Timer set to internal instruction cycle
 //    OPTION_REGbits.PS = 0b110; /// * Prescaler set to 128
 //    OPTION_REGbits.PSA = 0; /// * Prescaler activated
@@ -135,7 +135,6 @@ void initialize()
     SYNC  = 0;    /// * Asynchronous
     SPEN  = 1;    /// * Enable serial port pins
     //_____Asynchronous serial port enabled_______//
-
     //**Lets prepare for transmission & reception**//
     TXEN  = 1;    /// * enable transmission
     CREN  = 1;    /// * enable reception
@@ -336,14 +335,14 @@ void calculate_avg()
     switch(count)
     {
         case COUNTER: /// If #count = #COUNTER
-            iprom = 0; /// * Make #iprom zero
-            vprom = 0; /// * Make #vprom zero
-            tprom = 0; /// * Make #tprom zero
+            iacum = 0; /// * Make #iprom zero
+            vacum = 0; /// * Make #vprom zero
+            tacum = 0; /// * Make #tprom zero
             break;
         case 0: /// If #count = 0
-            iprom /= (COUNTER - 1); /// * Divide the value stored in #iprom between COUNTER to obtain the average
-            vprom /= (COUNTER - 1); /// * Divide the value stored in #vprom between COUNTER to obtain the average
-            tprom /= (COUNTER - 1); /// * Divide the value stored in #tprom between COUNTER to obtain the average
+            iprom = iacum / (COUNTER - 1); /// * Divide the value stored in #iprom between COUNTER to obtain the average
+            vprom = vacum / (COUNTER - 1); /// * Divide the value stored in #vprom between COUNTER to obtain the average
+            tprom = tacum / (COUNTER - 1); /// * Divide the value stored in #tprom between COUNTER to obtain the average
             if (iprom > 0) qprom += (iprom/3600); /// * Divide #iprom between 3600 and add it to #qprom to integrate the current over time
             else qprom += 0;
             #if (NI_MH_CHEM)  
@@ -351,9 +350,9 @@ void calculate_avg()
             #endif
             break;
         default: /// If #count is not any of the previous cases then
-            iprom += i; /// * Accumulate #i in #iprom
-            vprom += v; /// * Accumulate #v in #vprom
-            tprom += t; /// * Accumulate #t in #tprom
+            iacum += i; /// * Accumulate #i in #iprom
+            vacum += v; /// * Accumulate #v in #vprom
+            tacum += t; /// * Accumulate #t in #tprom
             //tprom += dc * 1.953125; // TEST FOR DC Is required to deactivate temperature protection
             break;
     }   
@@ -418,8 +417,9 @@ void display_value(int value)
 
 void temp_protection()
 {
-    if (conv && tprom > 350){
-        UART_send_string((char*)"HIGH_TEMP");
+    if ((conv == 1) && (tprom > 350)){
+        UART_send_string((char*)"HIGH_TEMP:");
+        display_value((int)tprom);
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
         state = STANDBY; /// -# Go to the #STANDBY state.
     }
