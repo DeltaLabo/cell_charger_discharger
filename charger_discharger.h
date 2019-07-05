@@ -71,13 +71,13 @@
     void param(void);
     void converter_settings(void);
     void initialize(void);
-    void pid(float feedback, unsigned setpoint);
+    void pid(uint16_t feedback, uint16_t setpoint);
     void set_DC(void);
-    void read_ADC(void);
+    uint16_t read_ADC(uint16_t channel);
     void log_control(void);
     void display_value_s(int value);
     void display_value_u(unsigned value);
-    void cc_cv_mode(float current_voltage, unsigned int reference_voltage, char CC_mode_status);
+    void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, char CC_mode_status);
     void control_loop(void);
     void calculate_avg(void);
     void interrupt_enable(void);
@@ -124,12 +124,12 @@
     #define     DC_MIN_DISC             50  ///< Minimum possible duty cycle, set around @b 0.05
     #define     DC_MAX_DISC             358  ///< Maximum possible duty cycle, set around @b 0.8 
     #define     DC_START                50 ///< Maximum possible duty cycle, set around @b 0.8
-    #define     COUNTER                 249  ///< Counter value, needed to obtained one second between counts.
-    #define     CC_kp                   0.025  ///< Proportional constant for CC mode
-    #define     CC_ki                   0.04  ///< Integral constant for CC mode 
+    #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
+    #define     CC_kp                   40  ///< Proportional constant for CC mode
+    #define     CC_ki                   100  ///< Integral constant for CC mode 
     // last test with LI_ION gave this constants
-    #define     CV_kp                   0.1  ///< Proportional constant for CV mode
-    #define     CV_ki                   0.01  ///< Integral constant for CV mode 
+    #define     CV_kp                   10  ///< Proportional constant for CV mode
+    #define     CV_ki                   400  ///< Integral constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); } ///< Send a linebreak to the terminal
     //////////////////////////Chemistry definition///////////////////////////////////////
     #define     LI_ION_CHEM             0 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
@@ -161,9 +161,9 @@
     //Variables
     unsigned char                       SECF = 1; ///< 1 second flag
     unsigned char                       option = 0; ///< Four different options, look into @link param() @endlink for details
-    unsigned                            capacity; ///< Definition of capacity per cell according to each chemistry
-    unsigned                            i_char; ///< Charging current in mA
-    unsigned                            i_disc; ///< Discharging current in mA
+    uint16_t                            capacity; ///< Definition of capacity per cell according to each chemistry
+    uint16_t                            i_char; ///< Charging current in mA
+    uint16_t                            i_disc; ///< Discharging current in mA
     unsigned char                       cell_count = 49; ///< Cell counter from '1' to '4'. Initialized as '1'
     unsigned char                       cell_max = 0; ///< Number of cells to be tested. Initialized as 0
     unsigned                            wait_count = WAIT_TIME; ///< Counter for waiting time between states. Initialized as @link WAIT_TIME @endlink
@@ -181,34 +181,36 @@
     unsigned                            count = COUNTER; ///< Counter that should be cleared every second. Initialized as #COUNTER 
     /**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
     all the events that are done every second.*/
-    unsigned                            ad_res; ///< Result of an ADC measurement.
-    float                               v;  ///< Last voltage ADC measurement.
-    float                               i;  ///< Last current ADC measurement.
-    float                               t;  ///<  Last temperature ADC measurement.
-    float                               vacum = 0; ///< accumulator dor v
-    float                               iacum = 0;
-    float                               tacum = 0;
+    //uint16_t                            ad_res; ///< Result of an ADC measurement.
+    uint16_t                            v;  ///< Last voltage ADC measurement.
+    uint16_t                            i;  ///< Last current ADC measurement.
+    uint16_t                            t;  ///<  Last temperature ADC measurement.
+    uint24_t                            vacum = 0; ///< accumulator dor v
+    uint24_t                            iacum = 0;
+    uint24_t                            tacum = 0;
     //qprom does not need accumulator
-    float                               vprom = 0;  ///< Last one-second-average of #v . Initialized as 0
-    float                               iprom = 0;  ///< Last one-second-average of #i . Initialized as 0
-    float                               tprom = 0;  ///< Last one-second-average of #t . Initialized as 0
-    float                               qprom = 0;  ///< Integration of #i . Initialized as 0
-    int                                 vmax = 0;   ///< Maximum recorded average voltage. 
-    float                               proportional;  ///< Proportional component of PI compensator
-    float                               integral;  ///< Integral component of PI compensator
-    float                               kp;  ///< Proportional compesator gain
-    float                               ki;  ///< Integral compesator gain      
-    unsigned                            vref = 0;  ///< Voltage setpoint. Initialized as 0
-    unsigned                            iref = 0;  ///< Current setpoint. Initialized as 0
+    uint16_t                            vprom = 0;  ///< Last one-second-average of #v . Initialized as 0
+    uint16_t                            iprom = 0;  ///< Last one-second-average of #i . Initialized as 0
+    uint16_t                            tprom = 0;  ///< Last one-second-average of #t . Initialized as 0
+    uint16_t                            qprom = 0;  ///< Integration of #i . Initialized as 0
+    uint16_t                            vmax = 0;   ///< Maximum recorded average voltage. 
+    int16_t                             proportional;  ///< Proportional component of PI compensator
+    int16_t                             integral;  ///< Integral component of PI compensator
+    int16_t                             kp;  ///< Proportional compesator gain
+    int16_t                             ki;  ///< Integral compesator gain      
+    uint16_t                            vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
+    uint16_t                            cvref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
+    uint16_t                            iref = 0;  ///< Current setpoint. Initialized as 0
+    uint16_t                            ccref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
     char                                cmode;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt>   
-    unsigned                            dc = 0;  ///< Duty cycle
+    uint16_t                            dc = 0;  ///< Duty cycle
     char                                clear;  ///< Variable to clear the transmission buffer of UART
     unsigned                            log_on = 0; ///< Variable to indicate if the log is activated 
     int                                 second = 0; ///< Seconds counter, resetted after 59 seconds.
     int                                 minute = 0; ///< Minutes counter, only manually reset
-    unsigned                            timeout = 0;
-    unsigned                            dcmax = 0; ///<To put the maximum duty cycle according to the operation mode
-    unsigned                            dcmin = 0; ///<To put the minimum duty cycle according to the operation mode
+    uint16_t                            timeout = 0;
+    uint16_t                            dcmax = 0; ///<To put the maximum duty cycle according to the operation mode
+    uint16_t                            dcmin = 0; ///<To put the minimum duty cycle according to the operation mode
     //Strings       
     char const                          comma = ',';
     char const                          colons = ':'; 

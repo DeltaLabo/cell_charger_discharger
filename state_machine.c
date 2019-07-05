@@ -101,7 +101,7 @@ void fCHARGE()
 {
     LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
     conv = 1; /// * Activate control loop by setting #conv
-    if ((vprom < 900) && (qprom > 1)) /// If #vprom is below 0.9V
+    if (vprom < 900) //&& (qprom > 1)) /// If #vprom is below 0.9V
     {
         state = FAULT; /// * Go to #FAULT state
         UART_send_string((char*)cell_below_str); /// * Send a warning message
@@ -132,13 +132,13 @@ void fCHARGE()
     } 
     if (state == POSTCHARGE){
         #if (LI_ION_CHEM) 
-        if (qprom >= (0.5*capacity) && ((minute + second) >= 1)){
+        if (qprom >= ( (capacity * 10) / 2 ) && ((minute + second) >= 1)){
             prev_state = state;
             state = WAIT;
             wait_count = WAIT_TIME;
             STOP_CONVERTER();
         #elif (NI_MH_CHEM)
-        if (qprom >= (0.5*capacity) || minute >= timeout){
+        if (qprom >= ( (capacity * 10) / 2 ) || (unsigned) minute >= timeout){
             prev_state = state;
             state = WAIT;
             wait_count = WAIT_TIME;
@@ -173,7 +173,7 @@ void fDC_res() //can be improved a lot!!
     {
         v_1_dcres = vprom;
         i_1_dcres = iprom;
-        iref = capacity;                  
+        iref = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 1 ) ) + 0.5 );     //1C            
     }
     if (dc_res_count == 1)
     {
@@ -385,7 +385,7 @@ void converter_settings()
             dcmax = DC_MAX_CHAR;
             dcmin = DC_MIN_CHAR;
             iref = i_char; /// * The current setpoint, #iref is defined as #i_char
-            timeout = ((capacity / iref) * 66); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
+            timeout = ((capacity / ccref) * 66); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
             SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
             break;
         case PREDISCHARGE:
@@ -400,7 +400,7 @@ void converter_settings()
         case PS_DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
             dcmax = DC_MAX_DISC;
             dcmin = DC_MIN_DISC;
-            iref = capacity / 5; /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
+            iref = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 5 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
             dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;
@@ -427,7 +427,8 @@ void param()
     @endcode*/
     LINEBREAK;  
     #if (LI_ION_CHEM)    
-    vref = Li_Ion_CV;
+    cvref = (uint16_t) ( ( Li_Ion_CV * 4096 ) / 5000) + 0.5; //Scale the voltage refence to be compare with v
+    cvv = Li_Ion_CV;
     UART_send_string((char*)cv_val_str);
     display_value(Li_Ion_CV);
     UART_send_string((char*)mV_str);
@@ -438,7 +439,8 @@ void param()
     display_value(capacity);
     UART_send_string((char*)mAh_str);
     #elif (NI_MH_CHEM) 
-    vref = Ni_MH_CV;
+    vref = (uint16_t) ( ( ( Ni_MH_CV * 4096.0 ) / 5000 ) + 0.5 ); //Scale the voltage refence to be compare with v
+    cvref = Ni_MH_CV;
     UART_send_string((char*)cv_val_str);
     display_value_s(Ni_MH_CV);
     UART_send_string((char*)mV_str);
@@ -473,17 +475,20 @@ void param()
         {   
             /**After chosing the charging current, the program will assign it to @p i_char and print it.*/
             case '1':
-                i_char = capacity/4;
+                i_char = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 4 ) ) + 0.5 );
+                ccref = (uint16_t) ( (capacity / 4) + 0.5 );
                 UART_send_string((char*)char_def_quarter_str);  //0.25C
                 LINEBREAK;
                 break;
             case '2':
-                i_char = capacity/2;
+                i_char = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 2 ) ) + 0.5 );
+                ccref = (uint16_t) ( (capacity / 2) + 0.5 );
                 UART_send_string((char*)char_def_half_str);  //0.5C
                 LINEBREAK;
                 break;
             case '3':
-                i_char = capacity;
+                i_char = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 1 ) ) + 0.5 );
+                ccref = (uint16_t) ( (capacity / 1) + 0.5 );
                 UART_send_string((char*)char_def_one_str);  //0.1C
                 LINEBREAK;
                 break;
@@ -549,17 +554,17 @@ void param()
         {
             /**After chosing the discharging current, the program will assign it to @p i_disc and print it.*/
             case '1':
-                i_disc = capacity/4;
+                i_disc = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 4 ) ) + 0.5 );
                 UART_send_string((char*)dis_def_quarter_str);  //0.25 C
                 LINEBREAK;            
                 break;
             case '2':
-                i_disc = capacity/2;
+                i_disc = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 2 ) ) + 0.5 );
                 UART_send_string((char*)dis_def_half_str);  //0.5 C
                 LINEBREAK;         
                 break;
             case '3':
-                i_disc = capacity;
+                i_disc = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 1 ) ) + 0.5 );
                 UART_send_string((char*)dis_def_one_str);  //1C
                 LINEBREAK;
                 break;
@@ -595,7 +600,7 @@ void param()
     EOD_voltage = Li_Ion_EOD_V;
     UART_send_string((char*)EOD_V_str);
     #elif (NI_MH_CHEM)
-    EOD_voltage = Ni_MH_EOD_V;
+    EOD_voltage = Ni_MH_EOD_V;  //This is compared to vprom
     UART_send_string((char*)EOD_V_str);
     #endif
     display_value_s(EOD_voltage);

@@ -27,9 +27,15 @@ void main(void)
         {     
             SECF = 0;
             log_control(); /// *  Then, the log is printed in the serial terminal by calling the #log_control() function
-            cc_cv_mode(vprom, vref, cmode);
+            cc_cv_mode(vprom, cvref, cmode);
             state_machine(); /// -# Then the #state_machine() function is called
-            temp_protection(); /// -# If at any point the temperature is higher than 35 degrees the process is stopped
+            //temp_protection(); /// -# If at any point the temperature is higher than 35 degrees the process is stopped
+            LINEBREAK;
+            display_value_s((int)v);
+            LINEBREAK;
+            display_value_s((int)i);
+            LINEBREAK;
+            display_value_s((int)t);
         }     
 	}
 }
@@ -38,16 +44,19 @@ void main(void)
 */
 void interrupt ISR(void) 
 {
-    volatile char recep = 0; /// Define and initialize @p recep variable to store the received character
+    char recep = 0; /// Define and initialize @p recep variable to store the received character
     
     if(TMR1IF)
     {
-        TMR1H = 0xE0;//TMR1 Fosc/4= 8Mhz (Tosc= 0.125us)
-        TMR1L = 0xC0;//TMR1 counts: 8000 x 0.125us x 4 = 4ms
+        TMR1H = 0xE1;//TMR1 Fosc/4= 8Mhz (Tosc= 0.125us)
+        TMR1L = 0x83;//TMR1 counts: 7805 x 0.125us x 4 = 3.9025ms
         TMR1IF = 0; //Clear timer1 interrupt flag
-        read_ADC(); /// * Then, the ADC channels are read by calling the #read_ADC() function
-        calculate_avg(); /// * Then, averages for the 250 values available each second are calculated by calling the #calculate_avg() function
+        v = read_ADC(V_CHAN); /// * Then, the ADC channels are read by calling the #read_ADC() function
+        i = read_ADC(I_CHAN); /// * Then, the ADC channels are read by calling the #read_ADC() function
+        i = (uint16_t) (abs((int)i - 2048 )); ///If the #state is #CHARGE or #POSTCHARGE change the sign of the result  
+        t = read_ADC(T_CHAN); /// * Then, the ADC channels are read by calling the #read_ADC() function 
         if (conv) control_loop(); /// -# The #control_loop() function is called*/
+        calculate_avg(); /// * Then, averages for the 250 values available each second are calculated by calling the #calculate_avg() function
         timing(); /// * Timing control is executed by calling the #timing() function 
         //if (TMR1IF) UART_send_string((char*)"T_ERROR1");
     }

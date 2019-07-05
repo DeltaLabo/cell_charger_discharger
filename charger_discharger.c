@@ -47,14 +47,6 @@ void initialize()
     ANSB5 = 0; /// * Set RB% as digital  
     WPUB5 = 0; /// * Weak pull up deactivated
     Cell_OFF();
-    /** @b TIMER0 for control and measuring loop*/
-    TMR0IE = 0; /// * Disable timer0 interruptions
-//    TMR0CS = 0; /// * Timer set to internal instruction cycle
-//    OPTION_REGbits.PS = 0b110; /// * Prescaler set to 128
-//    OPTION_REGbits.PSA = 0; /// * Prescaler activated
-//    TMR0IF = 0; /// * Timer flag cleared
-//    TMR0 = 0x07; /// * Counter set to 255 - @b 250 + 2 (delay for sync) = 7
-   /** Timer set to 32Mhz/4/128/250 = 250Hz*/
     /** @b TIMER 1 for control and measuring loop using interruption
     /* Preload TMR1 register pair for 1us overflow */
     /* T1OSCEN = 1, nT1SYNC = 1, TMR1CS = 0 and TMR1ON = 1*/
@@ -65,9 +57,9 @@ void initialize()
     TMR1CS0 = 0;       
     TMR1CS1 = 0;    //FOSC/4
     T1CKPS0 = 0;
-    T1CKPS1 = 1;
-    TMR1H = 0xE0;//TMR1 Fosc/4= 8Mhz (Tosc= 0.125us)
-    TMR1L = 0xC0;//TMR1 counts: 8000 x 0.125us = 1ms
+    T1CKPS1 = 0;
+    TMR1H = 0xE1;//TMR1 Fosc/4= 8Mhz (Tosc= 0.125us)
+    TMR1L = 0x83;//TMR1 counts: 7805 x 0.125us = 0.97562ms
     /** @b PSMC/PWM @b SETTINGS*/
     /** Programmable switch mode control (PSMC)*/
     PSMC1CON = 0x00; /// * Clear PSMC1 configuration to start
@@ -147,33 +139,45 @@ void initialize()
     TXIE = 0; /// * Disable UART transmission interrupts
     /** @bFINAL CHECK ALL!!*/
     STOP_CONVERTER(); ///* Call #STOP_CONVERTER()
-    ad_res = 0; /// * Clear ADC result variable
     cmode = 1; /// * Start in CC mode    
     wait_count = 0; /// * CHECK!!!
     dc_res_count = 0; /// * CHECK!!
     RC3 = 0; /// * RELAY OUTPUT DOWN 
     RC4 = 0; /// * RELAY OUTPUT DOWN 
 }
+/**@brief This function is the PI control loop
+*/
+void control_loop()
+{   
+    if(!cmode) /// If #cmode is cleared then
+    {
+        pid(v, vref);  /// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
+    }else /// Else,
+    {
+        pid(i, iref); /// * The #pid() function is called with @p feedback = #i and @p setpoint = #iref
+    }
+    set_DC(); /// The duty cycle is set by calling the #set_DC() function
+}
 /**@brief This function defines the PI controller
 *  @param   feedback average of measured values for the control variable
 *  @param   setpoint desire controlled output for the variable
 */
-void pid(float feedback, unsigned setpoint)
+void pid(uint16_t feedback, uint16_t setpoint)
 { 
-float 	er; /// * Define @p er for calculating the error
-float   pi; /// * Define @p pi for storing the PI compesator value
-    er = setpoint - feedback; /// * Calculate the error by substracting the @p feedback from the @p setpoint and store it in @p er
+int16_t     er; /// * Define @p er for calculating the error
+int16_t     pi; /// * Define @p pi for storing the PI compesator value
+    er = (int16_t) (setpoint - feedback); /// * Calculate the error by substracting the @p feedback from the @p setpoint and store it in @p er
     if(er > ERR_MAX) er = ERR_MAX; /// * Make sure error is never above #ERR_MAX
     if(er < ERR_MIN) er = ERR_MIN; /// * Make sure error is never below #ERR_MIN
-    proportional = (kp * er); /// * Calculate #proportional component of compensator
-	integral += (ki * er)/COUNTER; /// * Calculate #integral component of compensator
+    proportional = er / kp; /// * Calculate #proportional component of compensator
+	integral += (er / (ki * COUNTER)); /// * Calculate #integral component of compensator
     pi = proportional + integral; /// * Sum them up and store in @p pi*/
     if (dc + pi >= dcmax){ /// * Make sure duty cycle is never above #DC_MAX
         dc = dcmax;
     }else if (dc + pi <= dcmin){ /// * Make sure duty cycle is never below #DC_MIN
         dc = dcmin;
     }else{
-        dc += (int)(pi + 0.5); /// * Store the new value of the duty cycle with operation @code dc = dc + pi @endcode
+        dc = (uint16_t)(dc + pi); /// * Store the new value of the duty cycle with operation @code dc = dc + pi @endcode
     }   
 }
 /**@brief This function sets the desired duty cycle
@@ -190,10 +194,10 @@ void set_DC()
 * @param referece_voltage voltage setpoint
 * @param CC_mode_status current condition of #cmode variable
 */
-void cc_cv_mode(float current_voltage, unsigned int reference_voltage, char CC_mode_status)
+void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, char CC_mode_status)
 {
 /// If the current voltage is bigger than the voltage setpoint and the system is in CC mode, then:
-    if(current_voltage > reference_voltage && CC_mode_status == 1)
+    if(current_voltage > reference_voltage && CC_mode_status)
     {        
             proportional = 0; /// * The #proportional is set to zero
             integral = 0; /// * The #integral is set to zero
@@ -206,12 +210,17 @@ void cc_cv_mode(float current_voltage, unsigned int reference_voltage, char CC_m
 */
 void log_control()
 {
-/**The code in this function is only excecuted if the #log_on variable is set*/
-/**This funtion takes care of sending the logging data in pieces to avoid disturbing the control loop. 
+/**The code in this function is only executed if the #log_on variable is set*/
+/**This function takes care of sending the logging data in pieces to avoid disturbing the control loop. 
 This problem can be avoided with the use of interruptions for the control loop; however this was not implemented
 and could be considered as some future improvement*/  
     if (log_on)
     {
+                iprom = (uint16_t) ( ( ( iprom * 2.5 * 5000 ) / 4096 ) + 0.5 ); 
+                vprom = (uint16_t) ( ( ( vprom * 5000.0 ) / 4096 ) + 0.5 );
+                tprom = (uint16_t) ( ( ( vprom * 5000.0 ) / 4096 ) + 0.5 );
+                tprom = (uint16_t) ( ( ( 1866.3 - tprom ) / 1.169 ) + 0.5 );
+                if (iprom > 0) qprom += (uint16_t) ( iprom / 360 ) + 0.5; /// * Divide #iprom between 3600 and multiplied by 10 add it to #qprom to integrate the current over time
                 LINEBREAK;
                 display_value_s((int) minute);
                 UART_send_char(colons); /// * Send a colons character
@@ -241,44 +250,45 @@ and could be considered as some future improvement*/
 }
 /**@brief This function read the ADC and store the data in the coresponding variables
 */
-void read_ADC()
-{
-    float opr = 0; /// Define @p opr to store the operations inside the function
-    AD_SET_CHAN(V_CHAN); /// Select the #V_CHAN channel usign #AD_SET_CHAN(x)
-    AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
-    AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()   
-    opr = (float)(1.2207 * ad_res); /// Apply the operation @code opr = ad_res * [(Vref)/(2^12)] = ad_res * (5000/4096) @endcode
-    v = opr; /// Make #v equal to @p opr
-    AD_SET_CHAN(I_CHAN); /// Select the #I_CHAN channel usign #AD_SET_CHAN(x)
-    AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
-    AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()
-    opr = (float)(1.22412 * ad_res); /// Apply the operation @code opr = [(Vref)/(2^12)] * ad_res @endcode
-    //i = opr;
-    opr = opr - 2525; /// Apply the operation @code opr = opr - 2525 @endcode
-    if (state == CHARGE | state == POSTCHARGE){
-        opr = -opr; ///If the #state is #CHARGE or #POSTCHARGE change the sign of the result
-    }
-    i = (float)(opr * 2.5); /// Apply the operation @code opr = opr * 2.5 @endcode which is the sensitivity of the ACS723LL
-    AD_SET_CHAN(T_CHAN); /// Select the #T_CHAN channel usign #AD_SET_CHAN(x)
-    AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
-    AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()
-    opr = (float)(1.22412 * ad_res); /// Apply the operation @code opr = [(Vref)/(2^12)] * ad_res @endcode
-    opr = (float)(1866.3 - opr); /// Apply the operation @code opr = 1866.3 - opr @endcode. Sensor STLM20 Datasheet p.6
-    t = (float) (opr/1.169); /// Apply the operation @code t = opr/1.169 @endcode. Sensor STLM20 Datasheet p.6
-}
-/**@brief This function is the PI control loop
+// void read_ADC()
+// {
+//     //float opr = 0; /// Define @p opr to store the operations inside the function
+//     AD_SET_CHAN(V_CHAN); /// Select the #V_CHAN channel usign #AD_SET_CHAN(x)
+//     AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
+//     AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()   
+//     //opr = (float)(1.2207 * ad_res); /// Apply the operation @code opr = ad_res * [(Vref)/(2^12)] = ad_res * (5000/4096) @endcode
+//     v = ad_res; /// Make #v equal to @p opr
+//     AD_SET_CHAN(I_CHAN); /// Select the #I_CHAN channel usign #AD_SET_CHAN(x)
+//     AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
+//     AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()
+//     opr = (float)(1.22412 * ad_res); /// Apply the operation @code opr = [(Vref)/(2^12)] * ad_res @endcode
+//     //i = opr;
+//     opr = opr - 2525; /// Apply the operation @code opr = opr - 2525 @endcode
+//     if (state == CHARGE | state == POSTCHARGE){
+//         opr = -opr; ///If the #state is #CHARGE or #POSTCHARGE change the sign of the result
+//     }
+//     i = (float)(opr * 2.5); /// Apply the operation @code opr = opr * 2.5 @endcode which is the sensitivity of the ACS723LL
+//     AD_SET_CHAN(T_CHAN); /// Select the #T_CHAN channel usign #AD_SET_CHAN(x)
+//     AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
+//     AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()
+//     opr = (float)(1.22412 * ad_res); /// Apply the operation @code opr = [(Vref)/(2^12)] * ad_res @endcode
+//     opr = (float)(1866.3 - opr); /// Apply the operation @code opr = 1866.3 - opr @endcode. Sensor STLM20 Datasheet p.6
+//     t = (float) (opr/1.169); /// Apply the operation @code t = opr/1.169 @endcode. Sensor STLM20 Datasheet p.6
+// }
+
+/**@brief This function read the ADC and store the data in the coresponding variable
 */
-void control_loop()
-{   
-    if(!cmode) /// If #cmode is cleared then
-    {
-        pid(v, vref);  /// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
-    }else /// Else,
-    {
-        pid(i, iref); /// * The #pid() function is called with @p feedback = #i and @p setpoint = #iref
-    }
-    set_DC(); /// The duty cycle is set by calling the #set_DC() function
+uint16_t read_ADC(uint16_t channel)
+{
+    uint16_t ad_res = 0;
+    ADCON0bits.CHS = channel;
+    __delay_us(5);
+    GO_nDONE = 1;
+    while(GO_nDONE);
+    ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);
+    return ad_res;
 }
+
 /**@brief This function control the timing
 */
 void timing()
@@ -306,21 +316,18 @@ void calculate_avg()
             tacum = 0; /// * Make #tprom zero
             break;
         case 0: /// If #count = 0
-            iprom = iacum / (COUNTER - 1); /// * Divide the value stored in #iprom between COUNTER to obtain the average
-            vprom = vacum / (COUNTER - 1); /// * Divide the value stored in #vprom between COUNTER to obtain the average
-            tprom = tacum / (COUNTER - 1); /// * Divide the value stored in #tprom between COUNTER to obtain the average
-            if (iprom > 0) qprom += (iprom/3600); /// * Divide #iprom between 3600 and add it to #qprom to integrate the current over time
-            else qprom += 0;
+            iprom = ((iacum >> 10) + ((iacum >> 9) & 0x01)); /// * Divide the value stored in #iprom between COUNTER to obtain the average   
+            vprom = ((vacum >> 10) + ((vacum >> 9) & 0x01)); /// * This is equivalent to vacum / 1024 = vacum / 2^10 
+            tprom = ((tacum >> 10) + ((tacum >> 9) & 0x01)); /// * This is equivalent to tacum / 1024 = tacum / 2^10 
             #if (NI_MH_CHEM)  
-            if ((int) vprom > vmax) vmax = (int) vprom; /// * If is the chemistry is Ni-MH and #vprom is bigger than #vmax then set #vmax = #vprom
+            if (vprom > vmax) vmax = vprom; /// * If is the chemistry is Ni-MH and #vprom is bigger than #vmax then set #vmax = #vprom
             #endif
             break;
         default: /// If #count is not any of the previous cases then
-            iacum += i; /// * Accumulate #i in #iprom
-            vacum += v; /// * Accumulate #v in #vprom
-            tacum += t; /// * Accumulate #t in #tprom
+            iacum += (uint24_t) i; /// * Accumulate #i in #iprom
+            vacum += (uint24_t) v; /// * Accumulate #v in #vprom
+            tacum += (uint24_t) t; /// * Accumulate #t in #tprom
             //tprom += dc * 1.953125; // TEST FOR DC Is required to deactivate temperature protection
-            break;
     }   
 }
 /**@brief This function activate the UART reception interruption 
@@ -393,8 +400,19 @@ void temp_protection()
 {
     if ((conv == 1) && (tprom > 350)){
         UART_send_string((char*)"HIGH_TEMP:");
-        display_value_s((int)tprom);
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
+        display_value_s((int)tprom);
+        LINEBREAK;
+        display_value_s((int)t);
+        LINEBREAK;
+        display_value_s((int)vprom);
+        LINEBREAK;
+        display_value_s((int)v);
+        LINEBREAK;
+        display_value_s((int)iprom);
+        LINEBREAK;
+        display_value_s((int)i);
+        LINEBREAK;
         state = STANDBY; /// -# Go to the #STANDBY state.
     }
 }
