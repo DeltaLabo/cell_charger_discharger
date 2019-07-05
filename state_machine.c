@@ -475,19 +475,19 @@ void param()
         {   
             /**After chosing the charging current, the program will assign it to @p i_char and print it.*/
             case '1':
-                i_char = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 4 ) ) + 0.5 );
+                i_char = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 4 ) ) + 0.5 );
                 ccref = (uint16_t) ( (capacity / 4) + 0.5 );
                 UART_send_string((char*)char_def_quarter_str);  //0.25C
                 LINEBREAK;
                 break;
             case '2':
-                i_char = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 2 ) ) + 0.5 );
+                i_char = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 2 ) ) + 0.5 );
                 ccref = (uint16_t) ( (capacity / 2) + 0.5 );
                 UART_send_string((char*)char_def_half_str);  //0.5C
                 LINEBREAK;
                 break;
             case '3':
-                i_char = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 1 ) ) + 0.5 );
+                i_char = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 1 ) ) + 0.5 );
                 ccref = (uint16_t) ( (capacity / 1) + 0.5 );
                 UART_send_string((char*)char_def_one_str);  //0.1C
                 LINEBREAK;
@@ -554,17 +554,17 @@ void param()
         {
             /**After chosing the discharging current, the program will assign it to @p i_disc and print it.*/
             case '1':
-                i_disc = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 4 ) ) + 0.5 );
+                i_disc = (uint16_t) ( ( ( capacity * 4096.0) / ( 5000 * 2.5 * 4 ) ) + 0.5 );
                 UART_send_string((char*)dis_def_quarter_str);  //0.25 C
                 LINEBREAK;            
                 break;
             case '2':
-                i_disc = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 2 ) ) + 0.5 );
+                i_disc = (uint16_t) ( ( ( capacity * 4096.0 ) / ( 5000 * 2.5 * 2 ) ) + 0.5 );
                 UART_send_string((char*)dis_def_half_str);  //0.5 C
                 LINEBREAK;         
                 break;
             case '3':
-                i_disc = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 1 ) ) + 0.5 );
+                i_disc = (uint16_t) ( ( ( capacity * 4096.0 ) / ( 5000 * 2.5 * 1 ) ) + 0.5 );
                 UART_send_string((char*)dis_def_one_str);  //1C
                 LINEBREAK;
                 break;

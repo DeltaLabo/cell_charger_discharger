@@ -30,12 +30,6 @@ void main(void)
             cc_cv_mode(vprom, cvref, cmode);
             state_machine(); /// -# Then the #state_machine() function is called
             //temp_protection(); /// -# If at any point the temperature is higher than 35 degrees the process is stopped
-            LINEBREAK;
-            display_value_s((int)v);
-            LINEBREAK;
-            display_value_s((int)i);
-            LINEBREAK;
-            display_value_s((int)t);
         }     
 	}
 }
@@ -53,7 +47,7 @@ void interrupt ISR(void)
         TMR1IF = 0; //Clear timer1 interrupt flag
         v = read_ADC(V_CHAN); /// * Then, the ADC channels are read by calling the #read_ADC() function
         i = read_ADC(I_CHAN); /// * Then, the ADC channels are read by calling the #read_ADC() function
-        i = (uint16_t) (abs((int)i - 2048 )); ///If the #state is #CHARGE or #POSTCHARGE change the sign of the result  
+        i = (uint16_t) (abs ( 2048 - (int)i ) ); ///If the #state is #CHARGE or #POSTCHARGE change the sign of the result  
         t = read_ADC(T_CHAN); /// * Then, the ADC channels are read by calling the #read_ADC() function 
         if (conv) control_loop(); /// -# The #control_loop() function is called*/
         calculate_avg(); /// * Then, averages for the 250 values available each second are calculated by calling the #calculate_avg() function

@@ -177,7 +177,7 @@ int16_t     pi; /// * Define @p pi for storing the PI compesator value
     }else if (dc + pi <= dcmin){ /// * Make sure duty cycle is never below #DC_MIN
         dc = dcmin;
     }else{
-        dc = (uint16_t)(dc + pi); /// * Store the new value of the duty cycle with operation @code dc = dc + pi @endcode
+        dc = (uint16_t)((int16_t)dc + pi); /// * Store the new value of the duty cycle with operation @code dc = dc + pi @endcode
     }   
 }
 /**@brief This function sets the desired duty cycle
@@ -234,16 +234,17 @@ and could be considered as some future improvement*/
                 display_value_s((int)state);
                 UART_send_char(comma); /// * Send a comma character
                 UART_send_char(V_str); /// * Send a 'V'
-                display_value_s((int)vprom);
+                display_value_u(vprom);
                 UART_send_char(comma); ///* Send a comma character
                 UART_send_char(I_str); /// * Send an 'I'
-                display_value_s((int)iprom);
+                display_value_u(iprom);
                 UART_send_char(comma); ///* Send a comma character
                 UART_send_char(T_str); /// * Send a 'T'
-                display_value_s((int)tprom);
+                display_value_u(tprom);
                 UART_send_char(comma); ///* Send a comma character
                 UART_send_char(Q_str); /// * Send a 'Q'
-                display_value_u((unsigned)((qprom * 10) + 0.05));
+                //display_value_u((uint16_t) (dc * 1.933125));
+                display_value_s(qprom);
                 UART_send_char('<'); /// * Send a '<'  
     }
     if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
@@ -281,8 +282,9 @@ and could be considered as some future improvement*/
 uint16_t read_ADC(uint16_t channel)
 {
     uint16_t ad_res = 0;
+    __delay_us(10);
     ADCON0bits.CHS = channel;
-    __delay_us(5);
+    __delay_us(10);
     GO_nDONE = 1;
     while(GO_nDONE);
     ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);
@@ -401,18 +403,6 @@ void temp_protection()
     if ((conv == 1) && (tprom > 350)){
         UART_send_string((char*)"HIGH_TEMP:");
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
-        display_value_s((int)tprom);
-        LINEBREAK;
-        display_value_s((int)t);
-        LINEBREAK;
-        display_value_s((int)vprom);
-        LINEBREAK;
-        display_value_s((int)v);
-        LINEBREAK;
-        display_value_s((int)iprom);
-        LINEBREAK;
-        display_value_s((int)i);
-        LINEBREAK;
         state = STANDBY; /// -# Go to the #STANDBY state.
     }
 }

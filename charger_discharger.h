@@ -125,8 +125,8 @@
     #define     DC_MAX_DISC             358  ///< Maximum possible duty cycle, set around @b 0.8 
     #define     DC_START                50 ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
-    #define     CC_kp                   40  ///< Proportional constant for CC mode
-    #define     CC_ki                   100  ///< Integral constant for CC mode 
+    #define     CC_kp                   35  ///< Proportional constant for CC mode
+    #define     CC_ki                   200  ///< Integral constant for CC mode 
     // last test with LI_ION gave this constants
     #define     CV_kp                   10  ///< Proportional constant for CV mode
     #define     CV_ki                   400  ///< Integral constant for CV mode 
