@@ -36,7 +36,7 @@ void main(void)
 
 /**@brief This is the interruption service function. It will stop the process if an @b ESC or a @b "n" is pressed. 
 */
-void interrupt ISR(void) 
+void __interrupt() ISR(void) 
 {
     char recep = 0; /// Define and initialize @p recep variable to store the received character
     

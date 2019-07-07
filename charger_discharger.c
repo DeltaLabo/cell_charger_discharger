@@ -118,7 +118,6 @@ void initialize()
     baud rate and set BRGH for fast baud_rate**/
     SP1BRGH = 0x00; 
     SP1BRGL = 0x8A;    
-    
     BRGH  = 1;  /// * for high baud_rate
     BRG16 = 1;  /// * for 16 bits timer
     //_________End of baud_rate setting_________//
@@ -225,16 +224,16 @@ if (iprom > 0) qprom += (uint16_t) ( iprom / 360 ) + 0.5; /// * Divide #iprom be
     if (log_on)
     {
                 LINEBREAK;
-                display_value_s((int) minute);
+                display_value_u(minute);
                 UART_send_char(colons); /// * Send a colons character
                 if (second < 10) UART_send_char('0'); /// * If #second is smaller than 10 send a '0'
-                display_value_s((int) second);
+                display_value_u((uint16_t) second);
                 UART_send_char(comma); /// * Send a comma character
                 UART_send_char(C_str); /// * Send a 'C'
                 UART_send_char(cell_count); /// * Send a #cell_count variable
                 UART_send_char(comma); /// * Send a comma character
                 UART_send_char(S_str); /// * Send an 'S'
-                display_value_s((int)state);
+                display_value_u((uint16_t)state);
                 UART_send_char(comma); /// * Send a comma character
                 UART_send_char(V_str); /// * Send a 'V'
                 display_value_u(vprom);
@@ -247,7 +246,7 @@ if (iprom > 0) qprom += (uint16_t) ( iprom / 360 ) + 0.5; /// * Divide #iprom be
                 UART_send_char(comma); ///* Send a comma character
                 UART_send_char(Q_str); /// * Send a 'Q'
                 //display_value_u((uint16_t) (dc * 1.933125));
-                display_value_s(qprom);
+                display_value_u(qprom);
                 UART_send_char('<'); /// * Send a '<'
     }
     if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
@@ -381,31 +380,43 @@ char UART_get_char()
 void UART_send_string(char* st_pt)
 {
     while(*st_pt) /// While there is a byte to send
-        UART_send_char(*st_pt++); /// * Send it usign #UART_send_char() and then increase the pointer possition
+        UART_send_char(*st_pt++); /// * Send it using #UART_send_char() and then increase the pointer possition
 }
 /**@brief This function convert a number to string and then send it using UART
 * @param value integer to be send
 */
-void display_value_s(int value)
-{   
-    char buffer[6]; /// * Define @p buffer to used it for store character storage
-    itoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
-    UART_send_string((char*)buffer); /// * Send @p buffer using #UART_send_string()
-}
+//void display_value_s(int value)
+//{   
+//    char buffer[6]; /// * Define @p buffer to used it for store character storage
+//    itoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
+//    UART_send_string((char*)buffer); /// * Send @p buffer using #UART_send_string()
+//}
 /**@brief This function convert a number to string and then send it using UART
 * @param value integer to be send
 */
-void display_value_u(unsigned value)
+void display_value_u(uint16_t value)
 {   
     char buffer[6]; /// * Define @p buffer to used it for store character storage
-    utoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
-    UART_send_string((char*)buffer); /// * Send @p buffer using #UART_send_string()
+    char* start; 
+    char* end;
+    end = &buffer[6];
+    start = dec(value,end); 
+    UART_send_string(start); /// * Send @p buffer using #UART_send_string()
 }
+
+
+char *dec(uint16_t x, char *s)
+{
+    *--s = 0;
+    if (!x) *--s = '0';
+    for (; x; x/=10) *--s = '0'+x%10;
+    return s;
+}
+
 void temp_protection()
 {
-    if (conv && (tprom > 350u)){
+    if (conv && (tprom > 350)){
         UART_send_string((char*)"HIGH_TEMP:");
-        display_value_u(tprom);
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
         state = STANDBY; /// -# Go to the #STANDBY state.
     }

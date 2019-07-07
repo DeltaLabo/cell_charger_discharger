@@ -75,9 +75,10 @@
     void set_DC(void);
     uint16_t read_ADC(uint16_t channel);
     void log_control(void);
-    void display_value_s(int value);
-    void display_value_u(unsigned value);
-    void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, char CC_mode_status);
+    //void display_value_s(int value);
+    void display_value_u(uint16_t value);
+    char *dec(uint16_t x, char *s);
+    void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status);
     void control_loop(void);
     void calculate_avg(void);
     void interrupt_enable(void);
@@ -166,16 +167,16 @@
     unsigned char                       cell_count = 49; ///< Cell counter from '1' to '4'. Initialized as '1'
     unsigned char                       cell_max = 0; ///< Number of cells to be tested. Initialized as 0
     uint16_t                            wait_count = WAIT_TIME; ///< Counter for waiting time between states. Initialized as @link WAIT_TIME @endlink
-    unsigned                            dc_res_count = DC_RES_SECS; ///< Counter for DC resistance. Initialized as @link DC_RES_SECS @endlink
+    unsigned char                       dc_res_count = DC_RES_SECS; ///< Counter for DC resistance. Initialized as @link DC_RES_SECS @endlink
     unsigned char                       state = STANDBY; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
     unsigned char                       prev_state = STANDBY; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
     uint16_t                            EOC_current; ///< End-of-charge current in mA
     uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
-    float                               v_1_dcres; ///< First voltage measured during DC resistance state 
-    float                               i_1_dcres; ///< First current measured during DC resistance state  
-    float                               v_2_dcres; ///< Second voltage measured during DC resistance state 
-    float                               i_2_dcres; ///< Second current measured during DC resistance state
-    float                               dc_res_val; ///< To store the operation of obtained from the DC resistance state
+    uint16_t                            v_1_dcres; ///< First voltage measured during DC resistance state 
+    uint16_t                            i_1_dcres; ///< First current measured during DC resistance state  
+    uint16_t                            v_2_dcres; ///< Second voltage measured during DC resistance state 
+    uint16_t                            i_2_dcres; ///< Second current measured during DC resistance state
+    uint24_t                            dc_res_val; ///< To store the operation of obtained from the DC resistance state
     bool                                conv = 0; ///< Turn controller ON(1) or OFF(0). Initialized as 0
     uint16_t                            count = COUNTER; ///< Counter that should be cleared every second. Initialized as #COUNTER 
     /**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
@@ -202,7 +203,7 @@
     uint16_t                            ccref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
     bool                                cmode = 1;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt>   
     uint16_t                            dc = 0;  ///< Duty cycle
-    char                                clear;  ///< Variable to clear the transmission buffer of UART
+    //char                                clear;  ///< Variable to clear the transmission buffer of UART
     bool                                log_on = 0; ///< Variable to indicate if the log is activated 
     int16_t                             second = 0; ///< Seconds counter, resetted after 59 seconds.
     uint16_t                            minute = 0; ///< Minutes counter, only manually reset

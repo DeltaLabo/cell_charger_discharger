@@ -173,15 +173,15 @@ void fDC_res() //can be improved a lot!!
     {
         v_1_dcres = vprom;
         i_1_dcres = iprom;
-        iref = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 1 ) ) + 0.5 );     //1C            
+        iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 1 ) ) + 0.5 );     //1C            
     }
     if (dc_res_count == 1)
     {
         v_2_dcres = vprom;
         i_2_dcres = iprom;
         STOP_CONVERTER();            
-        dc_res_val = ((v_1_dcres - v_2_dcres)/(i_2_dcres - i_1_dcres));
-        dc_res_val = dc_res_val * 10000;
+        dc_res_val = (uint24_t)(v_1_dcres - v_2_dcres) * 10000;    
+        dc_res_val = dc_res_val /(uint24_t)(i_2_dcres - i_1_dcres);
     }
     if (!dc_res_count)
     {   
@@ -190,10 +190,10 @@ void fDC_res() //can be improved a lot!!
         UART_send_char(cell_count);
         UART_send_char(comma);
         UART_send_char(S_str);
-        display_value_s((int)state);
+        display_value_u((uint16_t)state);
         UART_send_char(comma);
         UART_send_char(R_str);
-        display_value_s((int)dc_res_val);
+        display_value_u((uint16_t)dc_res_val);
         UART_send_char('<');
         LINEBREAK;
         LOG_OFF();   ///I dont like this 
@@ -215,10 +215,10 @@ void fWAIT()
         UART_send_char(cell_count);
         UART_send_char(comma);
         UART_send_char(S_str);
-        display_value_s((int)state);
+        display_value_u((uint16_t)state);
         UART_send_char(comma);
         UART_send_char(W_str);
-        display_value_s(wait_count);
+        display_value_u(wait_count);
         UART_send_char('<');
         wait_count--;             
     }
@@ -360,7 +360,7 @@ void start_state_machine()
     LINEBREAK;
     /**Cell {1,2,3 or 4}*/
     UART_send_string((char*)cell_str);
-    display_value_s((int)(cell_count - '0'));
+    display_value_u((uint16_t)(cell_count - '0'));
     LINEBREAK; 
     NOSTART: ;  //label to goto the end of the function 
 }
@@ -400,7 +400,7 @@ void converter_settings()
         case PS_DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
             dcmax = DC_MAX_DISC;
             dcmin = DC_MIN_DISC;
-            iref = (uint16_t) ( ( ( ( capacity * 4096 ) / 5000 ) / ( 2.5 * 5 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
+            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 5 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
             dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;
@@ -430,25 +430,25 @@ void param()
     cvref = (uint16_t) ( ( Li_Ion_CV * 4096 ) / 5000) + 0.5; //Scale the voltage refence to be compare with v
     cvv = Li_Ion_CV;
     UART_send_string((char*)cv_val_str);
-    display_value(Li_Ion_CV);
+    display_value_u(Li_Ion_CV);
     UART_send_string((char*)mV_str);
     LINEBREAK;
     /** The @p capacity will be set to @p Li_Ion_CAP.*/
     capacity = Li_Ion_CAP;
     UART_send_string((char*)nom_cap_str);
-    display_value(capacity);
+    display_value_u(capacity);
     UART_send_string((char*)mAh_str);
     #elif (NI_MH_CHEM) 
     vref = (uint16_t) ( ( ( Ni_MH_CV * 4096.0 ) / 5000 ) + 0.5 ); //Scale the voltage reference to be compare with v
     cvref = Ni_MH_CV;
     UART_send_string((char*)cv_val_str);
-    display_value_s(Ni_MH_CV);
+    display_value_u(Ni_MH_CV);
     UART_send_string((char*)mV_str);
     LINEBREAK;
     /** The @p capacity will be set to @p Ni_MH_CAP.*/
     capacity = Ni_MH_CAP;
     UART_send_string((char*)nom_cap_str);
-    display_value_s(capacity);
+    display_value_u(capacity);
     UART_send_string((char*)mAh_str);
     #endif
     LINEBREAK;
@@ -527,7 +527,7 @@ void param()
     UART_send_string((char*)mA_str);
     #elif (NI_MH_CHEM) 
     UART_send_string((char*)EOC_DV_str);
-    display_value_s(Ni_MH_EOC_DV);
+    display_value_u(Ni_MH_EOC_DV);
     UART_send_string((char*)mV_str);
     #endif    
     LINEBREAK; 
@@ -603,7 +603,7 @@ void param()
     EOD_voltage = Ni_MH_EOD_V;  //This is compared to vprom
     UART_send_string((char*)EOD_V_str);
     #endif
-    display_value_s(EOD_voltage);
+    display_value_u(EOD_voltage);
     UART_send_string((char*)mV_str);
     LINEBREAK;
     /**For the test cycle it will show four options:*/
