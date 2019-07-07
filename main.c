@@ -29,7 +29,7 @@ void main(void)
             log_control(); /// *  Then, the log is printed in the serial terminal by calling the #log_control() function
             cc_cv_mode(vprom, cvref, cmode);
             state_machine(); /// -# Then the #state_machine() function is called
-            //temp_protection(); /// -# If at any point the temperature is higher than 35 degrees the process is stopped
+            temp_protection(); /// -# If at any point the temperature is higher than 35 degrees the process is stopped
         }     
 	}
 }

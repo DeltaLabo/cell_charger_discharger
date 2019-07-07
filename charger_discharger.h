@@ -89,8 +89,8 @@
     void Cell_OFF(void);
     void timing(void);
     #define     _XTAL_FREQ              32000000 ///< Frequency to coordinate delays, 32 MHz
-    #define     ERR_MAX                 150 ///< Maximum permisible error, useful to avoid ringing
-    #define     ERR_MIN                 -150 ///< Minimum permisible error, useful to avoid ringing
+    #define     ERR_MAX                 500 ///< Maximum permisible error, useful to avoid ringing
+    #define     ERR_MIN                 -500 ///< Minimum permisible error, useful to avoid ringing
     #define     V_CHAN                  0b01010 ///< Definition of ADC channel for voltage measurements. AN10(RB1) 
     #define     I_CHAN                  0b01100 ///< Definition of ADC channel for current measurements. AN12(RB0)
     #define     T_CHAN                  0b00100 ///< Definition of ADC channel for temperature measurements. AN4(RA5)
@@ -114,7 +114,6 @@
     #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100);}
     #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100);}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
-    //#define   UART_INT_OFF()          { log_on = 0; }  ///< Turn OFF UART transmission interrupts. //CHECK THIS
     #define     LOG_ON()                { log_on = 1; }  ///< Turn OFF logging in the terminal.
     #define     LOG_OFF()               { log_on = 0; }  ///< Turn ON logging in the terminal.
     #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
@@ -122,15 +121,15 @@
     #define     DC_MIN_CHAR             50  ///< Minimum possible duty cycle, set around @b 0.05
     #define     DC_MAX_CHAR             150  ///< Maximum possible duty cycle, set around @b 0.8
     #define     DC_MIN_DISC             50  ///< Minimum possible duty cycle, set around @b 0.05
-    #define     DC_MAX_DISC             358  ///< Maximum possible duty cycle, set around @b 0.8 
-    #define     DC_START                50 ///< Maximum possible duty cycle, set around @b 0.8
+    #define     DC_MAX_DISC             358  ///< Maximum possible duty cycle, set around @b 0.1 
+    #define     DC_START                50 ///< Start duty cycle, set around @b 0.8
     #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
-    #define     CC_kp                   35  ///< Proportional constant for CC mode
-    #define     CC_ki                   200  ///< Integral constant for CC mode 
+    #define     CC_kp                   20  ///< Proportional constant divider for CC mode
+    #define     CC_ki                   200  ///< Integral constant divider for CC mode 
     // last test with LI_ION gave this constants
-    #define     CV_kp                   10  ///< Proportional constant for CV mode
-    #define     CV_ki                   400  ///< Integral constant for CV mode 
-    #define     LINEBREAK               { UART_send_char(10); } ///< Send a linebreak to the terminal
+    #define     CV_kp                   10  ///< Proportional constant divider for CV mode
+    #define     CV_ki                   400  ///< Integral constant divider for CV mode 
+    #define     LINEBREAK               { UART_send_char(10); UART_send_char(13); } ///< Send a linebreak to the terminal
     //////////////////////////Chemistry definition///////////////////////////////////////
     #define     LI_ION_CHEM             0 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
     #define     NI_MH_CHEM              1 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
@@ -159,26 +158,26 @@
     #define     Ni_MH_EOC_DV            10 ///< Ni-MH end-fo-charge voltage drop in mV
     #define     Ni_MH_EOD_V             1000 ///< Ni-MH end-of-discharge voltage in mV
     //Variables
-    unsigned char                       SECF = 1; ///< 1 second flag
+    bool                                SECF = 1; ///< 1 second flag
     unsigned char                       option = 0; ///< Four different options, look into @link param() @endlink for details
     uint16_t                            capacity; ///< Definition of capacity per cell according to each chemistry
     uint16_t                            i_char; ///< Charging current in mA
     uint16_t                            i_disc; ///< Discharging current in mA
     unsigned char                       cell_count = 49; ///< Cell counter from '1' to '4'. Initialized as '1'
     unsigned char                       cell_max = 0; ///< Number of cells to be tested. Initialized as 0
-    unsigned                            wait_count = WAIT_TIME; ///< Counter for waiting time between states. Initialized as @link WAIT_TIME @endlink
+    uint16_t                            wait_count = WAIT_TIME; ///< Counter for waiting time between states. Initialized as @link WAIT_TIME @endlink
     unsigned                            dc_res_count = DC_RES_SECS; ///< Counter for DC resistance. Initialized as @link DC_RES_SECS @endlink
     unsigned char                       state = STANDBY; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
     unsigned char                       prev_state = STANDBY; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
-    unsigned                            EOC_current; ///< End-of-charge current in mA
-    unsigned                            EOD_voltage; ///< End-of-dischage voltage in mV
+    uint16_t                            EOC_current; ///< End-of-charge current in mA
+    uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
     float                               v_1_dcres; ///< First voltage measured during DC resistance state 
     float                               i_1_dcres; ///< First current measured during DC resistance state  
     float                               v_2_dcres; ///< Second voltage measured during DC resistance state 
     float                               i_2_dcres; ///< Second current measured during DC resistance state
     float                               dc_res_val; ///< To store the operation of obtained from the DC resistance state
-    unsigned                            conv = 0; ///< Turn controller ON(1) or OFF(0). Initialized as 0
-    unsigned                            count = COUNTER; ///< Counter that should be cleared every second. Initialized as #COUNTER 
+    bool                                conv = 0; ///< Turn controller ON(1) or OFF(0). Initialized as 0
+    uint16_t                            count = COUNTER; ///< Counter that should be cleared every second. Initialized as #COUNTER 
     /**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
     all the events that are done every second.*/
     //uint16_t                            ad_res; ///< Result of an ADC measurement.
@@ -194,20 +193,19 @@
     uint16_t                            tprom = 0;  ///< Last one-second-average of #t . Initialized as 0
     uint16_t                            qprom = 0;  ///< Integration of #i . Initialized as 0
     uint16_t                            vmax = 0;   ///< Maximum recorded average voltage. 
-    int16_t                             proportional;  ///< Proportional component of PI compensator
-    int16_t                             integral;  ///< Integral component of PI compensator
+    int24_t                             intacum;   ///< Integral acumulator of PI compensator
     int16_t                             kp;  ///< Proportional compesator gain
     int16_t                             ki;  ///< Integral compesator gain      
     uint16_t                            vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
     uint16_t                            cvref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
     uint16_t                            iref = 0;  ///< Current setpoint. Initialized as 0
     uint16_t                            ccref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
-    char                                cmode;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt>   
+    bool                                cmode = 1;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt>   
     uint16_t                            dc = 0;  ///< Duty cycle
     char                                clear;  ///< Variable to clear the transmission buffer of UART
-    unsigned                            log_on = 0; ///< Variable to indicate if the log is activated 
-    int                                 second = 0; ///< Seconds counter, resetted after 59 seconds.
-    int                                 minute = 0; ///< Minutes counter, only manually reset
+    bool                                log_on = 0; ///< Variable to indicate if the log is activated 
+    int16_t                             second = 0; ///< Seconds counter, resetted after 59 seconds.
+    uint16_t                            minute = 0; ///< Minutes counter, only manually reset
     uint16_t                            timeout = 0;
     uint16_t                            dcmax = 0; ///<To put the maximum duty cycle according to the operation mode
     uint16_t                            dcmin = 0; ///<To put the minimum duty cycle according to the operation mode

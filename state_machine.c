@@ -372,7 +372,7 @@ void converter_settings()
     kp = CC_kp; /// * The proportional constant, #kp is set to #CC_kp
     ki = CC_ki; /// * The proportional constant, #kp is set to #CC_kp
     cmode = 1; /// * Start in constant current mode by setting. #cmode
-    integral = 0; /// * The #integral component of the compensator is set to zero.*/
+    intacum = 0; /// * The #integral component of the compensator is set to zero.*/
     qprom = 0; /// * Average capacity, #q_prom is set to zero.*/
     vmax = 0; /// * Maximum averaged voltage, #vmax is set to zero.*/
     dc = DC_START;
@@ -439,7 +439,7 @@ void param()
     display_value(capacity);
     UART_send_string((char*)mAh_str);
     #elif (NI_MH_CHEM) 
-    vref = (uint16_t) ( ( ( Ni_MH_CV * 4096.0 ) / 5000 ) + 0.5 ); //Scale the voltage refence to be compare with v
+    vref = (uint16_t) ( ( ( Ni_MH_CV * 4096.0 ) / 5000 ) + 0.5 ); //Scale the voltage reference to be compare with v
     cvref = Ni_MH_CV;
     UART_send_string((char*)cv_val_str);
     display_value_s(Ni_MH_CV);

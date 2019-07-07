@@ -47,8 +47,8 @@ void initialize()
     ANSB5 = 0; /// * Set RB% as digital  
     WPUB5 = 0; /// * Weak pull up deactivated
     Cell_OFF();
-    /** @b TIMER 1 for control and measuring loop using interruption
-    /* Preload TMR1 register pair for 1us overflow */
+    /** @b TIMER 1 for control and measuring loop using interruption*/
+    /* Preload TMR1 register pair for 1us overflow*/
     /* T1OSCEN = 1, nT1SYNC = 1, TMR1CS = 0 and TMR1ON = 1*/
     nT1SYNC = 0;     //Synchronized
     T1OSCEN = 0;
@@ -164,17 +164,20 @@ void control_loop()
 */
 void pid(uint16_t feedback, uint16_t setpoint)
 { 
-int16_t     er; /// * Define @p er for calculating the error
-int16_t     pi; /// * Define @p pi for storing the PI compesator value
+int16_t     er = 0; /// * Define @p er for calculating the error
+int16_t     pi = 0; /// * Define @p pi for storing the PI compesator value
+int16_t     prop = 0;
+int16_t     inte = 0;
     er = (int16_t) (setpoint - feedback); /// * Calculate the error by substracting the @p feedback from the @p setpoint and store it in @p er
     if(er > ERR_MAX) er = ERR_MAX; /// * Make sure error is never above #ERR_MAX
     if(er < ERR_MIN) er = ERR_MIN; /// * Make sure error is never below #ERR_MIN
-    proportional = er / kp; /// * Calculate #proportional component of compensator
-	integral += (er / (ki * COUNTER)); /// * Calculate #integral component of compensator
-    pi = proportional + integral; /// * Sum them up and store in @p pi*/
-    if (dc + pi >= dcmax){ /// * Make sure duty cycle is never above #DC_MAX
+    prop = er / kp; /// * Calculate #proportional component of compensator
+	intacum += (int24_t) (er); /// * Calculate #integral component of compensator
+    inte = (int16_t) (intacum / (ki * COUNTER));
+    pi = prop + inte; /// * Sum them up and store in @p pi*/
+    if ((uint16_t)((int16_t)dc + pi) >= dcmax){ /// * Make sure duty cycle is never above #DC_MAX
         dc = dcmax;
-    }else if (dc + pi <= dcmin){ /// * Make sure duty cycle is never below #DC_MIN
+    }else if ((uint16_t)((int16_t)dc + pi) <= dcmin){ /// * Make sure duty cycle is never below #DC_MIN
         dc = dcmin;
     }else{
         dc = (uint16_t)((int16_t)dc + pi); /// * Store the new value of the duty cycle with operation @code dc = dc + pi @endcode
@@ -194,13 +197,12 @@ void set_DC()
 * @param referece_voltage voltage setpoint
 * @param CC_mode_status current condition of #cmode variable
 */
-void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, char CC_mode_status)
+void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status)
 {
 /// If the current voltage is bigger than the voltage setpoint and the system is in CC mode, then:
     if(current_voltage > reference_voltage && CC_mode_status)
     {        
-            proportional = 0; /// * The #proportional is set to zero
-            integral = 0; /// * The #integral is set to zero
+            intacum = 0; /// * The #integral is set to zero
             cmode = 0; /// * The system is set in CV mode by clearing the #cmode variable
             kp = CV_kp; /// * The proportional constant, #kp is set to #CV_kp 
             ki = CV_ki; /// * The integral constant, #ki is set to #CV_ki 
@@ -214,13 +216,14 @@ void log_control()
 /**This function takes care of sending the logging data in pieces to avoid disturbing the control loop. 
 This problem can be avoided with the use of interruptions for the control loop; however this was not implemented
 and could be considered as some future improvement*/  
+iprom = (uint16_t) ( ( ( iprom * 2.5 * 5000 ) / 4096 ) + 0.5 ); 
+vprom = (uint16_t) ( ( ( vprom * 5000.0 ) / 4096 ) + 0.5 );
+tprom = (uint16_t) ( ( ( tprom * 5000.0 ) / 4096 ) + 0.5 );
+tprom = (uint16_t) ( ( ( 1866.3 - tprom ) / 1.169 ) + 0.5 );
+if (iprom > 0) qprom += (uint16_t) ( iprom / 360 ) + 0.5; /// * Divide #iprom between 3600 and multiplied by 10 add it to #qprom to integrate the current over time
+    
     if (log_on)
     {
-                iprom = (uint16_t) ( ( ( iprom * 2.5 * 5000 ) / 4096 ) + 0.5 ); 
-                vprom = (uint16_t) ( ( ( vprom * 5000.0 ) / 4096 ) + 0.5 );
-                tprom = (uint16_t) ( ( ( vprom * 5000.0 ) / 4096 ) + 0.5 );
-                tprom = (uint16_t) ( ( ( 1866.3 - tprom ) / 1.169 ) + 0.5 );
-                if (iprom > 0) qprom += (uint16_t) ( iprom / 360 ) + 0.5; /// * Divide #iprom between 3600 and multiplied by 10 add it to #qprom to integrate the current over time
                 LINEBREAK;
                 display_value_s((int) minute);
                 UART_send_char(colons); /// * Send a colons character
@@ -245,7 +248,7 @@ and could be considered as some future improvement*/
                 UART_send_char(Q_str); /// * Send a 'Q'
                 //display_value_u((uint16_t) (dc * 1.933125));
                 display_value_s(qprom);
-                UART_send_char('<'); /// * Send a '<'  
+                UART_send_char('<'); /// * Send a '<'
     }
     if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
 }
@@ -287,7 +290,7 @@ uint16_t read_ADC(uint16_t channel)
     __delay_us(10);
     GO_nDONE = 1;
     while(GO_nDONE);
-    ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);
+    ad_res = (uint16_t)((ADRESL & 0xFF)|((ADRESH << 8) & 0xF00));
     return ad_res;
 }
 
@@ -298,7 +301,7 @@ void timing()
     if(!count) /// If #count is other than zero, then
     {
         SECF = 1;
-        count = COUNTER; /// * Make #count equal to #COUNTER
+        count = COUNTER + 1; /// * Make #count equal to #COUNTER
         if(second < 59) second++; /// * If #second is smaller than 59 then increase it
         else{second = 0; minute++;} /// * Else, make #second zero and increase #minute
     }else /// Else,
@@ -312,7 +315,7 @@ void calculate_avg()
 {
     switch(count)
     {
-        case COUNTER: /// If #count = #COUNTER
+        case COUNTER + 1: /// If #count = #COUNTER
             iacum = 0; /// * Make #iprom zero
             vacum = 0; /// * Make #vprom zero
             tacum = 0; /// * Make #tprom zero
@@ -345,9 +348,9 @@ void interrupt_enable()
     TMR1IE = 1;   //enable T1 interrupt
     PEIE = 1;       //enable peripherals interrupts
     GIE = 1;        //enable global interrupts
-    TMR1ON = 1;    //turn on timer
+    count = COUNTER + 1; /// The timing counter #count will be initialized to zero, to start a full control loop cycle
     TMR1IF = 0; //Clear timer1 interrupt flag
-    count = COUNTER; /// The timing counter #count will be initialized to zero, to start a full control loop cycle
+    TMR1ON = 1;    //turn on timer 
 }
 /**@brief This function send one byte of data to UART
 * @param bt character to be send
@@ -400,8 +403,9 @@ void display_value_u(unsigned value)
 }
 void temp_protection()
 {
-    if ((conv == 1) && (tprom > 350)){
+    if (conv && (tprom > 350u)){
         UART_send_string((char*)"HIGH_TEMP:");
+        display_value_u(tprom);
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
         state = STANDBY; /// -# Go to the #STANDBY state.
     }
