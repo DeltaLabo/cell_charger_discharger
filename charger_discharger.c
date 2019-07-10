@@ -219,6 +219,9 @@ iprom = (uint16_t) ( ( ( iprom * 2.5 * 5000 ) / 4096 ) + 0.5 );
 vprom = (uint16_t) ( ( ( vprom * 5000.0 ) / 4096 ) + 0.5 );
 tprom = (uint16_t) ( ( ( tprom * 5000.0 ) / 4096 ) + 0.5 );
 tprom = (uint16_t) ( ( ( 1866.3 - tprom ) / 1.169 ) + 0.5 );
+#if (NI_MH_CHEM)  
+if (vprom > vmax) vmax = vprom; /// * If is the chemistry is Ni-MH and #vprom is bigger than #vmax then set #vmax = #vprom
+#endif
 if (iprom > 0) qprom += (uint16_t) ( iprom / 360 ) + 0.5; /// * Divide #iprom between 3600 and multiplied by 10 add it to #qprom to integrate the current over time
     
     if (log_on)
@@ -323,9 +326,6 @@ void calculate_avg()
             iprom = ((iacum >> 10) + ((iacum >> 9) & 0x01)); /// * Divide the value stored in #iprom between COUNTER to obtain the average   
             vprom = ((vacum >> 10) + ((vacum >> 9) & 0x01)); /// * This is equivalent to vacum / 1024 = vacum / 2^10 
             tprom = ((tacum >> 10) + ((tacum >> 9) & 0x01)); /// * This is equivalent to tacum / 1024 = tacum / 2^10 
-            #if (NI_MH_CHEM)  
-            if (vprom > vmax) vmax = vprom; /// * If is the chemistry is Ni-MH and #vprom is bigger than #vmax then set #vmax = #vprom
-            #endif
             break;
         default: /// If #count is not any of the previous cases then
             iacum += (uint24_t) i; /// * Accumulate #i in #iprom
@@ -382,27 +382,27 @@ void UART_send_string(char* st_pt)
     while(*st_pt) /// While there is a byte to send
         UART_send_char(*st_pt++); /// * Send it using #UART_send_char() and then increase the pointer possition
 }
-/**@brief This function convert a number to string and then send it using UART
-* @param value integer to be send
-*/
-//void display_value_s(int value)
-//{   
-//    char buffer[6]; /// * Define @p buffer to used it for store character storage
-//    itoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
-//    UART_send_string((char*)buffer); /// * Send @p buffer using #UART_send_string()
-//}
-/**@brief This function convert a number to string and then send it using UART
-* @param value integer to be send
-*/
+///**@brief This function convert a number to string and then send it using UART
+//* @param value integer to be send
+//*/
 void display_value_u(uint16_t value)
 {   
     char buffer[6]; /// * Define @p buffer to used it for store character storage
-    char* start; 
-    char* end;
-    end = &buffer[6];
-    start = dec(value,end); 
-    UART_send_string(start); /// * Send @p buffer using #UART_send_string()
+    utoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
+    UART_send_string(&buffer[0]); /// * Send @p buffer using #UART_send_string()
 }
+///**@brief This function convert a number to string and then send it using UART
+//* @param value integer to be send
+//*/
+//void display_value_u(uint16_t value)
+//{   
+//    char buffer[6]={0}; /// * Define @p buffer to used it for store character storage
+//    char* start; 
+//    char* end;
+//    end = &buffer[5];
+//    start = dec(value,end); 
+//    UART_send_string(start); /// * Send @p buffer using #UART_send_string()
+//}
 
 
 char *dec(uint16_t x, char *s)

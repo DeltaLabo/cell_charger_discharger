@@ -77,6 +77,7 @@
     void log_control(void);
     //void display_value_s(int value);
     void display_value_u(uint16_t value);
+    //void display_value_u(uint16_t value);
     char *dec(uint16_t x, char *s);
     void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status);
     void control_loop(void);
@@ -125,8 +126,8 @@
     #define     DC_MAX_DISC             358  ///< Maximum possible duty cycle, set around @b 0.1 
     #define     DC_START                50 ///< Start duty cycle, set around @b 0.8
     #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
-    #define     CC_kp                   20  ///< Proportional constant divider for CC mode
-    #define     CC_ki                   200  ///< Integral constant divider for CC mode 
+    #define     CC_kp                   25  ///< Proportional constant divider for CC mode
+    #define     CC_ki                   25  ///< Integral constant divider for CC mode 
     // last test with LI_ION gave this constants
     #define     CV_kp                   10  ///< Proportional constant divider for CV mode
     #define     CV_ki                   400  ///< Integral constant divider for CV mode 
