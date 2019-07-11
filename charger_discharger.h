@@ -78,7 +78,7 @@
     //void display_value_s(int value);
     void display_value_u(uint16_t value);
     //void display_value_u(uint16_t value);
-    char *dec(uint16_t x, char *s);
+    //char *dec(uint16_t x, char *s);
     void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status);
     void control_loop(void);
     void calculate_avg(void);

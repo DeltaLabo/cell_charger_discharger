@@ -84,7 +84,7 @@ void initialize()
     P1DCST = 1;            /// * Falling edge event occurs when PSMC1TMR = PSMC1DC
     PSMC1CON = 0x80;                    /// * Enable|Load Buffer|Dead band disabled|Single PWM
     //PSMC1TIE = 1;                       //Enable interrupts for Time Based 
-    WPUC2 = 0; /// * Disable WPU for RC0.
+    WPUC2 = 0; /// * Disable WPU for RC2.
     TRISC2 = 0;                         /// * Set RC2 as output
     /** @b ADC*/
     /** ADC INPUTS*///check this after final design
@@ -172,7 +172,7 @@ int16_t     inte = 0;
     if(er < ERR_MIN) er = ERR_MIN; /// * Make sure error is never below #ERR_MIN
     prop = er / kp; /// * Calculate #proportional component of compensator
 	intacum += (int24_t) (er); /// * Calculate #integral component of compensator
-    inte = (int16_t) (intacum / (ki * COUNTER));
+    inte = (int16_t) (intacum / ((int24_t) ki * COUNTER));
     pi = prop + inte; /// * Sum them up and store in @p pi*/
     if ((uint16_t)((int16_t)dc + pi) >= dcmax){ /// * Make sure duty cycle is never above #DC_MAX
         dc = dcmax;
@@ -405,13 +405,13 @@ void display_value_u(uint16_t value)
 //}
 
 
-char *dec(uint16_t x, char *s)
-{
-    *--s = 0;
-    if (!x) *--s = '0';
-    for (; x; x/=10) *--s = '0'+x%10;
-    return s;
-}
+// char *dec(uint16_t x, char *s)
+// {
+//     *--s = 0;
+//     if (!x) *--s = '0';
+//     for (; x; x/=10) *--s = '0'+x%10;
+//     return s;
+// }
 
 void temp_protection()
 {
