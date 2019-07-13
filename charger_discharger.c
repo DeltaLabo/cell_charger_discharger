@@ -218,7 +218,7 @@ and could be considered as some future improvement*/
 iprom = (uint16_t) ( ( ( iprom * 2.5 * 5000 ) / 4096 ) + 0.5 ); 
 vprom = (uint16_t) ( ( ( vprom * 5000.0 ) / 4096 ) + 0.5 );
 tprom = (uint16_t) ( ( ( tprom * 5000.0 ) / 4096 ) + 0.5 );
-tprom = (uint16_t) ( ( ( 1866.3 - tprom ) / 1.169 ) + 0.5 );
+tprom = (uint16_t) ( ( ( abs ( 1866.3 - tprom ) ) / 1.169 ) + 0.5 );
 #if (NI_MH_CHEM)  
 if (vprom > vmax) vmax = vprom; /// * If is the chemistry is Ni-MH and #vprom is bigger than #vmax then set #vmax = #vprom
 #endif
@@ -254,33 +254,6 @@ if (iprom > 0) qprom += (uint16_t) ( iprom / 360 ) + 0.5; /// * Divide #iprom be
     }
     if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
 }
-/**@brief This function read the ADC and store the data in the coresponding variables
-*/
-// void read_ADC()
-// {
-//     //float opr = 0; /// Define @p opr to store the operations inside the function
-//     AD_SET_CHAN(V_CHAN); /// Select the #V_CHAN channel usign #AD_SET_CHAN(x)
-//     AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
-//     AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()   
-//     //opr = (float)(1.2207 * ad_res); /// Apply the operation @code opr = ad_res * [(Vref)/(2^12)] = ad_res * (5000/4096) @endcode
-//     v = ad_res; /// Make #v equal to @p opr
-//     AD_SET_CHAN(I_CHAN); /// Select the #I_CHAN channel usign #AD_SET_CHAN(x)
-//     AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
-//     AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()
-//     opr = (float)(1.22412 * ad_res); /// Apply the operation @code opr = [(Vref)/(2^12)] * ad_res @endcode
-//     //i = opr;
-//     opr = opr - 2525; /// Apply the operation @code opr = opr - 2525 @endcode
-//     if (state == CHARGE | state == POSTCHARGE){
-//         opr = -opr; ///If the #state is #CHARGE or #POSTCHARGE change the sign of the result
-//     }
-//     i = (float)(opr * 2.5); /// Apply the operation @code opr = opr * 2.5 @endcode which is the sensitivity of the ACS723LL
-//     AD_SET_CHAN(T_CHAN); /// Select the #T_CHAN channel usign #AD_SET_CHAN(x)
-//     AD_CONVERT(); /// Make the conversion by calling #AD_CONVERT()
-//     AD_RESULT(); /// Store the result in #ad_res with #AD_RESULT()
-//     opr = (float)(1.22412 * ad_res); /// Apply the operation @code opr = [(Vref)/(2^12)] * ad_res @endcode
-//     opr = (float)(1866.3 - opr); /// Apply the operation @code opr = 1866.3 - opr @endcode. Sensor STLM20 Datasheet p.6
-//     t = (float) (opr/1.169); /// Apply the operation @code t = opr/1.169 @endcode. Sensor STLM20 Datasheet p.6
-// }
 
 /**@brief This function read the ADC and store the data in the coresponding variable
 */
@@ -391,27 +364,6 @@ void display_value_u(uint16_t value)
     utoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
     UART_send_string(&buffer[0]); /// * Send @p buffer using #UART_send_string()
 }
-///**@brief This function convert a number to string and then send it using UART
-//* @param value integer to be send
-//*/
-//void display_value_u(uint16_t value)
-//{   
-//    char buffer[6]={0}; /// * Define @p buffer to used it for store character storage
-//    char* start; 
-//    char* end;
-//    end = &buffer[5];
-//    start = dec(value,end); 
-//    UART_send_string(start); /// * Send @p buffer using #UART_send_string()
-//}
-
-
-// char *dec(uint16_t x, char *s)
-// {
-//     *--s = 0;
-//     if (!x) *--s = '0';
-//     for (; x; x/=10) *--s = '0'+x%10;
-//     return s;
-// }
 
 void temp_protection()
 {

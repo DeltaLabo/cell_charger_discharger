@@ -52,7 +52,7 @@ void __interrupt() ISR(void)
         if (conv) control_loop(); /// -# The #control_loop() function is called*/
         calculate_avg(); /// * Then, averages for the 250 values available each second are calculated by calling the #calculate_avg() function
         timing(); /// * Timing control is executed by calling the #timing() function 
-        //if (TMR1IF) UART_send_string((char*)"T_ERROR1");
+        if (TMR1IF) UART_send_string((char*)"TIMING_ERROR");
     }
 
     if(RCIF)/// If the UART reception flag is set then:
