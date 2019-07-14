@@ -1,5 +1,11 @@
 var searchData=
 [
-  ['eoc_5fcurrent',['EOC_current',['../charger__discharger_8h.html#a0d9cf26c168f75afbb7a381014693308',1,'charger_discharger.h']]],
-  ['eod_5fvoltage',['EOD_voltage',['../charger__discharger_8h.html#a79e7b0a74f48e181c9d3505363eb5c3e',1,'charger_discharger.h']]]
+  ['i',['i',['../charger__discharger_8h.html#a78f7a37dba921e0b0347b960fb40bc51',1,'charger_discharger.h']]],
+  ['i_5f1_5fdcres',['i_1_dcres',['../charger__discharger_8h.html#a929a8aedc6d2bc11c053fca94c761728',1,'charger_discharger.h']]],
+  ['i_5f2_5fdcres',['i_2_dcres',['../charger__discharger_8h.html#a4489f85f12d38cbfedea76cf452608ab',1,'charger_discharger.h']]],
+  ['i_5fchar',['i_char',['../charger__discharger_8h.html#a38a978425fed5c90cc54372956b304dd',1,'charger_discharger.h']]],
+  ['i_5fdisc',['i_disc',['../charger__discharger_8h.html#a8695876e1624c29ba67082bea20b2c83',1,'charger_discharger.h']]],
+  ['intacum',['intacum',['../charger__discharger_8h.html#a2ab083909f4f4cd7c27bff01f9865da8',1,'charger_discharger.h']]],
+  ['iprom',['iprom',['../charger__discharger_8h.html#a6fcd9cec56ea560158c2a1fb053bef66',1,'charger_discharger.h']]],
+  ['iref',['iref',['../charger__discharger_8h.html#a18614df5d72e38b0006c070dcd4f8d86',1,'charger_discharger.h']]]
 ];

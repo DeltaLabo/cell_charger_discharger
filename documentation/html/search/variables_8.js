@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['option',['option',['../charger__discharger_8h.html#aa138b263667688f0a28af01c14f90f8a',1,'charger_discharger.h']]]
+  ['prev_5fstate',['prev_state',['../charger__discharger_8h.html#ad24a7209740a83b880691380fbe8e0e9',1,'charger_discharger.h']]]
 ];

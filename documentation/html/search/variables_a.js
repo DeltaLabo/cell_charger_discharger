@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['qp_5fbuff',['qp_buff',['../charger__discharger_8h.html#af7319d00b273407ffe5f28b29e97a1c7',1,'charger_discharger.h']]],
-  ['qprom',['qprom',['../charger__discharger_8h.html#a16200aa761421d421187ce19c33dfcd0',1,'charger_discharger.h']]]
+  ['secf',['SECF',['../charger__discharger_8h.html#a29f21565ea58c567076a7677b0cec206',1,'charger_discharger.h']]],
+  ['second',['second',['../charger__discharger_8h.html#af03cfc6ea64c1cf48f35ae59730afad6',1,'charger_discharger.h']]],
+  ['state',['state',['../charger__discharger_8h.html#ab12828525693568ae9c217805bea1ef9',1,'charger_discharger.h']]]
 ];

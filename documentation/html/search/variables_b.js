@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['second',['second',['../charger__discharger_8h.html#a6cf35be1947a62f134392fcb1b3c54d2',1,'charger_discharger.h']]],
-  ['state',['state',['../charger__discharger_8h.html#ab12828525693568ae9c217805bea1ef9',1,'charger_discharger.h']]]
+  ['t',['t',['../charger__discharger_8h.html#a3636f663c6b00463f1bad29dd9617997',1,'charger_discharger.h']]],
+  ['tprom',['tprom',['../charger__discharger_8h.html#adf0350f89aa81e9d78150c75e1d5e708',1,'charger_discharger.h']]]
 ];

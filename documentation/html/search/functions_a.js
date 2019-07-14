@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['uart_5fget_5fchar',['UART_get_char',['../charger__discharger_8c.html#a29ad5228bebf7b764c5ee79400b208ec',1,'UART_get_char():&#160;charger_discharger.c'],['../charger__discharger_8h.html#ae033bb8a9289af391aef3cc3bd57a0e9',1,'UART_get_char(void):&#160;charger_discharger.c']]],
-  ['uart_5finterrupt_5fenable',['UART_interrupt_enable',['../charger__discharger_8c.html#acdcc536c47d442a64e477464f7e704a2',1,'UART_interrupt_enable():&#160;charger_discharger.c'],['../charger__discharger_8h.html#a4bcf31185383adefc22f2209541c9991',1,'UART_interrupt_enable(void):&#160;charger_discharger.c']]],
-  ['uart_5fsend_5fchar',['UART_send_char',['../charger__discharger_8c.html#abf92d1a230db7234bdf5119716a0cf5f',1,'UART_send_char(char bt):&#160;charger_discharger.c'],['../charger__discharger_8h.html#abf92d1a230db7234bdf5119716a0cf5f',1,'UART_send_char(char bt):&#160;charger_discharger.c']]],
-  ['uart_5fsend_5fstring',['UART_send_string',['../charger__discharger_8c.html#ac27ccd7f2eb1f5e96bb091338acc1e7f',1,'UART_send_string(char *st_pt):&#160;charger_discharger.c'],['../charger__discharger_8h.html#ac27ccd7f2eb1f5e96bb091338acc1e7f',1,'UART_send_string(char *st_pt):&#160;charger_discharger.c']]]
+  ['temp_5fprotection',['temp_protection',['../charger__discharger_8c.html#ad7281e6b87164140f094392ac68ff1d6',1,'temp_protection():&#160;charger_discharger.c'],['../charger__discharger_8h.html#a4126a9c7eed2c3658428ce1613f62848',1,'temp_protection(void):&#160;charger_discharger.c']]],
+  ['timing',['timing',['../charger__discharger_8c.html#a4774aa6e41b08b4ff32010c008fa3a99',1,'timing():&#160;charger_discharger.c'],['../charger__discharger_8h.html#ad2a34e3f615b83a0c9d721b76899b2a4',1,'timing(void):&#160;charger_discharger.c']]]
 ];

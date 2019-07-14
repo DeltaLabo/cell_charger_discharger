@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['minute',['minute',['../charger__discharger_8h.html#a5edffad982a0566ad01d95005474eae3',1,'charger_discharger.h']]]
+  ['option',['option',['../charger__discharger_8h.html#aa138b263667688f0a28af01c14f90f8a',1,'charger_discharger.h']]]
 ];

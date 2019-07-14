@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['second',['second',['../charger__discharger_8h.html#a6cf35be1947a62f134392fcb1b3c54d2',1,'charger_discharger.h']]],
-  ['serial_5finterrupt',['serial_interrupt',['../main_8c.html#ab402c3c427b8d8d0ed2d6e1aac794ae7',1,'main.c']]],
+  ['secf',['SECF',['../charger__discharger_8h.html#a29f21565ea58c567076a7677b0cec206',1,'charger_discharger.h']]],
+  ['second',['second',['../charger__discharger_8h.html#af03cfc6ea64c1cf48f35ae59730afad6',1,'charger_discharger.h']]],
   ['set_5fdc',['set_DC',['../charger__discharger_8c.html#a95853552054d1c99e8765eca54abb930',1,'set_DC():&#160;charger_discharger.c'],['../charger__discharger_8h.html#a93f3630c962d9bcafd71e4c4a03547c1',1,'set_DC(void):&#160;charger_discharger.c']]],
   ['standby',['STANDBY',['../charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6',1,'charger_discharger.h']]],
   ['start_5fstate_5fmachine',['start_state_machine',['../charger__discharger_8h.html#aa37d23c2482420861e3f4580cfbbdb2a',1,'start_state_machine(void):&#160;state_machine.c'],['../state__machine_8c.html#a62eebb377f469fee54158c0a48d40603',1,'start_state_machine():&#160;state_machine.c']]],

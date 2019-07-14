@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['dc',['dc',['../charger__discharger_8h.html#a7feaae074885a9d2f57a75e0809ee4ba',1,'charger_discharger.h']]],
-  ['dc_5fres_5fcount',['dc_res_count',['../charger__discharger_8h.html#a84cf4389d019b53039c0c1ce35691335',1,'charger_discharger.h']]],
-  ['dc_5fres_5fval',['dc_res_val',['../charger__discharger_8h.html#a1e0b25759a62b1c0ee2ff911fa1aac40',1,'charger_discharger.h']]]
+  ['eoc_5fcurrent',['EOC_current',['../charger__discharger_8h.html#a065f3720f88ca40161383dfcbb3e0616',1,'charger_discharger.h']]],
+  ['eod_5fvoltage',['EOD_voltage',['../charger__discharger_8h.html#a87c08f93220186401fc9530f98a8cff3',1,'charger_discharger.h']]]
 ];

@@ -109,7 +109,7 @@
     turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
     and the UART reception interrupts.
     */
-    #define     STOP_CONVERTER()        { conv = 0; RC5 = 0; dc = DC_START; set_DC(); Cell_OFF(); LOG_OFF();}
+    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; dc = DC_START; set_DC(); Cell_OFF(); LOG_OFF();}
     #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100);}
     #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100);}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
@@ -164,8 +164,8 @@
     uint16_t                            i_disc; ///< Discharging current in mA
     unsigned char                       cell_count = 49; ///< Cell counter from '1' to '4'. Initialized as '1'
     unsigned char                       cell_max = 0; ///< Number of cells to be tested. Initialized as 0
-    uint16_t                            wait_count = WAIT_TIME; ///< Counter for waiting time between states. Initialized as @link WAIT_TIME @endlink
-    unsigned char                       dc_res_count = DC_RES_SECS; ///< Counter for DC resistance. Initialized as @link DC_RES_SECS @endlink
+    uint16_t                            wait_count = 0; ///< Counter for waiting time between states. Initialized as 0
+    unsigned char                       dc_res_count = 0; ///< Counter for DC resistance. Initialized as 0
     unsigned char                       state = STANDBY; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
     unsigned char                       prev_state = STANDBY; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
     uint16_t                            EOC_current; ///< End-of-charge current in mA

@@ -2,7 +2,7 @@
  * @file charger_discharger.c
  * @author Juan J. Rojas
  * @date 7 Aug 2018
- * @brief Hardware source file for Charge and Discharge System.
+ * @brief Hardware related functions source file.
  * @par Institution:
  * LaSEINE / CeNT. Kyushu Institute of Technology.
  * @par Mail (after leaving Kyutech):
@@ -13,136 +13,112 @@
 
 #include "charger_discharger.h"
 
-/**@brief Function to define initialize the system
+/**@brief Function to initialize all the PIC16F1787 registers
 */
 void initialize()
 {
-    /** @b GENERAL*/
+    /** <b> GENERAL </b>*/
     CLRWDT(); /// * Clear WDT by calling @p CLRWDT()
     nWPUEN = 0; /// * Allow change of individual WPU
-    /** @b SYSTEM @b CLOCK*/
-    /** PLL is always enabled because of configuration bits*/
-    OSCCONbits.IRCF = 0b1111; /// * Set clock to 32MHz (with PLL)
+    /** <b> SYSTEM CLOCK </b>*/
+    OSCCONbits.IRCF = 0b1111; /// * Set clock to 32MHz (PLL is enabled)
     OSCCONbits.SCS = 0b00; /// * Clock determined by FOSC<2:0> in Configuration Words
-    OSCCONbits.SPLLEN = 1; /// * Enable PLL. According to Errata this shall not be done in the Configuration Words
-    /** @b RELAY @b OUPUTS*/
+    OSCCONbits.SPLLEN = 1; /// * Enable PLL. 
+    //According to errata this shall not be done in the Configuration Words
+    /** <b> RELAY OUPUTS </b> */
     //PORTC doesn't have ANSELC
-    TRISC3 = 0; /// * Set RC3 as output. Discharge set
-    WPUC3 = 0; /// * Weak pull up deactivated
-    TRISC4 = 0; /// * Set RC4 as output. Charge set
-    WPUC4 = 0; /// * Weak pull up deactivated    
+    TRISC3 = 0; /// * Set RC3 as output. Set for discharge
+    WPUC3 = 0; /// * Deactivate weak pull up in RC3
+    TRISC4 = 0; /// * Set RC4 as output. Set for charge
+    WPUC4 = 0; /// * Deactivate weak pull up in RC4    
     TRISC5 = 0; /// * Set RC5 as output. ON/OFF relay
-    WPUC5 = 0; /// * Weak pull up deactivated
-    /** @b CELL @b SWITCHER @b OUPUTS*/
-    TRISB2 = 0; /// * Set RB2 as output. Cell #1
+    WPUC5 = 0; /// * Deactivate weak pull up in RC5
+    /** <b> CELL SWITCHER OUPUTS </b>*/
+    TRISB2 = 0; /// * Set RB2 as output. Set for Cell #1
     ANSB2 = 0; /// * Set RB2 as digital
-    WPUB2 = 0; /// * Weak pull up deactivated
-    TRISB3 = 0; /// * Set RB3 as output. Cell #2
+    WPUB2 = 0; /// * Deactivate weak pull up in RB2
+    TRISB3 = 0; /// * Set RB3 as output. Set for Cell #2
     ANSB3 = 0; /// * Set RB3 as digital
-    WPUB3 = 0; /// * Weak pull up deactivated
-    TRISB4 = 0; /// * Set RB4 as output. Cell #3
+    WPUB3 = 0; /// * Deactivate weak pull up in RB3
+    TRISB4 = 0; /// * Set RB4 as output. Set for Cell #3
     ANSB4 = 0; /// * Set RB4 as digital  
-    WPUB4 = 0; /// * Weak pull up deactivated
-    TRISB5 = 0; /// * Set RB5 as output. Cell #4
-    ANSB5 = 0; /// * Set RB% as digital  
-    WPUB5 = 0; /// * Weak pull up deactivated
+    WPUB4 = 0; /// * Deactivate weak pull up in RB4
+    TRISB5 = 0; /// * Set RB5 as output. Set for Cell #4
+    ANSB5 = 0; /// * Set RB5 as digital  
+    WPUB5 = 0; /// * Deactivate weak pull up in RB5
     Cell_OFF();
-    /** @b TIMER 1 for control and measuring loop using interruption*/
-    /* Preload TMR1 register pair for 1us overflow*/
-    /* T1OSCEN = 1, nT1SYNC = 1, TMR1CS = 0 and TMR1ON = 1*/
-    nT1SYNC = 0;     //Synchronized
-    T1OSCEN = 0;
-    TMR1ON = 0;       //ON
-    TMR1GE = 0;      //Dont care about gate
-    TMR1CS0 = 0;       
-    TMR1CS1 = 0;    //FOSC/4
-    T1CKPS0 = 0;
-    T1CKPS1 = 0;
-    TMR1H = 0xE1;//TMR1 Fosc/4= 8Mhz (Tosc= 0.125us)
-    TMR1L = 0x83;//TMR1 counts: 7805 x 0.125us = 0.97562ms
-    /** @b PSMC/PWM @b SETTINGS*/
-    /** Programmable switch mode control (PSMC)*/
-    PSMC1CON = 0x00; /// * Clear PSMC1 configuration to start
+    /** @b TIMER1 */
+    nT1SYNC = 0; /// * Synchronize asynchronous clock input with system clock (FOSC)
+    T1OSCEN = 0; /// * Dedicated Timer1 oscillator circuit disabled    
+    TMR1ON = 0; /// * Enables Timer1
+    TMR1GE = 0; /// * Timer1 counts regardless of Timer1 gate function
+    TMR1CS0 = 0; // TMR1CS=0b00      
+    TMR1CS1 = 0; /// * Timer1 clock source is instruction clock (FOSC/4)
+    T1CKPS0 = 0; // T1CKPS=0b00  
+    T1CKPS1 = 0; /// * 1:1 Prescale value
+    TMR1H = 0xE1; //TMR1 Fosc/4= 8Mhz (Tosc= 0.125us). TMR1 counts: 7805 x 0.125us = 0.97562 ms
+    TMR1L = 0x83; /// * Set Timer1 register to overflow in 0.97562 ms
+    /** <b> PROGRAMMABLE SWITCH MODE CONTROL (PSMC) </b> */
+    PSMC1CON = 0x00; /// * Clear PSMC1 configuration
     PSMC1MDL = 0x00; /// * No modulation
     PSMC1CLK = 0x01; /// * Driven by 64MHz PLL system clock
-    PSMC1PRH = 0x01; /// * Set period high register to 0x01
-    PSMC1PRL = 0xFF; /// * Set period low register to 0xFF
-    /** 511 + 1 clock cycles for period that is 8us (125KHz)*/
-    /** This set the PWM with 9 bit of resolution*/
-    /** Duty cycle*/
-    PSMC1DCH = 0x00;                    // * Set duty cycle high register to 0x00   
-    PSMC1DCL = 0x00;                    // * Set duty cycle low register to 0x00
-    /* Duty cycle starts in 0 */  
-    /** Phase or rising event*/
-    PSMC1PHH = 0x00;                    /// * Rising event starts from the beginning
-    PSMC1PHL = 0x00;                    /// * Rising event starts from the beginning
-    P1STRC = 1;           /// * Single PWM activated in PSMC1C (RC2)
-    P1POLC = 0;            /// * Active high (RC2)
-    P1OEC = 1;             /// * PSMC activated in PSMC1C (RC2)
-    P1PRST = 1;            /// * Period event occurs when PSMC1TMR = PSMC1PR
-    P1PHST = 1;            /// * Rising edge event occurs when PSMC1TMR = PSMC1PH
-    P1DCST = 1;            /// * Falling edge event occurs when PSMC1TMR = PSMC1DC
-    PSMC1CON = 0x80;                    /// * Enable|Load Buffer|Dead band disabled|Single PWM
-    //PSMC1TIE = 1;                       //Enable interrupts for Time Based 
-    WPUC2 = 0; /// * Disable WPU for RC2.
-    TRISC2 = 0;                         /// * Set RC2 as output
+    PSMC1PRH = 0x01; //
+    PSMC1PRL = 0xFF; /// * Set period register to overflow in 8us (125kHz)
+    // 511 + 1 clock cycles for period that is 8us (125kHz)
+    // This set the PWM with 9 bit of resolution
+    PSMC1DCH = 0x00;    //   
+    PSMC1DCL = 0x32;    // * Set duty cycle register to a 10% duty cycle (0x0032)
+    PSMC1PHH = 0x00; 
+    PSMC1PHL = 0x00; /// * Rising event starts from the beginning, i.e duty cycle is in-phase with the period
+    P1STRC = 1; /// * Single PWM activated in PSMC1C (RC2)
+    P1POLC = 0; /// * PWM PSMC1 output is active-high (RC2)
+    P1OEC = 1; /// * PSMC output is active in PSMC1C (RC2)
+    P1PRST = 1; /// * Period event occurs when PSMC1TMR = PSMC1PR
+    P1PHST = 1; /// * Rising edge event occurs when PSMC1TMR = PSMC1PH
+    P1DCST = 1; /// * Falling edge event occurs when PSMC1TMR = PSMC1DC
+    PSMC1CON = 0x80; /// * PSMC1 module is enable
+    /// * Disable buffer load
+    /// * Disable dead band
+    /// * Operating mode: Single PWM
+    TRISC2 = 0; /// * Set RC2 as output. PWM output
+    WPUC2 = 0; /// * Deactivate weak pull up in RC2    
     /** @b ADC*/
-    /** ADC INPUTS*///check this after final design
-    TRISA3 = 1; /// * RA3, Positive voltage reference
-    ANSA3 = 1; /// * RA3 analog
-    WPUA3 = 0; /// * Weak pull up deactivated
-    TRISB1 = 1; /// * RB1, voltage sensing input
-    ANSB1 = 1; /// * RB1 analog
-    WPUB1 = 0; /// * RB1 weak pull up deactivated
-    TRISB0 = 1; /// * RB0, current sensing input
-    ANSB0 = 1; /// * RB0 analog
-    WPUB0 = 0; /// * RB0 weak pull up deactivated
-    TRISA5 = 1; /// * RA5, temperature sensing input
-    ANSA5 = 1; /// * RA5 analog
-    WPUA5 = 0; /// * RA5 weak pull up deactivated   
-    /** Configs*/
-    ADCON0bits.ADRMD = 0; /// * 12 bits result
+    TRISA3 = 1; /// * Set RA3 as input. VREF+
+    ANSA3 = 1; /// * Set RA3 as analog
+    WPUA3 = 0; /// * Deactivate weak pull up in RA3
+    TRISB1 = 1; /// * Set RB1 as input. Voltage sense
+    ANSB1 = 1; /// * Set RB1 as analog
+    WPUB1 = 0; /// * Deactivate weak pull up in RB1
+    TRISB0 = 1; /// * Set RB0 as input. Current sense
+    ANSB0 = 1; /// * Set RB0 as analog
+    WPUB0 = 0; /// * Deactivate weak pull up in RB0
+    TRISA5 = 1; /// * Set RA5 as input. Temperature sense
+    ANSA5 = 1; /// * Set RA5 as analog
+    WPUA5 = 0; /// * Deactivate weak pull up in RA5
+    ADCON0bits.ADRMD = 0; /// * 12-bit result
     ADCON1bits.ADCS = 0b010; /// * Clock selected as FOSC/32
-    ADCON1bits.ADNREF = 0; /// * Connected to Vss
-    ADCON1bits.ADPREF = 0b01; /// * Connected to Vref+
+    ADCON1bits.ADNREF = 0; /// * Negative reference connected to VSS
+    ADCON1bits.ADPREF = 0b01; /// * Positive reference connected to VREF+
     ADCON1bits.ADFM = 1; /// * 2's compliment result
-    ADCON2bits.CHSN = 0b1111; /// * Negative differential input as ADNREF
-    ADCON0bits.ADON = 1; /// * Turn on the ADC
+    ADCON2bits.CHSN = 0b1111; /// * Negative differential input given by ADNREF
+    ADCON0bits.ADON = 1; /// * ADC is enabled
     /** @b UART*/
-    //**Setting I/O pins for UART*/
-    TXSEL = 0;      /// * RC6 selected as TX
-    RXSEL = 0;      /// * RC7 selected as RX
-    //________I/O pins set __________//
-    
-    /**Initialize SPBRG register for required 
-    baud rate and set BRGH for fast baud_rate**/
+    TXSEL = 0; /// * RC6 selected as TX
+    RXSEL = 0; /// * RC7 selected as RX
     SP1BRGH = 0x00; 
-    SP1BRGL = 0x8A;    
-    BRGH  = 1;  /// * for high baud_rate
-    BRG16 = 1;  /// * for 16 bits timer
-    //_________End of baud_rate setting_________//
-    
-    //****Enable Asynchronous serial port*******//
-    SYNC  = 0;    /// * Asynchronous
-    SPEN  = 1;    /// * Enable serial port pins
-    //_____Asynchronous serial port enabled_______//
-    //**Lets prepare for transmission & reception**//
-    TXEN  = 1;    /// * enable transmission
-    CREN  = 1;    /// * enable reception
-    //__UART module up and ready for transmission and reception__//
-    //**Select 8-bit mode**//  
-    TX9   = 0;    /// * 8-bit reception selected
-    RX9   = 0;    /// * 8-bit reception mode selected
-    //__8-bit mode selected__/
+    SP1BRGL = 0x8A; // * Baud rate register set to 57600 bps    
+    BRGH  = 1;  /// * High baud rate set
+    BRG16 = 1;  /// * 16-bit timer set
+    SYNC  = 0;  /// * Asynchronous serial
+    SPEN  = 1;  /// * Enable serial port pins
+    TXEN  = 1;  /// * Enable transmission
+    CREN  = 1;  /// * Enable reception
+    TX9   = 0;  /// * 8-bit transmission selected
+    RX9   = 0;  /// * 8-bit reception selected
     RCIE = 0; /// * Disable UART reception interrupts
     TXIE = 0; /// * Disable UART transmission interrupts
-    /** @bFINAL CHECK ALL!!*/
-    STOP_CONVERTER(); ///* Call #STOP_CONVERTER()
-    cmode = 1; /// * Start in CC mode    
-    wait_count = 0; /// * CHECK!!!
-    dc_res_count = 0; /// * CHECK!!
-    RC3 = 0; /// * RELAY OUTPUT DOWN 
-    RC4 = 0; /// * RELAY OUTPUT DOWN 
+    /** @b FINAL */
+    STOP_CONVERTER(); ///* Call #STOP_CONVERTER() macro
 }
 /**@brief This function is the PI control loop
 */

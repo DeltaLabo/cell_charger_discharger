@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['read_5fadc',['read_ADC',['../charger__discharger_8c.html#a332625a6266a8da27bc1d8919be50063',1,'read_ADC():&#160;charger_discharger.c'],['../charger__discharger_8h.html#a1402bbcb4580b6798483c7821e6106d2',1,'read_ADC(void):&#160;charger_discharger.c']]]
+  ['param',['param',['../charger__discharger_8h.html#ac441c35a0d7d01f983d6b3414944d62a',1,'param(void):&#160;state_machine.c'],['../state__machine_8c.html#a54ace7ad4925a44e0b916762be282d66',1,'param():&#160;state_machine.c']]],
+  ['pid',['pid',['../charger__discharger_8c.html#ac0a5face47787c24a8922e3a5b4274ee',1,'pid(uint16_t feedback, uint16_t setpoint):&#160;charger_discharger.c'],['../charger__discharger_8h.html#ac0a5face47787c24a8922e3a5b4274ee',1,'pid(uint16_t feedback, uint16_t setpoint):&#160;charger_discharger.c']]]
 ];
