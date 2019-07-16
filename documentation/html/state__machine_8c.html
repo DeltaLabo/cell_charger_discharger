@@ -143,7 +143,7 @@ Functions</h2></td></tr>
 <li>The #integral component of the compensator is set to zero.*/</li>
 <li>Average capacity, #q_prom is set to zero.*/</li>
 <li>Maximum averaged voltage, <a class="el" href="charger__discharger_8h.html#aa45bd3ba8988708cb8dbf2d44220ba9f" title="Maximum recorded average voltage.">vmax</a> is set to zero.*/</li>
-<li>The <a class="el" href="charger__discharger_8c.html#a95853552054d1c99e8765eca54abb930" title="This function sets the desired duty cycle.">set_DC()</a> function is called</li>
+<li>The <a class="el" href="charger__discharger_8c.html#a95853552054d1c99e8765eca54abb930" title="This function sets the desired duty cycle of the PWM.">set_DC()</a> function is called</li>
 <li>The <a class="el" href="charger__discharger_8c.html#a1d26bd6e1261ba0d776c492ad35593f4" title="This function activate the desired relay in the switcher board according to the value of cell_count.">Cell_ON()</a> function is called</li>
 </ul>
 <p>If the current state is <code>POSTCHARGE</code> or <code>CHARGE</code> </p>
@@ -246,7 +246,7 @@ Functions</h2></td></tr>
 <ul>
 <li>Activate the logging by calling <a class="el" href="charger__discharger_8h.html#a4d26e5ca6078be961b6b42719ebca269" title="Turn OFF logging in the terminal.">LOG_ON()</a> macro</li>
 <li>Activate control loop by setting <a class="el" href="charger__discharger_8h.html#ad08b23d03ea817ae428dd1cc1e1d8f1a" title="Turn controller ON(1) or OFF(0). Initialized as 0.">conv</a></li>
-<li>If <a class="el" href="charger__discharger_8h.html#a56c17fc4666df092e35b3ff5ae8d9dc5" title="Last one-second-average of v . Initialized as 0.">vprom</a> is below <a class="el" href="charger__discharger_8h.html#a87c08f93220186401fc9530f98a8cff3" title="End-of-dischage voltage in mV.">EOD_voltage</a> then</li>
+<li>If <a class="el" href="charger__discharger_8h.html#aec6644dbb58ba751b340bd155b9e3cdc" title="Last one-second-average of v . Initialized as 0.">vavg</a> is below <a class="el" href="charger__discharger_8h.html#a87c08f93220186401fc9530f98a8cff3" title="End-of-dischage voltage in mV.">EOD_voltage</a> then</li>
 </ul>
 <ol type="1">
 <li>Set <a class="el" href="charger__discharger_8h.html#ad24a7209740a83b880691380fbe8e0e9" title="Used to store the previous state. Initialized as STANDBY.">prev_state</a> equal to <a class="el" href="charger__discharger_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY.">state</a></li>

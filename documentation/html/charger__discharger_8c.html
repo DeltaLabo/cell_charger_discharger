@@ -78,19 +78,22 @@ Functions</h2></td></tr>
 <tr class="memdesc:a25a40b6614565f755233080a384c35f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to initialize all the PIC16F1787 registers.  <a href="#a25a40b6614565f755233080a384c35f1">More...</a><br /></td></tr>
 <tr class="separator:a25a40b6614565f755233080a384c35f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c80a804f63cdf1b40bca055d0b2d77d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#a0c80a804f63cdf1b40bca055d0b2d77d">control_loop</a> ()</td></tr>
-<tr class="memdesc:a0c80a804f63cdf1b40bca055d0b2d77d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is the PI control loop.  <a href="#a0c80a804f63cdf1b40bca055d0b2d77d">More...</a><br /></td></tr>
+<tr class="memdesc:a0c80a804f63cdf1b40bca055d0b2d77d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function calls the PI control loop for current or voltage depending on the value of the <a class="el" href="charger__discharger_8h.html#ad4bb67368b5b95e33bae6d43ef3174a8" title="CC / CV selector. CC:  cmode = 1 . CV:  cmode = 0">cmode</a> variable.  <a href="#a0c80a804f63cdf1b40bca055d0b2d77d">More...</a><br /></td></tr>
 <tr class="separator:a0c80a804f63cdf1b40bca055d0b2d77d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac0a5face47787c24a8922e3a5b4274ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#ac0a5face47787c24a8922e3a5b4274ee">pid</a> (uint16_t feedback, uint16_t setpoint)</td></tr>
 <tr class="memdesc:ac0a5face47787c24a8922e3a5b4274ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function defines the PI controller.  <a href="#ac0a5face47787c24a8922e3a5b4274ee">More...</a><br /></td></tr>
 <tr class="separator:ac0a5face47787c24a8922e3a5b4274ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95853552054d1c99e8765eca54abb930"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#a95853552054d1c99e8765eca54abb930">set_DC</a> ()</td></tr>
-<tr class="memdesc:a95853552054d1c99e8765eca54abb930"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function sets the desired duty cycle.  <a href="#a95853552054d1c99e8765eca54abb930">More...</a><br /></td></tr>
+<tr class="memdesc:a95853552054d1c99e8765eca54abb930"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function sets the desired duty cycle of the PWM.  <a href="#a95853552054d1c99e8765eca54abb930">More...</a><br /></td></tr>
 <tr class="separator:a95853552054d1c99e8765eca54abb930"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1db67160f1d6e9368e8c07df1c904eb4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#a1db67160f1d6e9368e8c07df1c904eb4">cc_cv_mode</a> (uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status)</td></tr>
 <tr class="memdesc:a1db67160f1d6e9368e8c07df1c904eb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function switches between CC and CV mode.  <a href="#a1db67160f1d6e9368e8c07df1c904eb4">More...</a><br /></td></tr>
 <tr class="separator:a1db67160f1d6e9368e8c07df1c904eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb92cf488fc031fa581b9f7d2f90b438"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#acb92cf488fc031fa581b9f7d2f90b438">scaling</a> ()</td></tr>
+<tr class="memdesc:acb92cf488fc031fa581b9f7d2f90b438"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function takes care of scaling the average values to correspond with their real values.  <a href="#acb92cf488fc031fa581b9f7d2f90b438">More...</a><br /></td></tr>
+<tr class="separator:acb92cf488fc031fa581b9f7d2f90b438"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76c124e0fe411cb223495b945f9e7b6d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#a76c124e0fe411cb223495b945f9e7b6d">log_control</a> ()</td></tr>
-<tr class="memdesc:a76c124e0fe411cb223495b945f9e7b6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function takes care of printing the test data using the UART.  <a href="#a76c124e0fe411cb223495b945f9e7b6d">More...</a><br /></td></tr>
+<tr class="memdesc:a76c124e0fe411cb223495b945f9e7b6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function takes care of calculating the average values printing the log data using the UART.  <a href="#a76c124e0fe411cb223495b945f9e7b6d">More...</a><br /></td></tr>
 <tr class="separator:a76c124e0fe411cb223495b945f9e7b6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf70b9e763a525b6113c0349583e7ac0"><td class="memItemLeft" align="right" valign="top"><a id="abf70b9e763a525b6113c0349583e7ac0"></a>
 uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#abf70b9e763a525b6113c0349583e7ac0">read_ADC</a> (uint16_t channel)</td></tr>
@@ -117,6 +120,9 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <tr class="memitem:a92a0c0757e4254434d1526372af3113d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#a92a0c0757e4254434d1526372af3113d">display_value_u</a> (uint16_t value)</td></tr>
 <tr class="memdesc:a92a0c0757e4254434d1526372af3113d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function convert a number to string and then send it using UART.  <a href="#a92a0c0757e4254434d1526372af3113d">More...</a><br /></td></tr>
 <tr class="separator:a92a0c0757e4254434d1526372af3113d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fcc321fc8a8e5fb1c8aeeae5da8daf1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#a9fcc321fc8a8e5fb1c8aeeae5da8daf1">display_value_s</a> (int16_t value)</td></tr>
+<tr class="memdesc:a9fcc321fc8a8e5fb1c8aeeae5da8daf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function convert a number to string and then send it using UART.  <a href="#a9fcc321fc8a8e5fb1c8aeeae5da8daf1">More...</a><br /></td></tr>
+<tr class="separator:a9fcc321fc8a8e5fb1c8aeeae5da8daf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7281e6b87164140f094392ac68ff1d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#ad7281e6b87164140f094392ac68ff1d6">temp_protection</a> ()</td></tr>
 <tr class="separator:ad7281e6b87164140f094392ac68ff1d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d26bd6e1261ba0d776c492ad35593f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="charger__discharger_8c.html#a1d26bd6e1261ba0d776c492ad35593f4">Cell_ON</a> ()</td></tr>
@@ -153,21 +159,21 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <p>This function calculate the averages. </p>
 <p>If <a class="el" href="charger__discharger_8h.html#af6a39bfc7e1dc3b6f9c997c1c43fa996" title="Counter that should be cleared every second. Initialized as COUNTER.">count</a> = <a class="el" href="charger__discharger_8h.html#a7194053a42881b1b4bc8546b4c8713e9" title="Counter value, needed to obtained one second between counts.">COUNTER</a></p>
 <ul>
-<li>Make <a class="el" href="charger__discharger_8h.html#a6fcd9cec56ea560158c2a1fb053bef66" title="Last one-second-average of i . Initialized as 0.">iprom</a> zero</li>
-<li>Make <a class="el" href="charger__discharger_8h.html#a56c17fc4666df092e35b3ff5ae8d9dc5" title="Last one-second-average of v . Initialized as 0.">vprom</a> zero</li>
-<li>Make <a class="el" href="charger__discharger_8h.html#adf0350f89aa81e9d78150c75e1d5e708" title="Last one-second-average of t . Initialized as 0.">tprom</a> zero</li>
+<li>Make <a class="el" href="charger__discharger_8h.html#a0799e1bdc59344ad781f8ed52b3d9189" title="Last one-second-average of i . Initialized as 0.">iavg</a> zero</li>
+<li>Make <a class="el" href="charger__discharger_8h.html#aec6644dbb58ba751b340bd155b9e3cdc" title="Last one-second-average of v . Initialized as 0.">vavg</a> zero</li>
+<li>Make <a class="el" href="charger__discharger_8h.html#a2d8afe51d9406df27f4388df51b61e38" title="Last one-second-average of t . Initialized as 0.">tavg</a> zero</li>
 </ul>
 <p>If <a class="el" href="charger__discharger_8h.html#af6a39bfc7e1dc3b6f9c997c1c43fa996" title="Counter that should be cleared every second. Initialized as COUNTER.">count</a> = 0</p>
 <ul>
-<li>Divide the value stored in <a class="el" href="charger__discharger_8h.html#a6fcd9cec56ea560158c2a1fb053bef66" title="Last one-second-average of i . Initialized as 0.">iprom</a> between COUNTER to obtain the average</li>
+<li>Divide the value stored in <a class="el" href="charger__discharger_8h.html#a0799e1bdc59344ad781f8ed52b3d9189" title="Last one-second-average of i . Initialized as 0.">iavg</a> between COUNTER to obtain the average</li>
 <li>This is equivalent to vacum / 1024 = vacum / 2^10</li>
 <li>This is equivalent to tacum / 1024 = tacum / 2^10</li>
 </ul>
 <p>If <a class="el" href="charger__discharger_8h.html#af6a39bfc7e1dc3b6f9c997c1c43fa996" title="Counter that should be cleared every second. Initialized as COUNTER.">count</a> is not any of the previous cases then</p>
 <ul>
-<li>Accumulate <a class="el" href="charger__discharger_8h.html#a78f7a37dba921e0b0347b960fb40bc51" title="Last current ADC measurement.">i</a> in <a class="el" href="charger__discharger_8h.html#a6fcd9cec56ea560158c2a1fb053bef66" title="Last one-second-average of i . Initialized as 0.">iprom</a></li>
-<li>Accumulate <a class="el" href="charger__discharger_8h.html#ac5f38113a34f9eab3e7782eade81d266" title="Last voltage ADC measurement.">v</a> in <a class="el" href="charger__discharger_8h.html#a56c17fc4666df092e35b3ff5ae8d9dc5" title="Last one-second-average of v . Initialized as 0.">vprom</a></li>
-<li>Accumulate <a class="el" href="charger__discharger_8h.html#a3636f663c6b00463f1bad29dd9617997" title="Last temperature ADC measurement.">t</a> in <a class="el" href="charger__discharger_8h.html#adf0350f89aa81e9d78150c75e1d5e708" title="Last one-second-average of t . Initialized as 0.">tprom</a> </li>
+<li>Accumulate <a class="el" href="charger__discharger_8h.html#a78f7a37dba921e0b0347b960fb40bc51" title="Last current ADC measurement.">i</a> in <a class="el" href="charger__discharger_8h.html#a0799e1bdc59344ad781f8ed52b3d9189" title="Last one-second-average of i . Initialized as 0.">iavg</a></li>
+<li>Accumulate <a class="el" href="charger__discharger_8h.html#ac5f38113a34f9eab3e7782eade81d266" title="Last voltage ADC measurement.">v</a> in <a class="el" href="charger__discharger_8h.html#aec6644dbb58ba751b340bd155b9e3cdc" title="Last one-second-average of v . Initialized as 0.">vavg</a></li>
+<li>Accumulate <a class="el" href="charger__discharger_8h.html#a3636f663c6b00463f1bad29dd9617997" title="Last temperature ADC measurement.">t</a> in <a class="el" href="charger__discharger_8h.html#a2d8afe51d9406df27f4388df51b61e38" title="Last one-second-average of t . Initialized as 0.">tavg</a> </li>
 </ul>
 
 </div>
@@ -213,13 +219,23 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
   </table>
   </dd>
 </dl>
-<p>If the current voltage is bigger than the voltage setpoint and the system is in CC mode, then:</p>
-<ul>
-<li>The #integral is set to zero</li>
-<li>The system is set in CV mode by clearing the <a class="el" href="charger__discharger_8h.html#ad4bb67368b5b95e33bae6d43ef3174a8" title="CC / CV selector. CC:  cmode = 1 . CV:  cmode = 0">cmode</a> variable</li>
-<li>The proportional constant, <a class="el" href="charger__discharger_8h.html#a289f8a95d80e630813bce16c8697695d" title="Proportional compesator gain.">kp</a> is set to <a class="el" href="charger__discharger_8h.html#a31ae8362bae13f23cc6b521a7499a5ee" title="Proportional constant divider for CV mode.">CV_kp</a></li>
-<li>The integral constant, <a class="el" href="charger__discharger_8h.html#a6856f49f60524dad9333c2a1d14a46e7" title="Integral compesator gain.">ki</a> is set to <a class="el" href="charger__discharger_8h.html#a57181200f8247c552f8d9751003d77c6" title="Integral constant divider for CV mode.">CV_ki</a> </li>
-</ul>
+<p>If the current voltage is bigger than the CV setpoint and the system is in CC mode, then:</p>
+<ol>
+<li>
+<p class="startli">The integral acummulator is cleared</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">The system is set in CV mode by clearing the <a class="el" href="charger__discharger_8h.html#ad4bb67368b5b95e33bae6d43ef3174a8" title="CC / CV selector. CC:  cmode = 1 . CV:  cmode = 0">cmode</a> variable</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">The proportional constant divider is set to <a class="el" href="charger__discharger_8h.html#a31ae8362bae13f23cc6b521a7499a5ee" title="Proportional constant divider for CV mode.">CV_kp</a></p>
+<p class="endli"></p>
+</li>
+<li>
+The integral constant divider is set to <a class="el" href="charger__discharger_8h.html#a57181200f8247c552f8d9751003d77c6" title="Integral constant divider for CV mode.">CV_ki</a> </li>
+</ol>
 
 </div>
 </div>
@@ -304,7 +320,7 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
       </table>
 </div><div class="memdoc">
 
-<p>This function is the PI control loop. </p>
+<p>This function calls the PI control loop for current or voltage depending on the value of the <a class="el" href="charger__discharger_8h.html#ad4bb67368b5b95e33bae6d43ef3174a8" title="CC / CV selector. CC:  cmode = 1 . CV:  cmode = 0">cmode</a> variable. </p>
 <p>If <a class="el" href="charger__discharger_8h.html#ad4bb67368b5b95e33bae6d43ef3174a8" title="CC / CV selector. CC:  cmode = 1 . CV:  cmode = 0">cmode</a> is cleared then</p>
 <ul>
 <li>The <a class="el" href="charger__discharger_8c.html#ac0a5face47787c24a8922e3a5b4274ee" title="This function defines the PI controller.">pid()</a> function is called with <code>feedback</code> = <a class="el" href="charger__discharger_8h.html#ac5f38113a34f9eab3e7782eade81d266" title="Last voltage ADC measurement.">v</a> and <code>setpoint</code> = <a class="el" href="charger__discharger_8h.html#a9677ac60c8e6bbdd674b48efcd82634e" title="Scaled voltage setpoint. Initialized as 0.">vref</a></li>
@@ -313,7 +329,38 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <ul>
 <li>The <a class="el" href="charger__discharger_8c.html#ac0a5face47787c24a8922e3a5b4274ee" title="This function defines the PI controller.">pid()</a> function is called with <code>feedback</code> = <a class="el" href="charger__discharger_8h.html#a78f7a37dba921e0b0347b960fb40bc51" title="Last current ADC measurement.">i</a> and <code>setpoint</code> = <a class="el" href="charger__discharger_8h.html#a18614df5d72e38b0006c070dcd4f8d86" title="Current setpoint. Initialized as 0.">iref</a></li>
 </ul>
-<p>The duty cycle is set by calling the <a class="el" href="charger__discharger_8c.html#a95853552054d1c99e8765eca54abb930" title="This function sets the desired duty cycle.">set_DC()</a> function </p>
+<p>The duty cycle is set by calling the <a class="el" href="charger__discharger_8c.html#a95853552054d1c99e8765eca54abb930" title="This function sets the desired duty cycle of the PWM.">set_DC()</a> function </p>
+
+</div>
+</div>
+<a id="a9fcc321fc8a8e5fb1c8aeeae5da8daf1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fcc321fc8a8e5fb1c8aeeae5da8daf1">&#9670;&nbsp;</a></span>display_value_s()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void display_value_s </td>
+          <td>(</td>
+          <td class="paramtype">int16_t&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function convert a number to string and then send it using UART. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>integer to be send </td></tr>
+  </table>
+  </dd>
+</dl>
+<ul>
+<li>Define <code>buffer</code> to used it for store character storage</li>
+<li>Convert <code>value</code> into a string and store it in <code>buffer</code> </li>
+<li>Send <code>buffer</code> using <a class="el" href="charger__discharger_8c.html#ac27ccd7f2eb1f5e96bb091338acc1e7f" title="This function send a string using UART.">UART_send_string()</a> </li>
+</ul>
 
 </div>
 </div>
@@ -517,12 +564,8 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
       </table>
 </div><div class="memdoc">
 
-<p>This function takes care of printing the test data using the UART. </p>
-<p>The code in this function is only executed if the <a class="el" href="charger__discharger_8h.html#a6d4067d47fba082577dc98dae5e53c48" title="Variable to indicate if the log is activated.">log_on</a> variable is set</p>
-<p>This function takes care of sending the logging data in pieces to avoid disturbing the control loop. This problem can be avoided with the use of interruptions for the control loop; however this was not implemented and could be considered as some future improvement</p>
+<p>This function takes care of calculating the average values printing the log data using the UART. </p>
 <ul>
-<li>If is the chemistry is Ni-MH and <a class="el" href="charger__discharger_8h.html#a56c17fc4666df092e35b3ff5ae8d9dc5" title="Last one-second-average of v . Initialized as 0.">vprom</a> is bigger than <a class="el" href="charger__discharger_8h.html#aa45bd3ba8988708cb8dbf2d44220ba9f" title="Maximum recorded average voltage.">vmax</a> then set <a class="el" href="charger__discharger_8h.html#aa45bd3ba8988708cb8dbf2d44220ba9f" title="Maximum recorded average voltage.">vmax</a> = <a class="el" href="charger__discharger_8h.html#a56c17fc4666df092e35b3ff5ae8d9dc5" title="Last one-second-average of v . Initialized as 0.">vprom</a></li>
-<li>Divide <a class="el" href="charger__discharger_8h.html#a6fcd9cec56ea560158c2a1fb053bef66" title="Last one-second-average of i . Initialized as 0.">iprom</a> between 3600 and multiplied by 10 add it to <a class="el" href="charger__discharger_8h.html#ac9d8a2853ac125f44cf6219426393ef1" title="Integration of i . Initialized as 0.">qprom</a> to integrate the current over time</li>
 <li>Send a colons character</li>
 <li>If <a class="el" href="charger__discharger_8h.html#af03cfc6ea64c1cf48f35ae59730afad6" title="Seconds counter, resetted after 59 seconds.">second</a> is smaller than 10 send a '0'</li>
 <li>Send a comma character</li>
@@ -578,19 +621,84 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
   </table>
   </dd>
 </dl>
-<ul>
-<li>Define <code>er</code> for calculating the error</li>
-<li>Define <code>pi</code> for storing the PI compesator value</li>
-<li>Calculate the error by substracting the <code>feedback</code> from the <code>setpoint</code> and store it in <code>er</code> </li>
-<li>Make sure error is never above <a class="el" href="charger__discharger_8h.html#aadc49366a240cc84254d58cb455dee82" title="Maximum permisible error, useful to avoid ringing.">ERR_MAX</a></li>
-<li>Make sure error is never below <a class="el" href="charger__discharger_8h.html#a5bcad3156af59109b8ac2c78c588885a" title="Minimum permisible error, useful to avoid ringing.">ERR_MIN</a></li>
-<li>Calculate #proportional component of compensator</li>
-<li>Calculate #integral component of compensator</li>
-<li>Sum them up and store in <code>pi*/</code> </li>
-<li>Make sure duty cycle is never above #DC_MAX</li>
-<li>Make sure duty cycle is never below #DC_MIN</li>
-<li>Store the new value of the duty cycle with operation<div class="fragment"><div class="line"><a class="code" href="charger__discharger_8h.html#adb07fc3f35b1ac3f277f3c4b80ce2269">dc</a> = <a class="code" href="charger__discharger_8h.html#adb07fc3f35b1ac3f277f3c4b80ce2269">dc</a> + pi </div></div><!-- fragment --> </li>
-</ul>
+<p>This function performs the folowing tasks:</p>
+<ol>
+<li>
+<p class="startli">Calculate the error</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Make sure error is never above <a class="el" href="charger__discharger_8h.html#aadc49366a240cc84254d58cb455dee82" title="Maximum permisible error, useful to avoid ringing.">ERR_MAX</a></p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Make sure error is never below <a class="el" href="charger__discharger_8h.html#a5bcad3156af59109b8ac2c78c588885a" title="Minimum permisible error, useful to avoid ringing.">ERR_MIN</a></p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Calculate the proportional component of compensator</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Calculate the integral component of compensator usign <a class="el" href="charger__discharger_8h.html#a2ab083909f4f4cd7c27bff01f9865da8" title="Integral acumulator of PI compensator.">intacum</a> to accumulate over cycles</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Combine proportinal and integral parts</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Sum the result to the previous duty cycle stored in the <a class="el" href="charger__discharger_8h.html#adb07fc3f35b1ac3f277f3c4b80ce2269" title="Duty cycle.">dc</a> variable</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Make sure the duty cycle is never above <a class="el" href="charger__discharger_8h.html#a701d2222601b84faafa94cb1909df104" title="Maximum possible duty cycle, set around 0.8.">DC_MAX</a></p>
+<p class="endli"></p>
+</li>
+<li>
+Make sure duty cycle is never below <a class="el" href="charger__discharger_8h.html#a998e4507851dde706a60a5b475eb27ca" title="Minimum possible duty cycle, set around 0.1.">DC_MIN</a> </li>
+</ol>
+
+</div>
+</div>
+<a id="acb92cf488fc031fa581b9f7d2f90b438"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb92cf488fc031fa581b9f7d2f90b438">&#9670;&nbsp;</a></span>scaling()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void scaling </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This function takes care of scaling the average values to correspond with their real values. </p>
+<p>This function performs the folowing tasks: </p>
+<ol>
+<li>
+<p class="startli">Scale <a class="el" href="charger__discharger_8h.html#a0799e1bdc59344ad781f8ed52b3d9189" title="Last one-second-average of i . Initialized as 0.">iavg</a> according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A).</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Scale <a class="el" href="charger__discharger_8h.html#aec6644dbb58ba751b340bd155b9e3cdc" title="Last one-second-average of v . Initialized as 0.">vavg</a> according to the 12-bit ADC resolution (4096)</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Scale <a class="el" href="charger__discharger_8h.html#a2d8afe51d9406df27f4388df51b61e38" title="Last one-second-average of t . Initialized as 0.">tavg</a> according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Perform the discrete integration of <a class="el" href="charger__discharger_8h.html#a0799e1bdc59344ad781f8ed52b3d9189" title="Last one-second-average of i . Initialized as 0.">iavg</a> over one second and accumulate in <a class="el" href="charger__discharger_8h.html#a26dd2ede681df7d784fa64efc10d350a" title="Integration of i . Initialized as 0.">qavg</a></p>
+<p class="endli"></p>
+</li>
+<li>
+If the chemistry is Ni-MH and <a class="el" href="charger__discharger_8h.html#aec6644dbb58ba751b340bd155b9e3cdc" title="Last one-second-average of v . Initialized as 0.">vavg</a> is bigger than <a class="el" href="charger__discharger_8h.html#aa45bd3ba8988708cb8dbf2d44220ba9f" title="Maximum recorded average voltage.">vmax</a> then set <a class="el" href="charger__discharger_8h.html#aa45bd3ba8988708cb8dbf2d44220ba9f" title="Maximum recorded average voltage.">vmax</a> equal to <a class="el" href="charger__discharger_8h.html#aec6644dbb58ba751b340bd155b9e3cdc" title="Last one-second-average of v . Initialized as 0.">vavg</a> </li>
+</ol>
 
 </div>
 </div>
@@ -610,13 +718,16 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
       </table>
 </div><div class="memdoc">
 
-<p>This function sets the desired duty cycle. </p>
-<p>This function can set the duty cycle from 0x0 to 0x1FF</p>
-<ul>
-<li>Lower 8 bits of <a class="el" href="charger__discharger_8h.html#adb07fc3f35b1ac3f277f3c4b80ce2269" title="Duty cycle.">dc</a> are stored in <code>PSMC1DCL</code> </li>
-<li>Higher 1 bit of <a class="el" href="charger__discharger_8h.html#adb07fc3f35b1ac3f277f3c4b80ce2269" title="Duty cycle.">dc</a> are stored in <code>PSMC1DCH</code> </li>
-<li>Set the load register. This will load all the setting as once*/ </li>
-</ul>
+<p>This function sets the desired duty cycle of the PWM. </p>
+<p>This function performs the folowing tasks: </p>
+<ol>
+<li>
+<p class="startli">Load the duty cycle register of the PSMC with the <a class="el" href="charger__discharger_8h.html#adb07fc3f35b1ac3f277f3c4b80ce2269" title="Duty cycle.">dc</a> variable</p>
+<p class="endli"></p>
+</li>
+<li>
+Set the load register. This will load all the setting at once </li>
+</ol>
 
 </div>
 </div>

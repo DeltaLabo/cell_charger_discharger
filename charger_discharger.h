@@ -74,8 +74,10 @@
     void pid(uint16_t feedback, uint16_t setpoint);
     void set_DC(void);
     uint16_t read_ADC(uint16_t channel);
+    void scaling(void);
     void log_control(void);
     void display_value_u(uint16_t value);
+    void display_value_s(int16_t value);
     void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status);
     void control_loop(void);
     void calculate_avg(void);
@@ -109,7 +111,7 @@
     turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
     and the UART reception interrupts.
     */
-    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; dc = DC_START; set_DC(); Cell_OFF(); LOG_OFF();}
+    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF();}
     #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100);}
     #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100);}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
@@ -117,11 +119,8 @@
     #define     LOG_OFF()               { log_on = 0; }  ///< Turn ON logging in the terminal.
     #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
    //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function 
-    #define     DC_MIN_CHAR             50  ///< Minimum possible duty cycle, set around @b 0.1 //THIS CAN BE COMBINED
-    #define     DC_MAX_CHAR             409  ///< Maximum possible duty cycle, set around @b 0.8
-    #define     DC_MIN_DISC             50  ///< Minimum possible duty cycle, set around @b 0.05
-    #define     DC_MAX_DISC             409  ///< Maximum possible duty cycle, set around @b 0.1 
-    #define     DC_START                50 ///< Start duty cycle, set around @b 0.8
+    #define     DC_MIN                  50  ///< Minimum possible duty cycle, set around @b 0.1 
+    #define     DC_MAX                  409  ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
     #define     CC_kp                   25  ///< Proportional constant divider for CC mode
     #define     CC_ki                   35  ///< Integral constant divider for CC mode 
@@ -186,11 +185,11 @@
     uint24_t                            vacum = 0; ///< accumulator dor v
     uint24_t                            iacum = 0;
     uint24_t                            tacum = 0;
-    //qprom does not need accumulator
-    uint16_t                            vprom = 0;  ///< Last one-second-average of #v . Initialized as 0
-    uint16_t                            iprom = 0;  ///< Last one-second-average of #i . Initialized as 0
-    uint16_t                            tprom = 0;  ///< Last one-second-average of #t . Initialized as 0
-    uint16_t                            qprom = 0;  ///< Integration of #i . Initialized as 0
+    //qavg does not need accumulator
+    uint16_t                            vavg = 0;  ///< Last one-second-average of #v . Initialized as 0
+    uint16_t                            iavg = 0;  ///< Last one-second-average of #i . Initialized as 0
+    int16_t                            tavg = 0;  ///< Last one-second-average of #t . Initialized as 0
+    uint16_t                            qavg = 0;  ///< Integration of #i . Initialized as 0
     uint16_t                            vmax = 0;   ///< Maximum recorded average voltage. 
     int24_t                             intacum;   ///< Integral acumulator of PI compensator
     int16_t                             kp;  ///< Proportional compesator gain
@@ -206,8 +205,6 @@
     int16_t                             second = 0; ///< Seconds counter, resetted after 59 seconds.
     uint16_t                            minute = 0; ///< Minutes counter, only manually reset
     uint16_t                            timeout = 0;
-    uint16_t                            dcmax = 0; ///<To put the maximum duty cycle according to the operation mode
-    uint16_t                            dcmin = 0; ///<To put the minimum duty cycle according to the operation mode
     //Strings       
     char const                          comma = ',';
     char const                          colons = ':'; 

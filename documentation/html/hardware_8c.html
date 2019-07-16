@@ -153,22 +153,22 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hard
 <p>This function calculate the averages. </p>
 <p>If <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> = <a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9" title="Counter value, needed to obtained one second between counts. ">COUNTER</a></p>
 <ul>
-<li>Make <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iprom</a> zero</li>
-<li>Make <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a> zero</li>
-<li>Make <a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da" title="Last one-second-average of t . Initialized as 0. ">tprom</a> zero</li>
+<li>Make <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iavg</a> zero</li>
+<li>Make <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vavg</a> zero</li>
+<li>Make <a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da" title="Last one-second-average of t . Initialized as 0. ">tavg</a> zero</li>
 </ul>
 <p>If <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> = 0</p>
 <ul>
-<li>Divide the value stored in <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iprom</a> between COUNTER to obtain the average</li>
-<li>Divide the value stored in <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a> between COUNTER to obtain the average</li>
-<li>Divide the value stored in <a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da" title="Last one-second-average of t . Initialized as 0. ">tprom</a> between COUNTER to obtain the average</li>
-<li>Divide <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iprom</a> between 3600 and add it to <a class="el" href="hardware_8h.html#a16200aa761421d421187ce19c33dfcd0" title="Integration of i . Initialized as 0. ">qprom</a> to integrate the current over time</li>
-<li>If is the chemistry is Ni-MH and <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a> is bigger than <a class="el" href="hardware_8h.html#aeb4eb9ad2dc148d828a7f6e270aa0f09" title="Maximum recorded average voltage. ">vmax</a> then set <a class="el" href="hardware_8h.html#aeb4eb9ad2dc148d828a7f6e270aa0f09" title="Maximum recorded average voltage. ">vmax</a> = <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a></li>
+<li>Divide the value stored in <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iavg</a> between COUNTER to obtain the average</li>
+<li>Divide the value stored in <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vavg</a> between COUNTER to obtain the average</li>
+<li>Divide the value stored in <a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da" title="Last one-second-average of t . Initialized as 0. ">tavg</a> between COUNTER to obtain the average</li>
+<li>Divide <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iavg</a> between 3600 and add it to <a class="el" href="hardware_8h.html#a16200aa761421d421187ce19c33dfcd0" title="Integration of i . Initialized as 0. ">qavg</a> to integrate the current over time</li>
+<li>If is the chemistry is Ni-MH and <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vavg</a> is bigger than <a class="el" href="hardware_8h.html#aeb4eb9ad2dc148d828a7f6e270aa0f09" title="Maximum recorded average voltage. ">vmax</a> then set <a class="el" href="hardware_8h.html#aeb4eb9ad2dc148d828a7f6e270aa0f09" title="Maximum recorded average voltage. ">vmax</a> = <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vavg</a></li>
 </ul>
 <p>If <a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> is not any of the previous cases then</p>
 <ul>
-<li>Accumulate <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3" title="Last current ADC measurement. ">i</a> in <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iprom</a></li>
-<li>Accumulate <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72" title="Last voltage ADC measurement. ">v</a> in <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vprom</a> </li>
+<li>Accumulate <a class="el" href="hardware_8h.html#a58e739b7bdf8275493686ae76e3705c3" title="Last current ADC measurement. ">i</a> in <a class="el" href="hardware_8h.html#afce1f09585094a8102cf627d00de6d6f" title="Last one-second-average of i . Initialized as 0. ">iavg</a></li>
+<li>Accumulate <a class="el" href="hardware_8h.html#a48d9522e58fa05906c6dba23e5745a72" title="Last voltage ADC measurement. ">v</a> in <a class="el" href="hardware_8h.html#aa8a45b535ece3b14958359be03fa74b0" title="Last one-second-average of v . Initialized as 0. ">vavg</a> </li>
 </ul>
 
 </div>
@@ -446,9 +446,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="hard
 <ul>
 <li>Define <code>ip_buff</code> for storing #i_prom</li>
 <li>Define <code>vp_buff</code> for storing #v_prom</li>
-<li>Define <code>tp_buff</code> for storing <a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da" title="Last one-second-average of t . Initialized as 0. ">tprom</a></li>
+<li>Define <code>tp_buff</code> for storing <a class="el" href="hardware_8h.html#ade869e001da18e227da4d9dbb0b616da" title="Last one-second-average of t . Initialized as 0. ">tavg</a></li>
 </ul>
-<p>Define <code>qp_buff</code> for storing <a class="el" href="hardware_8h.html#a16200aa761421d421187ce19c33dfcd0" title="Integration of i . Initialized as 0. ">qprom</a> <code>*</code> <code>10*/</code> </p>
+<p>Define <code>qp_buff</code> for storing <a class="el" href="hardware_8h.html#a16200aa761421d421187ce19c33dfcd0" title="Integration of i . Initialized as 0. ">qavg</a> <code>*</code> <code>10*/</code> </p>
 <p><a class="el" href="hardware_8h.html#a6a9e89d63eb610dfe238b0a840979421" title="Counter that should be cleared every second. Initialized as COUNTER. ">count</a> = <a class="el" href="hardware_8h.html#a7194053a42881b1b4bc8546b4c8713e9" title="Counter value, needed to obtained one second between counts. ">COUNTER</a></p>
 <ul>
 <li>Convert <a class="el" href="hardware_8h.html#a5edffad982a0566ad01d95005474eae3" title="Minutes counter, only manually reset. ">minute</a> into a string and store it in <a class="el" href="hardware_8h.html#a20f2ad896b5d2be3ebe2145c7b00e033" title="Temporary buffer used between loops of log_control() ">log_buffer</a></li>

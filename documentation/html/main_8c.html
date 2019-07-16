@@ -75,10 +75,10 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a6288eba0f8e8ad3ab1544ad731eb7667"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a6288eba0f8e8ad3ab1544ad731eb7667">main</a> (void)</td></tr>
-<tr class="memdesc:a6288eba0f8e8ad3ab1544ad731eb7667"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the main function of the program. It takes care of initializing the registers.  <a href="#a6288eba0f8e8ad3ab1544ad731eb7667">More...</a><br /></td></tr>
+<tr class="memdesc:a6288eba0f8e8ad3ab1544ad731eb7667"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b> This is the main function of the program. It initializes the system in every reset and takes care of several tasks that are excecuted every second. </b>  <a href="#a6288eba0f8e8ad3ab1544ad731eb7667">More...</a><br /></td></tr>
 <tr class="separator:a6288eba0f8e8ad3ab1544ad731eb7667"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1d3159fc186c5f0bef6dd9a22c58859"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#ae1d3159fc186c5f0bef6dd9a22c58859">__interrupt</a> ()</td></tr>
-<tr class="memdesc:ae1d3159fc186c5f0bef6dd9a22c58859"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the interruption service function. It will interrupt the code whenever the Timer1 overflow (0.975625 milliseconds) or when any character is received from the serial terminal via UART.  <a href="#ae1d3159fc186c5f0bef6dd9a22c58859">More...</a><br /></td></tr>
+<tr class="memdesc:ae1d3159fc186c5f0bef6dd9a22c58859"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b> This is the interruption service function. It will interrupt the code whenever the Timer1 overflow (0.975625 milliseconds) or when any character is received from the serial terminal via UART. </b>  <a href="#ae1d3159fc186c5f0bef6dd9a22c58859">More...</a><br /></td></tr>
 <tr class="separator:ae1d3159fc186c5f0bef6dd9a22c58859"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -104,91 +104,80 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>This is the interruption service function. It will interrupt the code whenever the Timer1 overflow (0.975625 milliseconds) or when any character is received from the serial terminal via UART. </p>
+<p><b> This is the interruption service function. It will interrupt the code whenever the Timer1 overflow (0.975625 milliseconds) or when any character is received from the serial terminal via UART. </b> </p>
 <p>This function performs the folowing tasks: </p>
-<ul>
-<li>
-<p class="startli">define and initialize the <code>recep</code> variable to store the character received via UART</p>
-<p class="endli"></p>
-</li>
-<li>
-<p class="startli">check the <b>Timer1</b> interrupt flag, if it is set, the folowing task are executed:</p>
+<p>Check the <b>Timer1</b> interrupt flag, if it is set, the folowing task are executed:</p>
 <ol>
 <li>
-<p class="startli">load the <b>Timer1</b> 16-bit register so it overflow every 0.975625 ms</p>
+<p class="startli">Load the <b>Timer1</b> 16-bit register so it overflow every 0.975625 ms</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">clear the <b>Timer1</b> interrupt flag</p>
+<p class="startli">Clear the <b>Timer1</b> interrupt flag</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">read the ADC channel <a class="el" href="charger__discharger_8h.html#a420d619b855e71d5e8d4c26e2d0a0461" title="Definition of ADC channel for voltage measurements. AN10(RB1)">V_CHAN</a> and store the value in <a class="el" href="charger__discharger_8h.html#ac5f38113a34f9eab3e7782eade81d266" title="Last voltage ADC measurement.">v</a>. Using the <a class="el" href="charger__discharger_8c.html#abf70b9e763a525b6113c0349583e7ac0" title="This function read the ADC and store the data in the coresponding variable.">read_ADC()</a> function</p>
+<p class="startli">Read the ADC channel <a class="el" href="charger__discharger_8h.html#a420d619b855e71d5e8d4c26e2d0a0461" title="Definition of ADC channel for voltage measurements. AN10(RB1)">V_CHAN</a> and store the value in <a class="el" href="charger__discharger_8h.html#ac5f38113a34f9eab3e7782eade81d266" title="Last voltage ADC measurement.">v</a>. Using the <a class="el" href="charger__discharger_8c.html#abf70b9e763a525b6113c0349583e7ac0" title="This function read the ADC and store the data in the coresponding variable.">read_ADC()</a> function</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">read the ADC channel <a class="el" href="charger__discharger_8h.html#a72da0b033e023b574cca6ab663e25fca" title="Definition of ADC channel for current measurements. AN12(RB0)">I_CHAN</a> and store the value in <a class="el" href="charger__discharger_8h.html#a78f7a37dba921e0b0347b960fb40bc51" title="Last current ADC measurement.">i</a>. Using the <a class="el" href="charger__discharger_8c.html#abf70b9e763a525b6113c0349583e7ac0" title="This function read the ADC and store the data in the coresponding variable.">read_ADC()</a> function</p>
+<p class="startli">Read the ADC channel <a class="el" href="charger__discharger_8h.html#a72da0b033e023b574cca6ab663e25fca" title="Definition of ADC channel for current measurements. AN12(RB0)">I_CHAN</a> and store the value in <a class="el" href="charger__discharger_8h.html#a78f7a37dba921e0b0347b960fb40bc51" title="Last current ADC measurement.">i</a>. Using the <a class="el" href="charger__discharger_8c.html#abf70b9e763a525b6113c0349583e7ac0" title="This function read the ADC and store the data in the coresponding variable.">read_ADC()</a> function</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">substract the 2.5V bias from <a class="el" href="charger__discharger_8h.html#a78f7a37dba921e0b0347b960fb40bc51" title="Last current ADC measurement.">i</a>, use the absolute value</p>
+<p class="startli">Substract the 2.5V bias from <a class="el" href="charger__discharger_8h.html#a78f7a37dba921e0b0347b960fb40bc51" title="Last current ADC measurement.">i</a>, store the absolute value in <a class="el" href="charger__discharger_8h.html#a78f7a37dba921e0b0347b960fb40bc51" title="Last current ADC measurement.">i</a></p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">read the ADC channel <a class="el" href="charger__discharger_8h.html#a10ddb4ca8b21ecdf02ab19d67cb9142c" title="Definition of ADC channel for temperature measurements. AN4(RA5)">T_CHAN</a> and store the value in <a class="el" href="charger__discharger_8h.html#a3636f663c6b00463f1bad29dd9617997" title="Last temperature ADC measurement.">t</a>. Using the <a class="el" href="charger__discharger_8c.html#abf70b9e763a525b6113c0349583e7ac0" title="This function read the ADC and store the data in the coresponding variable.">read_ADC()</a> function</p>
+<p class="startli">Read the ADC channel <a class="el" href="charger__discharger_8h.html#a10ddb4ca8b21ecdf02ab19d67cb9142c" title="Definition of ADC channel for temperature measurements. AN4(RA5)">T_CHAN</a> and store the value in <a class="el" href="charger__discharger_8h.html#a3636f663c6b00463f1bad29dd9617997" title="Last temperature ADC measurement.">t</a>. Using the <a class="el" href="charger__discharger_8c.html#abf70b9e763a525b6113c0349583e7ac0" title="This function read the ADC and store the data in the coresponding variable.">read_ADC()</a> function</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">call the <a class="el" href="charger__discharger_8c.html#a0c80a804f63cdf1b40bca055d0b2d77d" title="This function is the PI control loop.">control_loop()</a> function</p>
+<p class="startli">Call the <a class="el" href="charger__discharger_8c.html#a0c80a804f63cdf1b40bca055d0b2d77d" title="This function calls the PI control loop for current or voltage depending on the value of the cmode va...">control_loop()</a> function</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">call the <a class="el" href="charger__discharger_8c.html#a6f1efdf53830030b8d4b67843aad1870" title="This function calculate the averages.">calculate_avg()</a> function</p>
+<p class="startli">Call the <a class="el" href="charger__discharger_8c.html#a6f1efdf53830030b8d4b67843aad1870" title="This function calculate the averages.">calculate_avg()</a> function</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">call the <a class="el" href="charger__discharger_8c.html#a4774aa6e41b08b4ff32010c008fa3a99" title="This function control the timing.">timing()</a> function</p>
+<p class="startli">Call the <a class="el" href="charger__discharger_8c.html#a4774aa6e41b08b4ff32010c008fa3a99" title="This function control the timing.">timing()</a> function</p>
 <p class="endli"></p>
 </li>
 <li>
-if the <b>Timer1</b> interrupt flag is set, there is a timing error, print "TIMING_ERROR" into the terminal. </li>
+If the <b>Timer1</b> interrupt flag is set, there is a timing error, print "TIMING_ERROR" into the terminal. </li>
 </ol>
-<p class="endli"></p>
-</li>
-<li>
-<p class="startli">check the <b>UART</b> reception interrupt flag, if it is set, the folowing task are executed:</p>
+<p>Check the <b>UART</b> reception interrupt flag, if it is set, the folowing task are executed:</p>
 <ol>
 <li>
-<p class="startli">check for any errors and clear them</p>
+<p class="startli">Check for any errors and clear them</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">assign the content of the UART reception buffer to the variable <code>recep</code> </p>
+<p class="startli">Store the received character</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">if <code>recep</code> received a <b>"c"</b>, the process is stop, then:</p>
+<p class="startli">If a <b>"c"</b> was received, the process shall stop, then:</p>
 <ul>
-<li>stop the converter by calling the <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0" title="Stop the converter.">STOP_CONVERTER()</a> macro</li>
-<li>set the <a class="el" href="charger__discharger_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY.">state</a> to <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6" title="&quot;Stand by&quot; state, defined by function fSTANDBY()">STANDBY</a></li>
+<li>Stop the converter by calling the <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0" title="Stop the converter.">STOP_CONVERTER()</a> macro</li>
+<li>Go to <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677ae4634ae4352b512b38c5da9dc1610ca6" title="&quot;Stand by&quot; state, defined by function fSTANDBY()">STANDBY</a> state</li>
 </ul>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">if <code>recep</code> received an <b>"n"</b>, the systems jumps to the next cell, then:</p>
+<p class="startli">If <code>an</code> <b>"n"</b> was received, the system shall jump to the next cell, then:</p>
 <ul>
-<li>stop the converter by calling the <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0" title="Stop the converter.">STOP_CONVERTER()</a> macro</li>
-<li>set the <a class="el" href="charger__discharger_8h.html#ab12828525693568ae9c217805bea1ef9" title="Used with store the value of the states enum. Initialized as STANDBY.">state</a> to <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a2df4f4d04ec310a30dd8eaac64f883a2" title="&quot;Is done&quot; state, defined by function fISDONE()">ISDONE</a></li>
+<li>Stop the converter by calling the <a class="el" href="charger__discharger_8h.html#ae1cb4a0872e924cf862a97b33dd2edf0" title="Stop the converter.">STOP_CONVERTER()</a> macro</li>
+<li>Go to <a class="el" href="charger__discharger_8h.html#aa19be6305a5a4485e1e70de70ed7d677a2df4f4d04ec310a30dd8eaac64f883a2" title="&quot;Is done&quot; state, defined by function fISDONE()">ISDONE</a> state</li>
 </ul>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">in any other case do nothing</p>
+<p class="startli">In any other case, do nothing</p>
 <p class="endli"></p>
 </li>
 </ol>
-</li>
-</ul>
 
 </div>
 </div>
@@ -208,24 +197,41 @@ if the <b>Timer1</b> interrupt flag is set, there is a timing error, print "TIMI
       </table>
 </div><div class="memdoc">
 
-<p>This is the main function of the program. It takes care of initializing the registers. </p>
+<p><b> This is the main function of the program. It initializes the system in every reset and takes care of several tasks that are excecuted every second. </b> </p>
 <p>This function performs the folowing tasks: </p>
 <ul>
 <li>
-<p class="startli">the <a class="el" href="charger__discharger_8h.html#a9efe22aaead3a5e936b5df459de02eba" title="Function to initialize all the PIC16F1787 registers.">initialize</a> function is excecuted one time.</p>
+<p class="startli">Call the <a class="el" href="charger__discharger_8h.html#a9efe22aaead3a5e936b5df459de02eba" title="Function to initialize all the PIC16F1787 registers.">initialize</a> function</p>
 <p class="endli"></p>
 </li>
 <li>
-<p class="startli">then the main <b>while</b> repeats the following steps forever:</p>
+<p class="startli"><b> The main loop repeats the following forever: </b></p>
 <ul>
 <li>
-<p class="startli">check the <a class="el" href="charger__discharger_8h.html#a29f21565ea58c567076a7677b0cec206" title="1 second flag">SECF</a> flag, if it is set, the folowing task are excecuted:</p>
-<ol type="1">
-<li>clear the <a class="el" href="charger__discharger_8h.html#a29f21565ea58c567076a7677b0cec206" title="1 second flag">SECF</a> flag to restart the 1 second timer</li>
-<li>print the log in the serial terminal by calling the <a class="el" href="charger__discharger_8h.html#a0b8b498532d1d667c624601a3cf715bc" title="This function takes care of printing the test data using the UART.">log_control</a> function</li>
-<li>check if the system shall change to CV mode by calling the <a class="el" href="charger__discharger_8h.html#a1db67160f1d6e9368e8c07df1c904eb4" title="This function switches between CC and CV mode.">cc_cv_mode</a> function</li>
-<li>call the <a class="el" href="state__machine_8c.html#a39943273f62c5b66673647a0a6cdb457" title="This function contain the transition definition for the states of the machine.">state_machine</a> function</li>
-<li>call the <a class="el" href="charger__discharger_8h.html#a4126a9c7eed2c3658428ce1613f62848">temp_protection</a> function </li>
+<p class="startli">Check the <a class="el" href="charger__discharger_8h.html#a29f21565ea58c567076a7677b0cec206" title="1 second flag">SECF</a> flag, if it is set, 1 second has passed since last execution, so the folowing task are executed:</p>
+<ol>
+<li>
+<p class="startli">Clear the <a class="el" href="charger__discharger_8h.html#a29f21565ea58c567076a7677b0cec206" title="1 second flag">SECF</a> flag to restart the 1 second timer</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Scale the average measured values by calling the <a class="el" href="charger__discharger_8h.html#a8eda4a7f25b80578a7cee00f6c9b6e4a" title="This function takes care of scaling the average values to correspond with their real values.">scaling</a> function</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Print the log in the serial terminal by calling the <a class="el" href="charger__discharger_8h.html#a0b8b498532d1d667c624601a3cf715bc" title="This function takes care of calculating the average values printing the log data using the UART.">log_control</a> function</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Check if the system shall change to CV mode by calling the <a class="el" href="charger__discharger_8h.html#a1db67160f1d6e9368e8c07df1c904eb4" title="This function switches between CC and CV mode.">cc_cv_mode</a> function</p>
+<p class="endli"></p>
+</li>
+<li>
+<p class="startli">Call the <a class="el" href="state__machine_8c.html#a39943273f62c5b66673647a0a6cdb457" title="This function contain the transition definition for the states of the machine.">state_machine</a> function</p>
+<p class="endli"></p>
+</li>
+<li>
+Call the <a class="el" href="charger__discharger_8h.html#a4126a9c7eed2c3658428ce1613f62848">temp_protection</a> function </li>
 </ol>
 </li>
 </ul>

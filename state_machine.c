@@ -101,7 +101,7 @@ void fCHARGE()
 {
     LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
     conv = 1; /// * Activate control loop by setting #conv
-    if (vprom < 900) //&& (qprom > 1)) /// If #vprom is below 0.9V
+    if (vavg < 900) //&& (qavg > 1)) /// If #vavg is below 0.9V
     {
         state = FAULT; /// * Go to #FAULT state
         UART_send_string((char*)cell_below_str); /// * Send a warning message
@@ -110,7 +110,7 @@ void fCHARGE()
     if (state == CHARGE){ /// If the #state is #CHARGE
         #if (LI_ION_CHEM) 
         /// If the chemistry is Li-Ion
-        if ((iprom < EOC_current)  && (qprom > 100)) /// * If #iprom is below #EOC_current then
+        if ((iavg < EOC_current)  && (qavg > 100)) /// * If #iavg is below #EOC_current then
         {                
             prev_state = state; /// -# Set #prev_state equal to #state
             if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #DONE state
@@ -120,7 +120,7 @@ void fCHARGE()
         }
         #elif (NI_MH_CHEM) 
         /// If the chemistry is Ni-MH
-        if (((vprom < (vmax - Ni_MH_EOC_DV)) && (qprom > 100)) || minute >= timeout)
+        if (((vavg < (vmax - Ni_MH_EOC_DV)) && (qavg > 100)) || minute >= timeout)
         {
             prev_state = state; /// -# Set #prev_state equal to #state
             if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #ISDONE state
@@ -132,13 +132,13 @@ void fCHARGE()
     } 
     if (state == POSTCHARGE){
         #if (LI_ION_CHEM) 
-        if (qprom >= ( (capacity * 10) / 2 ) && ((minute + second) >= 1)){
+        if (qavg >= ( (capacity * 10) / 2 ) && ((minute + second) >= 1)){
             prev_state = state;
             state = WAIT;
             wait_count = WAIT_TIME;
             STOP_CONVERTER();
         #elif (NI_MH_CHEM)
-        if (qprom >= ( (capacity * 10) / 2 ) || (unsigned) minute >= timeout){
+        if (qavg >= ( (capacity * 10) / 2 ) || (unsigned) minute >= timeout){
             prev_state = state;
             state = WAIT;
             wait_count = WAIT_TIME;
@@ -154,7 +154,7 @@ void fDISCHARGE()
 {
     LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
     conv = 1; /// * Activate control loop by setting #conv
-    if (vprom < EOD_voltage) /// * If #vprom is below #EOD_voltage then
+    if (vavg < EOD_voltage) /// * If #vavg is below #EOD_voltage then
     {
         prev_state = state; /// -# Set #prev_state equal to #state
         if (option == '2'| option == '4') state = ISDONE; /// -# If #option is '2' or '4' then go to #ISDONE state
@@ -171,14 +171,14 @@ void fDC_res() //can be improved a lot!!
     conv = 1; /// * Activate control loop by setting #conv
     if (dc_res_count == 4)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
     {
-        v_1_dcres = vprom;
-        i_1_dcres = iprom;
+        v_1_dcres = vavg;
+        i_1_dcres = iavg;
         iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 1 ) ) + 0.5 );     //1C            
     }
     if (dc_res_count == 1)
     {
-        v_2_dcres = vprom;
-        i_2_dcres = iprom;
+        v_2_dcres = vavg;
+        i_2_dcres = iavg;
         STOP_CONVERTER();            
         dc_res_val = (uint24_t)(v_1_dcres - v_2_dcres) * 10000;    
         dc_res_val = dc_res_val /(uint24_t)(i_2_dcres - i_1_dcres);
@@ -373,33 +373,27 @@ void converter_settings()
     ki = CC_ki; /// * The proportional constant, #kp is set to #CC_kp
     cmode = 1; /// * Start in constant current mode by setting. #cmode
     intacum = 0; /// * The #integral component of the compensator is set to zero.*/
-    qprom = 0; /// * Average capacity, #q_prom is set to zero.*/
+    qavg = 0; /// * Average capacity, #q_prom is set to zero.*/
     vmax = 0; /// * Maximum averaged voltage, #vmax is set to zero.*/
-    dc = DC_START;
+    dc = DC_MIN;
     set_DC();  /// * The #set_DC() function is called
     Cell_ON(); /// * The #Cell_ON() function is called
     switch(state)
     {
         case POSTCHARGE:
         case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
-            dcmax = DC_MAX_CHAR;
-            dcmin = DC_MIN_CHAR;
             iref = i_char; /// * The current setpoint, #iref is defined as #i_char
             timeout = ((capacity / ccref) * 66); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
             SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
             break;
         case PREDISCHARGE:
         case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE
-            dcmax = DC_MAX_DISC;
-            dcmin = DC_MIN_DISC;
             iref = i_disc; /// * The current setpoint, #iref is defined as #i_disc
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;
         case CS_DC_res:
         case DS_DC_res:
         case PS_DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
-            dcmax = DC_MAX_DISC;
-            dcmin = DC_MIN_DISC;
             iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 5 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
             dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
@@ -600,7 +594,7 @@ void param()
     EOD_voltage = Li_Ion_EOD_V;
     UART_send_string((char*)EOD_V_str);
     #elif (NI_MH_CHEM)
-    EOD_voltage = Ni_MH_EOD_V;  //This is compared to vprom
+    EOD_voltage = Ni_MH_EOD_V;  //This is compared to vavg
     UART_send_string((char*)EOD_V_str);
     #endif
     display_value_u(EOD_voltage);

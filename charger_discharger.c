@@ -120,7 +120,7 @@ void initialize()
     /** @b FINAL */
     STOP_CONVERTER(); ///* Call #STOP_CONVERTER() macro
 }
-/**@brief This function is the PI control loop
+/**@brief This function calls the PI control loop for current or voltage depending on the value of the #cmode variable.
 */
 void control_loop()
 {   
@@ -137,35 +137,34 @@ void control_loop()
 *  @param   feedback average of measured values for the control variable
 *  @param   setpoint desire controlled output for the variable
 */
-void pid(uint16_t feedback, uint16_t setpoint)
+void pid(uint16_t feedback, uint16_t setpoint) 
 { 
-int16_t     er = 0; /// * Define @p er for calculating the error
-int16_t     pi = 0; /// * Define @p pi for storing the PI compesator value
-int16_t     prop = 0;
+int16_t     er = 0; 
+int16_t     pi = 0; 
+int16_t     prop = 0; 
 int16_t     inte = 0;
-    er = (int16_t) (setpoint - feedback); /// * Calculate the error by substracting the @p feedback from the @p setpoint and store it in @p er
-    if(er > ERR_MAX) er = ERR_MAX; /// * Make sure error is never above #ERR_MAX
-    if(er < ERR_MIN) er = ERR_MIN; /// * Make sure error is never below #ERR_MIN
-    prop = er / kp; /// * Calculate #proportional component of compensator
-	intacum += (int24_t) (er); /// * Calculate #integral component of compensator
-    inte = (int16_t) (intacum / ((int24_t) ki * COUNTER));
-    pi = prop + inte; /// * Sum them up and store in @p pi*/
-    if ((uint16_t)((int16_t)dc + pi) >= dcmax){ /// * Make sure duty cycle is never above #DC_MAX
-        dc = dcmax;
-    }else if ((uint16_t)((int16_t)dc + pi) <= dcmin){ /// * Make sure duty cycle is never below #DC_MIN
-        dc = dcmin;
-    }else{
-        dc = (uint16_t)((int16_t)dc + pi); /// * Store the new value of the duty cycle with operation @code dc = dc + pi @endcode
-    }   
+    /// This function performs the folowing tasks:
+    er = (int16_t) (setpoint - feedback); /// <ol> <li> Calculate the error
+    if(er > ERR_MAX) er = ERR_MAX; /// <li> Make sure error is never above #ERR_MAX
+    if(er < ERR_MIN) er = ERR_MIN; /// <li> Make sure error is never below #ERR_MIN
+    prop = er / kp; /// <li> Calculate the proportional component of compensator
+	intacum += (int24_t) (er); 
+    inte = (int16_t) (intacum / ((int24_t) ki * COUNTER)); /// <li> Calculate the integral component of compensator usign #intacum to accumulate over cycles
+    pi = prop + inte; /// <li> Combine proportinal and integral parts
+    dc = (uint16_t)((int16_t)dc + pi);/// <li> Sum the result to the previous duty cycle stored in the #dc variable
+    if (dc >= DC_MAX){ /// <li> Make sure the duty cycle is never above #DC_MAX
+        dc = DC_MAX;
+    }else if (dc <= DC_MIN){ /// <li> Make sure duty cycle is never below #DC_MIN </ol>
+        dc = DC_MIN;
+    }
 }
-/**@brief This function sets the desired duty cycle
+/**@brief This function sets the desired duty cycle of the PWM
 */
-void set_DC()
+void set_DC() /// This function performs the folowing tasks:
 {
-/// This function can set the duty cycle from 0x0 to 0x1FF
-    PSMC1DCL = dc & 0x00FF; /// * Lower 8 bits of #dc are stored in @p PSMC1DCL
-    PSMC1DCH = (dc >> 8) & 0x01; /// * Higher 1 bit of #dc are stored in @p PSMC1DCH
-    PSMC1CONbits.PSMC1LD = 1; /// * Set the load register. This will load all the setting as once*/
+    PSMC1DCL = dc & 0x00FF; 
+    PSMC1DCH = (dc >> 8) & 0x01; /// <ol> <li> Load the duty cycle register of the PSMC with the #dc variable
+    PSMC1CONbits.PSMC1LD = 1; /// <li> Set the load register. This will load all the setting at once </ol>
 }
 /**@brief This function switches between CC and CV mode.
 * @param current_voltage average of current voltage
@@ -174,32 +173,32 @@ void set_DC()
 */
 void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status)
 {
-/// If the current voltage is bigger than the voltage setpoint and the system is in CC mode, then:
+/// If the current voltage is bigger than the CV setpoint and the system is in CC mode, then:
     if(current_voltage > reference_voltage && CC_mode_status)
     {        
-            intacum = 0; /// * The #integral is set to zero
-            cmode = 0; /// * The system is set in CV mode by clearing the #cmode variable
-            kp = CV_kp; /// * The proportional constant, #kp is set to #CV_kp 
-            ki = CV_ki; /// * The integral constant, #ki is set to #CV_ki 
+            intacum = 0; /// <ol> <li> The integral acummulator is cleared
+            cmode = 0; /// <li> The system is set in CV mode by clearing the #cmode variable
+            kp = CV_kp; /// <li> The proportional constant divider is set to #CV_kp 
+            ki = CV_ki; /// <li> The integral constant divider is set to #CV_ki 
     }    
 }
-/**@brief This function takes care of printing the test data using the UART
+/**@brief This function takes care of scaling the average values to correspond with their real values.
+*/
+void scaling() /// This function performs the folowing tasks:
+{
+iavg = (uint16_t) ( ( ( iavg * 2.5 * 5000 ) / 4096 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
+vavg = (uint16_t) ( ( ( vavg * 5000.0 ) / 4096 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
+tavg = (uint16_t) ( ( ( tavg * 5000.0 ) / 4096 ) + 0.5 ); 
+tavg = (int16_t) ( ( ( 1866.3 - tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
+qavg += (uint16_t) ( iavg / 360 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
+#if (NI_MH_CHEM)  
+if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg
+#endif
+}
+/**@brief This function takes care of calculating the average values printing the log data using the UART.
 */
 void log_control()
 {
-/**The code in this function is only executed if the #log_on variable is set*/
-/**This function takes care of sending the logging data in pieces to avoid disturbing the control loop. 
-This problem can be avoided with the use of interruptions for the control loop; however this was not implemented
-and could be considered as some future improvement*/  
-iprom = (uint16_t) ( ( ( iprom * 2.5 * 5000 ) / 4096 ) + 0.5 ); 
-vprom = (uint16_t) ( ( ( vprom * 5000.0 ) / 4096 ) + 0.5 );
-tprom = (uint16_t) ( ( ( tprom * 5000.0 ) / 4096 ) + 0.5 );
-tprom = (uint16_t) ( ( ( abs ( 1866.3 - tprom ) ) / 1.169 ) + 0.5 );
-#if (NI_MH_CHEM)  
-if (vprom > vmax) vmax = vprom; /// * If is the chemistry is Ni-MH and #vprom is bigger than #vmax then set #vmax = #vprom
-#endif
-if (iprom > 0) qprom += (uint16_t) ( iprom / 360 ) + 0.5; /// * Divide #iprom between 3600 and multiplied by 10 add it to #qprom to integrate the current over time
-    
     if (log_on)
     {
                 LINEBREAK;
@@ -215,17 +214,17 @@ if (iprom > 0) qprom += (uint16_t) ( iprom / 360 ) + 0.5; /// * Divide #iprom be
                 display_value_u((uint16_t)state);
                 UART_send_char(comma); /// * Send a comma character
                 UART_send_char(V_str); /// * Send a 'V'
-                display_value_u(vprom);
+                display_value_u(vavg);
                 UART_send_char(comma); ///* Send a comma character
                 UART_send_char(I_str); /// * Send an 'I'
-                display_value_u(iprom);
+                display_value_u(iavg);
                 UART_send_char(comma); ///* Send a comma character
                 UART_send_char(T_str); /// * Send a 'T'
-                display_value_u(tprom);
+                display_value_s(tavg);
                 UART_send_char(comma); ///* Send a comma character
                 UART_send_char(Q_str); /// * Send a 'Q'
                 //display_value_u((uint16_t) (dc * 1.933125));
-                display_value_u(qprom);
+                display_value_u(qavg);
                 UART_send_char('<'); /// * Send a '<'
     }
     if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
@@ -267,20 +266,20 @@ void calculate_avg()
     switch(count)
     {
         case COUNTER + 1: /// If #count = #COUNTER
-            iacum = 0; /// * Make #iprom zero
-            vacum = 0; /// * Make #vprom zero
-            tacum = 0; /// * Make #tprom zero
+            iacum = 0; /// * Make #iavg zero
+            vacum = 0; /// * Make #vavg zero
+            tacum = 0; /// * Make #tavg zero
             break;
         case 0: /// If #count = 0
-            iprom = ((iacum >> 10) + ((iacum >> 9) & 0x01)); /// * Divide the value stored in #iprom between COUNTER to obtain the average   
-            vprom = ((vacum >> 10) + ((vacum >> 9) & 0x01)); /// * This is equivalent to vacum / 1024 = vacum / 2^10 
-            tprom = ((tacum >> 10) + ((tacum >> 9) & 0x01)); /// * This is equivalent to tacum / 1024 = tacum / 2^10 
+            iavg = ((iacum >> 10) + ((iacum >> 9) & 0x01)); /// * Divide the value stored in #iavg between COUNTER to obtain the average   
+            vavg = ((vacum >> 10) + ((vacum >> 9) & 0x01)); /// * This is equivalent to vacum / 1024 = vacum / 2^10 
+            tavg = ((tacum >> 10) + ((tacum >> 9) & 0x01)); /// * This is equivalent to tacum / 1024 = tacum / 2^10 
             break;
         default: /// If #count is not any of the previous cases then
-            iacum += (uint24_t) i; /// * Accumulate #i in #iprom
-            vacum += (uint24_t) v; /// * Accumulate #v in #vprom
-            tacum += (uint24_t) t; /// * Accumulate #t in #tprom
-            //tprom += dc * 1.953125; // TEST FOR DC Is required to deactivate temperature protection
+            iacum += (uint24_t) i; /// * Accumulate #i in #iavg
+            vacum += (uint24_t) v; /// * Accumulate #v in #vavg
+            tacum += (uint24_t) t; /// * Accumulate #t in #tavg
+            //tavg += dc * 1.953125; // TEST FOR DC Is required to deactivate temperature protection
     }   
 }
 /**@brief This function activate the UART reception interruption 
@@ -340,10 +339,18 @@ void display_value_u(uint16_t value)
     utoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
     UART_send_string(&buffer[0]); /// * Send @p buffer using #UART_send_string()
 }
-
+///**@brief This function convert a number to string and then send it using UART
+//* @param value integer to be send
+//*/
+void display_value_s(int16_t value)
+{   
+    char buffer[7]; /// * Define @p buffer to used it for store character storage
+    itoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
+    UART_send_string(&buffer[0]); /// * Send @p buffer using #UART_send_string()
+}
 void temp_protection()
 {
-    if (conv && (tprom > 350)){
+    if (conv && (tavg > 350)){
         UART_send_string((char*)"HIGH_TEMP:");
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
         state = STANDBY; /// -# Go to the #STANDBY state.

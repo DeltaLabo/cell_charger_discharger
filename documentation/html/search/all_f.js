@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['scaling',['scaling',['../charger__discharger_8c.html#acb92cf488fc031fa581b9f7d2f90b438',1,'scaling():&#160;charger_discharger.c'],['../charger__discharger_8h.html#a8eda4a7f25b80578a7cee00f6c9b6e4a',1,'scaling(void):&#160;charger_discharger.c']]],
   ['secf',['SECF',['../charger__discharger_8h.html#a29f21565ea58c567076a7677b0cec206',1,'charger_discharger.h']]],
   ['second',['second',['../charger__discharger_8h.html#af03cfc6ea64c1cf48f35ae59730afad6',1,'charger_discharger.h']]],
   ['set_5fdc',['set_DC',['../charger__discharger_8c.html#a95853552054d1c99e8765eca54abb930',1,'set_DC():&#160;charger_discharger.c'],['../charger__discharger_8h.html#a93f3630c962d9bcafd71e4c4a03547c1',1,'set_DC(void):&#160;charger_discharger.c']]],
