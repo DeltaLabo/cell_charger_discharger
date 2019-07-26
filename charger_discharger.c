@@ -20,6 +20,7 @@ void initialize()
     /** <b> GENERAL </b>*/
     CLRWDT(); /// * Clear WDT by calling @p CLRWDT()
     nWPUEN = 0; /// * Allow change of individual WPU
+    WPUE3 = 1;      //Enable pull up for MCLR
     /** <b> SYSTEM CLOCK </b>*/
     OSCCONbits.IRCF = 0b1111; /// * Set clock to 32MHz (PLL is enabled)
     OSCCONbits.SCS = 0b00; /// * Clock determined by FOSC<2:0> in Configuration Words
