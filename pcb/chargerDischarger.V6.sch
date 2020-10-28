@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.4.2">
+<eagle version="9.5.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -287,10 +287,10 @@ DIN A4, landscape with location and doc. field</description>
 </library>
 <library name="ICs" urn="urn:adsk.eagle:library:3502073">
 <packages>
-<package name="SOIC-8" urn="urn:adsk.eagle:footprint:3502105/1" locally_modified="yes" library_version="16" library_locally_modified="yes">
+<package name="SOIC-8" urn="urn:adsk.eagle:footprint:3502105/1" library_version="16">
 <wire x1="2.5" y1="2" x2="2.5" y2="-2" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="-1.26890625" x2="-2.5" y2="2" width="0.127" layer="21"/>
-<circle x="-3" y="-3.5" radius="0.3302" width="0" layer="21"/>
+<circle x="-2.921" y="-2.032" radius="0.3302" width="0" layer="21"/>
 <smd name="1" x="-1.905" y="-2.7" dx="1.4" dy="0.6" layer="1" rot="R90"/>
 <smd name="2" x="-0.635" y="-2.7" dx="1.4" dy="0.6" layer="1" rot="R90"/>
 <smd name="3" x="0.635" y="-2.7" dx="1.4" dy="0.6" layer="1" rot="R90"/>
@@ -299,9 +299,9 @@ DIN A4, landscape with location and doc. field</description>
 <smd name="6" x="0.635" y="2.7" dx="1.4" dy="0.6" layer="1" rot="R90"/>
 <smd name="7" x="-0.635" y="2.7" dx="1.4" dy="0.6" layer="1" rot="R90"/>
 <smd name="8" x="-1.905" y="2.7" dx="1.4" dy="0.6" layer="1" rot="R90"/>
-<text x="-3" y="-3" size="1.27" layer="25" ratio="11" rot="R90">&gt;NAME</text>
+<text x="-3.5" y="0" size="1.5" layer="25" font="vector" ratio="11" rot="R90" align="center">&gt;NAME</text>
 </package>
-<package name="SOT-23" urn="urn:adsk.eagle:footprint:3502106/1" locally_modified="yes" library_version="16" library_locally_modified="yes">
+<package name="SOT-23" urn="urn:adsk.eagle:footprint:3502106/1" library_version="16">
 <smd name="1" x="-1.0922" y="0.9398" dx="1.3208" dy="0.5588" layer="1"/>
 <smd name="2" x="-1.0922" y="-0.9398" dx="1.3208" dy="0.5588" layer="1"/>
 <smd name="3" x="1.0922" y="0" dx="1.3208" dy="0.5588" layer="1"/>
@@ -334,10 +334,10 @@ DIN A4, landscape with location and doc. field</description>
 <wire x1="1.3208" y1="-0.254" x2="1.3208" y2="0.254" width="0" layer="51"/>
 <wire x1="1.3208" y1="0.254" x2="0.7112" y2="0.254" width="0" layer="51"/>
 <wire x1="0.3048" y1="1.524" x2="-0.3048" y2="1.524" width="0" layer="51" curve="-180"/>
-<text x="0" y="2.5" size="1.27" layer="25" ratio="10" rot="SR0" align="center">&gt;NAME</text>
+<text x="0" y="2.5" size="1.5" layer="25" font="vector" ratio="10" rot="SR0" align="center">&gt;NAME</text>
 <circle x="-1" y="1.5" radius="0.1" width="0.127" layer="21"/>
 </package>
-<package name="DIL04" urn="urn:adsk.eagle:footprint:3502114/1" locally_modified="yes" library_version="16" library_locally_modified="yes">
+<package name="DIL04" urn="urn:adsk.eagle:footprint:3502114/1" library_version="16">
 <description>&lt;b&gt;Dual In Line Package&lt;/b&gt;</description>
 <wire x1="2.54" y1="2.921" x2="-2.54" y2="2.921" width="0.1524" layer="21"/>
 <wire x1="-2.54" y1="-2.921" x2="2.54" y2="-2.921" width="0.1524" layer="21"/>
@@ -349,7 +349,7 @@ DIN A4, landscape with location and doc. field</description>
 <pad name="2" x="1.27" y="-3.81" drill="0.8128" shape="long" rot="R90"/>
 <pad name="3" x="1.27" y="3.81" drill="0.8128" shape="long" rot="R90"/>
 <pad name="4" x="-1.27" y="3.81" drill="0.8128" shape="long" rot="R90"/>
-<text x="-3.81" y="0" size="1.27" layer="25" ratio="10" rot="R90" align="center">&gt;NAME</text>
+<text x="0" y="0" size="1.524" layer="25" ratio="10" rot="R90" align="center">&gt;NAME</text>
 </package>
 <package name="SC70-6L" urn="urn:adsk.eagle:footprint:3502104/1" library_version="4">
 <description>&lt;b&gt;SC-70 Package&lt;/b&gt;</description>
@@ -420,7 +420,7 @@ DIN A4, landscape with location and doc. field</description>
 <pad name="28" x="3.81" y="16.51" drill="0.8128" shape="long"/>
 <text x="0" y="0" size="1.524" layer="25" rot="SR270" align="center">&gt;NAME</text>
 </package>
-<package name="SSOP28" urn="urn:adsk.eagle:footprint:20599/1" locally_modified="yes" library_version="16" library_locally_modified="yes">
+<package name="SSOP28" urn="urn:adsk.eagle:footprint:20599/1" library_version="16">
 <description>&lt;b&gt;Shrink Small Outline Package&lt;/b&gt;&lt;p&gt;
 package type SS</description>
 <wire x1="-5.1" y1="-2.6" x2="5.1" y2="-2.6" width="0.2032" layer="21"/>
@@ -485,21 +485,20 @@ package type SS</description>
 <rectangle x1="-3.7529" y1="2.6416" x2="-3.3973" y2="3.937" layer="51"/>
 <rectangle x1="-4.4028" y1="2.6416" x2="-4.0472" y2="3.937" layer="51"/>
 <rectangle x1="-5.1999" y1="-2.5999" x2="-4.225" y2="2.5999" layer="27"/>
-<circle x="-6" y="-3.5" radius="0.25" width="0.2" layer="21"/>
 </package>
 </packages>
 <packages3d>
-<package3d name="SOIC-8" urn="urn:adsk.eagle:package:3502142/3" type="model" library_version="16" library_locally_modified="yes">
+<package3d name="SOIC-8" urn="urn:adsk.eagle:package:3502142/3" type="model" library_version="16">
 <packageinstances>
 <packageinstance name="SOIC-8"/>
 </packageinstances>
 </package3d>
-<package3d name="SOT-23" urn="urn:adsk.eagle:package:3502141/2" type="model" library_version="16" library_locally_modified="yes">
+<package3d name="SOT-23" urn="urn:adsk.eagle:package:3502141/2" type="model" library_version="16">
 <packageinstances>
 <packageinstance name="SOT-23"/>
 </packageinstances>
 </package3d>
-<package3d name="DIL04" urn="urn:adsk.eagle:package:3502133/2" type="model" library_version="16" library_locally_modified="yes">
+<package3d name="DIL04" urn="urn:adsk.eagle:package:3502133/2" type="model" library_version="16">
 <description>&lt;b&gt;Dual In Line Package&lt;/b&gt;</description>
 <packageinstances>
 <packageinstance name="DIL04"/>
@@ -522,7 +521,7 @@ package type SS</description>
 <packageinstance name="SPDIP-28"/>
 </packageinstances>
 </package3d>
-<package3d name="SSOP28" urn="urn:adsk.eagle:package:11388080/2" type="model" library_version="16" library_locally_modified="yes">
+<package3d name="SSOP28" urn="urn:adsk.eagle:package:11388080/2" type="model" library_version="16">
 <description>Shrink Small Outline Package
 package type SS</description>
 <packageinstances>
@@ -728,7 +727,7 @@ package type SS</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="SI4154DY" urn="urn:adsk.eagle:component:3502160/2" prefix="MF" library_version="16" library_locally_modified="yes">
+<deviceset name="SI4154DY" urn="urn:adsk.eagle:component:3502160/2" prefix="MF" library_version="16">
 <description>N-Channel 40-V (D-S) MOSFET</description>
 <gates>
 <gate name="A" symbol="SI41XX" x="0" y="0"/>
@@ -754,7 +753,7 @@ package type SS</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="MCP14628-E/SN" urn="urn:adsk.eagle:component:3502159/2" prefix="DR" library_version="16" library_locally_modified="yes">
+<deviceset name="MCP14628-E/SN" urn="urn:adsk.eagle:component:3502159/2" prefix="DR" library_version="16">
 <description>MOSFET DRIVER, 2A, SYNC BUCK</description>
 <gates>
 <gate name="A" symbol="MCP14628-E/SN" x="0" y="0"/>
@@ -780,7 +779,7 @@ package type SS</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="BC818K-40" urn="urn:adsk.eagle:component:3502157/3" prefix="BJT" library_version="16" library_locally_modified="yes">
+<deviceset name="BC818K-40" urn="urn:adsk.eagle:component:3502157/3" prefix="BJT" library_version="16">
 <gates>
 <gate name="G$1" symbol="NPN" x="0" y="0"/>
 </gates>
@@ -800,7 +799,7 @@ package type SS</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="PS2502-1" urn="urn:adsk.eagle:component:3502156/2" prefix="OK" library_version="16" library_locally_modified="yes">
+<deviceset name="PS2502-1" urn="urn:adsk.eagle:component:3502156/2" prefix="OK" library_version="16">
 <description>PS2502-1</description>
 <gates>
 <gate name="A" symbol="OK-D" x="2.54" y="0" swaplevel="1"/>
@@ -868,7 +867,7 @@ package type SS</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="MAX4198" urn="urn:adsk.eagle:component:3502151/2" prefix="DA" library_version="16" library_locally_modified="yes">
+<deviceset name="MAX4198" urn="urn:adsk.eagle:component:3502151/2" prefix="DA" library_version="16">
 <gates>
 <gate name="A" symbol="MAX4198" x="0" y="0"/>
 </gates>
@@ -893,7 +892,7 @@ package type SS</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="ACS723-05AB-T" urn="urn:adsk.eagle:component:3502149/2" prefix="SEN" library_version="16" library_locally_modified="yes">
+<deviceset name="ACS723-05AB-T" urn="urn:adsk.eagle:component:3502149/2" prefix="SEN" library_version="16">
 <description>Hall Effect-Based Linear Current Sensor IC - 5A</description>
 <gates>
 <gate name="A" symbol="ACS723-05AB-T" x="0" y="0"/>
@@ -919,7 +918,7 @@ package type SS</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="PIC16F1786" urn="urn:adsk.eagle:component:3596020/7" prefix="PIC" library_version="16" library_locally_modified="yes">
+<deviceset name="PIC16F1786" urn="urn:adsk.eagle:component:3596020/7" prefix="PIC" library_version="16">
 <gates>
 <gate name="G$1" symbol="PIC16F1786" x="0" y="0"/>
 </gates>
@@ -1002,7 +1001,7 @@ package type SS</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="REF195GSZ" urn="urn:adsk.eagle:component:4900860/1" locally_modified="yes" prefix="VR" library_version="16" library_locally_modified="yes">
+<deviceset name="REF195GSZ" urn="urn:adsk.eagle:component:4900860/1" prefix="VREF" library_version="16">
 <gates>
 <gate name="G$1" symbol="REF195GSZ" x="0" y="0"/>
 </gates>
@@ -1053,7 +1052,7 @@ package type SS</description>
 <text x="0" y="2.5" size="1.5" layer="25" font="vector" align="center">&gt;NAME</text>
 <rectangle x1="-0.1999" y1="-0.4001" x2="0.1999" y2="0.4001" layer="35"/>
 </package>
-<package name="R0603" urn="urn:adsk.eagle:footprint:2793495/2" locally_modified="yes" library_version="14" library_locally_modified="yes">
+<package name="R0603" urn="urn:adsk.eagle:footprint:2793495/2" library_version="14">
 <description>&lt;b&gt;RESISTOR&lt;/b&gt;</description>
 <wire x1="-0.15" y1="-0.356" x2="0.15" y2="-0.356" width="0.1524" layer="51"/>
 <wire x1="0.15" y1="0.356" x2="-0.15" y2="0.356" width="0.1524" layer="51"/>
@@ -1078,7 +1077,7 @@ package type SS</description>
 <smd name="2" x="2.2" y="0" dx="1.8" dy="2.7" layer="1"/>
 <text x="0" y="2.5" size="1.5" layer="25" font="vector" align="center">&gt;NAME</text>
 </package>
-<package name="SOD123" urn="urn:adsk.eagle:footprint:2793499/1" locally_modified="yes" library_version="14" library_locally_modified="yes">
+<package name="SOD123" urn="urn:adsk.eagle:footprint:2793499/1" library_version="14">
 <description>&lt;b&gt;Diode&lt;/b&gt;</description>
 <wire x1="-1" y1="0.7" x2="1" y2="0.7" width="0.254" layer="51"/>
 <wire x1="1" y1="0.7" x2="1" y2="-0.7" width="0.254" layer="51"/>
@@ -1086,13 +1085,13 @@ package type SS</description>
 <wire x1="-1" y1="-0.7" x2="-1" y2="0.7" width="0.254" layer="51"/>
 <smd name="C" x="-1.9" y="0" dx="1.4" dy="1.4" layer="1"/>
 <smd name="A" x="1.9" y="0" dx="1.4" dy="1.4" layer="1"/>
-<text x="0" y="2" size="1.27" layer="25" align="center">&gt;NAME</text>
-<circle x="-1.5" y="1" radius="0.1" width="0.127" layer="21"/>
+<text x="0" y="2" size="1.5" layer="25" font="vector" align="center">&gt;NAME</text>
+<circle x="-0.67" y="0.3" radius="0.07" width="0.127" layer="21"/>
 </package>
-<package name="60B683C" urn="urn:adsk.eagle:footprint:2793500/1" locally_modified="yes" library_version="14" library_locally_modified="yes">
+<package name="60B683C" urn="urn:adsk.eagle:footprint:2793500/1" library_version="14">
 <description>&lt;b&gt;High Power Density, High Efficiency, Shielded Inductors&lt;/b&gt;&lt;p&gt;
 Source: coiltronics_dr_series.pdf</description>
-<text x="0" y="15.24" size="1.778" layer="25" align="center">&gt;NAME</text>
+<text x="0" y="0" size="1.778" layer="25" align="center">&gt;NAME</text>
 <smd name="1" x="-10.4" y="0" dx="14" dy="3" layer="1" rot="R90"/>
 <smd name="2" x="10.4" y="0" dx="14" dy="3" layer="1" rot="R90"/>
 <circle x="0" y="0" radius="8.8" width="0.127" layer="21"/>
@@ -1102,29 +1101,28 @@ Source: coiltronics_dr_series.pdf</description>
 <wire x1="-8.8" y1="-13.6" x2="-8.8" y2="13.6" width="0.127" layer="21"/>
 <wire x1="8.8" y1="-13.6" x2="-8.8" y2="-13.6" width="0.127" layer="21"/>
 </package>
-<package name="SOD08" urn="urn:adsk.eagle:footprint:2793501/1" locally_modified="yes" library_version="14" library_locally_modified="yes">
+<package name="SOD08" urn="urn:adsk.eagle:footprint:2793501/1" library_version="14">
 <smd name="C" x="-1.6" y="0" dx="0.9" dy="1.7" layer="1"/>
 <smd name="A" x="1.6" y="0" dx="0.9" dy="1.7" layer="1"/>
-<text x="-2.286" y="2" size="1.27" layer="25" ratio="5" rot="SR0" align="center-left">&gt;NAME</text>
+<text x="0" y="2" size="1.5" layer="25" ratio="5" rot="SR0" align="center">&gt;NAME</text>
 <wire x1="-0.875" y1="0.5" x2="0.875" y2="0.5" width="0.127" layer="21"/>
 <wire x1="0.875" y1="-0.5" x2="-0.875" y2="-0.5" width="0.127" layer="21"/>
 <wire x1="-0.75" y1="0.5" x2="-0.75" y2="-0.5" width="0.127" layer="21"/>
 <wire x1="-0.875" y1="-0.5" x2="-0.875" y2="0.5" width="0.127" layer="21"/>
-<circle x="-2.413" y="1.143" radius="0.179603125" width="0.127" layer="21"/>
 </package>
-<package name="SML0805" urn="urn:adsk.eagle:footprint:2793502/1" locally_modified="yes" library_version="14" library_locally_modified="yes">
+<package name="SML0805" urn="urn:adsk.eagle:footprint:2793502/1" library_version="14">
 <description>&lt;b&gt;SML0805-2CW-TR (0805 PROFILE)&lt;/b&gt; COOL WHITE&lt;p&gt;
 Source: http://www.ledtronics.com/ds/smd-0603/Dstr0093.pdf</description>
+<wire x1="-0.175" y1="-0.025" x2="0" y2="0.15" width="0.0634" layer="21"/>
+<wire x1="0" y1="0.15" x2="0.15" y2="0" width="0.0634" layer="21"/>
+<wire x1="0.15" y1="0" x2="-0.025" y2="-0.175" width="0.0634" layer="21"/>
+<wire x1="-0.025" y1="-0.175" x2="-0.175" y2="-0.025" width="0.0634" layer="21"/>
 <circle x="-2.075" y="0.5" radius="0.125" width="0" layer="21"/>
 <smd name="C" x="-1.05" y="0" dx="1.2" dy="1.2" layer="1"/>
 <smd name="A" x="1.05" y="0" dx="1.2" dy="1.2" layer="1"/>
-<text x="0" y="1.5" size="1.27" layer="25" align="center">&gt;NAME</text>
-<wire x1="-1.778" y1="0.635" x2="-1.778" y2="-0.635" width="0.127" layer="21"/>
-<wire x1="1.778" y1="0.635" x2="1.778" y2="-0.635" width="0.127" layer="21"/>
-<wire x1="-0.254" y1="0.762" x2="0.127" y2="0.762" width="0.127" layer="21"/>
-<wire x1="-0.254" y1="-0.635" x2="0.127" y2="-0.635" width="0.127" layer="21"/>
+<text x="0" y="1.5" size="1.5" layer="25" font="vector" align="center">&gt;NAME</text>
 </package>
-<package name="C7343" urn="urn:adsk.eagle:footprint:2793505/1" locally_modified="yes" library_version="14" library_locally_modified="yes">
+<package name="C7343" urn="urn:adsk.eagle:footprint:2793505/1" library_version="14">
 <smd name="+" x="-3.22" y="0" dx="2.77" dy="2.55" layer="1" rot="R90"/>
 <smd name="-" x="3.22" y="0" dx="2.77" dy="2.55" layer="1" rot="R90"/>
 <wire x1="-1.4" y1="2" x2="-1.4" y2="-2" width="0.2" layer="21"/>
@@ -1138,7 +1136,7 @@ Source: http://www.ledtronics.com/ds/smd-0603/Dstr0093.pdf</description>
 <wire x1="-1.1" y1="-2" x2="3" y2="-2" width="0.2" layer="21"/>
 <wire x1="-1.1" y1="2" x2="-1.1" y2="-2" width="0.2" layer="21"/>
 <wire x1="-1.25" y1="2" x2="-1.25" y2="-2" width="0.2" layer="21"/>
-<text x="0" y="3" size="1.27" layer="21" align="center">&gt;NAME</text>
+<text x="0" y="3" size="1.5" layer="21" align="center">&gt;NAME</text>
 </package>
 <package name="SMC_D" urn="urn:adsk.eagle:footprint:2793504/1" library_version="1">
 <description>&lt;b&gt;Chip Capacitor &lt;/b&gt; Polar tantalum capacitors with solid electrolyte&lt;p&gt;
@@ -1372,11 +1370,11 @@ chip</description>
 <text x="-12.7" y="-6.096" size="1.778" layer="25" ratio="10">&gt;NAME</text>
 <text x="1.143" y="-6.096" size="1.778" layer="27" ratio="10">&gt;VALUE</text>
 </package>
-<package name="TO-220HEATSINK" urn="urn:adsk.eagle:footprint:5417998/3" library_version="13">
-<pad name="R1" x="-2.54" y="6.1" drill="0.9" rot="R180"/>
-<pad name="R2" x="2.54" y="6.1" drill="0.9" rot="R180"/>
-<pad name="D1" x="-9.5" y="7" drill="2.7" rot="R180"/>
-<pad name="D2" x="9.5" y="7" drill="2.7" rot="R180"/>
+<package name="TO-220HEATSINK" urn="urn:adsk.eagle:footprint:5417998/5" library_version="16">
+<pad name="R1" x="-2.54" y="6.8" drill="0.9" diameter="1.778" rot="R180"/>
+<pad name="R2" x="2.54" y="6.8" drill="0.9" diameter="1.778" rot="R180"/>
+<pad name="D1" x="-9.5" y="7" drill="2.7" diameter="4.318" rot="R180"/>
+<pad name="D2" x="9.5" y="7" drill="2.7" diameter="4.318" rot="R180"/>
 <wire x1="-1.45" y1="0.0247" x2="0" y2="0.00000625" width="0.01" layer="21" curve="1.951425"/>
 <wire x1="-1.45" y1="0.0247" x2="0" y2="0.00000625" width="0.03" layer="21" curve="1.951425"/>
 <wire x1="-1.45" y1="0.0247" x2="0" y2="0.00000625" width="0.1" layer="21" curve="1.951425"/>
@@ -1441,8 +1439,8 @@ chip</description>
 <wire x1="4.95" y1="8.2" x2="5.2" y2="5" width="0.1" layer="21"/>
 <wire x1="-4.95" y1="8.2" x2="-5.2" y2="5" width="0.1" layer="21"/>
 <wire x1="-15.7" y1="5" x2="-15.7" y2="11" width="0.1" layer="21"/>
-<circle x="-2.54" y="6.1" radius="0.5" width="0.1" layer="21"/>
-<circle x="2.54" y="6.1" radius="0.5" width="0.1" layer="21"/>
+<circle x="-2.54" y="6.8" radius="0.5" width="0.1" layer="21"/>
+<circle x="2.54" y="6.8" radius="0.5" width="0.1" layer="21"/>
 <text x="-3.5" y="10" size="1.27" layer="25" font="vector">&gt;NAME</text>
 </package>
 <package name="CLF12555" urn="urn:adsk.eagle:footprint:5714496/1" library_version="9" library_locally_modified="yes">
@@ -1480,24 +1478,24 @@ chip</description>
 <packageinstance name="C0603"/>
 </packageinstances>
 </package3d>
-<package3d name="C7343" urn="urn:adsk.eagle:package:2793524/2" type="model" library_version="14" library_locally_modified="yes">
+<package3d name="C7343" urn="urn:adsk.eagle:package:2793524/2" type="model" library_version="14">
 <packageinstances>
 <packageinstance name="C7343"/>
 </packageinstances>
 </package3d>
-<package3d name="R0603" urn="urn:adsk.eagle:package:2793509/3" type="model" library_version="14" library_locally_modified="yes">
+<package3d name="R0603" urn="urn:adsk.eagle:package:2793509/3" type="model" library_version="14">
 <description>&lt;b&gt;RESISTOR&lt;/b&gt;</description>
 <packageinstances>
 <packageinstance name="R0603"/>
 </packageinstances>
 </package3d>
-<package3d name="SOD123" urn="urn:adsk.eagle:package:2793518/2" type="model" library_version="14" library_locally_modified="yes">
+<package3d name="SOD123" urn="urn:adsk.eagle:package:2793518/2" type="model" library_version="14">
 <description>&lt;b&gt;Diode&lt;/b&gt;</description>
 <packageinstances>
 <packageinstance name="SOD123"/>
 </packageinstances>
 </package3d>
-<package3d name="60B683C" urn="urn:adsk.eagle:package:2793519/2" type="model" library_version="14" library_locally_modified="yes">
+<package3d name="60B683C" urn="urn:adsk.eagle:package:2793519/2" type="model" library_version="14">
 <description>&lt;b&gt;High Power Density, High Efficiency, Shielded Inductors&lt;/b&gt;&lt;p&gt;
 Source: coiltronics_dr_series.pdf</description>
 <packageinstances>
@@ -1509,7 +1507,7 @@ Source: coiltronics_dr_series.pdf</description>
 <packageinstance name="IHLP-6767GZ-01"/>
 </packageinstances>
 </package3d>
-<package3d name="SOD08" urn="urn:adsk.eagle:package:2793520/2" type="model" library_version="14" library_locally_modified="yes">
+<package3d name="SOD08" urn="urn:adsk.eagle:package:2793520/2" type="model" library_version="14">
 <packageinstances>
 <packageinstance name="SOD08"/>
 </packageinstances>
@@ -1521,7 +1519,7 @@ diameter 5.6 mm, horizontal, grid 15.24 mm</description>
 <packageinstance name="DO201-15"/>
 </packageinstances>
 </package3d>
-<package3d name="SML0805" urn="urn:adsk.eagle:package:2793521/2" type="model" library_version="14" library_locally_modified="yes">
+<package3d name="SML0805" urn="urn:adsk.eagle:package:2793521/2" type="model" library_version="14">
 <description>&lt;b&gt;SML0805-2CW-TR (0805 PROFILE)&lt;/b&gt; COOL WHITE&lt;p&gt;
 Source: http://www.ledtronics.com/ds/smd-0603/Dstr0093.pdf</description>
 <packageinstances>
@@ -1610,7 +1608,7 @@ Source: www.farnell.com/datasheets/247.pdf</description>
 <packageinstance name="SH22,5"/>
 </packageinstances>
 </package3d>
-<package3d name="TO-220HEATSINK" urn="urn:adsk.eagle:package:5417999/5" type="model" library_version="13" library_locally_modified="yes">
+<package3d name="TO-220HEATSINK" urn="urn:adsk.eagle:package:5417999/7" type="model" library_version="16">
 <packageinstances>
 <packageinstance name="TO-220HEATSINK"/>
 </packageinstances>
@@ -1814,7 +1812,7 @@ Source: www.farnell.com/datasheets/247.pdf</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="POL_CAP" urn="urn:adsk.eagle:component:3563735/8" prefix="C" uservalue="yes" library_version="14" library_locally_modified="yes">
+<deviceset name="POL_CAP" urn="urn:adsk.eagle:component:3563735/8" prefix="C" uservalue="yes" library_version="14">
 <gates>
 <gate name="G$1" symbol="C-US" x="0" y="0"/>
 </gates>
@@ -1869,7 +1867,7 @@ Source: www.farnell.com/datasheets/247.pdf</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="RESISTOR" urn="urn:adsk.eagle:component:2793534/7" prefix="R" uservalue="yes" library_version="14" library_locally_modified="yes">
+<deviceset name="RESISTOR" urn="urn:adsk.eagle:component:2793534/7" prefix="R" uservalue="yes" library_version="14">
 <description>RESISTOR</description>
 <gates>
 <gate name="G$1" symbol="R-US" x="0" y="0"/>
@@ -1925,7 +1923,7 @@ Source: www.farnell.com/datasheets/247.pdf</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="SCHOTTKY_DIODE" urn="urn:adsk.eagle:component:2793529/3" prefix="D" uservalue="yes" library_version="14" library_locally_modified="yes">
+<deviceset name="SCHOTTKY_DIODE" urn="urn:adsk.eagle:component:2793529/3" prefix="D" uservalue="yes" library_version="14">
 <description>BAT42W</description>
 <gates>
 <gate name="G$1" symbol="SCHOTTKY" x="0" y="0"/>
@@ -1945,7 +1943,7 @@ Source: www.farnell.com/datasheets/247.pdf</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="INDUCTOR" urn="urn:adsk.eagle:component:2793532/9" prefix="L" uservalue="yes" library_version="14" library_locally_modified="yes">
+<deviceset name="INDUCTOR" urn="urn:adsk.eagle:component:2793532/9" prefix="L" uservalue="yes" library_version="14">
 <description>SMD Power Inductor</description>
 <gates>
 <gate name="G$1" symbol="L-US" x="0" y="0"/>
@@ -2013,7 +2011,7 @@ Source: www.farnell.com/datasheets/247.pdf</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="DIODE" urn="urn:adsk.eagle:component:2793531/6" prefix="D" uservalue="yes" library_version="14" library_locally_modified="yes">
+<deviceset name="DIODE" urn="urn:adsk.eagle:component:2793531/6" prefix="D" uservalue="yes" library_version="14">
 <gates>
 <gate name="G$1" symbol="D-US" x="0" y="0"/>
 </gates>
@@ -2082,7 +2080,7 @@ Source: www.farnell.com/datasheets/247.pdf</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="LGR971" urn="urn:adsk.eagle:component:2793527/3" prefix="LED" library_version="14" library_locally_modified="yes">
+<deviceset name="LGR971" urn="urn:adsk.eagle:component:2793527/3" prefix="LED" library_version="14">
 <gates>
 <gate name="G$1" symbol="LED" x="0" y="0"/>
 </gates>
@@ -2145,7 +2143,7 @@ Source: www.farnell.com/datasheets/247.pdf</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="TO-220_RESISTOR" urn="urn:adsk.eagle:component:5580876/3" prefix="PR" uservalue="yes" library_version="14">
+<deviceset name="TO-220_RESISTOR" urn="urn:adsk.eagle:component:5580876/5" prefix="PR" uservalue="yes" library_version="16">
 <gates>
 <gate name="G$1" symbol="TO-220_RESISTOR" x="0" y="0"/>
 </gates>
@@ -2158,7 +2156,7 @@ Source: www.farnell.com/datasheets/247.pdf</description>
 <connect gate="G$1" pin="D2" pad="D2"/>
 </connects>
 <package3dinstances>
-<package3dinstance package3d_urn="urn:adsk.eagle:package:5417999/5"/>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:5417999/7"/>
 </package3dinstances>
 <technologies>
 <technology name=""/>
@@ -2247,7 +2245,7 @@ Source: http://www.schrack.com/.. 5843.pdf</description>
 <pin name="NO" x="-5.08" y="5.08" visible="pad" length="short" direction="pas"/>
 <pin name="COM" x="0" y="-2.54" visible="pad" length="short" direction="pas" rot="R90"/>
 </symbol>
-<symbol name="+KS+KR-" urn="urn:adsk.eagle:symbol:4898017/1" library_version="1">
+<symbol name="+KS+KR-" urn="urn:adsk.eagle:symbol:4898017/1" locally_modified="yes" library_version="4" library_locally_modified="yes">
 <wire x1="-3.81" y1="-1.905" x2="-1.905" y2="-1.905" width="0.254" layer="94"/>
 <wire x1="3.81" y1="-1.905" x2="3.81" y2="1.905" width="0.254" layer="94"/>
 <wire x1="3.81" y1="1.905" x2="1.905" y2="1.905" width="0.254" layer="94"/>
@@ -2277,11 +2275,11 @@ Source: http://www.schrack.com/.. 5843.pdf</description>
 <wire x1="-5.588" y1="-4.445" x2="-5.588" y2="-4.953" width="0.1524" layer="94"/>
 <text x="1.27" y="2.921" size="1.778" layer="96">&gt;VALUE</text>
 <text x="1.27" y="5.08" size="1.778" layer="95">&gt;PART</text>
-<text x="4.318" y="-0.508" size="1.27" layer="94">R</text>
-<text x="-14.478" y="0.508" size="1.27" layer="94" rot="R180">S</text>
+<text x="-16.002" y="-0.508" size="1.27" layer="94">R</text>
 <pin name="-" x="-5.08" y="-5.08" visible="pad" length="short" direction="pas" rot="R90"/>
 <pin name="R+" x="0" y="5.08" visible="pad" length="short" direction="pas" rot="R270"/>
 <pin name="S+" x="-10.16" y="5.08" visible="pad" length="short" direction="pas" rot="R270"/>
+<text x="4.318" y="-0.508" size="1.27" layer="94">S</text>
 </symbol>
 <symbol name="U-1" urn="urn:adsk.eagle:symbol:4898016/1" library_version="1">
 <wire x1="3.175" y1="5.08" x2="1.905" y2="5.08" width="0.254" layer="94"/>
@@ -2320,7 +2318,7 @@ Source: http://www.schrack.com/.. 5843.pdf</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="RT424F05" urn="urn:adsk.eagle:component:4898026/3" prefix="K" library_version="4">
+<deviceset name="RT424F05" urn="urn:adsk.eagle:component:4898026/3" prefix="K" library_version="4" library_locally_modified="yes">
 <description>&lt;b&gt;Power PCB Relay  polarized bistable version&lt;/b&gt; SCHRACK&lt;p&gt;
 2 pole 8 A&lt;br&gt;
 Source: http://www.schrack.com/.. 5843.pdf</description>
@@ -3320,7 +3318,7 @@ Source: http://www.schrack.com/.. 5843.pdf</description>
 <wire x1="36.83" y1="125.73" x2="40.64" y2="125.73" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="DISC" class="0">
+<net name="CHAR" class="0">
 <segment>
 <pinref part="R1" gate="G$1" pin="1"/>
 <wire x1="26.67" y1="125.73" x2="12.7" y2="125.73" width="0.1524" layer="91"/>
@@ -3481,7 +3479,7 @@ Source: http://www.schrack.com/.. 5843.pdf</description>
 <junction x="105.41" y="105.41"/>
 </segment>
 </net>
-<net name="CHAR" class="0">
+<net name="DISC" class="0">
 <segment>
 <pinref part="R3" gate="G$1" pin="1"/>
 <wire x1="52.07" y1="99.06" x2="38.1" y2="99.06" width="0.1524" layer="91"/>
@@ -4078,9 +4076,9 @@ Source: http://www.schrack.com/.. 5843.pdf</description>
 <attribute name="SUBTITLE" value="Block Diagram"/>
 <attribute name="TITLE" value="General"/>
 </part>
-<part name="PR1" library="Pasives" library_urn="urn:adsk.eagle:library:2793478" deviceset="TO-220_RESISTOR" device="" package3d_urn="urn:adsk.eagle:package:5417999/5" value="1"/>
-<part name="PR2" library="Pasives" library_urn="urn:adsk.eagle:library:2793478" deviceset="TO-220_RESISTOR" device="" package3d_urn="urn:adsk.eagle:package:5417999/5" value="1"/>
-<part name="PR3" library="Pasives" library_urn="urn:adsk.eagle:library:2793478" deviceset="TO-220_RESISTOR" device="" package3d_urn="urn:adsk.eagle:package:5417999/5" value="1"/>
+<part name="PR1" library="Pasives" library_urn="urn:adsk.eagle:library:2793478" deviceset="TO-220_RESISTOR" device="" package3d_urn="urn:adsk.eagle:package:5417999/7" value="1"/>
+<part name="PR2" library="Pasives" library_urn="urn:adsk.eagle:library:2793478" deviceset="TO-220_RESISTOR" device="" package3d_urn="urn:adsk.eagle:package:5417999/7" value="1"/>
+<part name="PR3" library="Pasives" library_urn="urn:adsk.eagle:library:2793478" deviceset="TO-220_RESISTOR" device="" package3d_urn="urn:adsk.eagle:package:5417999/7" value="1"/>
 </parts>
 <sheets>
 <sheet>
@@ -4934,17 +4932,16 @@ Source: http://www.schrack.com/.. 5843.pdf</description>
 </net>
 <net name="CHAR" class="0">
 <segment>
-<label x="86.36" y="111.76" size="1.778" layer="95" xref="yes"/>
-<pinref part="PIC1" gate="G$1" pin="RC3"/>
-<wire x1="83.82" y1="111.76" x2="86.36" y2="111.76" width="0.1524" layer="91"/>
+<label x="109.22" y="114.3" size="1.778" layer="95" xref="yes"/>
+<wire x1="83.82" y1="114.3" x2="109.22" y2="114.3" width="0.1524" layer="91"/>
+<pinref part="PIC1" gate="G$1" pin="RC4"/>
 </segment>
 </net>
 <net name="DISC" class="0">
 <segment>
-<label x="107.95" y="114.3" size="1.778" layer="95" xref="yes"/>
-<pinref part="PIC1" gate="G$1" pin="RC4"/>
-<wire x1="106.68" y1="114.3" x2="107.95" y2="114.3" width="0.1524" layer="91"/>
-<wire x1="83.82" y1="114.3" x2="106.68" y2="114.3" width="0.1524" layer="91"/>
+<label x="87.63" y="111.76" size="1.778" layer="95" xref="yes"/>
+<wire x1="83.82" y1="111.76" x2="87.63" y2="111.76" width="0.1524" layer="91"/>
+<pinref part="PIC1" gate="G$1" pin="RC3"/>
 </segment>
 </net>
 <net name="I_SENS" class="0">
