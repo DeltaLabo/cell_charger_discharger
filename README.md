@@ -1,4 +1,4 @@
-Electrochemical Cell Charger/Discharger/Tester -- README {#mainpage}
+Electrochemical Cell Charger/Discharger/Tester
 ============
 
 ### Most recent version of this repository can be found in: ###
