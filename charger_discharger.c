@@ -4,11 +4,9 @@
  * @date 7 Aug 2018
  * @brief Hardware related functions source file.
  * @par Institution:
- * LaSEINE / CeNT. Kyushu Institute of Technology.
- * @par Mail (after leaving Kyutech):
+ * Instituto Tecnológico de Costa Rica.
+ * @par Mail:
  * juan.rojas@tec.ac.cr
- * @par Git repository:
- * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 #include "charger_discharger.h"
