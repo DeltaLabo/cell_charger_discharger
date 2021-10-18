@@ -1,18 +1,12 @@
 /**
- * @file
- * main.c
- * @author 
- * Juan J. Rojas
- * @date 
- * 7 Aug 2018
- * @brief 
- * Main source file. Includes the main loop and the interruption service routine. 
+ * @file charger_discharger.c
+ * @author Juan J. Rojas
+ * @date 7 Aug 2018
+ * @brief Hardware related functions source file.
  * @par Institution:
- * LaSEINE / CeNT. Kyushu Institute of Technology.
+ * Instituto Tecnológico de Costa Rica.
  * @par Mail:
  * juan.rojas@tec.ac.cr
- * @par Git repository:
- * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 #include "charger_discharger.h"
