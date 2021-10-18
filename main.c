@@ -2,7 +2,7 @@
  * @file charger_discharger.c
  * @author Juan J. Rojas
  * @date 7 Aug 2018
- * @brief Hardware related functions source file.
+ * @brief Main loop
  * @par Institution:
  * Instituto Tecnológico de Costa Rica.
  * @par Mail:
