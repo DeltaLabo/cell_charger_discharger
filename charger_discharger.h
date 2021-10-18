@@ -1,14 +1,12 @@
 /**
- * @file charger_discharger.h
+ * @file charger_discharger.c
  * @author Juan J. Rojas
  * @date 7 Aug 2018
- * @brief State machine header file for Charge and Discharge System.
+ * @brief Hardware related functions source file.
  * @par Institution:
- * LaSEINE / CeNT. Kyushu Institute of Technology.
- * @par Mail (after leaving Kyutech):
+ * Instituto Tecnológico de Costa Rica.
+ * @par Mail:
  * juan.rojas@tec.ac.cr
- * @par Git repository:
- * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 #ifndef CHARGER_DISCHARGER_H
