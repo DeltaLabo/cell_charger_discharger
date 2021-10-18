@@ -3,7 +3,7 @@ Electrochemical Cell Charger/Discharger/Tester
 
 ### Most recent version of this repository can be found in: ###
 
-* [Bitbucket](https://bitbucket.org/juanjorojash/cell_charger_discharger/src/master/)
+* [GitHub](https://github.com/juanjorojash/cell_charger_discharger)
 
 ### Documentation ###
 
