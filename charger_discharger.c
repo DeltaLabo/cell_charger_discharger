@@ -188,7 +188,7 @@ void scaling() /// This function performs the folowing tasks:
 iavg = (uint16_t) ( ( ( iavg * 2.5 * 5000 ) / 4096 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
 vavg = (uint16_t) ( ( ( vavg * 5000.0 ) / 4096 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
 tavg = (uint16_t) ( ( ( tavg * 5000.0 ) / 4096 ) + 0.5 ); 
-tavg = (int16_t) ( ( ( 1866.3 - tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
+tavg = dc * 1.933125; ///(uint16_t) ( ( ( 1866.3 - tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
 qavg += (uint16_t) ( iavg / 360 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
 #if (NI_MH_CHEM)  
 if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg

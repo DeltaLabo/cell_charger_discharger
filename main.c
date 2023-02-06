@@ -18,16 +18,22 @@ void main(void) /// This function performs the folowing tasks:
 {       
     initialize(); /// <ul> <li> Call the #initialize function
     __delay_ms(10);
+    //SECF = 1; ///quitar
+    //interrupt_enable(); ///quitar
+    //cell_count = '1'; //quitar
+    //Cell_ON(); //quitar
     while(1) /// <li> <b> The main loop repeats the following forever: </b> 
     {
         if (SECF) /// <ul> <li> Check the #SECF flag, if it is set, 1 second has passed since last execution, so the folowing task are executed:
         {     
             SECF = 0; /// <ol> <li> Clear the #SECF flag to restart the 1 second timer
             scaling(); /// <li> Scale the average measured values by calling the #scaling function 
+            //log_on = 1;  ///quitar
             log_control(); /// <li> Print the log in the serial terminal by calling the #log_control function
             cc_cv_mode(vavg, cvref, cmode); /// <li> Check if the system shall change to CV mode by calling the #cc_cv_mode function
+            //conv = 0; ///quitar
             state_machine(); /// <li> Call the #state_machine function
-            temp_protection(); /// <li> Call the #temp_protection function </ol> </ul> </ul>
+            //temp_protection(); /// <li> Call the #temp_protection function </ol> </ul> </ul>
         }
 	}
 }

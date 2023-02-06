@@ -102,7 +102,7 @@ void fCHARGE()
 {
     LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
     conv = 1; /// * Activate control loop by setting #conv
-    if (vavg < 900) //&& (qavg > 1)) /// If #vavg is below 0.9V
+    if ((vavg < 900) && (qavg > 1)) /// If #vavg is below 0.9V
     {
         state = FAULT; /// * Go to #FAULT state
         UART_send_string((char*)cell_below_str); /// * Send a warning message
@@ -111,7 +111,7 @@ void fCHARGE()
     if (state == CHARGE){ /// If the #state is #CHARGE
         #if (LI_ION_CHEM) 
         /// If the chemistry is Li-Ion
-        if ((iavg < EOC_current)  && (qavg > 100)) /// * If #iavg is below #EOC_current then
+        if (((iavg < EOC_current)  && (qavg > 100)) || minute >= timeout) /// * If #iavg is below #EOC_current then
         {                
             prev_state = state; /// -# Set #prev_state equal to #state
             if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #DONE state
@@ -138,6 +138,7 @@ void fCHARGE()
             state = WAIT;
             wait_count = WAIT_TIME;
             STOP_CONVERTER();
+        }
         #elif (NI_MH_CHEM)
         if (qavg >= ( (capacity * 10) / 2 ) || (unsigned) minute >= timeout){
             prev_state = state;
@@ -422,8 +423,8 @@ void param()
     @endcode*/
     LINEBREAK;  
     #if (LI_ION_CHEM)    
-    cvref = (uint16_t) ( ( Li_Ion_CV * 4096 ) / 5000) + 0.5; //Scale the voltage refence to be compare with v
-    cvv = Li_Ion_CV;
+    vref = (uint16_t) ( ( ( Li_Ion_CV * 4096.0 ) / 5000) + 0.5 ); //Scale the voltage refence to be compare with v
+    cvref = Li_Ion_CV;
     UART_send_string((char*)cv_val_str);
     display_value_u(Li_Ion_CV);
     UART_send_string((char*)mV_str);
@@ -518,7 +519,7 @@ void param()
     #if (LI_ION_CHEM)
     EOC_current = Li_Ion_EOC_I;
     UART_send_string((char*)EOC_I_str);
-    display_value(EOC_current);
+    display_value_u(EOC_current);
     UART_send_string((char*)mA_str);
     #elif (NI_MH_CHEM) 
     UART_send_string((char*)EOC_DV_str);
