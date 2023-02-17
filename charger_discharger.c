@@ -4,9 +4,11 @@
  * @date 7 Aug 2018
  * @brief Hardware related functions source file.
  * @par Institution:
- * Instituto Tecnológico de Costa Rica.
- * @par Mail:
+ * LaSEINE / CeNT. Kyushu Institute of Technology.
+ * @par Mail (after leaving Kyutech):
  * juan.rojas@tec.ac.cr
+ * @par Git repository:
+ * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 #include "charger_discharger.h"
@@ -117,7 +119,9 @@ void initialize()
     RCIE = 0; /// * Disable UART reception interrupts
     TXIE = 0; /// * Disable UART transmission interrupts
     /** @b FINAL */
-    STOP_CONVERTER(); ///* Call #STOP_CONVERTER() macro
+    SET_DISC();
+    __delay_ms(100);
+    STOP_CONVERTER();
 }
 /**@brief This function calls the PI control loop for current or voltage depending on the value of the #cmode variable.
 */
@@ -125,45 +129,41 @@ void control_loop()
 {   
     if(!cmode) /// If #cmode is cleared then
     {
-        pid(v, vref);  /// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
+        pid(v, vref, &intacum, &dc);  /// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
     }else /// Else,
     {
-        pid(i, iref); /// * The #pid() function is called with @p feedback = #i and @p setpoint = #iref
+        pid(i, iref, &intacum, &dc); /// * The #pid() function is called with @p feedback = #i and @p setpoint = #iref
     }
-    set_DC(); /// The duty cycle is set by calling the #set_DC() function
+    set_DC(&dc); /// The duty cycle is set by calling the #set_DC() function
 }
 /**@brief This function defines the PI controller
 *  @param   feedback average of measured values for the control variable
 *  @param   setpoint desire controlled output for the variable
 */
-void pid(uint16_t feedback, uint16_t setpoint) 
+void pid(uint16_t feedback, uint16_t setpoint, int24_t* acum, uint16_t* duty_cycle)
 { 
-int16_t     er = 0; 
-int16_t     pi = 0; 
-int16_t     prop = 0; 
-int16_t     inte = 0;
-    /// This function performs the folowing tasks:
-    er = (int16_t) (setpoint - feedback); /// <ol> <li> Calculate the error
-    if(er > ERR_MAX) er = ERR_MAX; /// <li> Make sure error is never above #ERR_MAX
-    if(er < ERR_MIN) er = ERR_MIN; /// <li> Make sure error is never below #ERR_MIN
-    prop = er / kp; /// <li> Calculate the proportional component of compensator
-	intacum += (int24_t) (er); 
-    inte = (int16_t) (intacum / ((int24_t) ki * COUNTER)); /// <li> Calculate the integral component of compensator usign #intacum to accumulate over cycles
-    pi = prop + inte; /// <li> Combine proportinal and integral parts
-    dc = (uint16_t)((int16_t)dc + pi);/// <li> Sum the result to the previous duty cycle stored in the #dc variable
-    if (dc >= DC_MAX){ /// <li> Make sure the duty cycle is never above #DC_MAX
-        dc = DC_MAX;
-    }else if (dc <= DC_MIN){ /// <li> Make sure duty cycle is never below #DC_MIN </ol>
-        dc = DC_MIN;
-    }
+int16_t     er = 0; /// * Define @p er for calculating the error
+float       pi = 0; /// * Define @p pi for storing the PI compensator value
+float       new_dc = 0;
+    er = (int16_t) (setpoint - feedback); /// * Calculate the error by substract the @p feedback from the @p setpoint and store it in @p er
+    if(er > ERR_MAX) er = ERR_MAX; /// * Make sure error is never above #ERR_MAX
+    if(er < ERR_MIN) er = ERR_MIN; /// * Make sure error is never below #ERR_MIN
+    pi = (float)er / kp; /// * Calculate #proportional component of compensator
+	*acum += (int24_t) (er); /// * Calculate #integral component of compensator
+    pi += ((float)*acum /  (ki * (float)COUNTER));
+    new_dc = ((float)*duty_cycle + pi);
+    if (new_dc >= DC_MAX) *duty_cycle = DC_MAX;
+    else if (new_dc <= DC_MIN) *duty_cycle = DC_MIN;
+    else *duty_cycle = (uint16_t)new_dc;
 }
-/**@brief This function sets the desired duty cycle of the PWM
+/**@brief This function sets the desired duty cycle
 */
-void set_DC() /// This function performs the folowing tasks:
+void set_DC(uint16_t* duty_cycle)
 {
-    PSMC1DCL = dc & 0x00FF; 
-    PSMC1DCH = (dc >> 8) & 0x01; /// <ol> <li> Load the duty cycle register of the PSMC with the #dc variable
-    PSMC1CONbits.PSMC1LD = 1; /// <li> Set the load register. This will load all the setting at once </ol>
+/// This function can set the duty cycle from 0x0 to 0x1FF
+    PSMC1DCL = *duty_cycle & 0x00FF; /// * Lower 8 bits of #dc are stored in @p PSMC1DCL
+    PSMC1DCH = (*duty_cycle >> 8) & 0x01; /// * Higher 1 bit of #dc are stored in @p PSMC1DCH
+    PSMC1CONbits.PSMC1LD = 1; /// * Set the load register. This will load all the setting as once*/
 }
 /**@brief This function switches between CC and CV mode.
 * @param current_voltage average of current voltage
@@ -175,21 +175,21 @@ void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mo
 /// If the current voltage is bigger than the CV setpoint and the system is in CC mode, then:
     if(current_voltage > reference_voltage && CC_mode_status)
     {        
-            intacum = 0; /// <ol> <li> The integral acummulator is cleared
-            cmode = 0; /// <li> The system is set in CV mode by clearing the #cmode variable
-            kp = CV_kp; /// <li> The proportional constant divider is set to #CV_kp 
-            ki = CV_ki; /// <li> The integral constant divider is set to #CV_ki 
+        intacum = 0; /// <ol> <li> The integral acummulator is cleared
+        cmode = 0; /// <li> The system is set in CV mode by clearing the #cmode variable
+        kp = CV_kp; /// <li> The proportional constant divider is set to #CV_kp 
+        ki = CV_ki; /// <li> The integral constant divider is set to #CV_ki 
     }    
 }
 /**@brief This function takes care of scaling the average values to correspond with their real values.
 */
 void scaling() /// This function performs the folowing tasks:
 {
-iavg = (uint16_t) ( ( ( iavg * 2.5 * 5000 ) / 4096 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
-vavg = (uint16_t) ( ( ( vavg * 5000.0 ) / 4096 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
-tavg = (uint16_t) ( ( ( tavg * 5000.0 ) / 4096 ) + 0.5 ); 
-tavg = dc * 1.933125; ///(uint16_t) ( ( ( 1866.3 - tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
-qavg += (uint16_t) ( iavg / 360 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
+iavg = (uint16_t) ( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
+vavg = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
+tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 ); 
+tavg = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
+qavg += (uint16_t) ( (float)iavg / 360.0 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
 #if (NI_MH_CHEM)  
 if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg
 #endif
@@ -207,7 +207,7 @@ void log_control()
                 display_value_u((uint16_t) second);
                 UART_send_char(comma); /// * Send a comma character
                 UART_send_char(C_str); /// * Send a 'C'
-                UART_send_char(cell_count); /// * Send a #cell_count variable
+                display_value_u((uint16_t)cell_count); /// * Send a #cell_count variable
                 UART_send_char(comma); /// * Send a comma character
                 UART_send_char(S_str); /// * Send an 'S'
                 display_value_u((uint16_t)state);
@@ -219,10 +219,10 @@ void log_control()
                 display_value_u(iavg);
                 UART_send_char(comma); ///* Send a comma character
                 UART_send_char(T_str); /// * Send a 'T'
-                display_value_s(tavg);
+                //display_value_s(tavg);
+                display_value_u((uint16_t) (dc * 1.933125)); //To show duty cycle
                 UART_send_char(comma); ///* Send a comma character
                 UART_send_char(Q_str); /// * Send a 'Q'
-                //display_value_u((uint16_t) (dc * 1.933125));
                 display_value_u(qavg);
                 UART_send_char('<'); /// * Send a '<'
     }
@@ -250,7 +250,7 @@ void timing()
     if(!count) /// If #count is other than zero, then
     {
         SECF = 1;
-        count = COUNTER + 1; /// * Make #count equal to #COUNTER
+        count = COUNTER; /// * Make #count equal to #COUNTER
         if(second < 59) second++; /// * If #second is smaller than 59 then increase it
         else{second = 0; minute++;} /// * Else, make #second zero and increase #minute
     }else /// Else,
@@ -264,10 +264,10 @@ void calculate_avg()
 {
     switch(count)
     {
-        case COUNTER + 1: /// If #count = #COUNTER
-            iacum = 0; /// * Make #iavg zero
-            vacum = 0; /// * Make #vavg zero
-            tacum = 0; /// * Make #tavg zero
+        case COUNTER: /// If #count = #COUNTER
+            iacum = (uint24_t) i; /// * Make #iavg zero
+            vacum = (uint24_t) v; /// * Make #vavg zero
+            tacum = (uint24_t) t; /// * Make #tavg zero
             break;
         case 0: /// If #count = 0
             iavg = ((iacum >> 10) + ((iacum >> 9) & 0x01)); /// * Divide the value stored in #iavg between COUNTER to obtain the average   
@@ -294,7 +294,7 @@ void interrupt_enable()
     TMR1IE = 1;   //enable T1 interrupt
     PEIE = 1;       //enable peripherals interrupts
     GIE = 1;        //enable global interrupts
-    count = COUNTER + 1; /// The timing counter #count will be initialized to zero, to start a full control loop cycle
+    count = COUNTER; /// The timing counter #count will be initialized to zero, to start a full control loop cycle
     TMR1IF = 0; //Clear timer1 interrupt flag
     TMR1ON = 1;    //turn on timer 
 }
@@ -336,7 +336,7 @@ void display_value_u(uint16_t value)
 {   
     char buffer[6]; /// * Define @p buffer to used it for store character storage
     utoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
-    UART_send_string(&buffer[0]); /// * Send @p buffer using #UART_send_string()
+    UART_send_string(buffer); /// * Send @p buffer using #UART_send_string()
 }
 ///**@brief This function convert a number to string and then send it using UART
 //* @param value integer to be send
@@ -345,11 +345,11 @@ void display_value_s(int16_t value)
 {   
     char buffer[7]; /// * Define @p buffer to used it for store character storage
     itoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
-    UART_send_string(&buffer[0]); /// * Send @p buffer using #UART_send_string()
+    UART_send_string(buffer); /// * Send @p buffer using #UART_send_string()
 }
 void temp_protection()
 {
-    if (conv && (tavg > 350)){
+    if (conv && (tavg > 400)){
         UART_send_string((char*)"HIGH_TEMP:");
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
         state = STANDBY; /// -# Go to the #STANDBY state.
@@ -360,7 +360,7 @@ void temp_protection()
 */
 void Cell_ON()
 {
-    if (cell_count == '1') /// If cell_count = '1'
+    if (cell_count == 1) /// If cell_count = '1'
     {
         CELL1_ON(); /// * Turn ON cell #1 by calling #CELL1_ON
         __delay_ms(10);
@@ -370,7 +370,7 @@ void Cell_ON()
         __delay_ms(10);
         CELL4_OFF(); /// * Turn OFF cell #4 by calling #CELL4_OFF
         __delay_ms(10);
-    }else if (cell_count == '2')
+    }else if (cell_count == 2)
     {
         CELL1_OFF(); /// * Turn OFF cell #1 by calling #CELL1_OFF
         __delay_ms(10);
@@ -380,7 +380,7 @@ void Cell_ON()
         __delay_ms(10);
         CELL4_OFF(); /// * Turn OFF cell #4 by calling #CELL4_OFF
         __delay_ms(10);
-    }else if (cell_count == '3')
+    }else if (cell_count == 3)
     {
         CELL1_OFF(); /// * Turn OFF cell #1 by calling #CELL1_OFF
         __delay_ms(10);
@@ -389,7 +389,7 @@ void Cell_ON()
         CELL3_ON(); /// * Turn ON cell #3 by calling #CELL3_ON
         __delay_ms(10);
         CELL4_OFF(); /// * Turn OFF cell #4 by calling #CELL4_OFF    
-    }else if (cell_count == '4')
+    }else if (cell_count == 4)
     {
         CELL1_OFF(); /// * Turn OFF cell #1 by calling #CELL1_OFF
         __delay_ms(10);

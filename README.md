@@ -1,9 +1,9 @@
-Electrochemical Cell Charger/Discharger/Tester
+Electrochemical Cell Charger/Discharger/Tester -- README {#mainpage}
 ============
 
 ### Most recent version of this repository can be found in: ###
 
-* [GitHub](https://github.com/juanjorojash/cell_charger_discharger)
+* [Bitbucket](https://bitbucket.org/juanjorojash/cell_charger_discharger/src/master/)
 
 ### Documentation ###
 

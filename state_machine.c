@@ -4,13 +4,12 @@
  * @date 7 Aug 2018
  * @brief State machine source file for Charge and Discharge System.
  * @par Institution:
- * Instituto Tecnológico de Costa Rica.
- * @par Mail:
+ * LaSEINE / CeNT. Kyushu Institute of Technology.
+ * @par Mail (after leaving Kyutech):
  * juan.rojas@tec.ac.cr
+ * @par Git repository:
+ * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
-
-
-
 
 #include "charger_discharger.h"
 
@@ -68,18 +67,14 @@ void fSTANDBY()
     TMR1ON = 0; ///* Disable the Timer1 to avoid interference
     option = 0; /// * Initialize #option to 0
     cell_max = 0; /// * Initialize #cell_max to 0
-    cell_count = '1'; /// * Initialize #cell_count to '1'
-    LINEBREAK; 
-    UART_send_string((char*)param_def_str); /// * Print message: <tt> ---Parameter definition for charger and discharger--- </tt>
+    cell_count = 1; /// * Initialize #cell_count to '1'
     LINEBREAK;
     #if (LI_ION_CHEM) /// If #LI_ION_CHEM  is set to @b 1 and #NI_MH_CHEM  is set to @b 0, the folowing message will be displayed:
     UART_send_string((char*)chem_def_liion); /// * <tt> Chemistry defined as Li-Ion </tt>
     LINEBREAK;
-    LINEBREAK;
     #elif (NI_MH_CHEM) /// If #NI_MH_CHEM  is set to @b 1 and #LI_ION_CHEM  is set to @b 0, the folowing message will be displayed:
     UART_send_string((char*)chem_def_nimh); /// * <tt> Chemistry defined as Ni-MH </tt>
     LINEBREAK;
-    LINEBREAK; 
     #endif
     param(); /// Call the #param() function
 }
@@ -102,7 +97,7 @@ void fCHARGE()
 {
     LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
     conv = 1; /// * Activate control loop by setting #conv
-    if ((vavg < 900) && (qavg > 1)) /// If #vavg is below 0.9V
+    if (vavg < 900) //&& (qavg > 1)) /// If #vavg is below 0.9V
     {
         state = FAULT; /// * Go to #FAULT state
         UART_send_string((char*)cell_below_str); /// * Send a warning message
@@ -111,11 +106,10 @@ void fCHARGE()
     if (state == CHARGE){ /// If the #state is #CHARGE
         #if (LI_ION_CHEM) 
         /// If the chemistry is Li-Ion
-        if (((iavg < EOC_current)  && (qavg > 100)) || minute >= timeout) /// * If #iavg is below #EOC_current then
+        if ((iavg < EOC_current)  && (qavg > 100)) /// * If #iavg is below #EOC_current then
         {                
             prev_state = state; /// -# Set #prev_state equal to #state
-            if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #DONE state
-            else state = WAIT; /// -# Else, go to #WAIT state
+            state = WAIT; /// -# Else, go to #WAIT state
             wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
             STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
         }
@@ -124,8 +118,7 @@ void fCHARGE()
         if (((vavg < (vmax - Ni_MH_EOC_DV)) && (qavg > 100)) || minute >= timeout)
         {
             prev_state = state; /// -# Set #prev_state equal to #state
-            if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #ISDONE state
-            else state = WAIT; /// -# Else, go to #WAIT state
+            state = WAIT; /// -# Else, go to #WAIT state
             wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
             STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
         }
@@ -156,11 +149,10 @@ void fDISCHARGE()
 {
     LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
     conv = 1; /// * Activate control loop by setting #conv
-    if (vavg < EOD_voltage) /// * If #vavg is below #EOD_voltage then
+    if ( vavg < EOD_voltage ) /// * If #vavg is below #EOD_voltage then
     {
-        prev_state = state; /// -# Set #prev_state equal to #state
-        if (option == '2'| option == '4') state = ISDONE; /// -# If #option is '2' or '4' then go to #ISDONE state
-        else state = WAIT; /// -# Else, go to #WAIT state                  
+        prev_state = state; /// -# Set #prev_state equal to #stat
+        state = WAIT; /// -# Else, go to #WAIT state                  
         wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
         STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro  
     }
@@ -175,7 +167,7 @@ void fDC_res() //can be improved a lot!!
     {
         v_1_dcres = vavg;
         i_1_dcres = iavg;
-        iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 1 ) ) + 0.5 );     //1C            
+        iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5 * 1.0 ) ) + 0.5 );     //1C            
     }
     if (dc_res_count == 1)
     {
@@ -189,7 +181,7 @@ void fDC_res() //can be improved a lot!!
     {   
         LINEBREAK;
         UART_send_char(C_str);
-        UART_send_char(cell_count);
+        display_value_u((uint16_t)cell_count);
         UART_send_char(comma);
         UART_send_char(S_str);
         display_value_u((uint16_t)state);
@@ -214,7 +206,7 @@ void fWAIT()
     {   
         LINEBREAK;
         UART_send_char(C_str);
-        UART_send_char(cell_count);
+        display_value_u((uint16_t)cell_count);
         UART_send_char(comma);
         UART_send_char(S_str);
         display_value_u((uint16_t)state);
@@ -245,11 +237,13 @@ void fWAIT()
                 converter_settings();
                 break;
             case DS_DC_res:
-                state = POSTCHARGE;
+                if (option == '2'| option == '4') state = ISDONE; /// -# If #option is '2' or '4' then go to #ISDONE state
+                else state = POSTCHARGE;
                 converter_settings();
                 break;
             case CS_DC_res:
-                state = DISCHARGE;
+                if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #ISDONE state
+                else state = DISCHARGE;
                 converter_settings();
                 break;
             case PS_DC_res:
@@ -321,7 +315,7 @@ void start_state_machine()
     unsigned char start = 0;
     switch (cell_count){
         /**If the current cell is the first (<tt>cell_count</tt>) , it will ask for user intervention to start.*/
-        case '1':
+        case 0x01:
             /**It will prompt the user to press @b s.*/
             UART_send_string((char*)press_s_str);
             LINEBREAK;                  
@@ -362,7 +356,7 @@ void start_state_machine()
     LINEBREAK;
     /**Cell {1,2,3 or 4}*/
     UART_send_string((char*)cell_str);
-    display_value_u((uint16_t)(cell_count - '0'));
+    display_value_u((uint16_t)(cell_count));
     LINEBREAK; 
     NOSTART: ;  //label to goto the end of the function 
 }
@@ -371,21 +365,19 @@ void start_state_machine()
 */
 void converter_settings()
 {
-    kp = CC_kp; /// * The proportional constant, #kp is set to #CC_kp
-    ki = CC_ki; /// * The proportional constant, #kp is set to #CC_kp
     cmode = 1; /// * Start in constant current mode by setting. #cmode
     intacum = 0; /// * The #integral component of the compensator is set to zero.*/
     qavg = 0; /// * Average capacity, #q_prom is set to zero.*/
     vmax = 0; /// * Maximum averaged voltage, #vmax is set to zero.*/
     dc = DC_MIN;
-    set_DC();  /// * The #set_DC() function is called
+    set_DC(&dc);  /// * The #set_DC() function is called
     Cell_ON(); /// * The #Cell_ON() function is called
     switch(state)
     {
         case POSTCHARGE:
         case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
             iref = i_char; /// * The current setpoint, #iref is defined as #i_char
-            timeout = ((capacity / ccref) * 66); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
+            timeout = (uint16_t)(((float)capacity / (float)ccref) * 66.0); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
             SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
             break;
         case PREDISCHARGE:
@@ -423,7 +415,7 @@ void param()
     @endcode*/
     LINEBREAK;  
     #if (LI_ION_CHEM)    
-    vref = (uint16_t) ( ( ( Li_Ion_CV * 4096.0 ) / 5000) + 0.5 ); //Scale the voltage refence to be compare with v
+    vref = (uint16_t) ( ( ( Li_Ion_CV * 4096.0 ) / 5000.0 ) + 0.5 ); //Scale the voltage reference to be compare with v
     cvref = Li_Ion_CV;
     UART_send_string((char*)cv_val_str);
     display_value_u(Li_Ion_CV);
@@ -435,7 +427,7 @@ void param()
     display_value_u(capacity);
     UART_send_string((char*)mAh_str);
     #elif (NI_MH_CHEM) 
-    vref = (uint16_t) ( ( ( Ni_MH_CV * 4096.0 ) / 5000 ) + 0.5 ); //Scale the voltage reference to be compare with v
+    vref = (uint16_t) ( ( ( Ni_MH_CV * 4096.0 ) / 5000.0 ) + 0.5 ); //Scale the voltage reference to be compare with v
     cvref = Ni_MH_CV;
     UART_send_string((char*)cv_val_str);
     display_value_u(Ni_MH_CV);
@@ -453,12 +445,15 @@ void param()
     UART_send_string((char*)def_char_curr_str);
     LINEBREAK;
     /** - 1) 0.25 C*/
+    UART_send_string((char*)one_str);
     UART_send_string((char*)quarter_c_str);
     LINEBREAK;
     /** - 2) 0.5 C*/
+    UART_send_string((char*)two_str);
     UART_send_string((char*)half_c_str);
     LINEBREAK;
     /** - 3) 1 C*/
+    UART_send_string((char*)three_str);
     UART_send_string((char*)one_c_str);
     LINEBREAK;
     LINEBREAK;
@@ -471,38 +466,42 @@ void param()
         {   
             /**After chosing the charging current, the program will assign it to @p i_char and print it.*/
             case '1':
-                i_char = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 4 ) ) + 0.5 );
-                ccref = (uint16_t) ( (capacity / 4) + 0.5 );
-                UART_send_string((char*)char_def_quarter_str);  //0.25C
+                i_char = (uint16_t) ( ( ( (float) capacity * 4096.0 ) / (5000.0 * 2.5 * 4 ) ) + 0.5 );
+                ccref = (uint16_t) ( ( (float) capacity / 4) + 0.5 );
+                UART_send_string((char*)char_def_str);
+                UART_send_string((char*)quarter_c_str);  //0.25C
                 LINEBREAK;
                 break;
             case '2':
-                i_char = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 2 ) ) + 0.5 );
-                ccref = (uint16_t) ( (capacity / 2) + 0.5 );
-                UART_send_string((char*)char_def_half_str);  //0.5C
+                i_char = (uint16_t) ( ( ( (float) capacity * 4096.0 ) / (5000.0 * 2.5 * 2 ) ) + 0.5 );
+                ccref = (uint16_t) ( ( (float) capacity / 4) + 0.5 );
+                UART_send_string((char*)char_def_str);
+                UART_send_string((char*)half_c_str);  //0.5C
                 LINEBREAK;
                 break;
             case '3':
-                i_char = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 1 ) ) + 0.5 );
-                ccref = (uint16_t) ( (capacity / 1) + 0.5 );
-                UART_send_string((char*)char_def_one_str);  //0.1C
+                i_char = (uint16_t) ( ( ( (float) capacity * 4096.0 ) / (5000.0 * 2.5 * 1 ) ) + 0.5 );
+                ccref = (uint16_t) ( ( (float) capacity / 4) + 0.5 );
+                UART_send_string((char*)char_def_str);
+                UART_send_string((char*)one_c_str);  //0.1C
                 LINEBREAK;
                 break;
                 /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
-                case 0x1B:
+            case 0x1B:
                 state = STANDBY;
                 LINEBREAK;
-                UART_send_string((char*)restarting_str);  //restarting...
+                UART_send_string((char*)re_str);  //restarting...
+                UART_send_string((char*)starting_str);
                 LINEBREAK; 
                 goto ESCAPE;  //go to the end of the function 
-                /**If the user press something different from @b 1, @b 2, @b 3 or @b ESC the program will print 
-                a warning message and wait for a valid input.*/
-                default:
+            /**If the user press something different from @b 1, @b 2, @b 3 or @b ESC the program will print 
+            a warning message and wait for a valid input.*/
+            default:
                 input = 0;  //stay inside the while loop.
                 LINEBREAK;
-                UART_send_string((char*)num_1and3_str);  //ask the user to use a number between 1 and 3.
+                UART_send_string((char*)input_num_str);
+                UART_send_string((char*)"1 and 3");//ask the user to use a number between 1 and 3.
                 LINEBREAK;                
-                break;
         }
     }
     /**Variable @p input is cleared*/
@@ -532,12 +531,15 @@ void param()
     UART_send_string((char*)def_disc_curr_str);
     LINEBREAK;
     /** - 1) 0.25 C*/
+    UART_send_string((char*)one_str);
     UART_send_string((char*)quarter_c_str);
     LINEBREAK;
     /** - 2) 0.5 C*/
+    UART_send_string((char*)two_str);
     UART_send_string((char*)half_c_str);
     LINEBREAK;
     /** - 3) 1 C*/
+    UART_send_string((char*)three_str);
     UART_send_string((char*)one_c_str);
     LINEBREAK;
     LINEBREAK;
@@ -550,25 +552,29 @@ void param()
         {
             /**After chosing the discharging current, the program will assign it to @p i_disc and print it.*/
             case '1':
-                i_disc = (uint16_t) ( ( ( capacity * 4096.0) / ( 5000 * 2.5 * 4 ) ) + 0.5 );
-                UART_send_string((char*)dis_def_quarter_str);  //0.25 C
+                i_disc = (uint16_t) ( ( ( (float) capacity * 4096.0) / ( 5000.0 * 2.5 * 4 ) ) + 0.5 );
+                UART_send_string((char*)dis_def_str);
+                UART_send_string((char*)quarter_c_str);  //0.25 C
                 LINEBREAK;            
                 break;
             case '2':
-                i_disc = (uint16_t) ( ( ( capacity * 4096.0 ) / ( 5000 * 2.5 * 2 ) ) + 0.5 );
-                UART_send_string((char*)dis_def_half_str);  //0.5 C
+                i_disc = (uint16_t) ( ( ( (float) capacity * 4096.0 ) / ( 5000.0 * 2.5 * 2 ) ) + 0.5 );
+                UART_send_string((char*)dis_def_str);
+                UART_send_string((char*)half_c_str);  //0.5 C
                 LINEBREAK;         
                 break;
             case '3':
-                i_disc = (uint16_t) ( ( ( capacity * 4096.0 ) / ( 5000 * 2.5 * 1 ) ) + 0.5 );
-                UART_send_string((char*)dis_def_one_str);  //1C
+                i_disc = (uint16_t) ( ( ( (float) capacity * 4096.0 ) / ( 5000.0 * 2.5 * 1 ) ) + 0.5 );
+                UART_send_string((char*)dis_def_str);
+                UART_send_string((char*)one_c_str);  //1C
                 LINEBREAK;
                 break;
             /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
             case 0x1B:  //ESC button was pressed
                 state = STANDBY;
                 LINEBREAK;
-                UART_send_string((char*)restarting_str);  //restarting...
+                UART_send_string((char*)re_str);  //restarting...
+                UART_send_string((char*)starting_str);
                 LINEBREAK;             
                 goto ESCAPE;  //go to the end of the function 
             /**If the user press something different from @e 1, @e 2, @e 3 or @e ESC the program will print 
@@ -576,9 +582,9 @@ void param()
             default:
                 input = 0;
                 LINEBREAK;
-                UART_send_string((char*)num_1and3_str);  //ask the user to use a number between 1 and 3.
+                UART_send_string((char*)input_num_str);  //ask the user to use a number between 1 and 3.
+                UART_send_string((char*)"1 and 3");
                 LINEBREAK;                
-                break;
         }
     }
     /**Varible @p input is cleared*/
@@ -607,15 +613,19 @@ void param()
     UART_send_string((char*)cho_bet_str);
     LINEBREAK;
     /** - 1) Precharge->Discharge->Charge (includes DC resistance measure after charge and after discharge).*/
+    UART_send_string((char*)one_str);
     UART_send_string((char*)op_1_str);
     LINEBREAK;
     /** - 2) Discharge->Charge (includes DC resistance measure after charge and after discharge).*/
+    UART_send_string((char*)two_str);
     UART_send_string((char*)op_2_str);
     LINEBREAK;
     /** - 3) Only Charge*/
+    UART_send_string((char*)three_str);
     UART_send_string((char*)op_3_str);
     LINEBREAK;
     /** - 4) Only Discharge*/
+    UART_send_string((char*)four_str);
     UART_send_string((char*)op_4_str);
     LINEBREAK;
     LINEBREAK;
@@ -629,29 +639,34 @@ void param()
             /**After that the program will print the selected option and:*/
             case '1':
                 LINEBREAK;
-                UART_send_string((char*)op_1_sel_str);  //Predischarge->Charge->Discharge->Postcharge
+                UART_send_string((char*)op_1_str);
+                UART_send_string((char*)sel_str);  //Predischarge->Charge->Discharge->Postcharge
                 LINEBREAK;
                 break;
             case '2':
                 LINEBREAK;
-                UART_send_string((char*)op_2_sel_str);  //Charge->Discharge
+                UART_send_string((char*)op_2_str);  //Charge->Discharge
+                UART_send_string((char*)sel_str);
                 LINEBREAK;
                 break;
             case '3':
                 LINEBREAK;
-                UART_send_string((char*)op_3_sel_str);  //Only Charge
+                UART_send_string((char*)op_3_str);  //Only Charge
+                UART_send_string((char*)sel_str);
                 LINEBREAK;         
                 break;
             case '4':
                 LINEBREAK;
-                UART_send_string((char*)op_4_sel_str);  //Only Discharge
+                UART_send_string((char*)op_4_str);  //Only Discharge
+                UART_send_string((char*)sel_str);
                 LINEBREAK;             
                 break;
             /**Unless the user press @e ESC, in that case the program will be restarted to the @p STANBY state.*/
             case 0x1B:
                 state = STANDBY;
                 LINEBREAK;
-                UART_send_string((char*)restarting_str);
+                UART_send_string((char*)re_str);
+                UART_send_string((char*)starting_str);
                 LINEBREAK;
                 goto ESCAPE;  //go to the end of the function 
             /**If the user press something different from @b 1, @b 2, @b 3, @b 4 or @b ESC the program will print 
@@ -659,14 +674,14 @@ void param()
             default:
                 option = 0;
                 LINEBREAK;
-                UART_send_string((char*)num_1and4_str);  //ask the user to use a number between 1 and 4.
+                UART_send_string((char*)input_num_str);  //ask the user to use a number between 1 and 4.
+                UART_send_string((char*)"1 and 4");
                 LINEBREAK;
-                break;
         }
     }
     LINEBREAK;
     /**Then, the program will ask the user how many cells he wants to test (4 cells is the maximum):*/
-    UART_send_string((char*)def_num_cell_str);
+    UART_send_string((char*)num_cell_str);
     LINEBREAK;
     while(cell_max == 0)
     {
@@ -679,31 +694,36 @@ void param()
                 LINEBREAK;
                 UART_send_string((char*)num_cell_str);
                 UART_send_string((char*)one_str);
+                cell_max = 1;
                 LINEBREAK;
                 break;
             case '2':
                 LINEBREAK;
                 UART_send_string((char*)num_cell_str);
                 UART_send_string((char*)two_str);
+                cell_max = 2;
                 LINEBREAK;
                 break;
             case '3':
                 LINEBREAK;
                 UART_send_string((char*)num_cell_str);
                 UART_send_string((char*)three_str);
+                cell_max = 3;
                 LINEBREAK;  
                 break;
             case '4':
                 LINEBREAK;
                 UART_send_string((char*)num_cell_str);
                 UART_send_string((char*)four_str);
+                cell_max = 4;
                 LINEBREAK;
                 break;
             /**Unless the user press @b ESC, in that case the program will be restarted to the @p STANBY state.*/
             case 0x1B:
                 state = STANDBY;
                 LINEBREAK;
-                UART_send_string((char*)restarting_str);
+                UART_send_string((char*)re_str);
+                UART_send_string((char*)starting_str);
                 LINEBREAK;
                 goto ESCAPE;  //go to the end of the function 
             /**If the user press something different from @b 1, @b 2, @b 3, @b 4 or @b ESC the program will print 
@@ -711,10 +731,10 @@ void param()
             default:
                 cell_max = 0;   //Keep the program inside the while loop 
                 LINEBREAK;
-                UART_send_string((char*)num_1and4_str);  //ask the user to use a number between 1 and 4.
+                UART_send_string((char*)input_num_str);
+                UART_send_string((char*)"1 and 4");  //ask the user to use a number between 1 and 4.
                 LINEBREAK;
-                break;
-        }           
+        }
     }
     /**After the user has set the number of cells the program will go to the @p IDLE state. @see fIDLE()*/
     state = IDLE;  //go to IDLE state

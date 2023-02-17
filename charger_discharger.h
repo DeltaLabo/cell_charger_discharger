@@ -1,12 +1,14 @@
 /**
- * @file charger_discharger.c
+ * @file charger_discharger.h
  * @author Juan J. Rojas
  * @date 7 Aug 2018
- * @brief Hardware related functions header file.
+ * @brief State machine header file for Charge and Discharge System.
  * @par Institution:
- * Instituto Tecnológico de Costa Rica.
- * @par Mail:
+ * LaSEINE / CeNT. Kyushu Institute of Technology.
+ * @par Mail (after leaving Kyutech):
  * juan.rojas@tec.ac.cr
+ * @par Git repository:
+ * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 #ifndef CHARGER_DISCHARGER_H
@@ -69,8 +71,8 @@
     void param(void);
     void converter_settings(void);
     void initialize(void);
-    void pid(uint16_t feedback, uint16_t setpoint);
-    void set_DC(void);
+    void pid(uint16_t feedback, uint16_t setpoint, int24_t* acum, uint16_t* duty_cycle);
+    void set_DC(uint16_t* duty_cycle);
     uint16_t read_ADC(uint16_t channel);
     void scaling(void);
     void log_control(void);
@@ -88,8 +90,8 @@
     void Cell_OFF(void);
     void timing(void);
     #define     _XTAL_FREQ              32000000 ///< Frequency to coordinate delays, 32 MHz
-    #define     ERR_MAX                 500 ///< Maximum permisible error, useful to avoid ringing
-    #define     ERR_MIN                 -500 ///< Minimum permisible error, useful to avoid ringing
+    #define     ERR_MAX                 1000 ///< Maximum permisible error, useful to avoid ringing
+    #define     ERR_MIN                 -1000 ///< Minimum permisible error, useful to avoid ringing
     #define     V_CHAN                  0b01010 ///< Definition of ADC channel for voltage measurements. AN10(RB1) 
     #define     I_CHAN                  0b01100 ///< Definition of ADC channel for current measurements. AN12(RB0)
     #define     T_CHAN                  0b00100 ///< Definition of ADC channel for temperature measurements. AN4(RA5)
@@ -109,9 +111,7 @@
     turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
     and the UART reception interrupts.
     */
-    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; dc = DC_MIN; set_DC(); Cell_OFF(); LOG_OFF();}
-    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100);}
-    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100);}
+    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; dc = DC_MIN; set_DC(&dc); Cell_OFF(); LOG_OFF();}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
     #define     LOG_ON()                { log_on = 1; }  ///< Turn OFF logging in the terminal.
     #define     LOG_OFF()               { log_on = 0; }  ///< Turn ON logging in the terminal.
@@ -120,46 +120,41 @@
     #define     DC_MIN                  50  ///< Minimum possible duty cycle, set around @b 0.1 
     #define     DC_MAX                  409  ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
-    #define     CC_kp                   25  ///< Proportional constant divider for CC mode
-    #define     CC_ki                   35  ///< Integral constant divider for CC mode 
+    #define     CC_char_kp              20  ///< Proportional constant divider for CC mode
+    #define     CC_char_ki              50  ///< Integral constant divider for CC mode 
+    #define     CC_disc_kp              15  ///< Proportional constant divider for CC mode
+    #define     CC_disc_ki              20  ///< Integral constant divider for CC mode 
     // last test with LI_ION gave this constants
-    #define     CV_kp                   10  ///< Proportional constant divider for CV mode
-    #define     CV_ki                   400  ///< Integral constant divider for CV mode 
+    #define     CV_kp                   40  ///< Proportional constant divider for CV mode
+    #define     CV_ki                   4  ///< Integral constant divider for CV mode 
     #define     LINEBREAK               { UART_send_char(10); UART_send_char(13); } ///< Send a linebreak to the terminal
     //////////////////////////Chemistry definition///////////////////////////////////////
-    #define     LI_ION_CHEM             0 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
-    #define     NI_MH_CHEM              1 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
+    #define     LI_ION_CHEM             1 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
+    #define     NI_MH_CHEM              0 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
     ////////////////////////////////////////////////////////////////////////////////////
     //General definitions
-    #define     WAIT_TIME               600 ///< Time to wait before states, set to 10 minutes
+    #define     WAIT_TIME               60 ///< Time to wait before states, set to 10 minutes
     #define     DC_RES_SECS             14 ///< How many seconds the DC resistance process takes
     //Li-Ion definitions
     #define     Li_Ion_CV               4200 ///< Li-Ion constant voltage setting in mV
     #define     Li_Ion_CAP              3250 ///< Li-Ion capacity setting in mAh
     #define     Li_Ion_EOC_I            100 ///< Li-Ion end-of-charge current in mA
-    #define     Li_Ion_EOD_V            3000 ///< Li_Ion end-of-discharge voltage in mV
-//    //HACK FOR LI-PO (make system thinks it is Li-Ion)
-//    #define     Li_Ion_CV               4200 ///< Li-Ion constant voltage setting in mV
-//    #define     Li_Ion_CAP              1200 ///< Li-Ion capacity setting in mAh
-//    #define     Li_Ion_EOC_I            60 ///< Li-Ion end-of-charge current in mA
-//    #define     Li_Ion_EOD_V            3000 ///< Li_Ion end-of-discharge voltage in mV
-//    //Li-Po definitions
-//    #define     Li_Po_CV                4200 ///< Li-Ion constant voltage setting in mV
-//    #define     Li_Po_CAP               1200 ///< Li-Ion capacity setting in mAh
-//    #define     Li_Po_EOC_I             60 ///< Li-Ion end-of-charge current in mA
-//    #define     Li_Po_EOD_V             3000 ///< Li_Ion end-of-discharge voltage in mV
+    #define     Li_Ion_EOD_V            2500 ///< Li_Ion end-of-discharge voltage in mV
     //Ni-MH definitions
     #define     Ni_MH_CV                1750 ///< Ni-MH constant voltage setting in mV
     #define     Ni_MH_CAP               2000 ///< Ni-MH capacity setting in mAh
     #define     Ni_MH_EOC_DV            10 ///< Ni-MH end-fo-charge voltage drop in mV
     #define     Ni_MH_EOD_V             1000 ///< Ni-MH end-of-discharge voltage in mV
+
+    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_disc_kp; ki = CC_disc_ki;}
+    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_char_kp; ki = CC_char_ki;}
     //Variables
     bool                                SECF = 1; ///< 1 second flag
     unsigned char                       option = 0; ///< Four different options, look into @link param() @endlink for details
     uint16_t                            capacity; ///< Definition of capacity per cell according to each chemistry
     uint16_t                            i_char; ///< Charging current in mA
     uint16_t                            i_disc; ///< Discharging current in mA
-    unsigned char                       cell_count = 49; ///< Cell counter from '1' to '4'. Initialized as '1'
+    unsigned char                       cell_count = 1; ///< Cell counter from '1' to '4'. Initialized as '1'
     unsigned char                       cell_max = 0; ///< Number of cells to be tested. Initialized as 0
     uint16_t                            wait_count = 0; ///< Counter for waiting time between states. Initialized as 0
     unsigned char                       dc_res_count = 0; ///< Counter for DC resistance. Initialized as 0
@@ -186,12 +181,12 @@
     //qavg does not need accumulator
     uint16_t                            vavg = 0;  ///< Last one-second-average of #v . Initialized as 0
     uint16_t                            iavg = 0;  ///< Last one-second-average of #i . Initialized as 0
-    int16_t                            tavg = 0;  ///< Last one-second-average of #t . Initialized as 0
+    int16_t                             tavg = 0;  ///< Last one-second-average of #t . Initialized as 0
     uint16_t                            qavg = 0;  ///< Integration of #i . Initialized as 0
     uint16_t                            vmax = 0;   ///< Maximum recorded average voltage. 
     int24_t                             intacum;   ///< Integral acumulator of PI compensator
-    int16_t                             kp;  ///< Proportional compesator gain
-    int16_t                             ki;  ///< Integral compesator gain      
+    float                               kp;  ///< Proportional compesator gain
+    float                               ki;  ///< Integral compesator gain      
     uint16_t                            vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
     uint16_t                            cvref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
     uint16_t                            iref = 0;  ///< Current setpoint. Initialized as 0
@@ -214,51 +209,40 @@
     char const                          Q_str = 'Q';
     char const                          R_str = 'R';
     char const                          W_str = 'W';
-    char const                          press_s_str[] = "Press 's' to start: ";
-    char const                          starting_str[] = "Starting...";
-    char const                          done_str[] = "DONE";
-    char const                          num_1and2_str[] = "Please input a number between 1 and 2";
-    char const                          num_1and3_str[] = "Please input a number between 1 and 3";
-    char const                          num_1and4_str[] = "Please input a number between 1 and 4";         
-    char const                          param_def_str[] = "---Parameter definition for charger and discharger---";
-    char const                          restarting_str[] = "Restarting...";
-    char const                          chem_def_liion[] = "Chemistry defined as Li-Ion";
-    char const                          chem_def_nimh[] = "Chemistry defined as Ni-MH";
+    char const                          press_s_str[] = "'s' to start: ";
+    char const                          starting_str[] = "starting...";
+    char const                          input_num_str[] = "Input a number between";
+    char const                          param_def_str[] = "Parameter definition:";
+    char const                          re_str[] = "re";
+    char const                          chem_def_liion[] = "Li-Ion";
+    char const                          chem_def_nimh[] = "Ni-MH";
     char const                          mV_str[] = " mV";
     char const                          mAh_str[] = " mAh";
     char const                          mA_str[] = " mA";
-    char const                          EOD_V_str[] = "End of discharge voltage: ";
-    char const                          EOC_I_str[] = "End of charge current: ";
-    char const                          EOC_DV_str[] = "End of charge voltage drop: ";
-    char const                          cho_bet_str[] = "Chose between following options: ";
-    char const                          quarter_c_str[] = "(1) 0.25C";
-    char const                          half_c_str[] = "(2) 0.50C";
-    char const                          one_c_str[] = "(3) 1C";
+    char const                          EOD_V_str[] = "EOD: ";
+    char const                          EOC_I_str[] = "EOC: ";
+    char const                          EOC_DV_str[] = "EOC DV: ";
+    char const                          cho_bet_str[] = "Chose: ";
+    char const                          quarter_c_str[] = "0.25C";
+    char const                          half_c_str[] = "0.50C";
+    char const                          one_c_str[] = "1C";
     char const                          cell_str[] = "Cell "; 
-    char const                          dis_def_quarter_str[] = "Discharge current defined as 0.25C";
-    char const                          dis_def_half_str[] = "Discharge current defined as 0.5C";
-    char const                          dis_def_one_str[] = "Discharge current defined as 1C";
-    char const                          char_def_quarter_str[] = "Charge current defined as 0.25C";
-    char const                          char_def_half_str[] = "Charge current defined as 0.5C";
-    char const                          char_def_one_str[] = "Charge current defined as 1C";
-    char const                          cv_val_str[] = "Constant voltage value: ";
-    char const                          nom_cap_str[] = "Nominal capacity: ";
-    char const                          def_char_curr_str[] = "Define charge current (input the number): ";
-    char const                          def_disc_curr_str[] = "Define discharge current (input the number): ";
-    char const                          def_num_cell_str[] = "Define number of cells to be tested (input the number, maximum of 4): ";
-    char const                          num_cell_str[] = "Number of cells to be tested: ";
-    char const                          one_str[] = "1";
-    char const                          two_str[] = "2";
-    char const                          three_str[] = "3";
-    char const                          four_str[] = "4";
-    char const                          op_1_str[] = "(1) Predischarge->Charge->Discharge->Postcharge";
-    char const                          op_2_str[] = "(2) Charge->Discharge";
-    char const                          op_3_str[] = "(3) Only Charge";
-    char const                          op_4_str[] = "(4) Only Discharge";
-    char const                          op_1_sel_str[] = "Predischarge->Charge->Discharge->Postcharge selected...";
-    char const                          op_2_sel_str[] = "Charge->Discharge selected...";
-    char const                          op_3_sel_str[] = "Only Charge selected...";
-    char const                          op_4_sel_str[] = "Only Discharge selected...";
+    char const                          dis_def_str[] = "Discharge current: ";
+    char const                          char_def_str[] = "Charge current: ";
+    char const                          cv_val_str[] = "CV: ";
+    char const                          nom_cap_str[] = "Capacity: ";
+    char const                          def_char_curr_str[] = "Charge current: ";
+    char const                          def_disc_curr_str[] = "Discharge current: ";
+    char const                          num_cell_str[] = "Number of cells: ";
+    char const                          one_str[] = "1) ";
+    char const                          two_str[] = "2) ";
+    char const                          three_str[] = "3) ";
+    char const                          four_str[] = "4) ";
+    char const                          op_1_str[] = "Predischarge->Charge->Discharge->Postcharge";
+    char const                          op_2_str[] = "Charge->Discharge";
+    char const                          op_3_str[] = "Only Charge";
+    char const                          op_4_str[] = "Only Discharge";
+    char const                          sel_str[] = " selected...";
     char const                          cell_below_str[] = "Cell below 0.9V or not present";
 
 #endif /* CHARGER_DISCHARGER_H*/

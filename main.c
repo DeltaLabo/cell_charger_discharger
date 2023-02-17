@@ -1,12 +1,18 @@
 /**
- * @file charger_discharger.c
- * @author Juan J. Rojas
- * @date 7 Aug 2018
- * @brief Main loop
+ * @file
+ * main.c
+ * @author 
+ * Juan J. Rojas
+ * @date 
+ * 7 Aug 2018
+ * @brief 
+ * Main source file. Includes the main loop and the interruption service routine. 
  * @par Institution:
- * Instituto Tecnológico de Costa Rica.
+ * LaSEINE / CeNT. Kyushu Institute of Technology.
  * @par Mail:
  * juan.rojas@tec.ac.cr
+ * @par Git repository:
+ * https://bitbucket.org/juanjorojash/cell_charger_discharger
  */
 
 #include "charger_discharger.h"
@@ -18,20 +24,14 @@ void main(void) /// This function performs the folowing tasks:
 {       
     initialize(); /// <ul> <li> Call the #initialize function
     __delay_ms(10);
-    //SECF = 1; ///quitar
-    //interrupt_enable(); ///quitar
-    //cell_count = '1'; //quitar
-    //Cell_ON(); //quitar
     while(1) /// <li> <b> The main loop repeats the following forever: </b> 
     {
         if (SECF) /// <ul> <li> Check the #SECF flag, if it is set, 1 second has passed since last execution, so the folowing task are executed:
         {     
             SECF = 0; /// <ol> <li> Clear the #SECF flag to restart the 1 second timer
             scaling(); /// <li> Scale the average measured values by calling the #scaling function 
-            //log_on = 1;  ///quitar
             log_control(); /// <li> Print the log in the serial terminal by calling the #log_control function
             cc_cv_mode(vavg, cvref, cmode); /// <li> Check if the system shall change to CV mode by calling the #cc_cv_mode function
-            //conv = 0; ///quitar
             state_machine(); /// <li> Call the #state_machine function
             //temp_protection(); /// <li> Call the #temp_protection function </ol> </ul> </ul>
         }
@@ -54,6 +54,7 @@ void __interrupt() ISR(void) /// This function performs the folowing tasks:
         i = (uint16_t) (abs ( 2048 - (int)i ) ); /// <li> Substract the 2.5V bias from #i, store the absolute value in #i   
         t = read_ADC(T_CHAN); /// <li> Read the ADC channel #T_CHAN and store the value in #t. Using the #read_ADC() function 
         if (conv) control_loop(); /// <li> Call the #control_loop() function
+        else intacum = 0;
         calculate_avg(); /// <li> Call the #calculate_avg() function
         timing(); /// <li> Call the #timing() function
         if (TMR1IF) UART_send_string((char*)"TIMING_ERROR"); /// <li> If the @b Timer1 interrupt flag is set, there is a timing error, print "TIMING_ERROR" into the terminal. </ol>
