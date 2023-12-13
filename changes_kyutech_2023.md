@@ -86,7 +86,7 @@ start byte (0xDD), operation: read (0xA5), command: basic configuration (0x03), 
 
 the user receives:
 
-DD A5 03 0B 01 10 68 0D AC 0D AC 00 64 00 64 09 C4 06 D6 3D 35 77
+DD A5 03 0F 01 10 68 0D AC 0D AC 00 64 00 64 09 C4 06 D6 3D 35 77
 
 operation byte: operation: read (0xA5), command: basic configuration (0x03), checksum: 15669 (0x3D35), the start, stop and data bytes should be the same
 
