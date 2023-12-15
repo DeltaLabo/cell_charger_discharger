@@ -72,9 +72,9 @@ Changes made in Kyutech from December 11-15
 ### Example to write and read basic configuration
 The user sends the _write basic configuration_ command:
 
-DD 5A 03 0F 01 10 68 0D AC 0D AC 00 64 00 64 09 C4 06 D6 3D 35 77
+DD 5A 03 0F 01 10 68 0D AC 0D AC 00 64 00 64 09 C4 06 D6 04 6E 77
 
-start byte (0xDD), operation: write (0x5A), command: basic configuration (0x03), length: 15 (0x0F), version: Li-Ion (0x01), CV value: 4200mV (0x1068), CC value: 3500mA (0x0DAC), capacity: 3500mAh (0x0DAC), end-of-charge current: 100mA (0x0064), end-of-precharge current: 100mA (0x0064), end-of-discharge voltage: 2500mV (0x09C4), end-of-postdischarge capacity: 1750mAh (0x06D6), checksum: 15669 (0x3D35) and stop byte (0x77)
+start byte (0xDD), operation: write (0x5A), command: basic configuration (0x03), length: 15 (0x0F), version: Li-Ion (0x01), CV value: 4200mV (0x1068), CC value: 3500mA (0x0DAC), capacity: 3500mAh (0x0DAC), end-of-charge current: 100mA (0x0064), end-of-precharge current: 100mA (0x0064), end-of-discharge voltage: 2500mV (0x09C4), end-of-postdischarge capacity: 1750mAh (0x06D6), checksum: 1134 (0x046E) and stop byte (0x77)
 
 Nothing should be received.
 
@@ -86,15 +86,15 @@ start byte (0xDD), operation: read (0xA5), command: basic configuration (0x03), 
 
 the user receives:
 
-DD A5 03 0F 01 10 68 0D AC 0D AC 00 64 00 64 09 C4 06 D6 3D 35 77
+DD A5 03 0F 01 10 68 0D AC 0D AC 00 64 00 64 09 C4 06 D6 04 6E 77
 
-operation byte: operation: read (0xA5), command: basic configuration (0x03), checksum: 15669 (0x3D35), the start, stop and data bytes should be the same
+operation byte: operation: read (0xA5), command: basic configuration (0x03), checksum: 1134 (0x046E), the start, stop and data bytes should be the same
 
 ## Test configuration
 
-| number of cells | number of states | number of repetitions | order of states | wait time | end wait time | 
+| number of cells | number of states | number of repetitions | wait time | end wait time | order of states | 
 |--|--|--|--|--|--|
-| 1byte | 1byte | 1byte | 12bytes max | 2bytes | 2bytes |
+| 1byte | 1byte | 1byte | 2bytes | 2bytes | 10bytes max |
 
 ### states definition
 
@@ -103,13 +103,14 @@ operation byte: operation: read (0xA5), command: basic configuration (0x03), che
 * discharge = 0x07
 * postdischarge = 0x09
 * DC resistance = 0x0B
+* undefinded = 0x00
 
 ### Example to write and read test configuration
 The user sends the _write test configuration_ command:
 
-DD 5A 05 11 01 08 01 05 0B 07 0B 03 0B 09 0B 02 58 04 B0 07 69 77
+DD 5A 05 11 01 08 01 02 58 04 B0 05 0B 07 0B 03 0B 09 0B 00 00 01 6B 77
 
-start byte (0xDD), operation: write (0x5A), command: test configuration (0x05), length: 17 (0x11), number of cells: 1 (0x01), number of states: 8 (0x08), number of repetitions: 1 (0x01), order of states: precharge -> DC res -> discharge -> DC res -> charge -> DC res -> postdischarge -> DC res (0x05 0x0B 0x07 0x0B 0x03 0x0B 0x09 0x0B), wait time between states: 600s (0x0258), end wait time: 1200s (04B0), checksum: 1897 (0x0769), stop byte (0x77)
+start byte (0xDD), operation: write (0x5A), command: test configuration (0x05), length: 17 (0x11), number of cells: 1 (0x01), number of states: 8 (0x08), number of repetitions: 1 (0x01), wait time between states: 600s (0x0258), end wait time: 1200s (04B0), order of states: precharge -> DC res -> discharge -> DC res -> charge -> DC res -> postdischarge -> DC res and two undefined states (0x05 0x0B 0x07 0x0B 0x03 0x0B 0x09 0x0B 0x00 0x00), checksum: 363 (0x016B), stop byte (0x77)
 
 Nothing should be received
 
@@ -121,9 +122,9 @@ start byte (0xDD), operation: read (0xA5), command: test configuration (0x05), s
 
 the user receives:
 
-DD A5 05 11 01 08 01 05 0B 07 0B 03 0B 09 0B 02 58 04 B0 07 6B 77
+DD A5 05 11 01 08 01 05 0B 07 0B 03 0B 09 0B 02 58 04 B0 00 00 01 6B 77
 
-operation: read (0xA5), command: test configuration (0x05), checksum: 1897 (0x0769) and the start, stop and data bytes should be the same
+operation: read (0xA5), command: test configuration (0x05), checksum: 363 (0x016B) and the start, stop and data bytes should be the same
 
 ## Converter configuration
 
