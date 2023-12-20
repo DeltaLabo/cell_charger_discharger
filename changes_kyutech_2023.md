@@ -190,29 +190,6 @@ go to next state:
 
 DD 0F 09 00 09 77
 
-## Structure of commands
-|start byte | operation | command code | length | data | checksum | stop byte |
-|--|--|--|--|--|--|--|
-0xDD | 1byte | 1byte | 1byte | 20bytes max | 2bytes | 0x77
-
-### operation:
-* 0xA5: read
-* 0x5A: write 
-* 0x0F: action
-
-### read/write command codes:
-* 0x03: basic configuration 
-* 0x05: test configuration
-* 0x07: converter configuration
-
-### action command codes
-* 0x03: reset
-* 0x05: start
-* 0x07: next cell
-* 0x09: next state
-
-###
-
 ## Structure of log data
 
 | start byte | cell counter | repetition counter | state | elapsed time | voltage | current | capacity | temperature | duty cycle | stop byte |
