@@ -158,16 +158,27 @@ bool command_interpreter()
                 switch (code)
                 {
                     case 0x03:
-                        UART_send_some_bytes(sizeof(basic_configuration), (uint8_t*)basic_configuration_ptr);
+                        length = sizeof(basic_configuration);
+                        UART_send_byte(length);
+                        UART_send_some_bytes(length, (uint8_t*)basic_configuration_ptr);
+                        checksum = calculate_checksum(code, length, (uint8_t*)basic_configuration_ptr);
                         break;
                     case 0x05:
-                        UART_send_some_bytes(sizeof(test_configuration), (uint8_t*)test_configuration_ptr);
+                        length = sizeof(test_configuration);
+                        UART_send_byte(length);
+                        UART_send_some_bytes(length, (uint8_t*)test_configuration_ptr);
+                        checksum = calculate_checksum(code, length, (uint8_t*)test_configuration_ptr);
                         break;
                     case 0x07:
-                        UART_send_some_bytes(sizeof(converter_configuration), (uint8_t*)converter_configuration_ptr);
+                        length = sizeof(converter_configuration);
+                        UART_send_byte(length);
+                        UART_send_some_bytes(length, (uint8_t*)converter_configuration_ptr);
+                        checksum = calculate_checksum(code, length, (uint8_t*)converter_configuration_ptr);
                         break;
                 }
+                UART_send_some_bytes(2,(uint8_t*)checksum);
                 UART_send_byte(0x77);
+                
                 break;
             case 0x5A:
                 switch (code)

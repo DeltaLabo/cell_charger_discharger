@@ -174,7 +174,7 @@
         uint8_t number_of_repetitions;
         uint16_t wait_time;
         uint16_t end_wait_time;
-        uint16_t order_of_states;
+        uint8_t order_of_states[10];
     }test_configuration_type, *test_configuration_type_ptr;
     
     typedef struct converter_configuration_struct {
