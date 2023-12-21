@@ -123,6 +123,88 @@ void initialize()
     __delay_ms(100);
     STOP_CONVERTER();
 }
+bool command_interpreter()
+{
+    bool test = true;
+    uint8_t operation = 0x00;
+    uint8_t code = 0x00;
+    uint8_t length = 0x00;
+    uint8_t data[20] = {0x00};
+    uint16_t checksum = 0x0000;
+    basic_configuration_ptr = &basic_configuration;
+    test_configuration_ptr = &test_configuration;
+    converter_configuration_ptr = &converter_configuration;
+    if(UART_get_byte()==0xDD)
+    {
+        test = true;
+        operation = UART_get_byte();
+        code = UART_get_byte();
+        length = UART_get_byte();
+        if (length>0) UART_get_some_bytes(length, (uint8_t*)data);
+        checksum = (UART_get_byte()<<16) + UART_get_byte();
+        if(UART_get_byte()==0x77)
+        {
+            test = true;
+        }else test = false;
+        //UART_send_byte(checksum>>16); // just for debugging
+        if (checksum == calculate_checksum(code, length, (uint8_t*)data))
+        {
+            test = true;
+        }else test = false;
+        switch (operation)
+        {
+            case 0xA5:
+                UART_send_header(0xDD, operation, code);
+                switch (code)
+                {
+                    case 0x03:
+                        UART_send_some_bytes(sizeof(basic_configuration), (uint8_t*)basic_configuration_ptr);
+                        break;
+                    case 0x05:
+                        UART_send_some_bytes(sizeof(test_configuration), (uint8_t*)test_configuration_ptr);
+                        break;
+                    case 0x07:
+                        UART_send_some_bytes(sizeof(converter_configuration), (uint8_t*)converter_configuration_ptr);
+                        break;
+                }
+                UART_send_byte(0x77);
+                break;
+            case 0x5A:
+                switch (code)
+                {
+                    case 0x03:
+                        put_data_into_structure(length, (uint8_t*)data, (uint8_t*)basic_configuration_ptr);
+                        break;
+                    case 0x05:
+                        put_data_into_structure(length, (uint8_t*)data, (uint8_t*)test_configuration_ptr);
+                        break;
+                    case 0x07:
+                        put_data_into_structure(length, (uint8_t*)data, (uint8_t*)converter_configuration_ptr);
+                        break;
+                }
+                break;
+            case 0x0F:
+                switch (code)
+                {
+                    case 0x03:
+                        //UART_send_string((char*)"reset");
+                        break;
+                    case 0x05:
+                        //UART_send_string((char*)"start");
+                        break;
+                    case 0x07:
+                        //UART_send_string((char*)"next cell");
+                        break;
+                    case 0x09:
+                        //UART_send_string((char*)"next state"); 
+                        break;
+                }
+                break;
+        }
+    }else test = false;
+    return (test);
+}
+
 /**@brief This function calls the PI control loop for current or voltage depending on the value of the #cmode variable.
 */
 void control_loop()
@@ -308,6 +390,77 @@ void UART_send_char(char bt)
     }/// * Hold the program until the transmission buffer is free
     TX1REG = bt; /// * Load the transmission buffer with @p bt
 }
+
+void UART_send_header(uint8_t start, uint8_t operation, uint8_t code)
+{
+    UART_send_byte(start);
+    UART_send_byte(operation);
+    UART_send_byte(code);
+}
+
+
+void UART_send_byte(uint8_t byte)  
+{
+    while(0 == TXIF)
+    {
+    }/// * Hold the program until the transmission buffer is free
+    TX1REG = byte; /// * Load the transmission buffer with @p bt
+}
+
+/**@brief This function receive one byte of data from UART
+* @return RC1REG reception register
+*/
+uint8_t UART_get_byte()
+{
+    if(OERR) /// If there is error
+    {
+        CREN = 0; /// * Clear the error
+        CREN = 1; /// * Restart
+    }    
+    while(!RCIF);  /// Hold the program until the reception buffer is free   
+    return RC1REG; /// Receive the value and return it
+}
+
+void UART_get_some_bytes(uint8_t length, uint8_t* data)
+{
+    if(OERR) /// If there is error
+    {
+        CREN = 0; /// * Clear the error
+        CREN = 1; /// * Restart
+    }    
+    while(length--)
+    {
+        *data++ = UART_get_byte(); /// * Get a byte      
+    }
+}
+
+void UART_send_some_bytes(uint8_t length, uint8_t* data)
+{
+    while(length--)
+    {
+        UART_send_byte(*data++); /// * Get a byte      
+    }
+}
+
+uint16_t calculate_checksum(uint8_t code, uint8_t length, uint8_t* data)
+{
+    uint16_t result = 0x00;
+    result = (uint16_t)code + (uint16_t)length;
+    while(length--)
+    {
+        result += *data++;
+    }
+    return (result);
+}
+
+void put_data_into_structure(uint8_t length, uint8_t* data, uint8_t* structure)
+{
+    while(length--)
+    {
+        *structure++ = *data++;
+    }
+}
+
 /**@brief This function receive one byte of data from UART
 * @return RC1REG reception register
 */

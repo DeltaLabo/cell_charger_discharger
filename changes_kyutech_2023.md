@@ -176,19 +176,19 @@ Action commands do not have any data
 ### Example of action commands
 to reset:
 
-DD 0F 03 00 03 77
+DD 0F 03 00 00 03 77
 
 to start:
 
-DD 0F 05 00 05 77
+DD 0F 05 00 00 05 77
 
 go to next cell:
 
-DD 0F 07 00 07 77
+DD 0F 07 00 00 07 77
 
 go to next state:
 
-DD 0F 09 00 09 77
+DD 0F 09 00 00 09 77
 
 ## Structure of log data
 

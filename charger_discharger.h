@@ -57,7 +57,8 @@
         DS_DC_res = 9, ///< "Discharged state DC resistance" state, defined by function @link fDC_res() @endlink
         CS_DC_res = 10, ///< "Charged state DC resistance" state, defined by function @link fDC_res() @endlink
         PS_DC_res = 11 ///< "Postcharged state DC resistance" state, defined by function @link fDC_res() @endlink
-    };    
+    };   
+    bool command_interpreter(void);
     void fSTANDBY(void);
     void fIDLE(void);
     void fCHARGE(void);
@@ -83,7 +84,14 @@
     void calculate_avg(void);
     void interrupt_enable(void);
     void UART_send_char(char bt);
-    char UART_get_char(void); 
+    char UART_get_char(void);
+    uint8_t UART_get_byte(void);
+    void UART_send_header(uint8_t start, uint8_t operation, uint8_t code);
+    void UART_send_byte(uint8_t byte);
+    void UART_get_some_bytes(uint8_t length, uint8_t* data);
+    void UART_send_some_bytes(uint8_t length, uint8_t* data);
+    uint16_t calculate_checksum(uint8_t code, uint8_t length, uint8_t* data);
+    void put_data_into_structure(uint8_t length, uint8_t* data, uint8_t* structure);
     void UART_send_string(char* st_pt);
     void temp_protection(void);
     void Cell_ON(void);
@@ -148,7 +156,55 @@
 
     #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_disc_kp; ki = CC_disc_ki;}
     #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_char_kp; ki = CC_char_ki;}
+    //Structs
+    typedef struct basic_configuration_struct {
+        uint8_t version;
+        uint16_t const_voltage;
+        uint16_t const_current;
+        uint16_t capacity;
+        uint16_t end_of_charge;
+        uint16_t end_of_precharge;
+        uint16_t end_of_discharge;
+        uint16_t end_of_postdischarge;
+    }basic_configuration_type, *basic_configuration_type_ptr;
+    
+    typedef struct test_configuration_struct {
+        uint8_t number_of_cells;
+        uint8_t number_of_states;
+        uint8_t number_of_repetitions;
+        uint16_t wait_time;
+        uint16_t end_wait_time;
+        uint16_t order_of_states;
+    }test_configuration_type, *test_configuration_type_ptr;
+    
+    typedef struct converter_configuration_struct {
+        uint16_t CVKp;
+        uint16_t CVKi;
+        uint16_t CVKd;
+        uint16_t CCKp;
+        uint16_t CCKi;
+    }converter_configuration_type, *converter_configuration_type_ptr;
+    
+    typedef struct log_data_struct {
+        uint8_t cell_counter;
+        uint8_t repetition_counter;
+        uint8_t state;
+        uint16_t elapsed_time;
+        uint16_t voltage;
+        uint16_t current; 
+        uint16_t capacity;
+        uint16_t temperature;
+        uint16_t duty_cycle;
+    }log_data_type, *log_data_type_ptr;
+    
     //Variables
+    
+    basic_configuration_type            basic_configuration;
+    basic_configuration_type_ptr        basic_configuration_ptr;  
+    test_configuration_type             test_configuration;
+    test_configuration_type_ptr         test_configuration_ptr; 
+    converter_configuration_type        converter_configuration;
+    converter_configuration_type_ptr    converter_configuration_ptr; 
     bool                                SECF = 1; ///< 1 second flag
     unsigned char                       option = 0; ///< Four different options, look into @link param() @endlink for details
     uint16_t                            capacity; ///< Definition of capacity per cell according to each chemistry

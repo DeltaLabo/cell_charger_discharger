@@ -13,6 +13,7 @@
 		<Item Name="assemble_command.vi" Type="VI" URL="../command/assemble_command.vi"/>
 		<Item Name="basic.vi" Type="VI" URL="../panels/basic.vi"/>
 		<Item Name="basic_configuration_cluster.ctl" Type="VI" URL="../typedefs/basic_configuration_cluster.ctl"/>
+		<Item Name="command.ctl" Type="VI" URL="../typedefs/command.ctl"/>
 		<Item Name="main.vi" Type="VI" URL="../main.vi"/>
 		<Item Name="operation.ctl" Type="VI" URL="../typedefs/operation.ctl"/>
 		<Item Name="Dependencies" Type="Dependencies">
@@ -22,7 +23,9 @@
 				<Item Name="VISA Configure Serial Port (Serial Instr).vi" Type="VI" URL="/&lt;vilib&gt;/Instr/_visa.llb/VISA Configure Serial Port (Serial Instr).vi"/>
 			</Item>
 			<Item Name="command_codes.vi" Type="VI" URL="../command/command_codes.vi"/>
+			<Item Name="converter_configuration_cluster.ctl" Type="VI" URL="../typedefs/converter_configuration_cluster.ctl"/>
 			<Item Name="disassemble_command.vi" Type="VI" URL="../command/disassemble_command.vi"/>
+			<Item Name="log_data_cluster.ctl" Type="VI" URL="../typedefs/log_data_cluster.ctl"/>
 			<Item Name="serial_clear_reset_wait.vi" Type="VI" URL="../serial/serial_clear_reset_wait.vi"/>
 			<Item Name="serial_command.vi" Type="VI" URL="../serial/serial_command.vi"/>
 			<Item Name="test_configuration_cluster.ctl" Type="VI" URL="../typedefs/test_configuration_cluster.ctl"/>
