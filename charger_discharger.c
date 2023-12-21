@@ -131,6 +131,7 @@ bool command_interpreter()
     uint8_t length = 0x00;
     uint8_t data[20] = {0x00};
     uint16_t checksum = 0x0000;
+    uint16_t calc_checksum = 0x0000;
     basic_configuration_ptr = &basic_configuration;
     test_configuration_ptr = &test_configuration;
     converter_configuration_ptr = &converter_configuration;
@@ -141,13 +142,14 @@ bool command_interpreter()
         code = UART_get_byte();
         length = UART_get_byte();
         if (length>0) UART_get_some_bytes(length, (uint8_t*)data);
-        checksum = (UART_get_byte()<<16) + UART_get_byte();
+        checksum = UART_get_byte();
+        checksum += UART_get_byte()*256;
+        calc_checksum = calculate_checksum(code, length, (uint8_t*)data);
         if(UART_get_byte()==0x77)
         {
             test = true;
-        }else test = false;
-        //UART_send_byte(checksum>>16); // just for debugging
-        if (checksum == calculate_checksum(code, length, (uint8_t*)data))
+        }else test = false;     
+        if (checksum == calc_checksum)
         {
             test = true;
         }else test = false;
@@ -161,24 +163,23 @@ bool command_interpreter()
                         length = sizeof(basic_configuration);
                         UART_send_byte(length);
                         UART_send_some_bytes(length, (uint8_t*)basic_configuration_ptr);
-                        checksum = calculate_checksum(code, length, (uint8_t*)basic_configuration_ptr);
+                        calc_checksum = calculate_checksum(code, length, (uint8_t*)basic_configuration_ptr);
                         break;
                     case 0x05:
                         length = sizeof(test_configuration);
                         UART_send_byte(length);
                         UART_send_some_bytes(length, (uint8_t*)test_configuration_ptr);
-                        checksum = calculate_checksum(code, length, (uint8_t*)test_configuration_ptr);
+                        calc_checksum = calculate_checksum(code, length, (uint8_t*)test_configuration_ptr);
                         break;
                     case 0x07:
                         length = sizeof(converter_configuration);
                         UART_send_byte(length);
                         UART_send_some_bytes(length, (uint8_t*)converter_configuration_ptr);
-                        checksum = calculate_checksum(code, length, (uint8_t*)converter_configuration_ptr);
+                        calc_checksum = calculate_checksum(code, length, (uint8_t*)converter_configuration_ptr);
                         break;
                 }
-                UART_send_some_bytes(2,(uint8_t*)checksum);
-                UART_send_byte(0x77);
-                
+                UART_send_some_bytes(2,(uint8_t*)&calc_checksum);
+                UART_send_byte(0x77);                
                 break;
             case 0x5A:
                 switch (code)
