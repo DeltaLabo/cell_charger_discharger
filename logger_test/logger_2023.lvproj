@@ -14,6 +14,7 @@
 		<Item Name="basic.vi" Type="VI" URL="../panels/basic.vi"/>
 		<Item Name="basic_configuration_cluster.ctl" Type="VI" URL="../typedefs/basic_configuration_cluster.ctl"/>
 		<Item Name="command.ctl" Type="VI" URL="../typedefs/command.ctl"/>
+		<Item Name="create_files.vi" Type="VI" URL="../file/create_files.vi"/>
 		<Item Name="main.vi" Type="VI" URL="../main.vi"/>
 		<Item Name="operation.ctl" Type="VI" URL="../typedefs/operation.ctl"/>
 		<Item Name="Dependencies" Type="Dependencies">

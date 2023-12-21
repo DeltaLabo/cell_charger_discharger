@@ -205,6 +205,8 @@
     test_configuration_type_ptr         test_configuration_ptr; 
     converter_configuration_type        converter_configuration;
     converter_configuration_type_ptr    converter_configuration_ptr; 
+    log_data_type                       log_data;
+    log_data_type_ptr                   log_data_ptr;
     bool                                start = false;
     bool                                SECF = 1; ///< 1 second flag
     unsigned char                       option = 0; ///< Four different options, look into @link param() @endlink for details

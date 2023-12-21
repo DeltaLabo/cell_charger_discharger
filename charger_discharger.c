@@ -196,6 +196,7 @@ bool command_interpreter()
                             put_data_into_structure(length, (uint8_t*)data, (uint8_t*)converter_configuration_ptr);
                             break;
                     }
+                    UART_send_byte(test);
                     break;
             }
         }
@@ -217,6 +218,7 @@ bool command_interpreter()
                         //UART_send_string((char*)"next state"); 
                         break;
                 }
+                UART_send_byte(test);
                 break;
         }
     }else test = false;
@@ -285,11 +287,12 @@ void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mo
 */
 void scaling() /// This function performs the folowing tasks:
 {
-iavg = (uint16_t) ( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
-vavg = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
+log_data.current = (uint16_t) ( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
+log_data.voltage = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
 tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 ); 
-tavg = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
+log_data.temperature = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
 qavg += (uint16_t) ( (float)iavg / 360.0 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
+log_data.capacity = qavg;
 #if (NI_MH_CHEM)  
 if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg
 #endif
@@ -298,35 +301,17 @@ if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bi
 */
 void log_control()
 {
-    if (log_on)
+    log_data_ptr = &log_data;
+    log_data.cell_counter = 0x01;
+    log_data.repetition_counter = 0x01;   
+    log_data.state = 0x03;
+    if(start)
     {
-//                LINEBREAK;
-//                display_value_u(minute);
-//                UART_send_char(colons); /// * Send a colons character
-//                if (second < 10) UART_send_char('0'); /// * If #second is smaller than 10 send a '0'
-//                display_value_u((uint16_t) second);
-//                UART_send_char(comma); /// * Send a comma character
-//                UART_send_char(C_str); /// * Send a 'C'
-//                display_value_u((uint16_t)cell_count); /// * Send a #cell_count variable
-//                UART_send_char(comma); /// * Send a comma character
-//                UART_send_char(S_str); /// * Send an 'S'
-//                display_value_u((uint16_t)state);
-//                UART_send_char(comma); /// * Send a comma character
-//                UART_send_char(V_str); /// * Send a 'V'
-//                display_value_u(vavg);
-//                UART_send_char(comma); ///* Send a comma character
-//                UART_send_char(I_str); /// * Send an 'I'
-//                display_value_u(iavg);
-//                UART_send_char(comma); ///* Send a comma character
-//                UART_send_char(T_str); /// * Send a 'T'
-//                //display_value_s(tavg);
-//                display_value_u((uint16_t) (dc * 1.933125)); //To show duty cycle
-//                UART_send_char(comma); ///* Send a comma character
-//                UART_send_char(Q_str); /// * Send a 'Q'
-//                display_value_u(qavg);
-//                UART_send_char('<'); /// * Send a '<'
-    }
-    if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
+        log_data.elapsed_time = second;
+        UART_send_byte(0xDD);
+        UART_send_some_bytes(sizeof(log_data),(uint8_t*)log_data_ptr);
+        UART_send_byte(0x77);
+    }else second = 0;
 }
 
 /**@brief This function read the ADC and store the data in the coresponding variable
