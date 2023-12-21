@@ -25,6 +25,12 @@ void main(void) /// This function performs the folowing tasks:
     initialize(); /// <ul> <li> Call the #initialize function
     __delay_ms(10);
     interrupt_enable(); // this I added for the test
+    log_data_type log_data;
+    log_data_type_ptr log_data_ptr;
+    log_data_ptr = &log_data;
+    log_data.cell_counter = 0x01;
+    log_data.repetition_counter = 0x01;   
+    log_data.state = 0x03;
     while(1) /// <li> <b> The main loop repeats the following forever: </b> 
     {
         if (SECF) /// <ul> <li> Check the #SECF flag, if it is set, 1 second has passed since last execution, so the folowing task are executed:
@@ -35,6 +41,18 @@ void main(void) /// This function performs the folowing tasks:
             //cc_cv_mode(vavg, cvref, cmode); /// <li> Check if the system shall change to CV mode by calling the #cc_cv_mode function
             //state_machine(); /// <li> Call the #state_machine function
             //temp_protection(); /// <li> Call the #temp_protection function </ol> </ul> </ul>
+            if(start)
+            {
+                log_data.elapsed_time = second;
+                log_data.voltage = 1000 + second;
+                log_data.current = 500 + second; 
+                log_data.capacity = 900 + second;
+                log_data.temperature = 2300;
+                log_data.duty_cycle = 1000;
+                UART_send_byte(0xDD);
+                UART_send_some_bytes(sizeof(log_data),(uint8_t*)log_data_ptr);
+                UART_send_byte(0x77);
+            }else second = 0;
         }
 	}
 }
@@ -45,11 +63,11 @@ void __interrupt() ISR(void) /// This function performs the folowing tasks:
 {
     char recep = 0;
     bool status = 0;
-//    if(TMR1IF) /// <li> Check the @b Timer1 interrupt flag, if it is set, the folowing task are executed:
-//    {
-//        TMR1H = 0xE1; // TMR1 clock is Fosc/4= 8Mhz (Tick= 0.125us). TMR1IF is set when the 16-bit register overflows. 7805 x 0.125us = 0.975625 ms.
-//        TMR1L = 0x83;/// <ol> <li> Load the @b Timer1 16-bit register so it overflow every 0.975625 ms 
-//        TMR1IF = 0; /// <li> Clear the @b Timer1 interrupt flag
+    if(TMR1IF) /// <li> Check the @b Timer1 interrupt flag, if it is set, the folowing task are executed:
+    {
+        TMR1H = 0xE1; // TMR1 clock is Fosc/4= 8Mhz (Tick= 0.125us). TMR1IF is set when the 16-bit register overflows. 7805 x 0.125us = 0.975625 ms.
+        TMR1L = 0x83;/// <ol> <li> Load the @b Timer1 16-bit register so it overflow every 0.975625 ms 
+        TMR1IF = 0; /// <li> Clear the @b Timer1 interrupt flag
 //        v = read_ADC(V_CHAN); /// <li> Read the ADC channel #V_CHAN and store the value in #v. Using the #read_ADC() function
 //        i = read_ADC(I_CHAN); /// <li> Read the ADC channel #I_CHAN and store the value in #i. Using the #read_ADC() function
 //        i = (uint16_t) (abs ( 2048 - (int)i ) ); /// <li> Substract the 2.5V bias from #i, store the absolute value in #i   
@@ -57,9 +75,9 @@ void __interrupt() ISR(void) /// This function performs the folowing tasks:
 //        if (conv) control_loop(); /// <li> Call the #control_loop() function
 //        else intacum = 0;
 //        calculate_avg(); /// <li> Call the #calculate_avg() function
-//        timing(); /// <li> Call the #timing() function
+        timing(); /// <li> Call the #timing() function
 //        if (TMR1IF) UART_send_string((char*)"TIMING_ERROR"); /// <li> If the @b Timer1 interrupt flag is set, there is a timing error, print "TIMING_ERROR" into the terminal. </ol>
-//    }
+    }
 
     if(RCIF)/// <li> Check the @b UART reception interrupt flag, if it is set, the folowing task are executed:
     {

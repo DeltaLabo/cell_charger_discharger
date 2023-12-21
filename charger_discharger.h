@@ -205,6 +205,7 @@
     test_configuration_type_ptr         test_configuration_ptr; 
     converter_configuration_type        converter_configuration;
     converter_configuration_type_ptr    converter_configuration_ptr; 
+    bool                                start = false;
     bool                                SECF = 1; ///< 1 second flag
     unsigned char                       option = 0; ///< Four different options, look into @link param() @endlink for details
     uint16_t                            capacity; ///< Definition of capacity per cell according to each chemistry
@@ -251,7 +252,7 @@
     uint16_t                            dc = 0;  ///< Duty cycle
     //char                                clear;  ///< Variable to clear the transmission buffer of UART
     bool                                log_on = 0; ///< Variable to indicate if the log is activated 
-    int16_t                             second = 0; ///< Seconds counter, resetted after 59 seconds.
+    uint16_t                            second = 0; ///< Seconds counter
     uint16_t                            minute = 0; ///< Minutes counter, only manually reset
     uint16_t                            timeout = 0;
 #endif /* CHARGER_DISCHARGER_H*/

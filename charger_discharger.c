@@ -152,57 +152,63 @@ bool command_interpreter()
         if (checksum == calc_checksum)
         {
             test = true;
-        }else test = false;
-        switch (operation)
+        }else test = false;        
+        if(!start)
         {
-            case 0xA5:
-                UART_send_header(0xDD, operation, code);
-                switch (code)
-                {
-                    case 0x03:
-                        length = sizeof(basic_configuration);
-                        UART_send_byte(length);
-                        UART_send_some_bytes(length, (uint8_t*)basic_configuration_ptr);
-                        calc_checksum = calculate_checksum(code, length, (uint8_t*)basic_configuration_ptr);
-                        break;
-                    case 0x05:
-                        length = sizeof(test_configuration);
-                        UART_send_byte(length);
-                        UART_send_some_bytes(length, (uint8_t*)test_configuration_ptr);
-                        calc_checksum = calculate_checksum(code, length, (uint8_t*)test_configuration_ptr);
-                        break;
-                    case 0x07:
-                        length = sizeof(converter_configuration);
-                        UART_send_byte(length);
-                        UART_send_some_bytes(length, (uint8_t*)converter_configuration_ptr);
-                        calc_checksum = calculate_checksum(code, length, (uint8_t*)converter_configuration_ptr);
-                        break;
-                }
-                UART_send_some_bytes(2,(uint8_t*)&calc_checksum);
-                UART_send_byte(0x77);                
-                break;
-            case 0x5A:
-                switch (code)
-                {
-                    case 0x03:
-                        put_data_into_structure(length, (uint8_t*)data, (uint8_t*)basic_configuration_ptr);
-                        break;
-                    case 0x05:
-                        put_data_into_structure(length, (uint8_t*)data, (uint8_t*)test_configuration_ptr);
-                        break;
-                    case 0x07:
-                        put_data_into_structure(length, (uint8_t*)data, (uint8_t*)converter_configuration_ptr);
-                        break;
-                }
-                break;
+            switch (operation)
+            {
+                case 0xA5:
+                    UART_send_header(0xDD, operation, code);
+                    switch (code)
+                    {
+                        case 0x03:
+                            length = sizeof(basic_configuration);
+                            UART_send_byte(length);
+                            UART_send_some_bytes(length, (uint8_t*)basic_configuration_ptr);
+                            calc_checksum = calculate_checksum(code, length, (uint8_t*)basic_configuration_ptr);
+                            break;
+                        case 0x05:
+                            length = sizeof(test_configuration);
+                            UART_send_byte(length);
+                            UART_send_some_bytes(length, (uint8_t*)test_configuration_ptr);
+                            calc_checksum = calculate_checksum(code, length, (uint8_t*)test_configuration_ptr);
+                            break;
+                        case 0x07:
+                            length = sizeof(converter_configuration);
+                            UART_send_byte(length);
+                            UART_send_some_bytes(length, (uint8_t*)converter_configuration_ptr);
+                            calc_checksum = calculate_checksum(code, length, (uint8_t*)converter_configuration_ptr);
+                            break;
+                    }
+                    UART_send_some_bytes(2,(uint8_t*)&calc_checksum);
+                    UART_send_byte(0x77);                
+                    break;   
+                case 0x5A:
+                    switch (code)
+                    {
+                        case 0x03:
+                            put_data_into_structure(length, (uint8_t*)data, (uint8_t*)basic_configuration_ptr);
+                            break;
+                        case 0x05:
+                            put_data_into_structure(length, (uint8_t*)data, (uint8_t*)test_configuration_ptr);
+                            break;
+                        case 0x07:
+                            put_data_into_structure(length, (uint8_t*)data, (uint8_t*)converter_configuration_ptr);
+                            break;
+                    }
+                    break;
+            }
+        }
+        switch(operation)
+        {
             case 0x0F:
                 switch (code)
                 {
                     case 0x03:
-                        //UART_send_string((char*)"reset");
+                        start = false;
                         break;
                     case 0x05:
-                        //UART_send_string((char*)"start");
+                        start = true;
                         break;
                     case 0x07:
                         //UART_send_string((char*)"next cell");
@@ -294,31 +300,31 @@ void log_control()
 {
     if (log_on)
     {
-                LINEBREAK;
-                display_value_u(minute);
-                UART_send_char(colons); /// * Send a colons character
-                if (second < 10) UART_send_char('0'); /// * If #second is smaller than 10 send a '0'
-                display_value_u((uint16_t) second);
-                UART_send_char(comma); /// * Send a comma character
-                UART_send_char(C_str); /// * Send a 'C'
-                display_value_u((uint16_t)cell_count); /// * Send a #cell_count variable
-                UART_send_char(comma); /// * Send a comma character
-                UART_send_char(S_str); /// * Send an 'S'
-                display_value_u((uint16_t)state);
-                UART_send_char(comma); /// * Send a comma character
-                UART_send_char(V_str); /// * Send a 'V'
-                display_value_u(vavg);
-                UART_send_char(comma); ///* Send a comma character
-                UART_send_char(I_str); /// * Send an 'I'
-                display_value_u(iavg);
-                UART_send_char(comma); ///* Send a comma character
-                UART_send_char(T_str); /// * Send a 'T'
-                //display_value_s(tavg);
-                display_value_u((uint16_t) (dc * 1.933125)); //To show duty cycle
-                UART_send_char(comma); ///* Send a comma character
-                UART_send_char(Q_str); /// * Send a 'Q'
-                display_value_u(qavg);
-                UART_send_char('<'); /// * Send a '<'
+//                LINEBREAK;
+//                display_value_u(minute);
+//                UART_send_char(colons); /// * Send a colons character
+//                if (second < 10) UART_send_char('0'); /// * If #second is smaller than 10 send a '0'
+//                display_value_u((uint16_t) second);
+//                UART_send_char(comma); /// * Send a comma character
+//                UART_send_char(C_str); /// * Send a 'C'
+//                display_value_u((uint16_t)cell_count); /// * Send a #cell_count variable
+//                UART_send_char(comma); /// * Send a comma character
+//                UART_send_char(S_str); /// * Send an 'S'
+//                display_value_u((uint16_t)state);
+//                UART_send_char(comma); /// * Send a comma character
+//                UART_send_char(V_str); /// * Send a 'V'
+//                display_value_u(vavg);
+//                UART_send_char(comma); ///* Send a comma character
+//                UART_send_char(I_str); /// * Send an 'I'
+//                display_value_u(iavg);
+//                UART_send_char(comma); ///* Send a comma character
+//                UART_send_char(T_str); /// * Send a 'T'
+//                //display_value_s(tavg);
+//                display_value_u((uint16_t) (dc * 1.933125)); //To show duty cycle
+//                UART_send_char(comma); ///* Send a comma character
+//                UART_send_char(Q_str); /// * Send a 'Q'
+//                display_value_u(qavg);
+//                UART_send_char('<'); /// * Send a '<'
     }
     if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
 }
@@ -345,8 +351,7 @@ void timing()
     {
         SECF = 1;
         count = COUNTER; /// * Make #count equal to #COUNTER
-        if(second < 59) second++; /// * If #second is smaller than 59 then increase it
-        else{second = 0; minute++;} /// * Else, make #second zero and increase #minute
+        second++; /// * always increase second, no more minutes
     }else /// Else,
     {
         count--; /// * Decrease it

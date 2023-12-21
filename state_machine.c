@@ -70,11 +70,11 @@ void fSTANDBY()
     cell_count = 1; /// * Initialize #cell_count to '1'
     LINEBREAK;
     #if (LI_ION_CHEM) /// If #LI_ION_CHEM  is set to @b 1 and #NI_MH_CHEM  is set to @b 0, the folowing message will be displayed:
-    UART_send_string((char*)chem_def_liion); /// * <tt> Chemistry defined as Li-Ion </tt>
-    LINEBREAK;
+    //UART_send_string((char*)chem_def_liion); /// * <tt> Chemistry defined as Li-Ion </tt>
+    //LINEBREAK;
     #elif (NI_MH_CHEM) /// If #NI_MH_CHEM  is set to @b 1 and #LI_ION_CHEM  is set to @b 0, the folowing message will be displayed:
-    UART_send_string((char*)chem_def_nimh); /// * <tt> Chemistry defined as Ni-MH </tt>
-    LINEBREAK;
+    //UART_send_string((char*)chem_def_nimh); /// * <tt> Chemistry defined as Ni-MH </tt>
+    //LINEBREAK;
     #endif
     param(); /// Call the #param() function
 }
@@ -100,8 +100,8 @@ void fCHARGE()
     if (vavg < 900) //&& (qavg > 1)) /// If #vavg is below 0.9V
     {
         state = FAULT; /// * Go to #FAULT state
-        UART_send_string((char*)cell_below_str); /// * Send a warning message
-        LINEBREAK;
+        //UART_send_string((char*)cell_below_str); /// * Send a warning message
+        //LINEBREAK;
     }
     if (state == CHARGE){ /// If the #state is #CHARGE
         #if (LI_ION_CHEM) 
@@ -179,17 +179,17 @@ void fDC_res() //can be improved a lot!!
     }
     if (!dc_res_count)
     {   
-        LINEBREAK;
-        UART_send_char(C_str);
-        display_value_u((uint16_t)cell_count);
-        UART_send_char(comma);
-        UART_send_char(S_str);
-        display_value_u((uint16_t)state);
-        UART_send_char(comma);
-        UART_send_char(R_str);
-        display_value_u((uint16_t)dc_res_val);
-        UART_send_char('<');
-        LINEBREAK;
+//        LINEBREAK;
+//        UART_send_char(C_str);
+//        display_value_u((uint16_t)cell_count);
+//        UART_send_char(comma);
+//        UART_send_char(S_str);
+//        display_value_u((uint16_t)state);
+//        UART_send_char(comma);
+//        UART_send_char(R_str);
+//        display_value_u((uint16_t)dc_res_val);
+//        UART_send_char('<');
+//        LINEBREAK;
         LOG_OFF();   ///I dont like this 
         prev_state = state;
         state = WAIT;
@@ -204,16 +204,16 @@ void fWAIT()
     STOP_CONVERTER();  ///MAYBEOK
     if (wait_count)
     {   
-        LINEBREAK;
-        UART_send_char(C_str);
-        display_value_u((uint16_t)cell_count);
-        UART_send_char(comma);
-        UART_send_char(S_str);
-        display_value_u((uint16_t)state);
-        UART_send_char(comma);
-        UART_send_char(W_str);
-        display_value_u(wait_count);
-        UART_send_char('<');
+//        LINEBREAK;
+//        UART_send_char(C_str);
+//        display_value_u((uint16_t)cell_count);
+//        UART_send_char(comma);
+//        UART_send_char(S_str);
+//        display_value_u((uint16_t)state);
+//        UART_send_char(comma);
+//        UART_send_char(W_str);
+//        display_value_u(wait_count);
+//        UART_send_char('<');
         wait_count--;             
     }
     if(!wait_count)
@@ -287,79 +287,79 @@ void fFAULT()
 
 /**@brief Function to start the state machine.
 */
-void start_state_machine()
-{
-    /**First,*/
-    switch(option)
-    {
-        /**Check the option (CHANGE)*/
-        case '1':
-            /**> if @option is equal to @b 1 it will set the @p state as @p PREDISCHARGE*/
-            state = PREDISCHARGE;
-            break;
-        case '2':
-            /**> if @option is equal to @b 2 it will set the @p state as @p CHARGE*/
-            state = CHARGE;
-            break;
-        case '3':
-            /**> if @option is equal to @b 3 it will set the @p state as @p CHARGE*/
-            state = CHARGE;            
-            break;
-        case '4':
-            /**> if @option is equal to @b 4 it will set the @p state as @p DISCHARGE*/
-            state = DISCHARGE;                
-            break;
-    }
-    /**First, this function will declare and initialized to zero a variable called @p start, which will
-    be used to store the input of the user.*/ 
-    unsigned char start = 0;
-    switch (cell_count){
-        /**If the current cell is the first (<tt>cell_count</tt>) , it will ask for user intervention to start.*/
-        case 0x01:
-            /**It will prompt the user to press @b s.*/
-            UART_send_string((char*)press_s_str);
-            LINEBREAK;                  
-            while(start == 0)                                               
-            {
-                /**`The key pressed by the user will be assigned to @p start.*/
-                start = UART_get_char();
-                switch(start)
-                {
-                    /**If the user press @b s, the program will start.*/
-                    case 's': 
-                        break;
-                    /**The user also can press @b ESC and the program will be restarted to the @p STANBY state.*/ 
-                    case 0x1B:
-                        state = STANDBY;
-                        goto NOSTART;  //go to the end of the function 
-                    /**If the user press something different from @b s, or @b ESC the program will print 
-                    a warning message and wait for a valid input.*/
-                    default:
-                        LINEBREAK;
-                        UART_send_string((char*)press_s_str);
-                        LINEBREAK;
-                        start = 0;  //Keep the program inside the while loop 
-                        break;
-                }
-            }
-            break;
-        /**If the current cell is @b not @b '1' the program will start without 
-        the user intervention.*/
-        default: 
-            break;
-    }    
-    /**Before starting, the program will print the following:*/
-    LINEBREAK; 
-    /**Starting...*/
-    UART_send_string((char*)starting_str);                                            
-    LINEBREAK; 
-    LINEBREAK;
-    /**Cell {1,2,3 or 4}*/
-    UART_send_string((char*)cell_str);
-    display_value_u((uint16_t)(cell_count));
-    LINEBREAK; 
-    NOSTART: ;  //label to goto the end of the function 
-}
+//void start_state_machine()
+//{
+//    /**First,*/
+//    switch(option)
+//    {
+//        /**Check the option (CHANGE)*/
+//        case '1':
+//            /**> if @option is equal to @b 1 it will set the @p state as @p PREDISCHARGE*/
+//            state = PREDISCHARGE;
+//            break;
+//        case '2':
+//            /**> if @option is equal to @b 2 it will set the @p state as @p CHARGE*/
+//            state = CHARGE;
+//            break;
+//        case '3':
+//            /**> if @option is equal to @b 3 it will set the @p state as @p CHARGE*/
+//            state = CHARGE;            
+//            break;
+//        case '4':
+//            /**> if @option is equal to @b 4 it will set the @p state as @p DISCHARGE*/
+//            state = DISCHARGE;                
+//            break;
+//    }
+//    /**First, this function will declare and initialized to zero a variable called @p start, which will
+//    be used to store the input of the user.*/ 
+//    unsigned char start = 0;
+//    switch (cell_count){
+//        /**If the current cell is the first (<tt>cell_count</tt>) , it will ask for user intervention to start.*/
+//        case 0x01:
+//            /**It will prompt the user to press @b s.*/
+//            UART_send_string((char*)press_s_str);
+//            LINEBREAK;                  
+//            while(start == 0)                                               
+//            {
+//                /**`The key pressed by the user will be assigned to @p start.*/
+//                start = UART_get_char();
+//                switch(start)
+//                {
+//                    /**If the user press @b s, the program will start.*/
+//                    case 's': 
+//                        break;
+//                    /**The user also can press @b ESC and the program will be restarted to the @p STANBY state.*/ 
+//                    case 0x1B:
+//                        state = STANDBY;
+//                        goto NOSTART;  //go to the end of the function 
+//                    /**If the user press something different from @b s, or @b ESC the program will print 
+//                    a warning message and wait for a valid input.*/
+//                    default:
+//                        LINEBREAK;
+//                        UART_send_string((char*)press_s_str);
+//                        LINEBREAK;
+//                        start = 0;  //Keep the program inside the while loop 
+//                        break;
+//                }
+//            }
+//            break;
+//        /**If the current cell is @b not @b '1' the program will start without 
+//        the user intervention.*/
+//        default: 
+//            break;
+//    }    
+//    /**Before starting, the program will print the following:*/
+//    LINEBREAK; 
+//    /**Starting...*/
+//    UART_send_string((char*)starting_str);                                            
+//    LINEBREAK; 
+//    LINEBREAK;
+//    /**Cell {1,2,3 or 4}*/
+//    UART_send_string((char*)cell_str);
+//    display_value_u((uint16_t)(cell_count));
+//    LINEBREAK; 
+//    NOSTART: ;  //label to goto the end of the function 
+//}
 
 /**@brief Function to set the configurations of the converter.
 */
