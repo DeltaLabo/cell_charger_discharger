@@ -254,53 +254,6 @@
     int16_t                             second = 0; ///< Seconds counter, resetted after 59 seconds.
     uint16_t                            minute = 0; ///< Minutes counter, only manually reset
     uint16_t                            timeout = 0;
-    //Strings       
-    char const                          comma = ',';
-    char const                          colons = ':'; 
-    char const                          S_str = 'S';
-    char const                          C_str = 'C';
-    char const                          V_str = 'V';
-    char const                          I_str = 'I';
-    char const                          T_str = 'T';
-    char const                          Q_str = 'Q';
-    char const                          R_str = 'R';
-    char const                          W_str = 'W';
-    char const                          press_s_str[] = "'s' to start: ";
-    char const                          starting_str[] = "starting...";
-    char const                          input_num_str[] = "Input a number between";
-    char const                          param_def_str[] = "Parameter definition:";
-    char const                          re_str[] = "re";
-    char const                          chem_def_liion[] = "Li-Ion";
-    char const                          chem_def_nimh[] = "Ni-MH";
-    char const                          mV_str[] = " mV";
-    char const                          mAh_str[] = " mAh";
-    char const                          mA_str[] = " mA";
-    char const                          EOD_V_str[] = "EOD: ";
-    char const                          EOC_I_str[] = "EOC: ";
-    char const                          EOC_DV_str[] = "EOC DV: ";
-    char const                          cho_bet_str[] = "Chose: ";
-    char const                          quarter_c_str[] = "0.25C";
-    char const                          half_c_str[] = "0.50C";
-    char const                          one_c_str[] = "1C";
-    char const                          cell_str[] = "Cell "; 
-    char const                          dis_def_str[] = "Discharge current: ";
-    char const                          char_def_str[] = "Charge current: ";
-    char const                          cv_val_str[] = "CV: ";
-    char const                          nom_cap_str[] = "Capacity: ";
-    char const                          def_char_curr_str[] = "Charge current: ";
-    char const                          def_disc_curr_str[] = "Discharge current: ";
-    char const                          num_cell_str[] = "Number of cells: ";
-    char const                          one_str[] = "1) ";
-    char const                          two_str[] = "2) ";
-    char const                          three_str[] = "3) ";
-    char const                          four_str[] = "4) ";
-    char const                          op_1_str[] = "Predischarge->Charge->Discharge->Postcharge";
-    char const                          op_2_str[] = "Charge->Discharge";
-    char const                          op_3_str[] = "Only Charge";
-    char const                          op_4_str[] = "Only Discharge";
-    char const                          sel_str[] = " selected...";
-    char const                          cell_below_str[] = "Cell below 0.9V or not present";
-
 #endif /* CHARGER_DISCHARGER_H*/
 
 
