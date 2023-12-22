@@ -45,18 +45,25 @@
     #include <stdbool.h> // Include bool type
     /** This is the State Machine enum*/
 	enum states { 
-        STANDBY = 0, ///< "Stand by" state, defined by function @link fSTANDBY() @endlink
-        IDLE = 1, ///< "Idle" state, defined by function @link fIDLE() @endlink
-        FAULT = 2, ///< "Fault" state, defined by function @link fFAULT() @endlink
-        ISDONE = 3, ///< "Is done" state, defined by function @link fISDONE() @endlink
-        WAIT = 4, ///< "Wait" state, defined by function @link fWAIT() @endlink
-        PREDISCHARGE = 5, ///< "Predischarge" state, defined by function @link fDISCHARGE() @endlink
-        CHARGE = 6, ///< "Charge" state, defined by function @link fCHARGE() @endlink
-        DISCHARGE = 7, ///< "Discharge" state, defined by function @link fDISCHARGE() @endlink
-        POSTCHARGE = 8, ///< "Postcharge" state, defined by function @link fCHARGE() @endlink
-        DS_DC_res = 9, ///< "Discharged state DC resistance" state, defined by function @link fDC_res() @endlink
-        CS_DC_res = 10, ///< "Charged state DC resistance" state, defined by function @link fDC_res() @endlink
-        PS_DC_res = 11 ///< "Postcharged state DC resistance" state, defined by function @link fDC_res() @endlink
+//        STANDBY = 0, ///< "Stand by" state, defined by function @link fSTANDBY() @endlink
+//        IDLE = 1, ///< "Idle" state, defined by function @link fIDLE() @endlink
+//        FAULT = 2, ///< "Fault" state, defined by function @link fFAULT() @endlink
+//        ISDONE = 3, ///< "Is done" state, defined by function @link fISDONE() @endlink
+//        WAIT = 4, ///< "Wait" state, defined by function @link fWAIT() @endlink
+//        PREDISCHARGE = 5, ///< "Predischarge" state, defined by function @link fDISCHARGE() @endlink
+//        CHARGE = 6, ///< "Charge" state, defined by function @link fCHARGE() @endlink
+//        DISCHARGE = 7, ///< "Discharge" state, defined by function @link fDISCHARGE() @endlink
+//        POSTCHARGE = 8, ///< "Postcharge" state, defined by function @link fCHARGE() @endlink
+//        DS_DC_res = 9, ///< "Discharged state DC resistance" state, defined by function @link fDC_res() @endlink
+//        CS_DC_res = 10, ///< "Charged state DC resistance" state, defined by function @link fDC_res() @endlink
+//        PS_DC_res = 11 ///< "Postcharged state DC resistance" state, defined by function @link fDC_res() @endlink
+        IDLE = 0x01,
+        CHARGE = 0x03,
+        PRECHARGE = 0x05,
+        DISCHARGE = 0x07,
+        POSTDISCHARGE = 0x09,
+        DC_res = 0x0B,
+        WAIT = 0x0D
     };   
     bool command_interpreter(void);
     void fSTANDBY(void);
@@ -160,7 +167,8 @@
     typedef struct basic_configuration_struct {
         uint8_t version;
         uint16_t const_voltage;
-        uint16_t const_current;
+        uint16_t const_current_char;
+        uint16_t const_current_disc;
         uint16_t capacity;
         uint16_t end_of_charge;
         uint16_t end_of_precharge;
@@ -217,8 +225,8 @@
     unsigned char                       cell_max = 0; ///< Number of cells to be tested. Initialized as 0
     uint16_t                            wait_count = 0; ///< Counter for waiting time between states. Initialized as 0
     unsigned char                       dc_res_count = 0; ///< Counter for DC resistance. Initialized as 0
-    unsigned char                       state = STANDBY; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
-    unsigned char                       prev_state = STANDBY; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
+    unsigned char                       state = IDLE; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
+    unsigned char                       prev_state = IDLE; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
     uint16_t                            EOC_current; ///< End-of-charge current in mA
     uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
     uint16_t                            v_1_dcres; ///< First voltage measured during DC resistance state 

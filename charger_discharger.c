@@ -507,7 +507,7 @@ void temp_protection()
     if (conv && (tavg > 400)){
         UART_send_string((char*)"HIGH_TEMP:");
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
-        state = STANDBY; /// -# Go to the #STANDBY state.
+        //state = STANDBY; /// -# Go to the #STANDBY state.
     }
 }
 /**@brief This function activate the desired relay in the switcher board according to the value

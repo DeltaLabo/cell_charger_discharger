@@ -18,130 +18,115 @@
 void state_machine()
 {
     switch(state){
-    /**The #STANDBY  state goes to the #fSTANDBY()  function.*/
-            case STANDBY:
-                fSTANDBY();
-                SECF = 1; //THis makes the thing go inside the state machine
-                break;   
     /**The #IDLE  state goes to the #fIDLE()  function.*/             
             case IDLE:
                 fIDLE();
                 break;
     /**The #PREDISCHARGE  and #DISCHARGE  states go to the #fDISCHARGE()  function.*/ 
-            case PREDISCHARGE:
+            case POSTDISCHARGE:
             case DISCHARGE:
                 fDISCHARGE();
                 break;
     /**And the #POSTCHARGE  and #CHARGE  states go to the #fCHARGE()  function.*/  
-            case POSTCHARGE:  
+            case PRECHARGE:  
             case CHARGE:   
                 fCHARGE();  
                 break;
     /**The #CS_DC_res , #DS_DC_res  and #PS_DC_res  states go to the #fDC_res()  function.*/
-            case CS_DC_res:
-            case DS_DC_res:
-            case PS_DC_res:
+            case DC_res:
                 fDC_res();
                 break;
     /**The #WAIT  state goes to the #fWAIT()  function.*/
             case WAIT:    
                 fWAIT();
                 break;
-    /**The #ISDONE  state goes to the #fISDONE()  function.*/
-            case ISDONE:    
-                fISDONE();
-                break;
-    /**The #FAULT  state goes to the #fFAULT()  function.*/
-            case FAULT:    
-                fFAULT();
-                break;
     }
 }
 
-/**@brief This function define the #STANDBY  state of the state machine.
-*/
-void fSTANDBY()
-{   
-    STOP_CONVERTER(); /// * Stop the converter by calling the #STOP_CONVERTER() macro
-    RCIE = 0; /// * Disable the USART reception interrupts to avoid interference with the setting of parameters in the #STANDBY state
-    TMR1ON = 0; ///* Disable the Timer1 to avoid interference
-    option = 0; /// * Initialize #option to 0
-    cell_max = 0; /// * Initialize #cell_max to 0
-    cell_count = 1; /// * Initialize #cell_count to '1'
-    LINEBREAK;
-    #if (LI_ION_CHEM) /// If #LI_ION_CHEM  is set to @b 1 and #NI_MH_CHEM  is set to @b 0, the folowing message will be displayed:
-    //UART_send_string((char*)chem_def_liion); /// * <tt> Chemistry defined as Li-Ion </tt>
-    //LINEBREAK;
-    #elif (NI_MH_CHEM) /// If #NI_MH_CHEM  is set to @b 1 and #LI_ION_CHEM  is set to @b 0, the folowing message will be displayed:
-    //UART_send_string((char*)chem_def_nimh); /// * <tt> Chemistry defined as Ni-MH </tt>
-    //LINEBREAK;
-    #endif
-    param(); /// Call the #param() function
-}
+///**@brief This function define the #STANDBY  state of the state machine.
+//*/
+//void fSTANDBY()
+//{   
+//    STOP_CONVERTER(); /// * Stop the converter by calling the #STOP_CONVERTER() macro
+//    RCIE = 0; /// * Disable the USART reception interrupts to avoid interference with the setting of parameters in the #STANDBY state
+//    TMR1ON = 0; ///* Disable the Timer1 to avoid interference
+//    option = 0; /// * Initialize #option to 0
+//    cell_max = 0; /// * Initialize #cell_max to 0
+//    cell_count = 1; /// * Initialize #cell_count to '1'
+//    LINEBREAK;
+//    #if (LI_ION_CHEM) /// If #LI_ION_CHEM  is set to @b 1 and #NI_MH_CHEM  is set to @b 0, the folowing message will be displayed:
+//    //UART_send_string((char*)chem_def_liion); /// * <tt> Chemistry defined as Li-Ion </tt>
+//    //LINEBREAK;
+//    #elif (NI_MH_CHEM) /// If #NI_MH_CHEM  is set to @b 1 and #LI_ION_CHEM  is set to @b 0, the folowing message will be displayed:
+//    //UART_send_string((char*)chem_def_nimh); /// * <tt> Chemistry defined as Ni-MH </tt>
+//    //LINEBREAK;
+//    #endif
+//    param(); /// Call the #param() function
+//}
 /**@brief This function define the IDLE state of the state machine.
 */
-void fIDLE()
-{
-    /**At first, the function will call the #Start_state_machine()  function.*/
-    start_state_machine();
-    /**Then, it will call the #Converter_settings()  function.*/
-    converter_settings(); 
-    /**Then, it will enable the USART reception interrupts to give the possibility to the user to press
-    @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
-    interrupt_enable();
-}
-
-/**@brief This function define the IDLE state of the state machine.
-*/
-void fCHARGE()
-{
-    LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
-    conv = 1; /// * Activate control loop by setting #conv
-    if (vavg < 900) //&& (qavg > 1)) /// If #vavg is below 0.9V
-    {
-        state = FAULT; /// * Go to #FAULT state
-        //UART_send_string((char*)cell_below_str); /// * Send a warning message
-        //LINEBREAK;
-    }
-    if (state == CHARGE){ /// If the #state is #CHARGE
-        #if (LI_ION_CHEM) 
-        /// If the chemistry is Li-Ion
-        if ((iavg < EOC_current)  && (qavg > 100)) /// * If #iavg is below #EOC_current then
-        {                
-            prev_state = state; /// -# Set #prev_state equal to #state
-            state = WAIT; /// -# Else, go to #WAIT state
-            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
-            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
-        }
-        #elif (NI_MH_CHEM) 
-        /// If the chemistry is Ni-MH
-        if (((vavg < (vmax - Ni_MH_EOC_DV)) && (qavg > 100)) || minute >= timeout)
-        {
-            prev_state = state; /// -# Set #prev_state equal to #state
-            state = WAIT; /// -# Else, go to #WAIT state
-            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
-            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
-        }
-        #endif   
-    } 
-    if (state == POSTCHARGE){
-        #if (LI_ION_CHEM) 
-        if (qavg >= ( (capacity * 10) / 2 ) && ((minute + second) >= 1)){
-            prev_state = state;
-            state = WAIT;
-            wait_count = WAIT_TIME;
-            STOP_CONVERTER();
-        }
-        #elif (NI_MH_CHEM)
-        if (qavg >= ( (capacity * 10) / 2 ) || (unsigned) minute >= timeout){
-            prev_state = state;
-            state = WAIT;
-            wait_count = WAIT_TIME;
-            STOP_CONVERTER();
-        }
-        #endif  
-    }    
-}
+//void fIDLE()
+//{
+//    /**At first, the function will call the #Start_state_machine()  function.*/
+//    start_state_machine();
+//    /**Then, it will call the #Converter_settings()  function.*/
+//    converter_settings(); 
+//    /**Then, it will enable the USART reception interrupts to give the possibility to the user to press
+//    @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
+//    interrupt_enable();
+//}
+//
+///**@brief This function define the IDLE state of the state machine.
+//*/
+//void fCHARGE()
+//{
+//    LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
+//    conv = 1; /// * Activate control loop by setting #conv
+//    if (vavg < 900) //&& (qavg > 1)) /// If #vavg is below 0.9V
+//    {
+////        state = FAULT; /// * Go to #FAULT state
+////        //UART_send_string((char*)cell_below_str); /// * Send a warning message
+////        //LINEBREAK;
+//    }
+//    if (state == CHARGE){ /// If the #state is #CHARGE
+//        #if (LI_ION_CHEM) 
+//        /// If the chemistry is Li-Ion
+//        if ((iavg < EOC_current)  && (qavg > 100)) /// * If #iavg is below #EOC_current then
+//        {                
+//            prev_state = state; /// -# Set #prev_state equal to #state
+//            state = WAIT; /// -# Else, go to #WAIT state
+//            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
+//            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
+//        }
+//        #elif (NI_MH_CHEM) 
+//        /// If the chemistry is Ni-MH
+//        if (((vavg < (vmax - Ni_MH_EOC_DV)) && (qavg > 100)) || minute >= timeout)
+//        {
+//            prev_state = state; /// -# Set #prev_state equal to #state
+//            state = WAIT; /// -# Else, go to #WAIT state
+//            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
+//            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
+//        }
+//        #endif   
+//    } 
+//    if (state == PRECHARGE){
+//        #if (LI_ION_CHEM) 
+//        if (qavg >= ( (capacity * 10) / 2 ) && ((minute + second) >= 1)){
+//            prev_state = state;
+//            state = WAIT;
+//            wait_count = WAIT_TIME;
+//            STOP_CONVERTER();
+//        }
+//        #elif (NI_MH_CHEM)
+//        if (qavg >= ( (capacity * 10) / 2 ) || (unsigned) minute >= timeout){
+//            prev_state = state;
+//            state = WAIT;
+//            wait_count = WAIT_TIME;
+//            STOP_CONVERTER();
+//        }
+//        #endif  
+//    }    
+//}
 
 /**@brief This function define the IDLE state of the state machine.
 */
@@ -218,72 +203,72 @@ void fWAIT()
     }
     if(!wait_count)
     {           
-        switch(prev_state)
-        {
-            case PREDISCHARGE:
-                state = CHARGE;
-                converter_settings();
-                break;
-            case CHARGE:
-                state = CS_DC_res; 
-                converter_settings();
-                break;
-            case DISCHARGE:
-                state = DS_DC_res; 
-                converter_settings();
-                break;
-            case POSTCHARGE:
-                state = PS_DC_res;
-                converter_settings();
-                break;
-            case DS_DC_res:
-                if (option == '2'| option == '4') state = ISDONE; /// -# If #option is '2' or '4' then go to #ISDONE state
-                else state = POSTCHARGE;
-                converter_settings();
-                break;
-            case CS_DC_res:
-                if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #ISDONE state
-                else state = DISCHARGE;
-                converter_settings();
-                break;
-            case PS_DC_res:
-                state = ISDONE;
-                STOP_CONVERTER();
-                break;
-        }
+//        switch(prev_state)
+//        {
+//            case PREDISCHARGE:
+//                state = CHARGE;
+//                converter_settings();
+//                break;
+//            case CHARGE:
+//                state = CS_DC_res; 
+//                converter_settings();
+//                break;
+//            case DISCHARGE:
+//                state = DS_DC_res; 
+//                converter_settings();
+//                break;
+//            case POSTCHARGE:
+//                state = PS_DC_res;
+//                converter_settings();
+//                break;
+//            case DS_DC_res:
+//                if (option == '2'| option == '4') state = ISDONE; /// -# If #option is '2' or '4' then go to #ISDONE state
+//                else state = POSTCHARGE;
+//                converter_settings();
+//                break;
+//            case CS_DC_res:
+//                if (option == '3') state = ISDONE; /// -# If #option is '3' then go to #ISDONE state
+//                else state = DISCHARGE;
+//                converter_settings();
+//                break;
+//            case PS_DC_res:
+//                state = ISDONE;
+//                STOP_CONVERTER();
+//                break;
+//        }
     }
 }
 
-/**@brief This function is executed every time a whole test process for one cell is finished
-*/
-void fISDONE()
-{
-    /**The function will check if the current cell number (@p cell_count) is smaller than the 
-    number of cells to be tested (@p cell_max)*/
-    if (cell_count < cell_max)
-    {
-        UART_send_string((char*)">END<");
-        __delay_ms(500);
-        /**If the condition is @b TRUE the counter will be incremented */       
-        cell_count++;
-        /**And the testin process of the next cell will be started by going to the @p IDLE state*/
-        state = IDLE;   
-    }else
-    {
-        UART_send_string((char*)">END<");
-        state = STANDBY;
-    }    
-}
+///**@brief This function is executed every time a whole test process for one cell is finished
+//*/
+//void fISDONE()
+//{
+//    /**The function will check if the current cell number (@p cell_count) is smaller than the 
+//    number of cells to be tested (@p cell_max)*/
+//    if (cell_count < cell_max)
+//    {
+//        UART_send_string((char*)">END<");
+//        __delay_ms(500);
+//        /**If the condition is @b TRUE the counter will be incremented */       
+//        cell_count++;
+//        /**And the testin process of the next cell will be started by going to the @p IDLE state*/
+//        state = IDLE;   
+//    }else
+//    {
+//        UART_send_string((char*)">END<");
+//        state = STANDBY;
+//    }    
+//}
 
-/**@brief This function define the FAULT state of the state machine.
-*/
-void fFAULT()
-{   
-    /**The function will stop the converter using #STOP_CONVERTER()  macro*/
-    STOP_CONVERTER();
-    /**The @p state will be set to @p STANDBY*/
-    state = STANDBY;
-}
+///**@brief This function define the FAULT state of the state machine.
+//*/
+//void fFAULT()
+//{   
+//    /**The function will stop the converter using #STOP_CONVERTER()  macro*/
+//    STOP_CONVERTER();
+//    /**The @p state will be set to @p STANDBY*/
+//    state = STANDBY;
+//}
 
 /**@brief Function to start the state machine.
 */
@@ -374,20 +359,18 @@ void converter_settings()
     Cell_ON(); /// * The #Cell_ON() function is called
     switch(state)
     {
-        case POSTCHARGE:
+        case PRECHARGE:
         case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
-            iref = i_char; /// * The current setpoint, #iref is defined as #i_char
+            iref = basic_configuration.const_current_char; /// * The current setpoint, #iref is defined as #i_char
             timeout = (uint16_t)(((float)capacity / (float)ccref) * 66.0); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
             SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
             break;
-        case PREDISCHARGE:
+        case POSTDISCHARGE:
         case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE
-            iref = i_disc; /// * The current setpoint, #iref is defined as #i_disc
+            iref = basic_configuration.const_current_disc; /// * The current setpoint, #iref is defined as #i_disc
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;
-        case CS_DC_res:
-        case DS_DC_res:
-        case PS_DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
+        case DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
             iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 5 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
             dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
