@@ -210,11 +210,38 @@ bool command_interpreter()
                         break;
                     case 0x05:
                         start = true;
+                        counter_state = 0;
+                        state = test_configuration.order_of_states[counter_state];
+                        cell_count = 0x01;
                         break;
                     case 0x07:
-                        //UART_send_string((char*)"next cell");
+                        counter_state = 0;
+                        if (test_configuration.number_of_cells > cell_count){
+                            state = test_configuration.order_of_states[counter_state];
+                            cell_count = cell_count + 1;
+                        }
+                        else {
+                            cell_count = 0;
+                            state = 0;
+                            counter_state = 0;
+                        }
                         break;
                     case 0x09:
+                        counter_state = counter_state + 1;
+                        if (counter_state <= 9 && test_configuration.order_of_states[counter_state] != 0x00){
+                            state = test_configuration.order_of_states[counter_state];
+                        }else{
+                            counter_state = 0;
+                            if (test_configuration.number_of_cells > cell_count){
+                                state = test_configuration.order_of_states[counter_state];
+                                cell_count = cell_count + 1;
+                            }
+                            else {
+                                cell_count = 0;
+                                state = 0;
+                                counter_state = 0;
+                            }
+                        }
                         //UART_send_string((char*)"next state"); 
                         break;
                 }
@@ -302,9 +329,10 @@ if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bi
 void log_control()
 {
     log_data_ptr = &log_data;
-    log_data.cell_counter = 0x01;
+    log_data.cell_counter = cell_count;
     log_data.repetition_counter = 0x01;   
-    log_data.state = 0x03;
+    log_data.state = state;  
+    //log_data.state = 0x03;
     if(start)
     {
         log_data.elapsed_time = second;

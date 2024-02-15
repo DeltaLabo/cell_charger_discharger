@@ -16,6 +16,7 @@
       <itemPath>main.c</itemPath>
       <itemPath>state_machine.c</itemPath>
       <itemPath>charger_discharger.c</itemPath>
+      <itemPath>state_machine_b.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

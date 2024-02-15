@@ -43,93 +43,95 @@ void state_machine()
     }
 }
 
-///**@brief This function define the #STANDBY  state of the state machine.
-//*/
-//void fSTANDBY()
-//{   
-//    STOP_CONVERTER(); /// * Stop the converter by calling the #STOP_CONVERTER() macro
-//    RCIE = 0; /// * Disable the USART reception interrupts to avoid interference with the setting of parameters in the #STANDBY state
-//    TMR1ON = 0; ///* Disable the Timer1 to avoid interference
-//    option = 0; /// * Initialize #option to 0
-//    cell_max = 0; /// * Initialize #cell_max to 0
-//    cell_count = 1; /// * Initialize #cell_count to '1'
-//    LINEBREAK;
-//    #if (LI_ION_CHEM) /// If #LI_ION_CHEM  is set to @b 1 and #NI_MH_CHEM  is set to @b 0, the folowing message will be displayed:
-//    //UART_send_string((char*)chem_def_liion); /// * <tt> Chemistry defined as Li-Ion </tt>
-//    //LINEBREAK;
-//    #elif (NI_MH_CHEM) /// If #NI_MH_CHEM  is set to @b 1 and #LI_ION_CHEM  is set to @b 0, the folowing message will be displayed:
-//    //UART_send_string((char*)chem_def_nimh); /// * <tt> Chemistry defined as Ni-MH </tt>
-//    //LINEBREAK;
-//    #endif
-//    param(); /// Call the #param() function
-//}
-/**@brief This function define the IDLE state of the state machine.
+/**@brief This function define the #STANDBY  state of the state machine.
 */
-//void fIDLE()
-//{
-//    /**At first, the function will call the #Start_state_machine()  function.*/
-//    start_state_machine();
-//    /**Then, it will call the #Converter_settings()  function.*/
-//    converter_settings(); 
-//    /**Then, it will enable the USART reception interrupts to give the possibility to the user to press
-//    @b ESC to cancel or @b n to go to the next cell, at any time during the testing process*/            
-//    interrupt_enable();
-//}
-//
-///**@brief This function define the IDLE state of the state machine.
-//*/
-//void fCHARGE()
-//{
-//    LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
-//    conv = 1; /// * Activate control loop by setting #conv
-//    if (vavg < 900) //&& (qavg > 1)) /// If #vavg is below 0.9V
-//    {
-////        state = FAULT; /// * Go to #FAULT state
-////        //UART_send_string((char*)cell_below_str); /// * Send a warning message
-////        //LINEBREAK;
-//    }
-//    if (state == CHARGE){ /// If the #state is #CHARGE
-//        #if (LI_ION_CHEM) 
-//        /// If the chemistry is Li-Ion
-//        if ((iavg < EOC_current)  && (qavg > 100)) /// * If #iavg is below #EOC_current then
-//        {                
-//            prev_state = state; /// -# Set #prev_state equal to #state
-//            state = WAIT; /// -# Else, go to #WAIT state
-//            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
-//            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
-//        }
-//        #elif (NI_MH_CHEM) 
-//        /// If the chemistry is Ni-MH
-//        if (((vavg < (vmax - Ni_MH_EOC_DV)) && (qavg > 100)) || minute >= timeout)
-//        {
-//            prev_state = state; /// -# Set #prev_state equal to #state
-//            state = WAIT; /// -# Else, go to #WAIT state
-//            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
-//            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
-//        }
-//        #endif   
-//    } 
-//    if (state == PRECHARGE){
-//        #if (LI_ION_CHEM) 
-//        if (qavg >= ( (capacity * 10) / 2 ) && ((minute + second) >= 1)){
-//            prev_state = state;
-//            state = WAIT;
-//            wait_count = WAIT_TIME;
-//            STOP_CONVERTER();
-//        }
-//        #elif (NI_MH_CHEM)
-//        if (qavg >= ( (capacity * 10) / 2 ) || (unsigned) minute >= timeout){
-//            prev_state = state;
-//            state = WAIT;
-//            wait_count = WAIT_TIME;
-//            STOP_CONVERTER();
-//        }
-//        #endif  
-//    }    
-//}
+void fSTANDBY()
+{   
+    STOP_CONVERTER(); /// * Stop the converter by calling the #STOP_CONVERTER() macro
+    RCIE = 0; /// * Disable the USART reception interrupts to avoid interference with the setting of parameters in the #STANDBY state
+    TMR1ON = 0; ///* Disable the Timer1 to avoid interference
+    option = 0; /// * Initialize #option to 0
+    cell_max = 0; /// * Initialize #cell_max to 0
+    cell_count = 1; /// * Initialize #cell_count to '1'
+    LINEBREAK;
+    #if (LI_ION_CHEM) /// If #LI_ION_CHEM  is set to @b 1 and #NI_MH_CHEM  is set to @b 0, the folowing message will be displayed:
+    //UART_send_string((char*)chem_def_liion); /// * <tt> Chemistry defined as Li-Ion </tt>
+    //LINEBREAK;
+    #elif (NI_MH_CHEM) /// If #NI_MH_CHEM  is set to @b 1 and #LI_ION_CHEM  is set to @b 0, the folowing message will be displayed:
+    //UART_send_string((char*)chem_def_nimh); /// * <tt> Chemistry defined as Ni-MH </tt>
+    //LINEBREAK;
+    #endif
+    param(); /// Call the #param() function
+}
 
 /**@brief This function define the IDLE state of the state machine.
 */
+
+//This function define the IDLE state of the state machine.
+void fIDLE(){
+    //IN PROGRESS
+    
+    /**At first, the function will call the #Start_state_machine()  function.*/
+    start_state_machine();
+    /**Then, it will call the #Converter_settings()  function.*/
+    converter_settings(); 
+    
+}
+
+
+void fCHARGE()
+{
+    LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
+    conv = 1; /// * Activate control loop by setting #conv
+    if (vavg < 900) //&& (qavg > 1)) /// If #vavg is below 0.9V
+    {
+//        state = FAULT; /// * Go to #FAULT state
+//        //UART_send_string((char*)cell_below_str); /// * Send a warning message
+//        //LINEBREAK;
+    }
+    if (state == CHARGE){ /// If the #state is #CHARGE
+        #if (LI_ION_CHEM) 
+        /// If the chemistry is Li-Ion
+        if ((iavg < EOC_current)  && (qavg > 100)) /// * If #iavg is below #EOC_current then
+        {                
+            prev_state = state; /// -# Set #prev_state equal to #state
+            state = WAIT; /// -# Else, go to #WAIT state
+            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
+            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
+        }
+        #elif (NI_MH_CHEM) 
+        /// If the chemistry is Ni-MH
+        if (((vavg < (vmax - Ni_MH_EOC_DV)) && (qavg > 100)) || minute >= timeout)
+        {
+            prev_state = state; /// -# Set #prev_state equal to #state
+            state = WAIT; /// -# Else, go to #WAIT state
+            wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
+            STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro
+        }
+        #endif   
+    } 
+    if (state == PRECHARGE){
+        #if (LI_ION_CHEM) 
+        if (qavg >= ( (capacity * 10) / 2 ) && ((minute + second) >= 1)){
+            prev_state = state;
+            state = WAIT;
+            wait_count = WAIT_TIME;
+            STOP_CONVERTER();
+        }
+        #elif (NI_MH_CHEM)
+        if (qavg >= ( (capacity * 10) / 2 ) || (unsigned) minute >= timeout){
+            prev_state = state;
+            state = WAIT;
+            wait_count = WAIT_TIME;
+            STOP_CONVERTER();
+        }
+        #endif  
+    }    
+}
+
+/**@brief This function define the IDLE state of the state machine.
+*/
+
 void fDISCHARGE()
 {
     LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
@@ -201,6 +203,7 @@ void fWAIT()
 //        UART_send_char('<');
         wait_count--;             
     }
+    
     if(!wait_count)
     {           
 //        switch(prev_state)

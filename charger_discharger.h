@@ -227,6 +227,7 @@
     unsigned char                       dc_res_count = 0; ///< Counter for DC resistance. Initialized as 0
     unsigned char                       state = IDLE; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
     unsigned char                       prev_state = IDLE; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
+    uint8_t                             counter_state = 0; ///< Used to move trough the diferent states.
     uint16_t                            EOC_current; ///< End-of-charge current in mA
     uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
     uint16_t                            v_1_dcres; ///< First voltage measured during DC resistance state 
@@ -265,6 +266,6 @@
     uint16_t                            second = 0; ///< Seconds counter
     uint16_t                            minute = 0; ///< Minutes counter, only manually reset
     uint16_t                            timeout = 0;
-#endif /* CHARGER_DISCHARGER_H*/
+#endif /* CHARGER_DISCHARGER_H */
 
 

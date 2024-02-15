@@ -17,6 +17,7 @@
 		<Item Name="create_files.vi" Type="VI" URL="../file/create_files.vi"/>
 		<Item Name="main.vi" Type="VI" URL="../main.vi"/>
 		<Item Name="operation.ctl" Type="VI" URL="../typedefs/operation.ctl"/>
+		<Item Name="states.ctl" Type="VI" URL="../typedefs/states.ctl"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="vi.lib" Type="Folder">
 				<Item Name="BuildHelpPath.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/BuildHelpPath.vi"/>
