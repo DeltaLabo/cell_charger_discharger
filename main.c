@@ -34,7 +34,7 @@ void main(void) /// This function performs the folowing tasks:
             scaling(); /// <li> Scale the average measured values by calling the #scaling function 
             log_control(); /// <li> Print the log in the serial terminal by calling the #log_control function
             //cc_cv_mode(vavg, cvref, cmode); /// <li> Check if the system shall change to CV mode by calling the #cc_cv_mode function
-            //state_machine(); /// <li> Call the #state_machine function
+            state_machine(); /// <li> Call the #state_machine function
             //temp_protection(); /// <li> Call the #temp_protection function </ol> </ul> </ul>
         }
 	}

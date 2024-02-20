@@ -74,6 +74,11 @@
     void fWAIT(void);
     void fISDONE(void);
     void fFAULT(void);
+    
+    void fNEXTSTATE(void);
+    void fNEXTCELL(void);
+    void fNEXTREPETITION(void);
+    
     void start_state_machine(void);
     void state_machine(void);
     void param(void);
@@ -148,7 +153,7 @@
     #define     NI_MH_CHEM              0 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
     ////////////////////////////////////////////////////////////////////////////////////
     //General definitions
-    #define     WAIT_TIME               60 ///< Time to wait before states, set to 10 minutes
+    #define     WAIT_TIME               5 ///< Time to wait before states, set to 10 minutes = 60
     #define     DC_RES_SECS             14 ///< How many seconds the DC resistance process takes
     //Li-Ion definitions
     #define     Li_Ion_CV               4200 ///< Li-Ion constant voltage setting in mV
@@ -227,7 +232,10 @@
     unsigned char                       dc_res_count = 0; ///< Counter for DC resistance. Initialized as 0
     unsigned char                       state = IDLE; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
     unsigned char                       prev_state = IDLE; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
+    
     uint8_t                             counter_state = 0; ///< Used to move trough the diferent states.
+    uint8_t                             repetition_counter = 0; ///< Used to move trough repetitions.
+    
     uint16_t                            EOC_current; ///< End-of-charge current in mA
     uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
     uint16_t                            v_1_dcres; ///< First voltage measured during DC resistance state 

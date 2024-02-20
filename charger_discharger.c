@@ -205,44 +205,22 @@ bool command_interpreter()
             case 0x0F:
                 switch (code)
                 {
-                    case 0x03:
+                    case 0x03: // RESET
+                        state = 0x01;
                         start = false;
                         break;
-                    case 0x05:
+                    case 0x05: // START
                         start = true;
-                        counter_state = 0;
+                        counter_state = 0x00;
                         state = test_configuration.order_of_states[counter_state];
                         cell_count = 0x01;
+                        repetition_counter = 0x01;
                         break;
-                    case 0x07:
-                        counter_state = 0;
-                        if (test_configuration.number_of_cells > cell_count){
-                            state = test_configuration.order_of_states[counter_state];
-                            cell_count = cell_count + 1;
-                        }
-                        else {
-                            cell_count = 0;
-                            state = 0;
-                            counter_state = 0;
-                        }
+                    case 0x07: // NEXT CELL
+                        fNEXTCELL();
                         break;
-                    case 0x09:
-                        counter_state = counter_state + 1;
-                        if (counter_state <= 9 && test_configuration.order_of_states[counter_state] != 0x00){
-                            state = test_configuration.order_of_states[counter_state];
-                        }else{
-                            counter_state = 0;
-                            if (test_configuration.number_of_cells > cell_count){
-                                state = test_configuration.order_of_states[counter_state];
-                                cell_count = cell_count + 1;
-                            }
-                            else {
-                                cell_count = 0;
-                                state = 0;
-                                counter_state = 0;
-                            }
-                        }
-                        //UART_send_string((char*)"next state"); 
+                    case 0x09: // NEXT STATE
+                        fNEXTSTATE();
                         break;
                 }
                 UART_send_byte(test);
@@ -331,8 +309,9 @@ void log_control()
     log_data_ptr = &log_data;
     log_data.cell_counter = cell_count;
     log_data.repetition_counter = 0x01;   
-    log_data.state = state;  
-    //log_data.state = 0x03;
+    log_data.state = state;
+    log_data.repetition_counter = repetition_counter;
+    
     if(start)
     {
         log_data.elapsed_time = second;
