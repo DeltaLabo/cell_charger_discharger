@@ -131,10 +131,8 @@
     turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
     and the UART reception interrupts.
     */
-    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; dc = DC_MIN; set_DC(&dc); Cell_OFF(); LOG_OFF();}
+    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; dc = DC_MIN; set_DC(&dc); Cell_OFF();}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
-    #define     LOG_ON()                { log_on = 1; }  ///< Turn OFF logging in the terminal.
-    #define     LOG_OFF()               { log_on = 0; }  ///< Turn ON logging in the terminal.
     #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
    //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function 
     #define     DC_MIN                  50  ///< Minimum possible duty cycle, set around @b 0.1 
@@ -236,8 +234,10 @@
     uint8_t                             counter_state = 0; ///< Used to move trough the diferent states.
     uint8_t                             repetition_counter = 0; ///< Used to move trough repetitions.
     
-    uint16_t                            EOC_current; ///< End-of-charge current in mA
+    uint16_t                            EOC_variable; ///< End-of-charge current in mA
+    uint16_t                            EOPC_variable; ///< End-of-precharge variable in mA or mV
     uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
+    uint16_t                            EOPD_capacity; ///< End-of-postdischarge capacity
     uint16_t                            v_1_dcres; ///< First voltage measured during DC resistance state 
     uint16_t                            i_1_dcres; ///< First current measured during DC resistance state  
     uint16_t                            v_2_dcres; ///< Second voltage measured during DC resistance state 
@@ -266,13 +266,11 @@
     uint16_t                            vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
     uint16_t                            cvref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
     uint16_t                            iref = 0;  ///< Current setpoint. Initialized as 0
-    uint16_t                            ccref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
+    uint16_t                            ccref = 0;  ///< Unscaled current setpoint. Initialized as 0
     bool                                cmode = 1;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt>   
     uint16_t                            dc = 0;  ///< Duty cycle
     //char                                clear;  ///< Variable to clear the transmission buffer of UART
-    bool                                log_on = 0; ///< Variable to indicate if the log is activated 
     uint16_t                            second = 0; ///< Seconds counter
-    uint16_t                            minute = 0; ///< Minutes counter, only manually reset
     uint16_t                            timeout = 0;
 #endif /* CHARGER_DISCHARGER_H */
 

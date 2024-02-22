@@ -54,35 +54,36 @@ void fIDLE() //@brief This function define the IDLE state of the state machine.
 {
     // REVISION DE FUNCIONALIDAD
     start = false;
+    STOP_CONVERTER(); // MAYBE OK ALEX
 }
 
 void fCHARGE()
 {
-//    // POR VERIFICAR
-//    
-//    LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
-//    conv = 1; /// * Activate control loop by setting #conv
-//    
-//    if ( vavg < basic_configuration_struct.end_of_discharge) /// * If #vavg is below #EOD_voltage then
-//    {
-//        state = WAIT; /// -# Else, go to #WAIT state          
-//        wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
-//        STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro  
-//    }
+    // POR VERIFICAR
+    
+    conv = 1; /// * Activate control loop by setting #conv
+    
+    if ( ( ( iavg < basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x01 ) ) || ( ( vavg > basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x02 ) ) ) /// * If #vavg is below #EOD_voltage
+    {
+        if (capacity > 10)
+        {
+        state = WAIT; /// -# Else, go to #WAIT state          
+        wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+        STOP_CONVERTER();
+        }
+    }
 }
 
 void fDISCHARGE()
 {
 //    // POR VERIFICAR
-    
-//    LOG_ON(); /// * Activate the logging by calling #LOG_ON() macro
+//
 //    conv = 1; /// * Activate control loop by setting #conv
+//    
 //    if ( vavg < EOD_voltage ) /// * If #vavg is below #EOD_voltage then
 //    {
-//        prev_state = state; /// -# Set #prev_state equal to #stat
 //        state = WAIT; /// -# Else, go to #WAIT state                  
-//        wait_count = WAIT_TIME; /// -# Set #wait_count equal to #WAIT_TIME
-//        STOP_CONVERTER(); /// -# Stop the converter by calling #STOP_CONVERTER() macro  
+//        wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to #WAIT_TIME
 //    }
 }
 
@@ -129,33 +130,17 @@ void fDC_res() //can be improved a lot!!
 */
 void fWAIT()
 {
-//    // POR VERIFICAR
-    
-    STOP_CONVERTER();  ///MAYBEOK
-    if (wait_count)
-    {   
-//        LINEBREAK;
-//        UART_send_char(C_str);
-//        display_value_u((uint16_t)cell_count);
-//        UART_send_char(comma);
-//        UART_send_char(S_str);
-//        display_value_u((uint16_t)state);
-//        UART_send_char(comma);
-//        UART_send_char(W_str);
-//        display_value_u(wait_count);
-//        UART_send_char('<');
-        wait_count--;             
-    }
-    if(!wait_count)
-    {
-        fNEXTSTATE();
-    }
+    STOP_CONVERTER();
+    second = wait_count;
+    if (wait_count) wait_count--;
+    if(!wait_count) fNEXTSTATE();
 }
 
 void fNEXTSTATE(){
     counter_state = counter_state + 1;
     if (counter_state <= 8 && test_configuration.order_of_states[counter_state] != 0x00){
         state = test_configuration.order_of_states[counter_state];
+        converter_settings();
     }
     else{
         fNEXTCELL();
@@ -167,6 +152,7 @@ void fNEXTCELL(){
     counter_state = 0;
     if (test_configuration.number_of_cells > cell_count){
         state = test_configuration.order_of_states[counter_state];
+        converter_settings();
         cell_count = cell_count + 1;
     }
     else {
@@ -179,6 +165,7 @@ void fNEXTREPETITION(){
     if (repetition_counter < test_configuration.number_of_repetitions){
         counter_state = 0;
         state = test_configuration.order_of_states[counter_state];
+        converter_settings();
         cell_count = 0x01;
         repetition_counter = repetition_counter + 1;
         }
@@ -197,22 +184,21 @@ void converter_settings()
 {
     // POR VERIFICAR 
     
-//    cmode = 1; /// * Start in constant current mode by setting. #cmode
-//    intacum = 0; /// * The #integral component of the compensator is set to zero.*/
-//    qavg = 0; /// * Average capacity, #q_prom is set to zero.*/
-//    vmax = 0; /// * Maximum averaged voltage, #vmax is set to zero.*/
-//    dc = DC_MIN;
-//    set_DC(&dc);  /// * The #set_DC() function is called
-//    Cell_ON(); /// * The #Cell_ON() function is called
-//    switch(state)
-//    {
-//        case PRECHARGE:
-//        case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
-//            iref = basic_configuration.const_current_char; /// * The current setpoint, #iref is defined as #i_char
-//            timeout = (uint16_t)(((float)capacity / (float)ccref) * 66.0); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
-//            SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
-//            break;
-//        case POSTDISCHARGE:
+    cmode = 1; /// * Start in constant current mode by setting. #cmode
+    intacum = 0; /// * The #integral component of the compensator is set to zero.*/
+    qavg = 0; /// * Average capacity, #q_prom is set to zero.*/
+    vmax = 0; /// * Maximum averaged voltage, #vmax is set to zero.*/
+    dc = DC_MIN;
+    set_DC(&dc);  /// * The #set_DC() function is called
+    Cell_ON(); /// * The #Cell_ON() function is called
+    switch(state)
+    {
+        case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
+            //iref = i_char; /// * The current setpoint, #iref is defined as #i_char
+            iref = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
+            if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 60 *1.1); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
+            SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
+            break;
 //        case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE
 //            iref = basic_configuration.const_current_disc; /// * The current setpoint, #iref is defined as #i_disc
 //            SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
@@ -222,6 +208,6 @@ void converter_settings()
 //            dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
 //            SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
 //            break;
-//    }
-//    __delay_ms(10);   
+    }
+    __delay_ms(10);   
 }

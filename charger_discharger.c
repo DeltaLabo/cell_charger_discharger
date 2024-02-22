@@ -166,6 +166,14 @@ bool command_interpreter()
                             UART_send_byte(length);
                             UART_send_some_bytes(length, (uint8_t*)basic_configuration_ptr);
                             calc_checksum = calculate_checksum(code, length, (uint8_t*)basic_configuration_ptr);
+                            vref = (uint16_t) ( ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ); //Scale the voltage reference to be compare with v;
+                            i_char = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
+                            i_disc = (uint16_t) ( ( ( (float) basic_configuration.const_current_disc * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
+                            capacity = basic_configuration.capacity;
+                            EOC_variable = basic_configuration.end_of_charge;
+                            EOPC_variable = basic_configuration.end_of_precharge;
+                            EOD_voltage = basic_configuration.end_of_discharge;
+                            EOPD_capacity = basic_configuration.end_of_postdischarge;
                             break;
                         case 0x05:
                             length = sizeof(test_configuration);
@@ -207,12 +215,12 @@ bool command_interpreter()
                 {
                     case 0x03: // RESET
                         state = 0x01;
-                        start = false;
                         break;
                     case 0x05: // START
                         start = true;
                         counter_state = 0x00;
                         state = test_configuration.order_of_states[counter_state];
+                        converter_settings();
                         cell_count = 0x01;
                         repetition_counter = 0x01;
                         break;
@@ -220,7 +228,8 @@ bool command_interpreter()
                         fNEXTCELL();
                         break;
                     case 0x09: // NEXT STATE
-                        fNEXTSTATE();
+                        wait_count = 5;
+                        state = WAIT;
                         break;
                 }
                 UART_send_byte(test);
@@ -280,7 +289,7 @@ void set_DC(uint16_t* duty_cycle)
 void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status)
 {
 /// If the current voltage is bigger than the CV setpoint and the system is in CC mode, then:
-    if(current_voltage > reference_voltage && CC_mode_status)
+    if( ( ( (uint16_t) ( ( ( (float)current_voltage * 5000.0 ) / 4096.0 ) + 0.5 ) ) > reference_voltage ) && CC_mode_status )
     {        
         intacum = 0; /// <ol> <li> The integral acummulator is cleared
         cmode = 0; /// <li> The system is set in CV mode by clearing the #cmode variable
