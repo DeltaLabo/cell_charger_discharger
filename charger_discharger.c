@@ -166,14 +166,6 @@ bool command_interpreter()
                             UART_send_byte(length);
                             UART_send_some_bytes(length, (uint8_t*)basic_configuration_ptr);
                             calc_checksum = calculate_checksum(code, length, (uint8_t*)basic_configuration_ptr);
-                            vref = (uint16_t) ( ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ); //Scale the voltage reference to be compare with v;
-                            i_char = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
-                            i_disc = (uint16_t) ( ( ( (float) basic_configuration.const_current_disc * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
-                            capacity = basic_configuration.capacity;
-                            EOC_variable = basic_configuration.end_of_charge;
-                            EOPC_variable = basic_configuration.end_of_precharge;
-                            EOD_voltage = basic_configuration.end_of_discharge;
-                            EOPD_capacity = basic_configuration.end_of_postdischarge;
                             break;
                         case 0x05:
                             length = sizeof(test_configuration);
@@ -196,6 +188,14 @@ bool command_interpreter()
                     {
                         case 0x03:
                             put_data_into_structure(length, (uint8_t*)data, (uint8_t*)basic_configuration_ptr);
+                            vref = (uint16_t) ( ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ); //Scale the voltage reference to be compare with v;
+                            i_char = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
+                            i_disc = (uint16_t) ( ( ( (float) basic_configuration.const_current_disc * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
+                            capacity = basic_configuration.capacity;
+                            EOC_variable = basic_configuration.end_of_charge;
+                            EOPC_variable = basic_configuration.end_of_precharge;
+                            EOD_voltage = basic_configuration.end_of_discharge;
+                            EOPD_capacity = basic_configuration.end_of_postdischarge;
                             break;
                         case 0x05:
                             put_data_into_structure(length, (uint8_t*)data, (uint8_t*)test_configuration_ptr);
@@ -214,15 +214,17 @@ bool command_interpreter()
                 switch (code)
                 {
                     case 0x03: // RESET
-                        state = 0x01;
+                        state = IDLE;
                         break;
                     case 0x05: // START
-                        start = true;
-                        counter_state = 0x00;
-                        state = test_configuration.order_of_states[counter_state];
-                        converter_settings();
-                        cell_count = 0x01;
-                        repetition_counter = 0x01;
+                        if (!start){
+                            start = true;
+                            counter_state = 0;
+                            state = test_configuration.order_of_states[counter_state];
+                            converter_settings();
+                            cell_count = 0x01;
+                            repetition_counter = 0x01;
+                        }
                         break;
                     case 0x07: // NEXT CELL
                         fNEXTCELL();
@@ -303,8 +305,9 @@ void scaling() /// This function performs the folowing tasks:
 {
 log_data.current = (uint16_t) ( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
 log_data.voltage = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
-tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 ); 
-log_data.temperature = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
+// tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 );     NOT IN SERVICE ALEX
+// log_data.temperature = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
+log_data.temperature = 27;      // WHILE NOT IN SERVICE
 qavg += (uint16_t) ( (float)iavg / 360.0 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
 log_data.capacity = qavg;
 #if (NI_MH_CHEM)  
@@ -315,15 +318,15 @@ if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bi
 */
 void log_control()
 {
-    log_data_ptr = &log_data;
-    log_data.cell_counter = cell_count;
-    log_data.repetition_counter = 0x01;   
-    log_data.state = state;
-    log_data.repetition_counter = repetition_counter;
-    
     if(start)
     {
+        log_data_ptr = &log_data;
+        log_data.cell_counter = cell_count;
+        log_data.repetition_counter = 0x01;   
+        log_data.state = state;
+        log_data.repetition_counter = repetition_counter;
         log_data.elapsed_time = second;
+        log_data.duty_cycle = dc;
         UART_send_byte(0xDD);
         UART_send_some_bytes(sizeof(log_data),(uint8_t*)log_data_ptr);
         UART_send_byte(0x77);
@@ -367,17 +370,17 @@ void calculate_avg()
         case COUNTER: /// If #count = #COUNTER
             iacum = (uint24_t) i; /// * Make #iavg zero
             vacum = (uint24_t) v; /// * Make #vavg zero
-            tacum = (uint24_t) t; /// * Make #tavg zero
+            //tacum = (uint24_t) t; /// * Make #tavg zero                          NOT IN SERVICE ALEX
             break;
         case 0: /// If #count = 0
             iavg = ((iacum >> 10) + ((iacum >> 9) & 0x01)); /// * Divide the value stored in #iavg between COUNTER to obtain the average   
             vavg = ((vacum >> 10) + ((vacum >> 9) & 0x01)); /// * This is equivalent to vacum / 1024 = vacum / 2^10 
-            tavg = ((tacum >> 10) + ((tacum >> 9) & 0x01)); /// * This is equivalent to tacum / 1024 = tacum / 2^10 
+            // tavg = ((tacum >> 10) + ((tacum >> 9) & 0x01)); /// * This is equivalent to tacum / 1024 = tacum / 2^10                 NOT IN SERVICE ALEX
             break;
         default: /// If #count is not any of the previous cases then
             iacum += (uint24_t) i; /// * Accumulate #i in #iavg
             vacum += (uint24_t) v; /// * Accumulate #v in #vavg
-            tacum += (uint24_t) t; /// * Accumulate #t in #tavg
+            //tacum += (uint24_t) t; /// * Accumulate #t in #tavg                  NOT IN SERVICE ALEX
             //tavg += dc * 1.953125; // TEST FOR DC Is required to deactivate temperature protection
     }   
 }

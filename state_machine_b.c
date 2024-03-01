@@ -53,19 +53,17 @@ void state_machine()
 void fIDLE() //@brief This function define the IDLE state of the state machine.
 {
     // REVISION DE FUNCIONALIDAD
-    start = false;
     STOP_CONVERTER(); // MAYBE OK ALEX
+    start = false;
 }
 
 void fCHARGE()
 {
-    // POR VERIFICAR
-    
     conv = 1; /// * Activate control loop by setting #conv
     
     if ( ( ( iavg < basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x01 ) ) || ( ( vavg > basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x02 ) ) ) /// * If #vavg is below #EOD_voltage
     {
-        if (capacity > 10)
+        if (5 < second)
         {
         state = WAIT; /// -# Else, go to #WAIT state          
         wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
@@ -76,15 +74,16 @@ void fCHARGE()
 
 void fDISCHARGE()
 {
-//    // POR VERIFICAR
-//
-//    conv = 1; /// * Activate control loop by setting #conv
-//    
-//    if ( vavg < EOD_voltage ) /// * If #vavg is below #EOD_voltage then
-//    {
-//        state = WAIT; /// -# Else, go to #WAIT state                  
-//        wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to #WAIT_TIME
-//    }
+    // POR VERIFICAR
+
+    conv = 1; /// * Activate control loop by setting #conv
+    
+    if ( (((uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 )) < basic_configuration.end_of_discharge) && (5 < second) ) /// * If #vavg is below #EOD_voltage then
+    {
+        state = WAIT; /// -# Else, go to #WAIT state                  
+        wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to #WAIT_TIME
+        STOP_CONVERTER();
+    }
 }
 
 void fDC_res() //can be improved a lot!!
@@ -138,7 +137,7 @@ void fWAIT()
 
 void fNEXTSTATE(){
     counter_state = counter_state + 1;
-    if (counter_state <= 8 && test_configuration.order_of_states[counter_state] != 0x00){
+    if ((counter_state <= test_configuration.number_of_states) && (test_configuration.order_of_states[counter_state] != 0x00)){
         state = test_configuration.order_of_states[counter_state];
         converter_settings();
     }
@@ -170,10 +169,8 @@ void fNEXTREPETITION(){
         repetition_counter = repetition_counter + 1;
         }
     else{
-        cell_count = 0;
-        state = 0x01;
-        counter_state = 0;
-        repetition_counter = 0;
+        state = IDLE;
+        STOP_CONVERTER(); // MAYBE OK ALEX
     }
     //converter_settings();
 }
@@ -195,14 +192,14 @@ void converter_settings()
     {
         case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
             //iref = i_char; /// * The current setpoint, #iref is defined as #i_char
-            iref = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
+            iref = i_char;
             if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 60 *1.1); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
             SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
             break;
-//        case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE
-//            iref = basic_configuration.const_current_disc; /// * The current setpoint, #iref is defined as #i_disc
-//            SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
-//            break;
+        case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE
+            iref = i_disc; /// * The current setpoint, #iref is defined as #i_disc
+            SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
+            break;
 //        case DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
 //            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 5 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
 //            dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
