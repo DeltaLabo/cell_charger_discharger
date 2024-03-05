@@ -36,9 +36,9 @@ Changes made in Kyutech from December 11-15
 
 ## Basic configuration
 
-| version | const. voltage | const. current | capacity | end-of-charge | end-of-precharge | end-of-discharge | end-of-postdischarge |
-|--|--|--|--|--|--|--|--|
-| 1byte | 2bytes | 2bytes | 2bytes | 2 bytes | 2 bytes | 2bytes | 2bytes |
+| version | const. voltage | end-of-postdischarge | end-of-discharge | end-of-precharge | end-of-charge | capacity | const-current-charge | const-current-discharge |
+|--|--|--|--|--|--|--|--|--|
+| 1byte | 2bytes | 2bytes | 2bytes | 2 bytes | 2 bytes | 2bytes | 2bytes | 2bytes |
 
 **Note:** in all cases MSBF
 
@@ -48,26 +48,34 @@ Changes made in Kyutech from December 11-15
 
 ### const. voltage
 * value of constant voltage (mV)
+### end-of-postdischarge
+* value of end of postdischarge capacity (mAh)
 
-### const. current
-* value of constant current (mA)
-
-### capacity
-* value of capacity (mAh)
-
-### end-of-charge
-* Li-Ion: value of end of charge current (mA)
-* Ni-MH: value of end of charge delta V (mV)
+### end-of-discharge
+* value of end of discharge voltage (mV)
 
 ### end-of-precharge 
 * Li-Ion: value of end of precharge current (mA)
 * Ni-MH: value of end of precharge delta V (mV)
 
-### end-of-discharge
-* value of end of discharge voltage (mV)
+### end-of-charge
+* Li-Ion: value of end of charge current (mA)
+* Ni-MH: value of end of charge delta V (mV)
+  
+### const-current-charge
+* value of constant current when charging (mA)
+  
+### const-current-discharge
+* value of constant current when discharging (mA)
 
-### end-of-postdischarge
-* value of end of postdischarge capacity (mAh)
+### capacity
+* value of capacity (mAh)
+
+
+
+
+
+
 
 ### Example to write and read basic configuration
 The user sends the _write basic configuration_ command:
