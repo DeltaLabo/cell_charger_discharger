@@ -36,7 +36,7 @@ Changes made in Kyutech from December 11-15
 
 ## Basic configuration
 
-| version | const. voltage | end-of-postdischarge | end-of-discharge | end-of-precharge | end-of-charge | capacity | const-current-charge | const-current-discharge |
+| version | const. voltage | const-current-char | const-current-disc | capacity | end-of-charge | end-of-precharge | end-of-discharge | end-of-postdischarge |
 |--|--|--|--|--|--|--|--|--|
 | 1byte | 2bytes | 2bytes | 2bytes | 2 bytes | 2 bytes | 2bytes | 2bytes | 2bytes |
 
@@ -48,34 +48,29 @@ Changes made in Kyutech from December 11-15
 
 ### const. voltage
 * value of constant voltage (mV)
-### end-of-postdischarge
-* value of end of postdischarge capacity (mAh)
 
-### end-of-discharge
-* value of end of discharge voltage (mV)
-
-### end-of-precharge 
-* Li-Ion: value of end of precharge current (mA)
-* Ni-MH: value of end of precharge delta V (mV)
-
-### end-of-charge
-* Li-Ion: value of end of charge current (mA)
-* Ni-MH: value of end of charge delta V (mV)
-  
-### const-current-charge
+### const-current-char
 * value of constant current when charging (mA)
-  
-### const-current-discharge
+
+### const-current-disc
 * value of constant current when discharging (mA)
 
 ### capacity
 * value of capacity (mAh)
 
+### end-of-charge
+* Li-Ion: value of end of charge current (mA)
+* Ni-MH: value of end of charge delta V (mV)
 
+### end-of-precharge 
+* Li-Ion: value of end of precharge current (mA)
+* Ni-MH: value of end of precharge delta V (mV)
 
+### end-of-discharge
+* value of end of discharge voltage (mV)
 
-
-
+### end-of-postdischarge
+* value of end of postdischarge capacity (mAh)
 
 ### Example to write and read basic configuration
 The user sends the _write basic configuration_ command:
@@ -236,4 +231,3 @@ The user will receive
 DD 01 01 03 00 64 0F 0A 06 D6 0C B2 09 68 02 A6 77
 
 cell counter: 1 (0x01), repetition counter: 1 (0x01), state: charge (0x03), elapsed time: 100s (0x0064), voltage: 3850mV (0x0F0A), current: 1725mA (0x06D6), capacity: 3250mAh (0x0CB2), temperature: 24.08C (0x0968), duty cycle: 0.678 (0x02A6)
-
