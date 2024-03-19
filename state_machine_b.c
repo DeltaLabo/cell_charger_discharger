@@ -53,36 +53,34 @@ void state_machine()
 void fIDLE() //@brief This function define the IDLE state of the state machine.
 {
     // REVISION DE FUNCIONALIDAD
-    STOP_CONVERTER(); // MAYBE OK ALEX
+    if (start) STOP_CONVERTER(); // MAYBE OK ALEX 
     start = false;
+    
 }
 
 void fCHARGE()
-{
-    conv = 1; /// * Activate control loop by setting #conv
-    
+{    
     if ( ( ( iavg < basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x01 ) ) || ( ( vavg > basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x02 ) ) ) /// * If #vavg is below #EOD_voltage
     {
-        if (5 < second)
+        if (second > 5)
         {
-        state = WAIT; /// -# Else, go to #WAIT state          
-        wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
-        STOP_CONVERTER();
+            state = WAIT; /// -# Else, go to #WAIT state          
+            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+            STOP_CONVERTER();
         }
     }
 }
 
 void fDISCHARGE()
-{
-    // POR VERIFICAR
-
-    conv = 1; /// * Activate control loop by setting #conv
-    
-    if ( (((uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 )) < basic_configuration.end_of_discharge) && (5 < second) ) /// * If #vavg is below #EOD_voltage then
+{    
+    if ( (((uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 )) < basic_configuration.end_of_discharge) ) /// * If #vavg is below #EOD_voltage then
     {
-        state = WAIT; /// -# Else, go to #WAIT state                  
-        wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to #WAIT_TIME
-        STOP_CONVERTER();
+        if (second > 5)
+        {
+            state = WAIT; /// -# Else, go to #WAIT state                  
+            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to #WAIT_TIM
+            STOP_CONVERTER();
+        }
     }
 }
 
@@ -129,7 +127,6 @@ void fDC_res() //can be improved a lot!!
 */
 void fWAIT()
 {
-    STOP_CONVERTER();
     second = wait_count;
     if (wait_count) wait_count--;
     if(!wait_count) fNEXTSTATE();
@@ -149,7 +146,7 @@ void fNEXTSTATE(){
 
 void fNEXTCELL(){
     counter_state = 0;
-    if (test_configuration.number_of_cells > cell_count){
+    if (cell_count < test_configuration.number_of_cells){
         state = test_configuration.order_of_states[counter_state];
         converter_settings();
         cell_count = cell_count + 1;
@@ -170,7 +167,6 @@ void fNEXTREPETITION(){
         }
     else{
         state = IDLE;
-        STOP_CONVERTER(); // MAYBE OK ALEX
     }
     //converter_settings();
 }
@@ -182,11 +178,11 @@ void converter_settings()
     // POR VERIFICAR 
     
     cmode = 1; /// * Start in constant current mode by setting. #cmode
-    intacum = 0; /// * The #integral component of the compensator is set to zero.*/
+    pidi = 0; /// * The #integral component of the compensator is set to zero.*/
     qavg = 0; /// * Average capacity, #q_prom is set to zero.*/
     vmax = 0; /// * Maximum averaged voltage, #vmax is set to zero.*/
-    dc = DC_MIN;
-    set_DC(&dc);  /// * The #set_DC() function is called
+    pidt = DC_MIN;
+    set_DC();  /// * The #set_DC() function is called
     Cell_ON(); /// * The #Cell_ON() function is called
     switch(state)
     {
@@ -206,5 +202,7 @@ void converter_settings()
 //            SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
 //            break;
     }
-    __delay_ms(10);   
+    __delay_ms(10); 
+    second = 0;
+    conv = 1;
 }

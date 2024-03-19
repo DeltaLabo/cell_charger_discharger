@@ -84,8 +84,10 @@
     void param(void);
     void converter_settings(void);
     void initialize(void);
-    void pid(uint16_t feedback, uint16_t setpoint, int24_t* acum, uint16_t* duty_cycle);
-    void set_DC(uint16_t* duty_cycle);
+//    void pid(uint16_t feedback, uint16_t setpoint, int24_t* acum, uint16_t* duty_cycle);
+    void pid(float feedback, float setpoint);
+//    void set_DC(uint16_t* duty_cycle);
+    void set_DC();
     uint16_t read_ADC(uint16_t channel);
     void scaling(void);
     void log_control(void);
@@ -131,20 +133,23 @@
     turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
     and the UART reception interrupts.
     */
-    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; dc = DC_MIN; set_DC(&dc); Cell_OFF();}
+    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; pidt = DC_MIN; set_DC(); Cell_OFF();}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
     #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
    //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function 
-    #define     DC_MIN                  50  ///< Minimum possible duty cycle, set around @b 0.1 
-    #define     DC_MAX                  409  ///< Maximum possible duty cycle, set around @b 0.8
+    #define     DC_MIN                  50.0  ///< Minimum possible duty cycle, set around @b 0.1 
+    #define     DC_MAX                  300.0  ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
-    #define     CC_char_kp              20  ///< Proportional constant divider for CC mode
-    #define     CC_char_ki              50  ///< Integral constant divider for CC mode 
-    #define     CC_disc_kp              15  ///< Proportional constant divider for CC mode
-    #define     CC_disc_ki              20  ///< Integral constant divider for CC mode 
+    #define     CC_char_kp              0.013  ///< Proportional constant divider for CC mode
+    #define     CC_char_ki              0.0025  ///< Integral constant for CC mode 
+    #define     CC_char_kd              0.0     ///< Diferential constant for CC mode 
+    #define     CC_disc_kp              0.01  ///< Proportional constant for CC mode
+    #define     CC_disc_ki              0.001  ///< Integral constant for CC mode
+    #define     CC_disc_kd              0.0     ///< Diferential constant for CC mode 
     // last test with LI_ION gave this constants
-    #define     CV_kp                   40  ///< Proportional constant divider for CV mode
-    #define     CV_ki                   4  ///< Integral constant divider for CV mode 
+    #define     CV_kp                   0.0013  ///< Proportional constant for CV mode
+    #define     CV_ki                   0.0025  ///< Integral constant for CV mode 
+    #define     CV_kd                   0.1 ///< Diferential constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); UART_send_char(13); } ///< Send a linebreak to the terminal
     //////////////////////////Chemistry definition///////////////////////////////////////
     #define     LI_ION_CHEM             1 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
@@ -164,19 +169,19 @@
     #define     Ni_MH_EOC_DV            10 ///< Ni-MH end-fo-charge voltage drop in mV
     #define     Ni_MH_EOD_V             1000 ///< Ni-MH end-of-discharge voltage in mV
 
-    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_disc_kp; ki = CC_disc_ki;}
-    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_char_kp; ki = CC_char_ki;}
+    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_disc_kp; ki = CC_disc_ki; kd = CC_disc_kd; pidi = 0.0;}
+    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_char_kp; ki = CC_char_ki; kd = CC_char_kd; pidi = 0.0;}
     //Structs
     typedef struct basic_configuration_struct {
         uint8_t version;
         uint16_t const_voltage;
         uint16_t const_current_char;
-        uint16_t const_current_disc;
+        uint16_t const_current_disc; 
         uint16_t capacity;
         uint16_t end_of_charge;
         uint16_t end_of_precharge;
         uint16_t end_of_discharge;
-        uint16_t end_of_postdischarge;
+        uint16_t end_of_postdischarge;   
     }basic_configuration_type, *basic_configuration_type_ptr;
     
     typedef struct test_configuration_struct {
@@ -260,15 +265,17 @@
     int16_t                             tavg = 0;  ///< Last one-second-average of #t . Initialized as 0
     uint16_t                            qavg = 0;  ///< Integration of #i . Initialized as 0
     uint16_t                            vmax = 0;   ///< Maximum recorded average voltage. 
-    int24_t                             intacum;   ///< Integral acumulator of PI compensator
+    float                               pidi;   ///< Integral acumulator of PI compensator
     float                               kp;  ///< Proportional compesator gain
-    float                               ki;  ///< Integral compesator gain      
-    uint16_t                            vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
+    float                               ki;  ///< Integral compesator gain
+    float                               kd;  ///< Diferential compesator gain
+    float                               vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
     uint16_t                            cvref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
     uint16_t                            iref = 0;  ///< Current setpoint. Initialized as 0
     uint16_t                            ccref = 0;  ///< Unscaled current setpoint. Initialized as 0
     bool                                cmode = 1;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt>   
-    uint16_t                            dc = 0;  ///< Duty cycle
+    float                               pidt = 0;  ///< Duty cycle
+    float                               er = 0; /// < Define er for calculating the error on dc calculus    
     //char                                clear;  ///< Variable to clear the transmission buffer of UART
     uint16_t                            second = 0; ///< Seconds counter
     uint16_t                            timeout = 0;

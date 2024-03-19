@@ -54,12 +54,12 @@ void __interrupt() ISR(void) /// This function performs the folowing tasks:
         v = read_ADC(V_CHAN); /// <li> Read the ADC channel #V_CHAN and store the value in #v. Using the #read_ADC() function
         i = read_ADC(I_CHAN); /// <li> Read the ADC channel #I_CHAN and store the value in #i. Using the #read_ADC() function
         i = (uint16_t) (abs ( 2048 - (int)i ) ); /// <li> Substract the 2.5V bias from #i, store the absolute value in #i   
-        t = read_ADC(T_CHAN); /// <li> Read the ADC channel #T_CHAN and store the value in #t. Using the #read_ADC() function 
+        //t = read_ADC(T_CHAN); /// <li> Read the ADC channel #T_CHAN and store the value in #t. Using the #read_ADC() function 
         if (conv) control_loop(); /// <li> Call the #control_loop() function
-        else intacum = 0;
+        else pidi = 0;
         calculate_avg(); /// <li> Call the #calculate_avg() function
         timing(); /// <li> Call the #timing() function
-//        if (TMR1IF) UART_send_string((char*)"TIMING_ERROR"); /// <li> If the @b Timer1 interrupt flag is set, there is a timing error, print "TIMING_ERROR" into the terminal. </ol>
+        if (TMR1IF) UART_send_string((char*)"TIMING_ERROR"); /// <li> If the @b Timer1 interrupt flag is set, there is a timing error, print "TIMING_ERROR" into the terminal. </ol>
     }
 
     if(RCIF)/// <li> Check the @b UART reception interrupt flag, if it is set, the folowing task are executed:

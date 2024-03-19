@@ -188,7 +188,7 @@ bool command_interpreter()
                     {
                         case 0x03:
                             put_data_into_structure(length, (uint8_t*)data, (uint8_t*)basic_configuration_ptr);
-                            vref = (uint16_t) ( ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ); //Scale the voltage reference to be compare with v;
+                            vref = ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ; //Scale the voltage reference to be compare with v;
                             i_char = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
                             i_disc = (uint16_t) ( ( ( (float) basic_configuration.const_current_disc * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
                             capacity = basic_configuration.capacity;
@@ -218,12 +218,12 @@ bool command_interpreter()
                         break;
                     case 0x05: // START
                         if (!start){
-                            start = true;
                             counter_state = 0;
                             state = test_configuration.order_of_states[counter_state];
                             converter_settings();
                             cell_count = 0x01;
                             repetition_counter = 0x01;
+                            start = true;
                         }
                         break;
                     case 0x07: // NEXT CELL
@@ -247,42 +247,45 @@ void control_loop()
 {   
     if(!cmode) /// If #cmode is cleared then
     {
-        pid(v, vref, &intacum, &dc);  /// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
+        pid(v, vref);/// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
     }else /// Else,
     {
-        pid(i, iref, &intacum, &dc); /// * The #pid() function is called with @p feedback = #i and @p setpoint = #iref
+        pid(i, iref); /// * The #pid() function is called with @p feedback = #i and @p setpoint = #iref
     }
-    set_DC(&dc); /// The duty cycle is set by calling the #set_DC() function
+    set_DC();
 }
+
 /**@brief This function defines the PI controller
 *  @param   feedback average of measured values for the control variable
 *  @param   setpoint desire controlled output for the variable
 */
-void pid(uint16_t feedback, uint16_t setpoint, int24_t* acum, uint16_t* duty_cycle)
-{ 
-int16_t     er = 0; /// * Define @p er for calculating the error
-float       pi = 0; /// * Define @p pi for storing the PI compensator value
-float       new_dc = 0;
-    er = (int16_t) (setpoint - feedback); /// * Calculate the error by substract the @p feedback from the @p setpoint and store it in @p er
+void pid(float feedback, float setpoint)
+{  
+    pidt += kd * (setpoint - feedback - er); /// * Calculate #diferential component of compensator
+    
+    er = setpoint - feedback; /// * Calculate the error by substract the @p feedback from the @p setpoint and store it in @p er
     if(er > ERR_MAX) er = ERR_MAX; /// * Make sure error is never above #ERR_MAX
     if(er < ERR_MIN) er = ERR_MIN; /// * Make sure error is never below #ERR_MIN
-    pi = (float)er / kp; /// * Calculate #proportional component of compensator
-	*acum += (int24_t) (er); /// * Calculate #integral component of compensator
-    pi += ((float)*acum /  (ki * (float)COUNTER));
-    new_dc = ((float)*duty_cycle + pi);
-    if (new_dc >= DC_MAX) *duty_cycle = DC_MAX;
-    else if (new_dc <= DC_MIN) *duty_cycle = DC_MIN;
-    else *duty_cycle = (uint16_t)new_dc;
+    
+    
+	pidi += (ki * er); /// * Calculate #integral component of compensator
+    pidt += (er * kp + pidi); /// * Calculate #proportional component of compensator
+    
+    if (pidt >= DC_MAX) pidt = DC_MAX;
+    else if (pidt <= DC_MIN) pidt = DC_MIN;
 }
 /**@brief This function sets the desired duty cycle
 */
-void set_DC(uint16_t* duty_cycle)
+void set_DC()
 {
 /// This function can set the duty cycle from 0x0 to 0x1FF
-    PSMC1DCL = *duty_cycle & 0x00FF; /// * Lower 8 bits of #dc are stored in @p PSMC1DCL
-    PSMC1DCH = (*duty_cycle >> 8) & 0x01; /// * Higher 1 bit of #dc are stored in @p PSMC1DCH
+    uint16_t    dc = (uint16_t) pidt;
+    
+    PSMC1DCL = dc & 0x00FF; /// * Lower 8 bits of #dc are stored in @p PSMC1DCL
+    PSMC1DCH = (dc >> 8) & 0x01; /// * Higher 1 bit of #dc are stored in @p PSMC1DCH
     PSMC1CONbits.PSMC1LD = 1; /// * Set the load register. This will load all the setting as once*/
 }
+
 /**@brief This function switches between CC and CV mode.
 * @param current_voltage average of current voltage
 * @param referece_voltage voltage setpoint
@@ -293,26 +296,28 @@ void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mo
 /// If the current voltage is bigger than the CV setpoint and the system is in CC mode, then:
     if( ( ( (uint16_t) ( ( ( (float)current_voltage * 5000.0 ) / 4096.0 ) + 0.5 ) ) > reference_voltage ) && CC_mode_status )
     {        
-        intacum = 0; /// <ol> <li> The integral acummulator is cleared
+        pidi = 0; /// <ol> <li> The integral acummulator is cleared
         cmode = 0; /// <li> The system is set in CV mode by clearing the #cmode variable
         kp = CV_kp; /// <li> The proportional constant divider is set to #CV_kp 
-        ki = CV_ki; /// <li> The integral constant divider is set to #CV_ki 
+        ki = CV_ki; /// <li> The integral constant divider is set to #CV_ki
+        kd = CV_kd;
     }    
 }
 /**@brief This function takes care of scaling the average values to correspond with their real values.
 */
 void scaling() /// This function performs the folowing tasks:
 {
-log_data.current = (uint16_t) ( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
-log_data.voltage = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
-// tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 );     NOT IN SERVICE ALEX
-// log_data.temperature = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
-log_data.temperature = 27;      // WHILE NOT IN SERVICE
-qavg += (uint16_t) ( (float)iavg / 360.0 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
-log_data.capacity = qavg;
-#if (NI_MH_CHEM)  
-if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg
-#endif
+    log_data.current = (uint16_t) ( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
+    log_data.voltage = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
+    // tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 );     NOT IN SERVICE ALEX
+    // log_data.temperature = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
+    log_data.temperature = (uint16_t) (pidt);      // WHILE NOT IN SERVICE
+    //log_data.temperature = (uint16_t) (test_configuration.order_of_states[counter_state + 2]);
+    qavg += (uint16_t) ( (float)iavg / 3600.0 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
+    log_data.capacity = (uint16_t) ( (float)qavg / 100.0);
+    #if (NI_MH_CHEM)  
+    if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg
+    #endif
 }
 /**@brief This function takes care of calculating the average values printing the log data using the UART.
 */
@@ -326,7 +331,7 @@ void log_control()
         log_data.state = state;
         log_data.repetition_counter = repetition_counter;
         log_data.elapsed_time = second;
-        log_data.duty_cycle = dc;
+        log_data.duty_cycle = (uint16_t) pidt;
         UART_send_byte(0xDD);
         UART_send_some_bytes(sizeof(log_data),(uint8_t*)log_data_ptr);
         UART_send_byte(0x77);
