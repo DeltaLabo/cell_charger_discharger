@@ -141,34 +141,31 @@ void fNEXTSTATE(){
     else{
         fNEXTCELL();
     }
-    //converter_settings();
 }
 
 void fNEXTCELL(){
     counter_state = 0;
     if (cell_count < test_configuration.number_of_cells){
         state = test_configuration.order_of_states[counter_state];
-        converter_settings();
         cell_count = cell_count + 1;
+        converter_settings();
     }
     else {
         fNEXTREPETITION();
     }
-    //converter_settings();
 }
 
 void fNEXTREPETITION(){
     if (repetition_counter < test_configuration.number_of_repetitions){
         counter_state = 0;
         state = test_configuration.order_of_states[counter_state];
-        converter_settings();
         cell_count = 0x01;
         repetition_counter = repetition_counter + 1;
+        converter_settings();
         }
     else{
         state = IDLE;
     }
-    //converter_settings();
 }
 
 /**@brief Function to set the configurations of the converter.
@@ -176,7 +173,7 @@ void fNEXTREPETITION(){
 void converter_settings()
 {
     // POR VERIFICAR 
-    
+    interrupt_disable();
     cmode = 1; /// * Start in constant current mode by setting. #cmode
     pidi = 0; /// * The #integral component of the compensator is set to zero.*/
     qavg = 0; /// * Average capacity, #q_prom is set to zero.*/
@@ -205,4 +202,5 @@ void converter_settings()
     __delay_ms(10); 
     second = 0;
     conv = 1;
+    interrupt_enable();
 }
