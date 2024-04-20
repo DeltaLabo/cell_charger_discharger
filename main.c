@@ -8,11 +8,12 @@
  * @brief 
  * Main source file. Includes the main loop and the interruption service routine. 
  * @par Institution:
- * LaSEINE / CeNT. Kyushu Institute of Technology.
+ * LaSEINE / CeNT. Kyushu Institute of Technology. 
+ * DELTALab. Instituto Tecnologico de Costa Rica 
  * @par Mail:
  * juan.rojas@tec.ac.cr
  * @par Git repository:
- * https://bitbucket.org/juanjorojash/cell_charger_discharger
+ * https://github.com/DeltaLabo/cell_charger_discharger
  */
 
 #include "charger_discharger.h"
@@ -24,15 +25,16 @@ void main(void) /// This function performs the folowing tasks:
 {       
     initialize(); /// <ul> <li> Call the #initialize function
     __delay_ms(10);
+    interrupt_enable(); // this I added for the test
     while(1) /// <li> <b> The main loop repeats the following forever: </b> 
     {
         if (SECF) /// <ul> <li> Check the #SECF flag, if it is set, 1 second has passed since last execution, so the folowing task are executed:
         {     
             SECF = 0; /// <ol> <li> Clear the #SECF flag to restart the 1 second timer
-            scaling(); /// <li> Scale the average measured values by calling the #scaling function 
-            log_control(); /// <li> Print the log in the serial terminal by calling the #log_control function
-            cc_cv_mode(vavg, cvref, cmode); /// <li> Check if the system shall change to CV mode by calling the #cc_cv_mode function
+            scaling(); /// <li> Scale the average measured values by calling the #scaling function
             state_machine(); /// <li> Call the #state_machine function
+            log_control(); /// <li> Print the log in the serial terminal by calling the #log_control function
+            cc_cv_mode(vavg, basic_configuration.const_voltage, cmode); /// <li> Check if the system shall change to CV mode by calling the #cc_cv_mode function
             //temp_protection(); /// <li> Call the #temp_protection function </ol> </ul> </ul>
         }
 	}
@@ -43,7 +45,7 @@ void main(void) /// This function performs the folowing tasks:
 void __interrupt() ISR(void) /// This function performs the folowing tasks: 
 {
     char recep = 0;
-    
+    bool status = 0;
     if(TMR1IF) /// <li> Check the @b Timer1 interrupt flag, if it is set, the folowing task are executed:
     {
         TMR1H = 0xE1; // TMR1 clock is Fosc/4= 8Mhz (Tick= 0.125us). TMR1IF is set when the 16-bit register overflows. 7805 x 0.125us = 0.975625 ms.
@@ -52,9 +54,9 @@ void __interrupt() ISR(void) /// This function performs the folowing tasks:
         v = read_ADC(V_CHAN); /// <li> Read the ADC channel #V_CHAN and store the value in #v. Using the #read_ADC() function
         i = read_ADC(I_CHAN); /// <li> Read the ADC channel #I_CHAN and store the value in #i. Using the #read_ADC() function
         i = (uint16_t) (abs ( 2048 - (int)i ) ); /// <li> Substract the 2.5V bias from #i, store the absolute value in #i   
-        t = read_ADC(T_CHAN); /// <li> Read the ADC channel #T_CHAN and store the value in #t. Using the #read_ADC() function 
+        //t = read_ADC(T_CHAN); /// <li> Read the ADC channel #T_CHAN and store the value in #t. Using the #read_ADC() function 
         if (conv) control_loop(); /// <li> Call the #control_loop() function
-        else intacum = 0;
+        else pidi = 0;
         calculate_avg(); /// <li> Call the #calculate_avg() function
         timing(); /// <li> Call the #timing() function
         if (TMR1IF) UART_send_string((char*)"TIMING_ERROR"); /// <li> If the @b Timer1 interrupt flag is set, there is a timing error, print "TIMING_ERROR" into the terminal. </ol>
@@ -67,19 +69,6 @@ void __interrupt() ISR(void) /// This function performs the folowing tasks:
             RC1STAbits.CREN = 0;  
             RC1STAbits.CREN = 1; 
         }
-        while(RCIF) recep = RC1REG; /// <li> Store the received character
-        switch (recep)
-        {
-        case 0x63: /// <li> If a @b "c" was received, the process shall stop, then:
-            STOP_CONVERTER(); /// - Stop the converter by calling the #STOP_CONVERTER() macro
-            state = STANDBY; /// - Go to #STANDBY state
-            break;
-        case 0x6E: /// <li> If @p an @b "n" was received, the system shall jump to the next cell, then:
-            STOP_CONVERTER(); /// - Stop the converter by calling the #STOP_CONVERTER() macro
-            state = ISDONE; /// - Go to #ISDONE state
-            break;
-        default: /// <li> In any other case, do nothing
-            recep = 0; 
-        } /// </ol> </ul>
+        command_interpreter();
     }  
 }

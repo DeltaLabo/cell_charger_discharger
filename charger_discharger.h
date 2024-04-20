@@ -45,19 +45,27 @@
     #include <stdbool.h> // Include bool type
     /** This is the State Machine enum*/
 	enum states { 
-        STANDBY = 0, ///< "Stand by" state, defined by function @link fSTANDBY() @endlink
-        IDLE = 1, ///< "Idle" state, defined by function @link fIDLE() @endlink
-        FAULT = 2, ///< "Fault" state, defined by function @link fFAULT() @endlink
-        ISDONE = 3, ///< "Is done" state, defined by function @link fISDONE() @endlink
-        WAIT = 4, ///< "Wait" state, defined by function @link fWAIT() @endlink
-        PREDISCHARGE = 5, ///< "Predischarge" state, defined by function @link fDISCHARGE() @endlink
-        CHARGE = 6, ///< "Charge" state, defined by function @link fCHARGE() @endlink
-        DISCHARGE = 7, ///< "Discharge" state, defined by function @link fDISCHARGE() @endlink
-        POSTCHARGE = 8, ///< "Postcharge" state, defined by function @link fCHARGE() @endlink
-        DS_DC_res = 9, ///< "Discharged state DC resistance" state, defined by function @link fDC_res() @endlink
-        CS_DC_res = 10, ///< "Charged state DC resistance" state, defined by function @link fDC_res() @endlink
-        PS_DC_res = 11 ///< "Postcharged state DC resistance" state, defined by function @link fDC_res() @endlink
-    };    
+//        STANDBY = 0, ///< "Stand by" state, defined by function @link fSTANDBY() @endlink
+//        IDLE = 1, ///< "Idle" state, defined by function @link fIDLE() @endlink
+//        FAULT = 2, ///< "Fault" state, defined by function @link fFAULT() @endlink
+//        ISDONE = 3, ///< "Is done" state, defined by function @link fISDONE() @endlink
+//        WAIT = 4, ///< "Wait" state, defined by function @link fWAIT() @endlink
+//        PREDISCHARGE = 5, ///< "Predischarge" state, defined by function @link fDISCHARGE() @endlink
+//        CHARGE = 6, ///< "Charge" state, defined by function @link fCHARGE() @endlink
+//        DISCHARGE = 7, ///< "Discharge" state, defined by function @link fDISCHARGE() @endlink
+//        POSTCHARGE = 8, ///< "Postcharge" state, defined by function @link fCHARGE() @endlink
+//        DS_DC_res = 9, ///< "Discharged state DC resistance" state, defined by function @link fDC_res() @endlink
+//        CS_DC_res = 10, ///< "Charged state DC resistance" state, defined by function @link fDC_res() @endlink
+//        PS_DC_res = 11 ///< "Postcharged state DC resistance" state, defined by function @link fDC_res() @endlink
+        IDLE = 0x01,
+        CHARGE = 0x03,
+        PRECHARGE = 0x05,
+        DISCHARGE = 0x07,
+        POSTDISCHARGE = 0x09,
+        DC_res = 0x0B,
+        WAIT = 0x0D
+    };   
+    bool command_interpreter(void);
     void fSTANDBY(void);
     void fIDLE(void);
     void fCHARGE(void);
@@ -66,13 +74,20 @@
     void fWAIT(void);
     void fISDONE(void);
     void fFAULT(void);
+    
+    void fNEXTSTATE(void);
+    void fNEXTCELL(void);
+    void fNEXTREPETITION(void);
+    
     void start_state_machine(void);
     void state_machine(void);
     void param(void);
     void converter_settings(void);
     void initialize(void);
-    void pid(uint16_t feedback, uint16_t setpoint, int24_t* acum, uint16_t* duty_cycle);
-    void set_DC(uint16_t* duty_cycle);
+//    void pid(uint16_t feedback, uint16_t setpoint, int24_t* acum, uint16_t* duty_cycle);
+    void pid(float feedback, float setpoint);
+//    void set_DC(uint16_t* duty_cycle);
+    void set_DC();
     uint16_t read_ADC(uint16_t channel);
     void scaling(void);
     void log_control(void);
@@ -83,7 +98,14 @@
     void calculate_avg(void);
     void interrupt_enable(void);
     void UART_send_char(char bt);
-    char UART_get_char(void); 
+    char UART_get_char(void);
+    uint8_t UART_get_byte(void);
+    void UART_send_header(uint8_t start, uint8_t operation, uint8_t code);
+    void UART_send_byte(uint8_t byte);
+    void UART_get_some_bytes(uint8_t length, uint8_t* data);
+    void UART_send_some_bytes(uint8_t length, uint8_t* data);
+    uint16_t calculate_checksum(uint8_t code, uint8_t length, uint8_t* data);
+    void put_data_into_structure(uint8_t length, uint8_t* data, uint8_t* structure);
     void UART_send_string(char* st_pt);
     void temp_protection(void);
     void Cell_ON(void);
@@ -111,29 +133,30 @@
     turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
     and the UART reception interrupts.
     */
-    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; dc = DC_MIN; set_DC(&dc); Cell_OFF(); LOG_OFF();}
+    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; pidt = DC_MIN; set_DC(); Cell_OFF();}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
-    #define     LOG_ON()                { log_on = 1; }  ///< Turn OFF logging in the terminal.
-    #define     LOG_OFF()               { log_on = 0; }  ///< Turn ON logging in the terminal.
     #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
    //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function 
-    #define     DC_MIN                  50  ///< Minimum possible duty cycle, set around @b 0.1 
-    #define     DC_MAX                  409  ///< Maximum possible duty cycle, set around @b 0.8
+    #define     DC_MIN                  50.0  ///< Minimum possible duty cycle, set around @b 0.1 
+    #define     DC_MAX                  300.0  ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
-    #define     CC_char_kp              20  ///< Proportional constant divider for CC mode
-    #define     CC_char_ki              50  ///< Integral constant divider for CC mode 
-    #define     CC_disc_kp              15  ///< Proportional constant divider for CC mode
-    #define     CC_disc_ki              20  ///< Integral constant divider for CC mode 
+    #define     CC_char_kp              0.013  ///< Proportional constant divider for CC mode
+    #define     CC_char_ki              0.0025  ///< Integral constant for CC mode 
+    #define     CC_char_kd              0.0     ///< Diferential constant for CC mode 
+    #define     CC_disc_kp              0.01  ///< Proportional constant for CC mode
+    #define     CC_disc_ki              0.001  ///< Integral constant for CC mode
+    #define     CC_disc_kd              0.0     ///< Diferential constant for CC mode 
     // last test with LI_ION gave this constants
-    #define     CV_kp                   40  ///< Proportional constant divider for CV mode
-    #define     CV_ki                   4  ///< Integral constant divider for CV mode 
+    #define     CV_kp                   0.0013  ///< Proportional constant for CV mode
+    #define     CV_ki                   0.0025  ///< Integral constant for CV mode 
+    #define     CV_kd                   0.1 ///< Diferential constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); UART_send_char(13); } ///< Send a linebreak to the terminal
     //////////////////////////Chemistry definition///////////////////////////////////////
     #define     LI_ION_CHEM             1 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
     #define     NI_MH_CHEM              0 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
     ////////////////////////////////////////////////////////////////////////////////////
     //General definitions
-    #define     WAIT_TIME               60 ///< Time to wait before states, set to 10 minutes
+    #define     WAIT_TIME               5 ///< Time to wait before states, set to 10 minutes = 60
     #define     DC_RES_SECS             14 ///< How many seconds the DC resistance process takes
     //Li-Ion definitions
     #define     Li_Ion_CV               4200 ///< Li-Ion constant voltage setting in mV
@@ -146,9 +169,61 @@
     #define     Ni_MH_EOC_DV            10 ///< Ni-MH end-fo-charge voltage drop in mV
     #define     Ni_MH_EOD_V             1000 ///< Ni-MH end-of-discharge voltage in mV
 
-    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_disc_kp; ki = CC_disc_ki;}
-    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_char_kp; ki = CC_char_ki;}
+    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_disc_kp; ki = CC_disc_ki; kd = CC_disc_kd; pidi = 0.0;}
+    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_char_kp; ki = CC_char_ki; kd = CC_char_kd; pidi = 0.0;}
+    //Structs
+    typedef struct basic_configuration_struct {
+        uint8_t version;
+        uint16_t const_voltage;
+        uint16_t const_current_char;
+        uint16_t const_current_disc; 
+        uint16_t capacity;
+        uint16_t end_of_charge;
+        uint16_t end_of_precharge;
+        uint16_t end_of_discharge;
+        uint16_t end_of_postdischarge;   
+    }basic_configuration_type, *basic_configuration_type_ptr;
+    
+    typedef struct test_configuration_struct {
+        uint8_t number_of_cells;
+        uint8_t number_of_states;
+        uint8_t number_of_repetitions;
+        uint16_t wait_time;
+        uint16_t end_wait_time;
+        uint8_t order_of_states[10];
+    }test_configuration_type, *test_configuration_type_ptr;
+    
+    typedef struct converter_configuration_struct {
+        uint16_t CVKp;
+        uint16_t CVKi;
+        uint16_t CVKd;
+        uint16_t CCKp;
+        uint16_t CCKi;
+    }converter_configuration_type, *converter_configuration_type_ptr;
+    
+    typedef struct log_data_struct {
+        uint8_t cell_counter;
+        uint8_t repetition_counter;
+        uint8_t state;
+        uint16_t elapsed_time;
+        uint16_t voltage;
+        uint16_t current; 
+        uint16_t capacity;
+        uint16_t temperature;
+        uint16_t duty_cycle;
+    }log_data_type, *log_data_type_ptr;
+    
     //Variables
+    
+    basic_configuration_type            basic_configuration;
+    basic_configuration_type_ptr        basic_configuration_ptr;  
+    test_configuration_type             test_configuration;
+    test_configuration_type_ptr         test_configuration_ptr; 
+    converter_configuration_type        converter_configuration;
+    converter_configuration_type_ptr    converter_configuration_ptr; 
+    log_data_type                       log_data;
+    log_data_type_ptr                   log_data_ptr;
+    bool                                start = false;
     bool                                SECF = 1; ///< 1 second flag
     unsigned char                       option = 0; ///< Four different options, look into @link param() @endlink for details
     uint16_t                            capacity; ///< Definition of capacity per cell according to each chemistry
@@ -158,10 +233,16 @@
     unsigned char                       cell_max = 0; ///< Number of cells to be tested. Initialized as 0
     uint16_t                            wait_count = 0; ///< Counter for waiting time between states. Initialized as 0
     unsigned char                       dc_res_count = 0; ///< Counter for DC resistance. Initialized as 0
-    unsigned char                       state = STANDBY; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
-    unsigned char                       prev_state = STANDBY; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
-    uint16_t                            EOC_current; ///< End-of-charge current in mA
+    unsigned char                       state = IDLE; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
+    unsigned char                       prev_state = IDLE; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
+    
+    uint8_t                             counter_state = 0; ///< Used to move trough the diferent states.
+    uint8_t                             repetition_counter = 0; ///< Used to move trough repetitions.
+    
+    uint16_t                            EOC_variable; ///< End-of-charge current in mA
+    uint16_t                            EOPC_variable; ///< End-of-precharge variable in mA or mV
     uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
+    uint16_t                            EOPD_capacity; ///< End-of-postdischarge capacity
     uint16_t                            v_1_dcres; ///< First voltage measured during DC resistance state 
     uint16_t                            i_1_dcres; ///< First current measured during DC resistance state  
     uint16_t                            v_2_dcres; ///< Second voltage measured during DC resistance state 
@@ -184,67 +265,20 @@
     int16_t                             tavg = 0;  ///< Last one-second-average of #t . Initialized as 0
     uint16_t                            qavg = 0;  ///< Integration of #i . Initialized as 0
     uint16_t                            vmax = 0;   ///< Maximum recorded average voltage. 
-    int24_t                             intacum;   ///< Integral acumulator of PI compensator
+    float                               pidi;   ///< Integral acumulator of PI compensator
     float                               kp;  ///< Proportional compesator gain
-    float                               ki;  ///< Integral compesator gain      
-    uint16_t                            vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
+    float                               ki;  ///< Integral compesator gain
+    float                               kd;  ///< Diferential compesator gain
+    float                               vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
     uint16_t                            cvref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
     uint16_t                            iref = 0;  ///< Current setpoint. Initialized as 0
-    uint16_t                            ccref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
+    uint16_t                            ccref = 0;  ///< Unscaled current setpoint. Initialized as 0
     bool                                cmode = 1;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt>   
-    uint16_t                            dc = 0;  ///< Duty cycle
+    float                               pidt = 0;  ///< Duty cycle
+    float                               er = 0; /// < Define er for calculating the error on dc calculus    
     //char                                clear;  ///< Variable to clear the transmission buffer of UART
-    bool                                log_on = 0; ///< Variable to indicate if the log is activated 
-    int16_t                             second = 0; ///< Seconds counter, resetted after 59 seconds.
-    uint16_t                            minute = 0; ///< Minutes counter, only manually reset
+    uint16_t                            second = 0; ///< Seconds counter
     uint16_t                            timeout = 0;
-    //Strings       
-    char const                          comma = ',';
-    char const                          colons = ':'; 
-    char const                          S_str = 'S';
-    char const                          C_str = 'C';
-    char const                          V_str = 'V';
-    char const                          I_str = 'I';
-    char const                          T_str = 'T';
-    char const                          Q_str = 'Q';
-    char const                          R_str = 'R';
-    char const                          W_str = 'W';
-    char const                          press_s_str[] = "'s' to start: ";
-    char const                          starting_str[] = "starting...";
-    char const                          input_num_str[] = "Input a number between";
-    char const                          param_def_str[] = "Parameter definition:";
-    char const                          re_str[] = "re";
-    char const                          chem_def_liion[] = "Li-Ion";
-    char const                          chem_def_nimh[] = "Ni-MH";
-    char const                          mV_str[] = " mV";
-    char const                          mAh_str[] = " mAh";
-    char const                          mA_str[] = " mA";
-    char const                          EOD_V_str[] = "EOD: ";
-    char const                          EOC_I_str[] = "EOC: ";
-    char const                          EOC_DV_str[] = "EOC DV: ";
-    char const                          cho_bet_str[] = "Chose: ";
-    char const                          quarter_c_str[] = "0.25C";
-    char const                          half_c_str[] = "0.50C";
-    char const                          one_c_str[] = "1C";
-    char const                          cell_str[] = "Cell "; 
-    char const                          dis_def_str[] = "Discharge current: ";
-    char const                          char_def_str[] = "Charge current: ";
-    char const                          cv_val_str[] = "CV: ";
-    char const                          nom_cap_str[] = "Capacity: ";
-    char const                          def_char_curr_str[] = "Charge current: ";
-    char const                          def_disc_curr_str[] = "Discharge current: ";
-    char const                          num_cell_str[] = "Number of cells: ";
-    char const                          one_str[] = "1) ";
-    char const                          two_str[] = "2) ";
-    char const                          three_str[] = "3) ";
-    char const                          four_str[] = "4) ";
-    char const                          op_1_str[] = "Predischarge->Charge->Discharge->Postcharge";
-    char const                          op_2_str[] = "Charge->Discharge";
-    char const                          op_3_str[] = "Only Charge";
-    char const                          op_4_str[] = "Only Discharge";
-    char const                          sel_str[] = " selected...";
-    char const                          cell_below_str[] = "Cell below 0.9V or not present";
-
-#endif /* CHARGER_DISCHARGER_H*/
+#endif /* CHARGER_DISCHARGER_H */
 
 

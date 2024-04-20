@@ -123,48 +123,169 @@ void initialize()
     __delay_ms(100);
     STOP_CONVERTER();
 }
+bool command_interpreter()
+{
+    bool test = true;
+    uint8_t operation = 0x00;
+    uint8_t code = 0x00;
+    uint8_t length = 0x00;
+    uint8_t data[20] = {0x00};
+    uint16_t checksum = 0x0000;
+    uint16_t calc_checksum = 0x0000;
+    basic_configuration_ptr = &basic_configuration;
+    test_configuration_ptr = &test_configuration;
+    converter_configuration_ptr = &converter_configuration;
+    if(UART_get_byte()==0xDD)
+    {
+        test = true;
+        operation = UART_get_byte();
+        code = UART_get_byte();
+        length = UART_get_byte();
+        if (length>0) UART_get_some_bytes(length, (uint8_t*)data);
+        checksum = UART_get_byte();
+        checksum += UART_get_byte()*256;
+        calc_checksum = calculate_checksum(code, length, (uint8_t*)data);
+        if(UART_get_byte()==0x77)
+        {
+            test = true;
+        }else test = false;     
+        if (checksum == calc_checksum)
+        {
+            test = true;
+        }else test = false;        
+        if(!start)
+        {
+            switch (operation)
+            {
+                case 0xA5:
+                    UART_send_header(0xDD, operation, code);
+                    switch (code)
+                    {
+                        case 0x03:
+                            length = sizeof(basic_configuration);
+                            UART_send_byte(length);
+                            UART_send_some_bytes(length, (uint8_t*)basic_configuration_ptr);
+                            calc_checksum = calculate_checksum(code, length, (uint8_t*)basic_configuration_ptr);
+                            break;
+                        case 0x05:
+                            length = sizeof(test_configuration);
+                            UART_send_byte(length);
+                            UART_send_some_bytes(length, (uint8_t*)test_configuration_ptr);
+                            calc_checksum = calculate_checksum(code, length, (uint8_t*)test_configuration_ptr);
+                            break;
+                        case 0x07:
+                            length = sizeof(converter_configuration);
+                            UART_send_byte(length);
+                            UART_send_some_bytes(length, (uint8_t*)converter_configuration_ptr);
+                            calc_checksum = calculate_checksum(code, length, (uint8_t*)converter_configuration_ptr);
+                            break;
+                    }
+                    UART_send_some_bytes(2,(uint8_t*)&calc_checksum);
+                    UART_send_byte(0x77);                
+                    break;   
+                case 0x5A:
+                    switch (code)
+                    {
+                        case 0x03:
+                            put_data_into_structure(length, (uint8_t*)data, (uint8_t*)basic_configuration_ptr);
+                            vref = ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ; //Scale the voltage reference to be compare with v;
+                            i_char = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
+                            i_disc = (uint16_t) ( ( ( (float) basic_configuration.const_current_disc * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
+                            capacity = basic_configuration.capacity;
+                            EOC_variable = basic_configuration.end_of_charge;
+                            EOPC_variable = basic_configuration.end_of_precharge;
+                            EOD_voltage = basic_configuration.end_of_discharge;
+                            EOPD_capacity = basic_configuration.end_of_postdischarge;
+                            break;
+                        case 0x05:
+                            put_data_into_structure(length, (uint8_t*)data, (uint8_t*)test_configuration_ptr);
+                            break;
+                        case 0x07:
+                            put_data_into_structure(length, (uint8_t*)data, (uint8_t*)converter_configuration_ptr);
+                            break;
+                    }
+                    UART_send_byte(test);
+                    break;
+            }
+        }
+        switch(operation)
+        {
+            case 0x0F:
+                switch (code)
+                {
+                    case 0x03: // RESET
+                        state = IDLE;
+                        break;
+                    case 0x05: // START
+                        if (!start){
+                            counter_state = 0;
+                            state = test_configuration.order_of_states[counter_state];
+                            converter_settings();
+                            cell_count = 0x01;
+                            repetition_counter = 0x01;
+                            start = true;
+                        }
+                        break;
+                    case 0x07: // NEXT CELL
+                        fNEXTCELL();
+                        break;
+                    case 0x09: // NEXT STATE
+                        wait_count = 5;
+                        state = WAIT;
+                        break;
+                }
+                UART_send_byte(test);
+                break;
+        }
+    }else test = false;
+    return (test);
+}
+
 /**@brief This function calls the PI control loop for current or voltage depending on the value of the #cmode variable.
 */
 void control_loop()
 {   
     if(!cmode) /// If #cmode is cleared then
     {
-        pid(v, vref, &intacum, &dc);  /// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
+        pid(v, vref);/// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
     }else /// Else,
     {
-        pid(i, iref, &intacum, &dc); /// * The #pid() function is called with @p feedback = #i and @p setpoint = #iref
+        pid(i, iref); /// * The #pid() function is called with @p feedback = #i and @p setpoint = #iref
     }
-    set_DC(&dc); /// The duty cycle is set by calling the #set_DC() function
+    set_DC();
 }
+
 /**@brief This function defines the PI controller
 *  @param   feedback average of measured values for the control variable
 *  @param   setpoint desire controlled output for the variable
 */
-void pid(uint16_t feedback, uint16_t setpoint, int24_t* acum, uint16_t* duty_cycle)
-{ 
-int16_t     er = 0; /// * Define @p er for calculating the error
-float       pi = 0; /// * Define @p pi for storing the PI compensator value
-float       new_dc = 0;
-    er = (int16_t) (setpoint - feedback); /// * Calculate the error by substract the @p feedback from the @p setpoint and store it in @p er
+void pid(float feedback, float setpoint)
+{  
+    pidt += kd * (setpoint - feedback - er); /// * Calculate #diferential component of compensator
+    
+    er = setpoint - feedback; /// * Calculate the error by substract the @p feedback from the @p setpoint and store it in @p er
     if(er > ERR_MAX) er = ERR_MAX; /// * Make sure error is never above #ERR_MAX
     if(er < ERR_MIN) er = ERR_MIN; /// * Make sure error is never below #ERR_MIN
-    pi = (float)er / kp; /// * Calculate #proportional component of compensator
-	*acum += (int24_t) (er); /// * Calculate #integral component of compensator
-    pi += ((float)*acum /  (ki * (float)COUNTER));
-    new_dc = ((float)*duty_cycle + pi);
-    if (new_dc >= DC_MAX) *duty_cycle = DC_MAX;
-    else if (new_dc <= DC_MIN) *duty_cycle = DC_MIN;
-    else *duty_cycle = (uint16_t)new_dc;
+    
+    
+	pidi += (ki * er); /// * Calculate #integral component of compensator
+    pidt += (er * kp + pidi); /// * Calculate #proportional component of compensator
+    
+    if (pidt >= DC_MAX) pidt = DC_MAX;
+    else if (pidt <= DC_MIN) pidt = DC_MIN;
 }
 /**@brief This function sets the desired duty cycle
 */
-void set_DC(uint16_t* duty_cycle)
+void set_DC()
 {
 /// This function can set the duty cycle from 0x0 to 0x1FF
-    PSMC1DCL = *duty_cycle & 0x00FF; /// * Lower 8 bits of #dc are stored in @p PSMC1DCL
-    PSMC1DCH = (*duty_cycle >> 8) & 0x01; /// * Higher 1 bit of #dc are stored in @p PSMC1DCH
+    uint16_t    dc = (uint16_t) pidt;
+    
+    PSMC1DCL = dc & 0x00FF; /// * Lower 8 bits of #dc are stored in @p PSMC1DCL
+    PSMC1DCH = (dc >> 8) & 0x01; /// * Higher 1 bit of #dc are stored in @p PSMC1DCH
     PSMC1CONbits.PSMC1LD = 1; /// * Set the load register. This will load all the setting as once*/
 }
+
 /**@brief This function switches between CC and CV mode.
 * @param current_voltage average of current voltage
 * @param referece_voltage voltage setpoint
@@ -173,60 +294,48 @@ void set_DC(uint16_t* duty_cycle)
 void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status)
 {
 /// If the current voltage is bigger than the CV setpoint and the system is in CC mode, then:
-    if(current_voltage > reference_voltage && CC_mode_status)
+    if( ( ( (uint16_t) ( ( ( (float)current_voltage * 5000.0 ) / 4096.0 ) + 0.5 ) ) > reference_voltage ) && CC_mode_status )
     {        
-        intacum = 0; /// <ol> <li> The integral acummulator is cleared
+        pidi = 0; /// <ol> <li> The integral acummulator is cleared
         cmode = 0; /// <li> The system is set in CV mode by clearing the #cmode variable
         kp = CV_kp; /// <li> The proportional constant divider is set to #CV_kp 
-        ki = CV_ki; /// <li> The integral constant divider is set to #CV_ki 
+        ki = CV_ki; /// <li> The integral constant divider is set to #CV_ki
+        kd = CV_kd;
     }    
 }
 /**@brief This function takes care of scaling the average values to correspond with their real values.
 */
 void scaling() /// This function performs the folowing tasks:
 {
-iavg = (uint16_t) ( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
-vavg = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
-tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 ); 
-tavg = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
-qavg += (uint16_t) ( (float)iavg / 360.0 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
-#if (NI_MH_CHEM)  
-if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg
-#endif
+    log_data.current = (uint16_t) ( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
+    log_data.voltage = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
+    // tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 );     NOT IN SERVICE ALEX
+    // log_data.temperature = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
+    log_data.temperature = (uint16_t) (pidt);      // WHILE NOT IN SERVICE
+    //log_data.temperature = (uint16_t) (test_configuration.order_of_states[counter_state + 2]);
+    qavg += (uint16_t) ( (float)iavg / 3600.0 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
+    log_data.capacity = (uint16_t) ( (float)qavg / 100.0);
+    #if (NI_MH_CHEM)  
+    if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg
+    #endif
 }
 /**@brief This function takes care of calculating the average values printing the log data using the UART.
 */
 void log_control()
 {
-    if (log_on)
+    if(start)
     {
-                LINEBREAK;
-                display_value_u(minute);
-                UART_send_char(colons); /// * Send a colons character
-                if (second < 10) UART_send_char('0'); /// * If #second is smaller than 10 send a '0'
-                display_value_u((uint16_t) second);
-                UART_send_char(comma); /// * Send a comma character
-                UART_send_char(C_str); /// * Send a 'C'
-                display_value_u((uint16_t)cell_count); /// * Send a #cell_count variable
-                UART_send_char(comma); /// * Send a comma character
-                UART_send_char(S_str); /// * Send an 'S'
-                display_value_u((uint16_t)state);
-                UART_send_char(comma); /// * Send a comma character
-                UART_send_char(V_str); /// * Send a 'V'
-                display_value_u(vavg);
-                UART_send_char(comma); ///* Send a comma character
-                UART_send_char(I_str); /// * Send an 'I'
-                display_value_u(iavg);
-                UART_send_char(comma); ///* Send a comma character
-                UART_send_char(T_str); /// * Send a 'T'
-                //display_value_s(tavg);
-                display_value_u((uint16_t) (dc * 1.933125)); //To show duty cycle
-                UART_send_char(comma); ///* Send a comma character
-                UART_send_char(Q_str); /// * Send a 'Q'
-                display_value_u(qavg);
-                UART_send_char('<'); /// * Send a '<'
-    }
-    if (!log_on) RESET_TIME(); /// If #log_on is cleared, call #RESET_TIME()
+        log_data_ptr = &log_data;
+        log_data.cell_counter = cell_count;
+        log_data.repetition_counter = 0x01;   
+        log_data.state = state;
+        log_data.repetition_counter = repetition_counter;
+        log_data.elapsed_time = second;
+        log_data.duty_cycle = (uint16_t) pidt;
+        UART_send_byte(0xDD);
+        UART_send_some_bytes(sizeof(log_data),(uint8_t*)log_data_ptr);
+        UART_send_byte(0x77);
+    }else second = 0;
 }
 
 /**@brief This function read the ADC and store the data in the coresponding variable
@@ -251,8 +360,7 @@ void timing()
     {
         SECF = 1;
         count = COUNTER; /// * Make #count equal to #COUNTER
-        if(second < 59) second++; /// * If #second is smaller than 59 then increase it
-        else{second = 0; minute++;} /// * Else, make #second zero and increase #minute
+        second++; /// * always increase second, no more minutes
     }else /// Else,
     {
         count--; /// * Decrease it
@@ -267,17 +375,17 @@ void calculate_avg()
         case COUNTER: /// If #count = #COUNTER
             iacum = (uint24_t) i; /// * Make #iavg zero
             vacum = (uint24_t) v; /// * Make #vavg zero
-            tacum = (uint24_t) t; /// * Make #tavg zero
+            //tacum = (uint24_t) t; /// * Make #tavg zero                          NOT IN SERVICE ALEX
             break;
         case 0: /// If #count = 0
             iavg = ((iacum >> 10) + ((iacum >> 9) & 0x01)); /// * Divide the value stored in #iavg between COUNTER to obtain the average   
             vavg = ((vacum >> 10) + ((vacum >> 9) & 0x01)); /// * This is equivalent to vacum / 1024 = vacum / 2^10 
-            tavg = ((tacum >> 10) + ((tacum >> 9) & 0x01)); /// * This is equivalent to tacum / 1024 = tacum / 2^10 
+            // tavg = ((tacum >> 10) + ((tacum >> 9) & 0x01)); /// * This is equivalent to tacum / 1024 = tacum / 2^10                 NOT IN SERVICE ALEX
             break;
         default: /// If #count is not any of the previous cases then
             iacum += (uint24_t) i; /// * Accumulate #i in #iavg
             vacum += (uint24_t) v; /// * Accumulate #v in #vavg
-            tacum += (uint24_t) t; /// * Accumulate #t in #tavg
+            //tacum += (uint24_t) t; /// * Accumulate #t in #tavg                  NOT IN SERVICE ALEX
             //tavg += dc * 1.953125; // TEST FOR DC Is required to deactivate temperature protection
     }   
 }
@@ -308,6 +416,77 @@ void UART_send_char(char bt)
     }/// * Hold the program until the transmission buffer is free
     TX1REG = bt; /// * Load the transmission buffer with @p bt
 }
+
+void UART_send_header(uint8_t start, uint8_t operation, uint8_t code)
+{
+    UART_send_byte(start);
+    UART_send_byte(operation);
+    UART_send_byte(code);
+}
+
+
+void UART_send_byte(uint8_t byte)  
+{
+    while(0 == TXIF)
+    {
+    }/// * Hold the program until the transmission buffer is free
+    TX1REG = byte; /// * Load the transmission buffer with @p bt
+}
+
+/**@brief This function receive one byte of data from UART
+* @return RC1REG reception register
+*/
+uint8_t UART_get_byte()
+{
+    if(OERR) /// If there is error
+    {
+        CREN = 0; /// * Clear the error
+        CREN = 1; /// * Restart
+    }    
+    while(!RCIF);  /// Hold the program until the reception buffer is free   
+    return RC1REG; /// Receive the value and return it
+}
+
+void UART_get_some_bytes(uint8_t length, uint8_t* data)
+{
+    if(OERR) /// If there is error
+    {
+        CREN = 0; /// * Clear the error
+        CREN = 1; /// * Restart
+    }    
+    while(length--)
+    {
+        *data++ = UART_get_byte(); /// * Get a byte      
+    }
+}
+
+void UART_send_some_bytes(uint8_t length, uint8_t* data)
+{
+    while(length--)
+    {
+        UART_send_byte(*data++); /// * Get a byte      
+    }
+}
+
+uint16_t calculate_checksum(uint8_t code, uint8_t length, uint8_t* data)
+{
+    uint16_t result = 0x00;
+    result = (uint16_t)code + (uint16_t)length;
+    while(length--)
+    {
+        result += *data++;
+    }
+    return (result);
+}
+
+void put_data_into_structure(uint8_t length, uint8_t* data, uint8_t* structure)
+{
+    while(length--)
+    {
+        *structure++ = *data++;
+    }
+}
+
 /**@brief This function receive one byte of data from UART
 * @return RC1REG reception register
 */
@@ -352,7 +531,7 @@ void temp_protection()
     if (conv && (tavg > 400)){
         UART_send_string((char*)"HIGH_TEMP:");
         STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
-        state = STANDBY; /// -# Go to the #STANDBY state.
+        //state = STANDBY; /// -# Go to the #STANDBY state.
     }
 }
 /**@brief This function activate the desired relay in the switcher board according to the value
