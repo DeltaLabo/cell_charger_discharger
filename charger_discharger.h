@@ -155,8 +155,8 @@
 //    #define     CV_kd                   0.020000 ///< Diferential constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); UART_send_char(13); } ///< Send a linebreak to the terminal
     //////////////////////////Chemistry definition///////////////////////////////////////
-    #define     LI_ION_CHEM             1 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
-    #define     NI_MH_CHEM              0 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
+    #define     LI_ION_CHEM             0 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
+    #define     NI_MH_CHEM              1 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
     ////////////////////////////////////////////////////////////////////////////////////
     //General definitions
     #define     WAIT_TIME               5 ///< Time to wait before states, set to 10 minutes = 60
@@ -238,8 +238,7 @@
     unsigned char                       cell_max = 0; ///< Number of cells to be tested. Initialized as 0
     uint16_t                            wait_count = 0; ///< Counter for waiting time between states. Initialized as 0
     unsigned char                       dc_res_count = 0; ///< Counter for DC resistance. Initialized as 0
-    unsigned char                       state = IDLE; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
-    unsigned char                       prev_state = IDLE; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
+    unsigned char                       state = IDLE; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink 
     
     uint8_t                             counter_state = 0; ///< Used to move trough the diferent states.
     uint8_t                             repetition_counter = 0; ///< Used to move trough repetitions.

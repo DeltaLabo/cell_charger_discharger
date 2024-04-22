@@ -60,7 +60,7 @@ void fIDLE() //@brief This function define the IDLE state of the state machine.
 
 void fCHARGE()
 {    
-    if ( ( ( iavg < basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x01 ) ) || ( ( vavg > basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x02 ) ) ) /// * If #vavg is below #EOD_voltage
+    if ( ( ( iavg < basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x01 ) ) || ( ( vavg < (vmax - 5) ) && ( basic_configuration.version == 0x02 ) ) ) /// * If #vavg is below #EOD_voltage
     {
         if (second > 5)
         {
@@ -186,7 +186,7 @@ void converter_settings()
         case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
             //iref = i_char; /// * The current setpoint, #iref is defined as #i_char
             iref = i_char;
-            if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 60 *1.1); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
+            if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 60 * 1.1); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
             SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
             break;
         case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE
