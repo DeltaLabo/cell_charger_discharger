@@ -320,7 +320,7 @@ void scaling() /// This function performs the folowing tasks:
     log_data.voltage = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
     // tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 );     NOT IN SERVICE ALEX
     // log_data.temperature = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
-    log_data.temperature = (uint16_t) (pidt);      // WHILE NOT IN SERVICE
+    log_data.temperature = (uint16_t) (dc_res_val);      // WHILE NOT IN SERVICE
     //log_data.temperature = (uint16_t) (test_configuration.order_of_states[counter_state + 2]);
     qavg += (float)( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ) / 3600.0; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
     log_data.capacity = (uint16_t) (qavg);
