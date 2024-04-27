@@ -97,6 +97,9 @@
     void control_loop(void);
     void calculate_avg(void);
     void interrupt_enable(void);
+    
+    void interrupt_disable(void);
+    
     void UART_send_char(char bt);
     char UART_get_char(void);
     uint8_t UART_get_byte(void);
@@ -133,27 +136,27 @@
     turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
     and the UART reception interrupts.
     */
-    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; pidt = DC_MIN; set_DC(); Cell_OFF();}
+    #define     STOP_CONVERTER()        { interrupt_disable(); RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; pidt = DC_MIN; set_DC(); Cell_OFF(); interrupt_enable();}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
     #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
    //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function 
     #define     DC_MIN                  50.0  ///< Minimum possible duty cycle, set around @b 0.1 
     #define     DC_MAX                  300.0  ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
-    #define     CC_char_kp              0.013  ///< Proportional constant divider for CC mode
-    #define     CC_char_ki              0.0025  ///< Integral constant for CC mode 
-    #define     CC_char_kd              0.0     ///< Diferential constant for CC mode 
-    #define     CC_disc_kp              0.01  ///< Proportional constant for CC mode
-    #define     CC_disc_ki              0.001  ///< Integral constant for CC mode
-    #define     CC_disc_kd              0.0     ///< Diferential constant for CC mode 
-    // last test with LI_ION gave this constants
-    #define     CV_kp                   0.0013  ///< Proportional constant for CV mode
-    #define     CV_ki                   0.0025  ///< Integral constant for CV mode 
-    #define     CV_kd                   0.1 ///< Diferential constant for CV mode 
+//    #define     CC_char_kp              0.013  ///< Proportional constant divider for CC mode
+//    #define     CC_char_ki              0.0025  ///< Integral constant for CC mode 
+//    #define     CC_char_kd              0.0     ///< Diferential constant for CC mode 
+//    #define     CC_disc_kp              0.0060  ///< Proportional constant for CC mode
+//    #define     CC_disc_ki              0.0010  ///< Integral constant for CC mode
+//    #define     CC_disc_kd              0.0     ///< Diferential constant for CC mode 
+//    // last test with LI_ION gave this constants
+//    #define     CV_kp                   0.001800  ///< Proportional constant for CV mode
+//    #define     CV_ki                   0.000500  ///< Integral constant for CV mode 
+//    #define     CV_kd                   0.020000 ///< Diferential constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); UART_send_char(13); } ///< Send a linebreak to the terminal
     //////////////////////////Chemistry definition///////////////////////////////////////
-    #define     LI_ION_CHEM             1 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
-    #define     NI_MH_CHEM              0 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
+    #define     LI_ION_CHEM             0 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
+    #define     NI_MH_CHEM              1 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
     ////////////////////////////////////////////////////////////////////////////////////
     //General definitions
     #define     WAIT_TIME               5 ///< Time to wait before states, set to 10 minutes = 60
@@ -169,8 +172,8 @@
     #define     Ni_MH_EOC_DV            10 ///< Ni-MH end-fo-charge voltage drop in mV
     #define     Ni_MH_EOD_V             1000 ///< Ni-MH end-of-discharge voltage in mV
 
-    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_disc_kp; ki = CC_disc_ki; kd = CC_disc_kd; pidi = 0.0;}
-    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_char_kp; ki = CC_char_ki; kd = CC_char_kd; pidi = 0.0;}
+    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_disc_kp; ki = CC_disc_ki; kd = (float) (CC_char_disc_kd); pidi = 0.0;}
+    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_char_kp; ki = CC_char_ki; kd = (float) (CC_char_disc_kd); pidi = 0.0;}
     //Structs
     typedef struct basic_configuration_struct {
         uint8_t version;
@@ -197,8 +200,10 @@
         uint16_t CVKp;
         uint16_t CVKi;
         uint16_t CVKd;
-        uint16_t CCKp;
-        uint16_t CCKi;
+        uint16_t CCKpC;
+        uint16_t CCKiC;
+        uint16_t CCKpD;
+        uint16_t CCKiD;
     }converter_configuration_type, *converter_configuration_type_ptr;
     
     typedef struct log_data_struct {
@@ -233,11 +238,22 @@
     unsigned char                       cell_max = 0; ///< Number of cells to be tested. Initialized as 0
     uint16_t                            wait_count = 0; ///< Counter for waiting time between states. Initialized as 0
     unsigned char                       dc_res_count = 0; ///< Counter for DC resistance. Initialized as 0
-    unsigned char                       state = IDLE; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink
-    unsigned char                       prev_state = IDLE; ///< Used to store the previous state. Initialized as @link STANDBY @endlink  
+    unsigned char                       state = IDLE; ///< Used with store the value of the @link states @endlink enum. Initialized as @link STANDBY @endlink 
     
     uint8_t                             counter_state = 0; ///< Used to move trough the diferent states.
     uint8_t                             repetition_counter = 0; ///< Used to move trough repetitions.
+    
+    // last test with LI_ION gave this constants
+    float                               CV_kp = 0.0018;  ///< Proportional constant for CV mode
+    float                               CV_ki = 0.0005;  ///< Integral constant for CV mode 
+    float                               CV_kd = 0.020; ///< Diferential constant for CV mode 
+    
+    // last test with LI_ION gave this constants MAYBE OK ALEX
+    float                               CC_char_kp = 0.0130;  ///< Proportional constant divider for CC mode
+    float                               CC_char_ki = 0.0025;  ///< Integral constant for CC mode 
+    float                               CC_disc_kp = 0.006;   ///< Proportional constant for CC mode
+    float                               CC_disc_ki = 0.001;   ///< Integral constant for CC mode
+    uint8_t                             CC_char_disc_kd = 0;  ///< Diferential constant for CC mode 
     
     uint16_t                            EOC_variable; ///< End-of-charge current in mA
     uint16_t                            EOPC_variable; ///< End-of-precharge variable in mA or mV
@@ -263,7 +279,7 @@
     uint16_t                            vavg = 0;  ///< Last one-second-average of #v . Initialized as 0
     uint16_t                            iavg = 0;  ///< Last one-second-average of #i . Initialized as 0
     int16_t                             tavg = 0;  ///< Last one-second-average of #t . Initialized as 0
-    uint16_t                            qavg = 0;  ///< Integration of #i . Initialized as 0
+    float                               qavg = 0.0;  ///< Integration of #i . Initialized as 0
     uint16_t                            vmax = 0;   ///< Maximum recorded average voltage. 
     float                               pidi;   ///< Integral acumulator of PI compensator
     float                               kp;  ///< Proportional compesator gain

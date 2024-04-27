@@ -22,6 +22,7 @@ void state_machine()
             case IDLE:
                 fIDLE();
                 break;
+                
     /* The #POSTDISCHARGE  and #DISCHARGE  states go to the #fDISCHARGE()  function.*/ 
             case POSTDISCHARGE:
                 fDISCHARGE();
@@ -42,6 +43,7 @@ void state_machine()
             case DC_res:
                 fDC_res();
                 break;
+                
     /**The #WAIT  state goes to the #fWAIT()  function.*/
             case WAIT:    
                 fWAIT();
@@ -60,7 +62,7 @@ void fIDLE() //@brief This function define the IDLE state of the state machine.
 
 void fCHARGE()
 {    
-    if ( ( ( iavg < basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x01 ) ) || ( ( vavg > basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x02 ) ) ) /// * If #vavg is below #EOD_voltage
+    if ( ( ( iavg < basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x01 ) ) || ( ( ( vavg < (vmax - 5) ) || (timeout < second) ) && ( basic_configuration.version == 0x02 ) ) ) /// * If #vavg is below #EOD_voltage
     {
         if (second > 5)
         {
@@ -68,6 +70,21 @@ void fCHARGE()
             wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
             STOP_CONVERTER();
         }
+    }
+    if (state == PRECHARGE){
+        #if (LI_ION_CHEM) 
+        if (qavg >= ( (capacity) / 2 ) && (second >= 1)){
+            state = WAIT;
+            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+            STOP_CONVERTER();
+        }
+        #elif (NI_MH_CHEM)
+        if (qavg >= ( (capacity) / 2 ) || (second >= timeout)){
+            state = WAIT;
+            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+            STOP_CONVERTER();
+        }
+        #endif
     }
 }
 
@@ -82,45 +99,47 @@ void fDISCHARGE()
             STOP_CONVERTER();
         }
     }
+    if (state == POSTDISCHARGE){
+        #if (LI_ION_CHEM) 
+        if (qavg >= ( (capacity) / 2 ) && (second >= 1)){
+            state = WAIT;
+            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+            STOP_CONVERTER();
+        }
+        #elif (NI_MH_CHEM)
+        if (qavg >= ( (capacity) / 2 ) || (second >= timeout)){
+            state = WAIT;
+            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+            STOP_CONVERTER();
+        }
+        #endif
+    }
 }
 
 void fDC_res() //can be improved a lot!!
 {
-//    // POR VERIFICAR
-//    
-//    conv = 1; /// * Activate control loop by setting #conv
-//    if (dc_res_count == 4)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
-//    {
-//        v_1_dcres = vavg;
-//        i_1_dcres = iavg;
-//        iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5 * 1.0 ) ) + 0.5 );     //1C            
-//    }
-//    if (dc_res_count == 1)
-//    {
-//        v_2_dcres = vavg;
-//        i_2_dcres = iavg;
-//        STOP_CONVERTER();            
-//        dc_res_val = (uint24_t)(v_1_dcres - v_2_dcres) * 10000;    
-//        dc_res_val = dc_res_val /(uint24_t)(i_2_dcres - i_1_dcres);
-//    }
-//    if (!dc_res_count)
-//    {   
-////        LINEBREAK;
-////        UART_send_char(C_str);
-////        display_value_u((uint16_t)cell_count);
-////        UART_send_char(comma);
-////        UART_send_char(S_str);
-////        display_value_u((uint16_t)state);
-////        UART_send_char(comma);
-////        UART_send_char(R_str);
-////        display_value_u((uint16_t)dc_res_val);
-////        UART_send_char('<');
-////        LINEBREAK;
-//        LOG_OFF();   ///I dont like this 
-//        prev_state = state;
-//        state = WAIT;
-//        wait_count = WAIT_TIME;              
-//    }else dc_res_count--;
+    // POR VERIFICAR
+    
+    if (dc_res_count == 4)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
+    {
+        v_1_dcres = vavg;
+        i_1_dcres = iavg;
+        iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5) ) + 0.5 );     //1C            
+    }
+    if (dc_res_count == 1)
+    {
+        v_2_dcres = vavg;
+        i_2_dcres = iavg;
+        STOP_CONVERTER();            
+        dc_res_val = (uint24_t)(v_1_dcres - v_2_dcres) * 10000;    
+        dc_res_val = dc_res_val /(uint24_t)(i_2_dcres - i_1_dcres);
+    }
+    if (!dc_res_count)
+    {   
+        wait_count = test_configuration.wait_time; 
+        state = WAIT;
+                     
+    }else dc_res_count--;
 }
 
 /**@brief This function define the IDLE state of the state machine.
@@ -141,34 +160,31 @@ void fNEXTSTATE(){
     else{
         fNEXTCELL();
     }
-    //converter_settings();
 }
 
 void fNEXTCELL(){
     counter_state = 0;
     if (cell_count < test_configuration.number_of_cells){
         state = test_configuration.order_of_states[counter_state];
-        converter_settings();
         cell_count = cell_count + 1;
+        converter_settings();
     }
     else {
         fNEXTREPETITION();
     }
-    //converter_settings();
 }
 
 void fNEXTREPETITION(){
     if (repetition_counter < test_configuration.number_of_repetitions){
         counter_state = 0;
         state = test_configuration.order_of_states[counter_state];
-        converter_settings();
         cell_count = 0x01;
         repetition_counter = repetition_counter + 1;
+        converter_settings();
         }
     else{
         state = IDLE;
     }
-    //converter_settings();
 }
 
 /**@brief Function to set the configurations of the converter.
@@ -176,7 +192,7 @@ void fNEXTREPETITION(){
 void converter_settings()
 {
     // POR VERIFICAR 
-    
+    interrupt_disable();
     cmode = 1; /// * Start in constant current mode by setting. #cmode
     pidi = 0; /// * The #integral component of the compensator is set to zero.*/
     qavg = 0; /// * Average capacity, #q_prom is set to zero.*/
@@ -187,22 +203,32 @@ void converter_settings()
     switch(state)
     {
         case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
-            //iref = i_char; /// * The current setpoint, #iref is defined as #i_char
-            iref = i_char;
-            if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 60 *1.1); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
+            iref = i_char; /// * The current setpoint, #iref is defined as #i_char
+            if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 3600 * 1.1); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
             SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
             break;
         case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE
             iref = i_disc; /// * The current setpoint, #iref is defined as #i_disc
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;
-//        case DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
-//            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 5 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
-//            dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
-//            SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
-//            break;
+        case DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
+            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 5 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
+            dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
+            SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
+            break;
+        case POSTDISCHARGE:
+            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 2 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
+            if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 3600 * 1.1);
+            SET_DISC();
+            break;
+        case PRECHARGE:
+            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 2 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
+            if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 3600 * 1.1);
+            SET_CHAR();
+            break;
     }
     __delay_ms(10); 
     second = 0;
     conv = 1;
+    interrupt_enable();
 }

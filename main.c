@@ -34,7 +34,9 @@ void main(void) /// This function performs the folowing tasks:
             scaling(); /// <li> Scale the average measured values by calling the #scaling function
             state_machine(); /// <li> Call the #state_machine function
             log_control(); /// <li> Print the log in the serial terminal by calling the #log_control function
-            cc_cv_mode(vavg, basic_configuration.const_voltage, cmode); /// <li> Check if the system shall change to CV mode by calling the #cc_cv_mode function
+            if (LI_ION_CHEM){
+                cc_cv_mode(vavg, basic_configuration.const_voltage, cmode); /// <li> Check if the system shall change to CV mode by calling the #cc_cv_mode function
+            }
             //temp_protection(); /// <li> Call the #temp_protection function </ol> </ul> </ul>
         }
 	}
@@ -64,11 +66,13 @@ void __interrupt() ISR(void) /// This function performs the folowing tasks:
 
     if(RCIF)/// <li> Check the @b UART reception interrupt flag, if it is set, the folowing task are executed:
     {
+        interrupt_disable();
         if(RC1STAbits.OERR) /// <ol> <li> Check for any errors and clear them
         {
             RC1STAbits.CREN = 0;  
             RC1STAbits.CREN = 1; 
         }
         command_interpreter();
+        interrupt_enable();
     }  
 }

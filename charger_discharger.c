@@ -186,7 +186,7 @@ bool command_interpreter()
                 case 0x5A:
                     switch (code)
                     {
-                        case 0x03:
+                        case 0x03: //BASIC CONFIGURATION
                             put_data_into_structure(length, (uint8_t*)data, (uint8_t*)basic_configuration_ptr);
                             vref = ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ; //Scale the voltage reference to be compare with v;
                             i_char = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
@@ -197,11 +197,18 @@ bool command_interpreter()
                             EOD_voltage = basic_configuration.end_of_discharge;
                             EOPD_capacity = basic_configuration.end_of_postdischarge;
                             break;
-                        case 0x05:
+                        case 0x05: // TEST CONFIGURATION
                             put_data_into_structure(length, (uint8_t*)data, (uint8_t*)test_configuration_ptr);
                             break;
-                        case 0x07:
+                        case 0x07: // CONVERTER CONFIGURATION
                             put_data_into_structure(length, (uint8_t*)data, (uint8_t*)converter_configuration_ptr);
+                            CV_kp = (float) ((converter_configuration.CVKp) / 1000000.0);
+                            CV_ki = (float) ((converter_configuration.CVKi) / 1000000.0);
+                            CV_kd = (float) ((converter_configuration.CVKd) / 1000.0);
+                            CC_char_kp = (float) ((converter_configuration.CCKpC) / 1000000.0);
+                            CC_char_ki = (float) ((converter_configuration.CCKiC) / 1000000.0);
+                            CC_disc_kp = (float) ((converter_configuration.CCKpD) / 1000.0);
+                            CC_disc_ki = (float) ((converter_configuration.CCKiD) / 1000.0);
                             break;
                     }
                     UART_send_byte(test);
@@ -227,9 +234,11 @@ bool command_interpreter()
                         }
                         break;
                     case 0x07: // NEXT CELL
+                        STOP_CONVERTER();
                         fNEXTCELL();
                         break;
                     case 0x09: // NEXT STATE
+                        STOP_CONVERTER();
                         wait_count = 5;
                         state = WAIT;
                         break;
@@ -296,11 +305,11 @@ void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mo
 /// If the current voltage is bigger than the CV setpoint and the system is in CC mode, then:
     if( ( ( (uint16_t) ( ( ( (float)current_voltage * 5000.0 ) / 4096.0 ) + 0.5 ) ) > reference_voltage ) && CC_mode_status )
     {        
-        pidi = 0; /// <ol> <li> The integral acummulator is cleared
-        cmode = 0; /// <li> The system is set in CV mode by clearing the #cmode variable
-        kp = CV_kp; /// <li> The proportional constant divider is set to #CV_kp 
-        ki = CV_ki; /// <li> The integral constant divider is set to #CV_ki
-        kd = CV_kd;
+        pidi = 0;       /// <ol> <li> The integral acummulator is cleared
+        cmode = 0;      /// <li> The system is set in CV mode by clearing the #cmode variable
+        kp = CV_kp;     /// <li> The proportional constant is set to #CV_kp 
+        ki = CV_ki;     /// <li> The integral constant is set to #CV_ki
+        kd = CV_kd;     /// <li> The derivative constant is set to #CV_kd
     }    
 }
 /**@brief This function takes care of scaling the average values to correspond with their real values.
@@ -311,10 +320,10 @@ void scaling() /// This function performs the folowing tasks:
     log_data.voltage = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
     // tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 );     NOT IN SERVICE ALEX
     // log_data.temperature = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
-    log_data.temperature = (uint16_t) (pidt);      // WHILE NOT IN SERVICE
+    log_data.temperature = (uint16_t) (dc_res_val);      // WHILE NOT IN SERVICE
     //log_data.temperature = (uint16_t) (test_configuration.order_of_states[counter_state + 2]);
-    qavg += (uint16_t) ( (float)iavg / 3600.0 ) + 0.5; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
-    log_data.capacity = (uint16_t) ( (float)qavg / 100.0);
+    qavg += (float)( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ) / 3600.0; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
+    log_data.capacity = (uint16_t) (qavg);
     #if (NI_MH_CHEM)  
     if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg
     #endif
@@ -406,6 +415,24 @@ void interrupt_enable()
     TMR1IF = 0; //Clear timer1 interrupt flag
     TMR1ON = 1;    //turn on timer 
 }
+
+void interrupt_disable()
+{
+    //    char clear_buffer = 0; /// * Define the variable @p clear_buffer, used to empty the UART buffer
+    //    while(RCIF){
+    //        clear_buffer = RC1REG; /// * Clear the reception buffer and store it in @p clear_buffer
+    //    }
+    // RCIE = 0;           // * Disable UART reception interrupts
+    // TXIE = 0;        // * Disable UART transmission interrupts
+    TMR1IE = 0;         // Disable T1 interrupt
+    // PEIE = 1;           // Enable peripherals interrupts
+    // GIE = 1;         // Enable global interrupts
+    // count = COUNTER;    /// The timing counter #count will be initialized to zero, to start a full control loop cycle
+    // TMR1IF = 0;         //Clear timer1 interrupt flag
+    TMR1ON = 0;         //turn off timer  
+}
+
+
 /**@brief This function send one byte of data to UART
 * @param bt character to be send
 */
