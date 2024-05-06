@@ -74,6 +74,88 @@
 			<Item Name="serial_command.vi" Type="VI" URL="../serial/serial_command.vi"/>
 			<Item Name="test_configuration_cluster.ctl" Type="VI" URL="../typedefs/test_configuration_cluster.ctl"/>
 		</Item>
-		<Item Name="Build Specifications" Type="Build"/>
+		<Item Name="Build Specifications" Type="Build">
+			<Item Name="main" Type="EXE">
+				<Property Name="App_copyErrors" Type="Bool">true</Property>
+				<Property Name="App_INI_aliasGUID" Type="Str">{97EC8CA3-7345-4344-980B-2A99C6DE58B8}</Property>
+				<Property Name="App_INI_GUID" Type="Str">{B7AC8A23-C56D-424B-969C-5D096CC43652}</Property>
+				<Property Name="App_serverConfig.httpPort" Type="Int">8002</Property>
+				<Property Name="App_winsec.description" Type="Str">http://www.ITCR.com</Property>
+				<Property Name="Bld_autoIncrement" Type="Bool">true</Property>
+				<Property Name="Bld_buildCacheID" Type="Str">{5404191A-2356-4F4B-9CF2-F45DB20B93CE}</Property>
+				<Property Name="Bld_buildSpecName" Type="Str">main</Property>
+				<Property Name="Bld_excludeInlineSubVIs" Type="Bool">true</Property>
+				<Property Name="Bld_excludeLibraryItems" Type="Bool">true</Property>
+				<Property Name="Bld_excludePolymorphicVIs" Type="Bool">true</Property>
+				<Property Name="Bld_localDestDir" Type="Path">../builds/NI_AB_PROJECTNAME/main</Property>
+				<Property Name="Bld_localDestDirType" Type="Str">relativeToCommon</Property>
+				<Property Name="Bld_modifyLibraryFile" Type="Bool">true</Property>
+				<Property Name="Bld_previewCacheID" Type="Str">{D1F2586B-18BC-46F4-A23C-F7BB02FFFE7C}</Property>
+				<Property Name="Bld_version.major" Type="Int">1</Property>
+				<Property Name="Destination[0].destName" Type="Str">Application.exe</Property>
+				<Property Name="Destination[0].path" Type="Path">../builds/NI_AB_PROJECTNAME/main/Application.exe</Property>
+				<Property Name="Destination[0].preserveHierarchy" Type="Bool">true</Property>
+				<Property Name="Destination[0].type" Type="Str">App</Property>
+				<Property Name="Destination[1].destName" Type="Str">Support Directory</Property>
+				<Property Name="Destination[1].path" Type="Path">../builds/NI_AB_PROJECTNAME/main/data</Property>
+				<Property Name="DestinationCount" Type="Int">2</Property>
+				<Property Name="Source[0].itemID" Type="Str">{8E6E0BC8-277A-4BBC-8C1F-F8100BDDDC33}</Property>
+				<Property Name="Source[0].type" Type="Str">Container</Property>
+				<Property Name="Source[1].destinationIndex" Type="Int">0</Property>
+				<Property Name="Source[1].itemID" Type="Ref">/My Computer/main.vi</Property>
+				<Property Name="Source[1].sourceInclusion" Type="Str">TopLevel</Property>
+				<Property Name="Source[1].type" Type="Str">VI</Property>
+				<Property Name="SourceCount" Type="Int">2</Property>
+				<Property Name="TgtF_companyName" Type="Str">ITCR</Property>
+				<Property Name="TgtF_fileDescription" Type="Str">main</Property>
+				<Property Name="TgtF_internalName" Type="Str">main</Property>
+				<Property Name="TgtF_legalCopyright" Type="Str">Copyright © 2024 ITCR</Property>
+				<Property Name="TgtF_productName" Type="Str">main</Property>
+				<Property Name="TgtF_targetfileGUID" Type="Str">{5B38DD8C-EFA7-47D0-96D4-8E6F9C6115DF}</Property>
+				<Property Name="TgtF_targetfileName" Type="Str">Application.exe</Property>
+				<Property Name="TgtF_versionIndependent" Type="Bool">true</Property>
+			</Item>
+			<Item Name="Ni-MH" Type="EXE">
+				<Property Name="App_copyErrors" Type="Bool">true</Property>
+				<Property Name="App_INI_aliasGUID" Type="Str">{B5F0AC66-5F17-45DD-922E-F24AA80C1924}</Property>
+				<Property Name="App_INI_GUID" Type="Str">{CA3AB3C1-396A-4FF5-BD9C-0DE78E35CA41}</Property>
+				<Property Name="App_serverConfig.httpPort" Type="Int">8002</Property>
+				<Property Name="App_winsec.description" Type="Str">http://www.ITCR.com</Property>
+				<Property Name="Bld_autoIncrement" Type="Bool">true</Property>
+				<Property Name="Bld_buildCacheID" Type="Str">{4EF3A5BB-EFDE-44F2-8E36-5D8C343E1A3C}</Property>
+				<Property Name="Bld_buildSpecName" Type="Str">Ni-MH</Property>
+				<Property Name="Bld_excludeInlineSubVIs" Type="Bool">true</Property>
+				<Property Name="Bld_excludeLibraryItems" Type="Bool">true</Property>
+				<Property Name="Bld_excludePolymorphicVIs" Type="Bool">true</Property>
+				<Property Name="Bld_localDestDir" Type="Path">../builds/NI_AB_PROJECTNAME/Ni-MH</Property>
+				<Property Name="Bld_localDestDirType" Type="Str">relativeToCommon</Property>
+				<Property Name="Bld_modifyLibraryFile" Type="Bool">true</Property>
+				<Property Name="Bld_previewCacheID" Type="Str">{0E9C8D05-E16E-48E6-B3AD-2EEDA4199AC9}</Property>
+				<Property Name="Bld_version.build" Type="Int">1</Property>
+				<Property Name="Bld_version.major" Type="Int">1</Property>
+				<Property Name="Destination[0].destName" Type="Str">Ni-MH.exe</Property>
+				<Property Name="Destination[0].path" Type="Path">../builds/NI_AB_PROJECTNAME/Ni-MH/Ni-MH.exe</Property>
+				<Property Name="Destination[0].preserveHierarchy" Type="Bool">true</Property>
+				<Property Name="Destination[0].type" Type="Str">App</Property>
+				<Property Name="Destination[1].destName" Type="Str">Support Directory</Property>
+				<Property Name="Destination[1].path" Type="Path">../builds/NI_AB_PROJECTNAME/Ni-MH/data</Property>
+				<Property Name="DestinationCount" Type="Int">2</Property>
+				<Property Name="Source[0].itemID" Type="Str">{8E6E0BC8-277A-4BBC-8C1F-F8100BDDDC33}</Property>
+				<Property Name="Source[0].type" Type="Str">Container</Property>
+				<Property Name="Source[1].destinationIndex" Type="Int">0</Property>
+				<Property Name="Source[1].itemID" Type="Ref">/My Computer/main.vi</Property>
+				<Property Name="Source[1].sourceInclusion" Type="Str">TopLevel</Property>
+				<Property Name="Source[1].type" Type="Str">VI</Property>
+				<Property Name="SourceCount" Type="Int">2</Property>
+				<Property Name="TgtF_companyName" Type="Str">ITCR</Property>
+				<Property Name="TgtF_fileDescription" Type="Str">Ni-MH</Property>
+				<Property Name="TgtF_internalName" Type="Str">Ni-MH</Property>
+				<Property Name="TgtF_legalCopyright" Type="Str">Copyright © 2024 ITCR</Property>
+				<Property Name="TgtF_productName" Type="Str">Ni-MH</Property>
+				<Property Name="TgtF_targetfileGUID" Type="Str">{1B1ED6B2-74DF-4191-BEB3-D43B1804C9A7}</Property>
+				<Property Name="TgtF_targetfileName" Type="Str">Ni-MH.exe</Property>
+				<Property Name="TgtF_versionIndependent" Type="Bool">true</Property>
+			</Item>
+		</Item>
 	</Item>
 </Project>
