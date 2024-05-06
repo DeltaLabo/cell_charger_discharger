@@ -255,8 +255,11 @@
     float                               CC_disc_ki = 0.001;   ///< Integral constant for CC mode
     uint8_t                             CC_char_disc_kd = 0;  ///< Diferential constant for CC mode 
     
-    uint16_t                            EOC_variable; ///< End-of-charge current in mA
-    uint16_t                            EOPC_variable; ///< End-of-precharge variable in mA or mV
+                                EOC_variable; ///< End-of-charge current in mA
+    uintuint16_t
+                                        
+                                        
+                                        16_t                            EOPC_variable; ///< End-of-precharge variable in mA or mV
     uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
     uint16_t                            EOPD_capacity; ///< End-of-postdischarge capacity
     uint16_t                            v_1_dcres; ///< First voltage measured during DC resistance state 
