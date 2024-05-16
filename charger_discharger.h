@@ -136,7 +136,7 @@
     turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
     and the UART reception interrupts.
     */
-    #define     STOP_CONVERTER()        { interrupt_disable(); RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; pidt = DC_MIN; set_DC(); Cell_OFF(); interrupt_enable();}
+    #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; pidt = DC_MIN; set_DC(); Cell_OFF();}
     #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
     #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
    //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function 
@@ -230,6 +230,7 @@
     log_data_type_ptr                   log_data_ptr;
     bool                                start = false;
     bool                                SECF = 1; ///< 1 second flag
+    bool                                SRXF = 0; ///< Serial Reception Flag
     unsigned char                       option = 0; ///< Four different options, look into @link param() @endlink for details
     uint16_t                            capacity; ///< Definition of capacity per cell according to each chemistry
     uint16_t                            i_char; ///< Charging current in mA
@@ -255,11 +256,9 @@
     float                               CC_disc_ki = 0.001;   ///< Integral constant for CC mode
     uint8_t                             CC_char_disc_kd = 0;  ///< Diferential constant for CC mode 
     
-                                EOC_variable; ///< End-of-charge current in mA
-    uintuint16_t
-                                        
-                                        
-                                        16_t                            EOPC_variable; ///< End-of-precharge variable in mA or mV
+                                
+    uint16_t                            EOC_variable; ///< End-of-charge current in mA
+    uint16_t                            EOPC_variable; ///< End-of-precharge variable in mA or mV
     uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
     uint16_t                            EOPD_capacity; ///< End-of-postdischarge capacity
     uint16_t                            v_1_dcres; ///< First voltage measured during DC resistance state 

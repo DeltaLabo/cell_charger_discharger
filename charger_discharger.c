@@ -211,7 +211,6 @@ bool command_interpreter()
                             CC_disc_ki = (float) ((converter_configuration.CCKiD) / 1000.0);
                             break;
                     }
-                    UART_send_byte(test);
                     break;
             }
         }
@@ -235,7 +234,9 @@ bool command_interpreter()
                         break;
                     case 0x07: // NEXT CELL
                         STOP_CONVERTER();
-                        fNEXTCELL();
+                        counter_state = test_configuration.number_of_states + 1;
+                        wait_count = 5;
+                        state = WAIT;
                         break;
                     case 0x09: // NEXT STATE
                         STOP_CONVERTER();
@@ -243,7 +244,6 @@ bool command_interpreter()
                         state = WAIT;
                         break;
                 }
-                UART_send_byte(test);
                 break;
         }
     }else test = false;
@@ -418,18 +418,11 @@ void interrupt_enable()
 
 void interrupt_disable()
 {
-    //    char clear_buffer = 0; /// * Define the variable @p clear_buffer, used to empty the UART buffer
-    //    while(RCIF){
-    //        clear_buffer = RC1REG; /// * Clear the reception buffer and store it in @p clear_buffer
-    //    }
-    // RCIE = 0;           // * Disable UART reception interrupts
-    // TXIE = 0;        // * Disable UART transmission interrupts
-    TMR1IE = 0;         // Disable T1 interrupt
-    // PEIE = 1;           // Enable peripherals interrupts
-    // GIE = 1;         // Enable global interrupts
-    // count = COUNTER;    /// The timing counter #count will be initialized to zero, to start a full control loop cycle
-    // TMR1IF = 0;         //Clear timer1 interrupt flag
     TMR1ON = 0;         //turn off timer  
+    TMR1IF = 0;         //Clear timer1 interrupt flag
+    GIE = 0;         // Enable global interrupts
+    PEIE = 0;           // Enable peripherals interrupts
+    TMR1IE = 0;         // Disable T1 interrupt
 }
 
 

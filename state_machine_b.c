@@ -79,7 +79,7 @@ void fCHARGE()
             STOP_CONVERTER();
         }
         #elif (NI_MH_CHEM)
-        if (qavg >= ( (capacity) / 2 ) || (second >= timeout)){
+        if (vavg >= basic_configuration.end_of_precharge || qavg >= ( (capacity) / 2 ) || (second >= timeout)){
             state = WAIT;
             wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
             STOP_CONVERTER();
@@ -107,7 +107,7 @@ void fDISCHARGE()
             STOP_CONVERTER();
         }
         #elif (NI_MH_CHEM)
-        if (qavg >= ( (capacity) / 2 ) || (second >= timeout)){
+        if (((uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 )) <= basic_configuration.end_of_postdischarge || qavg >= ( (capacity) / 2 ) || (second >= timeout)){
             state = WAIT;
             wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
             STOP_CONVERTER();
@@ -192,7 +192,6 @@ void fNEXTREPETITION(){
 void converter_settings()
 {
     // POR VERIFICAR 
-    interrupt_disable();
     cmode = 1; /// * Start in constant current mode by setting. #cmode
     pidi = 0; /// * The #integral component of the compensator is set to zero.*/
     qavg = 0; /// * Average capacity, #q_prom is set to zero.*/
@@ -230,5 +229,4 @@ void converter_settings()
     __delay_ms(10); 
     second = 0;
     conv = 1;
-    interrupt_enable();
 }

@@ -28,6 +28,13 @@ void main(void) /// This function performs the folowing tasks:
     interrupt_enable(); // this I added for the test
     while(1) /// <li> <b> The main loop repeats the following forever: </b> 
     {
+        if (SRXF)
+        {
+            SRXF = 0; 
+            command_interpreter();
+            UART_send_byte(true);
+            interrupt_enable();
+        }
         if (SECF) /// <ul> <li> Check the #SECF flag, if it is set, 1 second has passed since last execution, so the folowing task are executed:
         {     
             SECF = 0; /// <ol> <li> Clear the #SECF flag to restart the 1 second timer
@@ -66,13 +73,13 @@ void __interrupt() ISR(void) /// This function performs the folowing tasks:
 
     if(RCIF)/// <li> Check the @b UART reception interrupt flag, if it is set, the folowing task are executed:
     {
-        interrupt_disable();
+        RCIF = 0;
+        interrupt_disable(); 
         if(RC1STAbits.OERR) /// <ol> <li> Check for any errors and clear them
         {
             RC1STAbits.CREN = 0;  
             RC1STAbits.CREN = 1; 
         }
-        command_interpreter();
-        interrupt_enable();
-    }  
+        SRXF = 1;
+    }
 }
