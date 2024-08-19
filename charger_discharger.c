@@ -207,8 +207,8 @@ bool command_interpreter()
                             CV_kd = (float) ((converter_configuration.CVKd) / 1000.0);
                             CC_char_kp = (float) ((converter_configuration.CCKpC) / 1000000.0);
                             CC_char_ki = (float) ((converter_configuration.CCKiC) / 1000000.0);
-                            CC_disc_kp = (float) ((converter_configuration.CCKpD) / 1000.0);
-                            CC_disc_ki = (float) ((converter_configuration.CCKiD) / 1000.0);
+                            CC_disc_kp = (float) ((converter_configuration.CCKpD) / 1000000.0);
+                            CC_disc_ki = (float) ((converter_configuration.CCKiD) / 1000000.0);
                             break;
                     }
                     break;
@@ -320,13 +320,17 @@ void scaling() /// This function performs the folowing tasks:
     log_data.voltage = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
     // tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 );     NOT IN SERVICE ALEX
     // log_data.temperature = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
-    log_data.temperature = (uint16_t) (dc_res_val);      // WHILE NOT IN SERVICE
+    // log_data.temperature = (uint16_t) (dc_res_val);      // WHILE NOT IN SERVICE
     //log_data.temperature = (uint16_t) (test_configuration.order_of_states[counter_state + 2]);
     qavg += (float)( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ) / 3600.0; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
     log_data.capacity = (uint16_t) (qavg);
-    #if (NI_MH_CHEM)  
-    if (vavg > vmax) vmax = vavg; /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg
-    #endif
+    if (basic_configuration.version == 2)
+    {
+        if (vavg > vmax)
+        {
+            (vmax = vavg); /// <li> If the chemistry is Ni-MH and #vavg is bigger than #vmax then set #vmax equal to #vavg
+        }
+    } 
 }
 /**@brief This function takes care of calculating the average values printing the log data using the UART.
 */
@@ -336,7 +340,6 @@ void log_control()
     {
         log_data_ptr = &log_data;
         log_data.cell_counter = cell_count;
-        log_data.repetition_counter = 0x01;   
         log_data.state = state;
         log_data.repetition_counter = repetition_counter;
         log_data.elapsed_time = second;
@@ -406,22 +409,22 @@ void interrupt_enable()
     while(RCIF){
         clear_buffer = RC1REG; /// * Clear the reception buffer and store it in @p clear_buffer
     }
-    RCIE = 1; /// * Enable UART reception interrupts
-    TXIE = 0; /// * Disable UART transmission interrupts
-    TMR1IE = 1;   //enable T1 interrupt
-    PEIE = 1;       //enable peripherals interrupts
-    GIE = 1;        //enable global interrupts
-    count = COUNTER; /// The timing counter #count will be initialized to zero, to start a full control loop cycle
-    TMR1IF = 0; //Clear timer1 interrupt flag
-    TMR1ON = 1;    //turn on timer 
+    RCIE = 1;           /// * Enable UART reception interrupts
+    TXIE = 0;           /// * Disable UART transmission interrupts
+    TMR1IE = 1;         //enable T1 interrupt
+    PEIE = 1;           //enable peripherals interrupts
+    GIE = 1;            //enable global interrupts
+    count = COUNTER;    /// The timing counter #count will be initialized to zero, to start a full control loop cycle
+    TMR1IF = 0;         //Clear timer1 interrupt flag
+    TMR1ON = 1;         //turn on timer 
 }
 
 void interrupt_disable()
 {
     TMR1ON = 0;         //turn off timer  
     TMR1IF = 0;         //Clear timer1 interrupt flag
-    GIE = 0;         // Enable global interrupts
-    PEIE = 0;           // Enable peripherals interrupts
+    GIE = 0;            // Disable global interrupts
+    PEIE = 0;           // Disable peripherals interrupts
     TMR1IE = 0;         // Disable T1 interrupt
 }
 
@@ -442,15 +445,6 @@ void UART_send_header(uint8_t start, uint8_t operation, uint8_t code)
     UART_send_byte(start);
     UART_send_byte(operation);
     UART_send_byte(code);
-}
-
-
-void UART_send_byte(uint8_t byte)  
-{
-    while(0 == TXIF)
-    {
-    }/// * Hold the program until the transmission buffer is free
-    TX1REG = byte; /// * Load the transmission buffer with @p bt
 }
 
 /**@brief This function receive one byte of data from UART
@@ -478,6 +472,14 @@ void UART_get_some_bytes(uint8_t length, uint8_t* data)
     {
         *data++ = UART_get_byte(); /// * Get a byte      
     }
+}
+
+void UART_send_byte(uint8_t byte)  
+{
+    while(0 == TXIF)
+    {
+    }/// * Hold the program until the transmission buffer is free
+    TX1REG = byte; /// * Load the transmission buffer with @p bt
 }
 
 void UART_send_some_bytes(uint8_t length, uint8_t* data)

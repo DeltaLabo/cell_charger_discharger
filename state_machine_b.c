@@ -72,19 +72,24 @@ void fCHARGE()
         }
     }
     if (state == PRECHARGE){
-        #if (LI_ION_CHEM) 
-        if (qavg >= ( (capacity) / 2 ) && (second >= 1)){
-            state = WAIT;
-            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
-            STOP_CONVERTER();
+        if (basic_configuration.version == 1)
+        { 
+            if (qavg >= ( (capacity) / 2 ) && (second >= 1))
+            {
+                state = WAIT;
+                wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+                STOP_CONVERTER();
+            }
         }
-        #elif (NI_MH_CHEM)
-        if (vavg >= basic_configuration.end_of_precharge || qavg >= ( (capacity) / 2 ) || (second >= timeout)){
-            state = WAIT;
-            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
-            STOP_CONVERTER();
+        else if (basic_configuration.version == 2)
+        {
+            if (vavg >= basic_configuration.end_of_precharge || qavg >= ( (capacity) / 2 ) || (second >= timeout))
+            {
+                state = WAIT;
+                wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+                STOP_CONVERTER();
+            }
         }
-        #endif
     }
 }
 
@@ -99,20 +104,26 @@ void fDISCHARGE()
             STOP_CONVERTER();
         }
     }
-    if (state == POSTDISCHARGE){
-        #if (LI_ION_CHEM) 
-        if (qavg >= ( (capacity) / 2 ) && (second >= 1)){
-            state = WAIT;
-            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
-            STOP_CONVERTER();
+    if (state == POSTDISCHARGE)
+    {
+        if (basic_configuration.version == 1) // If Lition Ion
+        {
+            if (qavg >= ( (capacity) / 2 ) && (second >= 1))
+            {
+                state = WAIT;
+                wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+                STOP_CONVERTER();
+            }
         }
-        #elif (NI_MH_CHEM)
-        if (((uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 )) <= basic_configuration.end_of_postdischarge || qavg >= ( (capacity) / 2 ) || (second >= timeout)){
-            state = WAIT;
-            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
-            STOP_CONVERTER();
+        else if (basic_configuration.version == 2) // If NiMH
+        {
+            if (((uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 )) <= basic_configuration.end_of_postdischarge || qavg >= ( (capacity) / 2 ) || (second >= timeout))
+            {
+                state = WAIT;
+                wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+                STOP_CONVERTER();
+            }
         }
-        #endif
     }
 }
 
@@ -120,22 +131,26 @@ void fDC_res() //can be improved a lot!!
 {
     // POR VERIFICAR
     
-    if (dc_res_count == 4)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
+    if (dc_res_count == 202)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
     {
-        v_1_dcres = vavg;
-        i_1_dcres = iavg;
-        iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5) ) + 0.5 );     //1C            
+        iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5) ) * 0.75 + 0.5 );     //0.75 C Discharge            
     }
-    if (dc_res_count == 1)
+    if (dc_res_count == 100)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
     {
-        v_2_dcres = vavg;
-        i_2_dcres = iavg;
-        STOP_CONVERTER();            
-        dc_res_val = (uint24_t)(v_1_dcres - v_2_dcres) * 10000;    
-        dc_res_val = dc_res_val /(uint24_t)(i_2_dcres - i_1_dcres);
+        iref = 0;
+    }
+    if (dc_res_count == 60)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
+    {
+        iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5) ) * 0.75 + 0.5 );      //0.75 C Charge
+        SET_CHAR();         
+    }
+    if (dc_res_count == 40)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
+    {
+        iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5) ) + 0.5 );      //1 C Charge        
     }
     if (!dc_res_count)
     {   
+        STOP_CONVERTER();
         wait_count = test_configuration.wait_time; 
         state = WAIT;
                      
@@ -210,8 +225,8 @@ void converter_settings()
             iref = i_disc; /// * The current setpoint, #iref is defined as #i_disc
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;
-        case DC_res: /// If the current state is #CS_DC_res, #DS_DC_res or #PS_DC_res
-            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 5 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
+        case DC_res: /// If the current state is #DC_RES
+            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity </tt>
             dc_res_count = DC_RES_SECS; /// * The #dc_res_count is set to #DC_RES_SECS
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;

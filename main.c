@@ -29,21 +29,22 @@ void main(void) /// This function performs the folowing tasks:
     while(1) /// <li> <b> The main loop repeats the following forever: </b> 
     {
         if (SRXF)
-        {
-            SRXF = 0; 
+        { 
             command_interpreter();
             UART_send_byte(true);
             interrupt_enable();
+            SRXF = 0;
+            RCIF = 0;
         }
         if (SECF) /// <ul> <li> Check the #SECF flag, if it is set, 1 second has passed since last execution, so the folowing task are executed:
         {     
-            SECF = 0; /// <ol> <li> Clear the #SECF flag to restart the 1 second timer
             scaling(); /// <li> Scale the average measured values by calling the #scaling function
             state_machine(); /// <li> Call the #state_machine function
             log_control(); /// <li> Print the log in the serial terminal by calling the #log_control function
-            if (LI_ION_CHEM){
+            if (basic_configuration.version == 1){
                 cc_cv_mode(vavg, basic_configuration.const_voltage, cmode); /// <li> Check if the system shall change to CV mode by calling the #cc_cv_mode function
             }
+            SECF = 0; /// <ol> <li> Clear the #SECF flag to restart the 1 second timer
             //temp_protection(); /// <li> Call the #temp_protection function </ol> </ul> </ul>
         }
 	}
@@ -73,13 +74,20 @@ void __interrupt() ISR(void) /// This function performs the folowing tasks:
 
     if(RCIF)/// <li> Check the @b UART reception interrupt flag, if it is set, the folowing task are executed:
     {
-        RCIF = 0;
-        interrupt_disable(); 
+        interrupt_disable();
         if(RC1STAbits.OERR) /// <ol> <li> Check for any errors and clear them
-        {
-            RC1STAbits.CREN = 0;  
-            RC1STAbits.CREN = 1; 
+        { 
+            RC1STAbits.CREN = 0;
+            RC1STAbits.CREN = 1;
+            __delay_ms(10);
+            UART_send_byte(false);
+            state = IDLE;
+            interrupt_enable();
+            RCIF = 0;
         }
-        SRXF = 1;
+        else
+        {
+            SRXF = 1;
+        }
     }
 }

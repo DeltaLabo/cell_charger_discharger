@@ -154,13 +154,10 @@
 //    #define     CV_ki                   0.000500  ///< Integral constant for CV mode 
 //    #define     CV_kd                   0.020000 ///< Diferential constant for CV mode 
     #define     LINEBREAK               { UART_send_char(10); UART_send_char(13); } ///< Send a linebreak to the terminal
-    //////////////////////////Chemistry definition///////////////////////////////////////
-    #define     LI_ION_CHEM             0 ///< Set this definition to 1 and NI_MH_CHEM to 0 to set the test Li-Ion cells  
-    #define     NI_MH_CHEM              1 ///< Set this definition to 1 and LI_ION_CHEM to 0 to set the test Ni-MH cells
     ////////////////////////////////////////////////////////////////////////////////////
     //General definitions
     #define     WAIT_TIME               5 ///< Time to wait before states, set to 10 minutes = 60
-    #define     DC_RES_SECS             14 ///< How many seconds the DC resistance process takes
+    #define     DC_RES_SECS             220 ///< How many seconds the DC resistance process takes
     //Li-Ion definitions
     #define     Li_Ion_CV               4200 ///< Li-Ion constant voltage setting in mV
     #define     Li_Ion_CAP              3250 ///< Li-Ion capacity setting in mAh
@@ -261,11 +258,6 @@
     uint16_t                            EOPC_variable; ///< End-of-precharge variable in mA or mV
     uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
     uint16_t                            EOPD_capacity; ///< End-of-postdischarge capacity
-    uint16_t                            v_1_dcres; ///< First voltage measured during DC resistance state 
-    uint16_t                            i_1_dcres; ///< First current measured during DC resistance state  
-    uint16_t                            v_2_dcres; ///< Second voltage measured during DC resistance state 
-    uint16_t                            i_2_dcres; ///< Second current measured during DC resistance state
-    uint24_t                            dc_res_val; ///< To store the operation of obtained from the DC resistance state
     bool                                conv = 0; ///< Turn controller ON(1) or OFF(0). Initialized as 0
     uint16_t                            count = COUNTER; ///< Counter that should be cleared every second. Initialized as #COUNTER 
     /**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
