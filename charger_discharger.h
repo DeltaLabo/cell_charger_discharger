@@ -110,7 +110,6 @@
     uint16_t calculate_checksum(uint8_t code, uint8_t length, uint8_t* data);
     void put_data_into_structure(uint8_t length, uint8_t* data, uint8_t* structure);
     void UART_send_string(char* st_pt);
-    void temp_protection(void);
     void Cell_ON(void);
     void Cell_OFF(void);
     void timing(void);
@@ -272,7 +271,7 @@
     //qavg does not need accumulator
     uint16_t                            vavg = 0;  ///< Last one-second-average of #v . Initialized as 0
     uint16_t                            iavg = 0;  ///< Last one-second-average of #i . Initialized as 0
-    int16_t                             tavg = 0;  ///< Last one-second-average of #t . Initialized as 0
+    //int16_t                             tavg = 0;  ///< Last one-second-average of #t . Initialized as 0 // NOT IN SERVICE ALEX
     float                               qavg = 0.0;  ///< Integration of #i . Initialized as 0
     uint16_t                            vmax = 0;   ///< Maximum recorded average voltage. 
     float                               pidi;   ///< Integral acumulator of PI compensator

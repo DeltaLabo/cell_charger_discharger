@@ -135,118 +135,120 @@ bool command_interpreter()
     basic_configuration_ptr = &basic_configuration;
     test_configuration_ptr = &test_configuration;
     converter_configuration_ptr = &converter_configuration;
-    if(UART_get_byte()==0xDD)
+    if (!start)
     {
-        test = true;
-        operation = UART_get_byte();
-        code = UART_get_byte();
-        length = UART_get_byte();
-        if (length>0) UART_get_some_bytes(length, (uint8_t*)data);
-        checksum = UART_get_byte();
-        checksum += UART_get_byte()*256;
-        calc_checksum = calculate_checksum(code, length, (uint8_t*)data);
-        if(UART_get_byte()==0x77)
+        if(UART_get_byte()==0xDD)
         {
-            test = true;
-        }else test = false;     
-        if (checksum == calc_checksum)
-        {
-            test = true;
-        }else test = false;        
-        if(!start)
-        {
-            switch (operation)
+            operation = UART_get_byte();
+            code = UART_get_byte();
+            length = UART_get_byte();
+            if (length>0) UART_get_some_bytes(length, (uint8_t*)data);
+            checksum = UART_get_byte();
+            checksum += UART_get_byte()* 256;
+            calc_checksum = calculate_checksum(code, length, (uint8_t*)data);
+            if(UART_get_byte() != 0x77)
             {
-                case 0xA5:
-                    UART_send_header(0xDD, operation, code);
-                    switch (code)
-                    {
-                        case 0x03:
-                            length = sizeof(basic_configuration);
-                            UART_send_byte(length);
-                            UART_send_some_bytes(length, (uint8_t*)basic_configuration_ptr);
-                            calc_checksum = calculate_checksum(code, length, (uint8_t*)basic_configuration_ptr);
-                            break;
-                        case 0x05:
-                            length = sizeof(test_configuration);
-                            UART_send_byte(length);
-                            UART_send_some_bytes(length, (uint8_t*)test_configuration_ptr);
-                            calc_checksum = calculate_checksum(code, length, (uint8_t*)test_configuration_ptr);
-                            break;
-                        case 0x07:
-                            length = sizeof(converter_configuration);
-                            UART_send_byte(length);
-                            UART_send_some_bytes(length, (uint8_t*)converter_configuration_ptr);
-                            calc_checksum = calculate_checksum(code, length, (uint8_t*)converter_configuration_ptr);
-                            break;
-                    }
-                    UART_send_some_bytes(2,(uint8_t*)&calc_checksum);
-                    UART_send_byte(0x77);                
-                    break;   
-                case 0x5A:
-                    switch (code)
-                    {
-                        case 0x03: //BASIC CONFIGURATION
-                            put_data_into_structure(length, (uint8_t*)data, (uint8_t*)basic_configuration_ptr);
-                            vref = ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ; //Scale the voltage reference to be compare with v;
-                            i_char = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
-                            i_disc = (uint16_t) ( ( ( (float) basic_configuration.const_current_disc * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
-                            capacity = basic_configuration.capacity;
-                            EOC_variable = basic_configuration.end_of_charge;
-                            EOPC_variable = basic_configuration.end_of_precharge;
-                            EOD_voltage = basic_configuration.end_of_discharge;
-                            EOPD_capacity = basic_configuration.end_of_postdischarge;
-                            break;
-                        case 0x05: // TEST CONFIGURATION
-                            put_data_into_structure(length, (uint8_t*)data, (uint8_t*)test_configuration_ptr);
-                            break;
-                        case 0x07: // CONVERTER CONFIGURATION
-                            put_data_into_structure(length, (uint8_t*)data, (uint8_t*)converter_configuration_ptr);
-                            CV_kp = (float) ((converter_configuration.CVKp) / 1000000.0);
-                            CV_ki = (float) ((converter_configuration.CVKi) / 1000000.0);
-                            CV_kd = (float) ((converter_configuration.CVKd) / 1000.0);
-                            CC_char_kp = (float) ((converter_configuration.CCKpC) / 1000000.0);
-                            CC_char_ki = (float) ((converter_configuration.CCKiC) / 1000000.0);
-                            CC_disc_kp = (float) ((converter_configuration.CCKpD) / 1000000.0);
-                            CC_disc_ki = (float) ((converter_configuration.CCKiD) / 1000000.0);
-                            break;
-                    }
-                    break;
+                test = false;
             }
-        }
-        switch(operation)
-        {
-            case 0x0F:
-                switch (code)
+            if (checksum != calc_checksum)
+            {
+                test = false;
+            }        
+            if(!start)
+            {
+                switch (operation)
                 {
-                    case 0x03: // RESET
-                        state = IDLE;
+                    case 0xA5:
+                        UART_send_header(0xDD, operation, code);
+                        switch (code)
+                        {
+                            case 0x03:
+                                length = sizeof(basic_configuration);
+                                UART_send_byte(length);
+                                UART_send_some_bytes(length, (uint8_t*)basic_configuration_ptr);
+                                calc_checksum = calculate_checksum(code, length, (uint8_t*)basic_configuration_ptr);
+                                break;
+                            case 0x05:
+                                length = sizeof(test_configuration);
+                                UART_send_byte(length);
+                                UART_send_some_bytes(length, (uint8_t*)test_configuration_ptr);
+                                calc_checksum = calculate_checksum(code, length, (uint8_t*)test_configuration_ptr);
+                                break;
+                            case 0x07:
+                                length = sizeof(converter_configuration);
+                                UART_send_byte(length);
+                                UART_send_some_bytes(length, (uint8_t*)converter_configuration_ptr);
+                                calc_checksum = calculate_checksum(code, length, (uint8_t*)converter_configuration_ptr);
+                                break;
+                        }
+                        UART_send_some_bytes(2,(uint8_t*)&calc_checksum);
+                        UART_send_byte(0x77);                
+                        break;   
+                    case 0x5A:
+                        switch (code)
+                        {
+                            case 0x03: //BASIC CONFIGURATION
+                                put_data_into_structure(length, (uint8_t*)data, (uint8_t*)basic_configuration_ptr);
+                                vref = ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ; //Scale the voltage reference to be compare with v;
+                                i_char = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
+                                i_disc = (uint16_t) ( ( ( (float) basic_configuration.const_current_disc * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
+                                capacity = basic_configuration.capacity;
+                                EOC_variable = basic_configuration.end_of_charge;
+                                EOPC_variable = basic_configuration.end_of_precharge;
+                                EOD_voltage = basic_configuration.end_of_discharge;
+                                EOPD_capacity = basic_configuration.end_of_postdischarge;
+                                break;
+                            case 0x05: // TEST CONFIGURATION
+                                put_data_into_structure(length, (uint8_t*)data, (uint8_t*)test_configuration_ptr);
+                                break;
+                            case 0x07: // CONVERTER CONFIGURATION
+                                put_data_into_structure(length, (uint8_t*)data, (uint8_t*)converter_configuration_ptr);
+                                CV_kp = (float) ((converter_configuration.CVKp) / 1000000.0);
+                                CV_ki = (float) ((converter_configuration.CVKi) / 1000000.0);
+                                CV_kd = (float) ((converter_configuration.CVKd) / 1000.0);
+                                CC_char_kp = (float) ((converter_configuration.CCKpC) / 1000000.0);
+                                CC_char_ki = (float) ((converter_configuration.CCKiC) / 1000000.0);
+                                CC_disc_kp = (float) ((converter_configuration.CCKpD) / 1000000.0);
+                                CC_disc_ki = (float) ((converter_configuration.CCKiD) / 1000000.0);
+                                break;
+                        }
                         break;
-                    case 0x05: // START
-                        if (!start){
+                    case 0x0F:  // START CONVERTER
+                        if (code == 0x05)
+                        {
                             counter_state = 0;
                             state = test_configuration.order_of_states[counter_state];
-                            converter_settings();
                             cell_count = 0x01;
                             repetition_counter = 0x01;
+                            converter_settings();
                             start = true;
                         }
                         break;
-                    case 0x07: // NEXT CELL
-                        STOP_CONVERTER();
-                        counter_state = test_configuration.number_of_states + 1;
-                        wait_count = 5;
-                        state = WAIT;
-                        break;
-                    case 0x09: // NEXT STATE
-                        STOP_CONVERTER();
-                        wait_count = 5;
-                        state = WAIT;
-                        break;
                 }
+            }
+        }else test = false;
+    }else 
+    {
+        code = UART_get_byte();
+        switch (code)
+        {
+            case 0x03: // RESET
+                state = IDLE;
+                break;
+            case 0x07: // NEXT CELL
+                counter_state = test_configuration.number_of_states + 1;
+                wait_count = test_configuration.wait_time;
+                state = WAIT;
+                break;
+            case 0x09: // NEXT STATE
+                wait_count = test_configuration.wait_time;
+                state = WAIT;
+                break;
+            default:
+                test = false;
                 break;
         }
-    }else test = false;
+    }
     return (test);
 }
 
@@ -486,7 +488,7 @@ void UART_send_some_bytes(uint8_t length, uint8_t* data)
 {
     while(length--)
     {
-        UART_send_byte(*data++); /// * Get a byte      
+        UART_send_byte(*data++); /// * send a byte      
     }
 }
 
@@ -548,14 +550,7 @@ void display_value_s(int16_t value)
     itoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
     UART_send_string(buffer); /// * Send @p buffer using #UART_send_string()
 }
-void temp_protection()
-{
-    if (conv && (tavg > 400)){
-        UART_send_string((char*)"HIGH_TEMP:");
-        STOP_CONVERTER(); /// -# Stop the converter by calling the #STOP_CONVERTER() macro.
-        //state = STANDBY; /// -# Go to the #STANDBY state.
-    }
-}
+
 /**@brief This function activate the desired relay in the switcher board according to the value
 * of #cell_count
 */

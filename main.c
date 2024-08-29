@@ -22,22 +22,14 @@
 */
 
 void main(void) /// This function performs the folowing tasks:                     
-{       
+{           
     initialize(); /// <ul> <li> Call the #initialize function
     __delay_ms(10);
     interrupt_enable(); // this I added for the test
     while(1) /// <li> <b> The main loop repeats the following forever: </b> 
     {
-        if (SRXF)
-        { 
-            command_interpreter();
-            UART_send_byte(true);
-            interrupt_enable();
-            SRXF = 0;
-            RCIF = 0;
-        }
         if (SECF) /// <ul> <li> Check the #SECF flag, if it is set, 1 second has passed since last execution, so the folowing task are executed:
-        {     
+        {
             scaling(); /// <li> Scale the average measured values by calling the #scaling function
             state_machine(); /// <li> Call the #state_machine function
             log_control(); /// <li> Print the log in the serial terminal by calling the #log_control function
@@ -54,8 +46,23 @@ void main(void) /// This function performs the folowing tasks:
 */
 void __interrupt() ISR(void) /// This function performs the folowing tasks: 
 {
-    char recep = 0;
-    bool status = 0;
+    if(RCIF)/// <li> Check the @b UART reception interrupt flag, if it is set, the folowing task are executed:
+    {
+        RCIF = 0;
+        if(RC1STAbits.OERR) /// <ol> <li> Check for any errors and clear them
+        { 
+            RC1STAbits.CREN = 0;
+            RC1STAbits.CREN = 1;
+            //UART_send_byte(false);
+            UART_send_string((char*)"OERR_ERROR");
+            state = IDLE;
+        }
+        else
+        {
+            UART_send_byte(command_interpreter());
+        }
+    }
+        
     if(TMR1IF) /// <li> Check the @b Timer1 interrupt flag, if it is set, the folowing task are executed:
     {
         TMR1H = 0xE1; // TMR1 clock is Fosc/4= 8Mhz (Tick= 0.125us). TMR1IF is set when the 16-bit register overflows. 7805 x 0.125us = 0.975625 ms.
@@ -70,24 +77,5 @@ void __interrupt() ISR(void) /// This function performs the folowing tasks:
         calculate_avg(); /// <li> Call the #calculate_avg() function
         timing(); /// <li> Call the #timing() function
         if (TMR1IF) UART_send_string((char*)"TIMING_ERROR"); /// <li> If the @b Timer1 interrupt flag is set, there is a timing error, print "TIMING_ERROR" into the terminal. </ol>
-    }
-
-    if(RCIF)/// <li> Check the @b UART reception interrupt flag, if it is set, the folowing task are executed:
-    {
-        interrupt_disable();
-        if(RC1STAbits.OERR) /// <ol> <li> Check for any errors and clear them
-        { 
-            RC1STAbits.CREN = 0;
-            RC1STAbits.CREN = 1;
-            __delay_ms(10);
-            UART_send_byte(false);
-            state = IDLE;
-            interrupt_enable();
-            RCIF = 0;
-        }
-        else
-        {
-            SRXF = 1;
-        }
     }
 }

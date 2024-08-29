@@ -55,7 +55,7 @@ void state_machine()
 void fIDLE() //@brief This function define the IDLE state of the state machine.
 {
     // REVISION DE FUNCIONALIDAD
-    if (start) STOP_CONVERTER(); // MAYBE OK ALEX 
+    if (start) STOP_CONVERTER(); // MAYBE OK ALEX
     start = false;
     
 }
@@ -161,6 +161,7 @@ void fDC_res() //can be improved a lot!!
 */
 void fWAIT()
 {
+    STOP_CONVERTER();
     second = wait_count;
     if (wait_count) wait_count--;
     if(!wait_count) fNEXTSTATE();
