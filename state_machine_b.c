@@ -67,7 +67,7 @@ void fCHARGE()
         if (second > 5)
         {
             state = WAIT; /// -# Else, go to #WAIT state          
-            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+            wait_count = getTime(); /// -# Set #wait_count equal to the time set
             STOP_CONVERTER();
         }
     }
@@ -77,7 +77,7 @@ void fCHARGE()
             if (qavg >= ( (capacity) / 2 ) && (second >= 1))
             {
                 state = WAIT;
-                wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+                wait_count = getTime(); /// -# Set #wait_count equal to the time set
                 STOP_CONVERTER();
             }
         }
@@ -86,7 +86,7 @@ void fCHARGE()
             if (vavg >= basic_configuration.end_of_precharge || qavg >= ( (capacity) / 2 ) || (second >= timeout))
             {
                 state = WAIT;
-                wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+                wait_count = getTime(); /// -# Set #wait_count equal to the time set
                 STOP_CONVERTER();
             }
         }
@@ -100,7 +100,7 @@ void fDISCHARGE()
         if (second > 5)
         {
             state = WAIT; /// -# Else, go to #WAIT state                  
-            wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to #WAIT_TIM
+            wait_count = getTime(); /// -# Set #wait_count equal to #WAIT_TIM
             STOP_CONVERTER();
         }
     }
@@ -111,7 +111,7 @@ void fDISCHARGE()
             if (qavg >= ( (capacity) / 2 ) && (second >= 1))
             {
                 state = WAIT;
-                wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+                wait_count = getTime(); /// -# Set #wait_count equal to the time set
                 STOP_CONVERTER();
             }
         }
@@ -120,7 +120,7 @@ void fDISCHARGE()
             if (((uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 )) <= basic_configuration.end_of_postdischarge || qavg >= ( (capacity) / 2 ) || (second >= timeout))
             {
                 state = WAIT;
-                wait_count = test_configuration.wait_time; /// -# Set #wait_count equal to the time set
+                wait_count = getTime(); /// -# Set #wait_count equal to the time set
                 STOP_CONVERTER();
             }
         }
@@ -151,7 +151,7 @@ void fDC_res() //can be improved a lot!!
     if (!dc_res_count)
     {   
         STOP_CONVERTER();
-        wait_count = test_configuration.wait_time; 
+        wait_count = getTime(); 
         state = WAIT;
                      
     }else dc_res_count--;

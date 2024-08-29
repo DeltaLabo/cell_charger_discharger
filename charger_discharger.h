@@ -78,6 +78,7 @@
     void fNEXTSTATE(void);
     void fNEXTCELL(void);
     void fNEXTREPETITION(void);
+    uint8_t getTime();
     
     void start_state_machine(void);
     void state_machine(void);

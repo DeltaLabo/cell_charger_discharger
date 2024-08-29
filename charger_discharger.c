@@ -237,11 +237,11 @@ bool command_interpreter()
                 break;
             case 0x07: // NEXT CELL
                 counter_state = test_configuration.number_of_states + 1;
-                wait_count = test_configuration.wait_time;
+                wait_count = getTime();
                 state = WAIT;
                 break;
             case 0x09: // NEXT STATE
-                wait_count = test_configuration.wait_time;
+                wait_count = getTime();
                 state = WAIT;
                 break;
             default:
@@ -609,4 +609,16 @@ void Cell_OFF()
     __delay_ms(10);
     CELL4_OFF(); /// * Turn OFF cell #4 by calling #CELL4_OFF  
     __delay_ms(10);
+}
+
+uint8_t getTime(){
+    if ((counter_state + 1 <= test_configuration.number_of_states) && (test_configuration.order_of_states[counter_state + 1] != 0x00)){
+        return test_configuration.wait_time;
+    }
+    else if (cell_count < test_configuration.number_of_cells){
+        return test_configuration.wait_time;
+    }
+    else{
+        return test_configuration.end_wait_time;
+    }
 }
