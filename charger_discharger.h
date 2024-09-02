@@ -90,12 +90,12 @@
     void Cell_ON(void);
     void Cell_OFF(void);
     void timing(void);
+    
     #define     _XTAL_FREQ              32000000 ///< Frequency to coordinate delays, 32 MHz
     #define     ERR_MAX                 1000 ///< Maximum permisible error, useful to avoid ringing
     #define     ERR_MIN                 -1000 ///< Minimum permisible error, useful to avoid ringing
     #define     V_CHAN                  0b01010 ///< Definition of ADC channel for voltage measurements. AN10(RB1) 
     #define     I_CHAN                  0b01100 ///< Definition of ADC channel for current measurements. AN12(RB0)
-    #define     T_CHAN                  0b00100 ///< Definition of ADC channel for temperature measurements. AN4(RA5)
     #define     CELL1_ON()              { RB2 = 1; } ///< Turn on Cell #1
     #define     CELL2_ON()              { RB3 = 1; } ///< Turn on Cell #2
     #define     CELL3_ON()              { RB4 = 1; } ///< Turn on Cell #3
@@ -104,35 +104,20 @@
     #define     CELL2_OFF()             { RB3 = 0; } ///< Turn off Cell #2
     #define     CELL3_OFF()             { RB4 = 0; } ///< Turn off Cell #3
     #define     CELL4_OFF()             { RB5 = 0; } ///< Turn off Cell #4
-    #define     AD_SET_CHAN(x)          { ADCON0bits.CHS = x; __delay_us(5); } ///< Set the ADC channel to @p x and wait for 5 microseconds.
-    #define     AD_CONVERT()            { GO_nDONE = 1; while(GO_nDONE);} ///< Start the conversion and wait until it is finished
-    #define     AD_RESULT()             { ad_res = 0; ad_res = (ADRESL & 0xFF)|((ADRESH << 8) & 0xF00);} ///< Store conversion result in #ad_res
+
     /** @brief Stop the converter*/
     /** Set @p conv to zero, turn off the main relay (@p RC5), set the duty cycle in @p DC_MIN, 
     turn off all the cell relays in the switcher board, disable the logging of data to the terminal 
     and the UART reception interrupts.
     */
     #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; pidt = DC_MIN; set_DC(); Cell_OFF();}
-    #define     UART_INT_ON()           { while(RCIF) clear = RC1REG; RCIE = 1; } ///< Clear transmission buffer and turn ON UART transmission interrupts.
-    #define     RESET_TIME()            { minute = 0; second = -1; } ///< Reset timers.
    //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function 
     #define     DC_MIN                  50.0  ///< Minimum possible duty cycle, set around @b 0.1 
     #define     DC_MAX                  300.0  ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
-//    #define     CC_char_kp              0.013  ///< Proportional constant divider for CC mode
-//    #define     CC_char_ki              0.0025  ///< Integral constant for CC mode 
-//    #define     CC_char_kd              0.0     ///< Diferential constant for CC mode 
-//    #define     CC_disc_kp              0.0060  ///< Proportional constant for CC mode
-//    #define     CC_disc_ki              0.0010  ///< Integral constant for CC mode
-//    #define     CC_disc_kd              0.0     ///< Diferential constant for CC mode 
-//    // last test with LI_ION gave this constants
-//    #define     CV_kp                   0.001800  ///< Proportional constant for CV mode
-//    #define     CV_ki                   0.000500  ///< Integral constant for CV mode 
-//    #define     CV_kd                   0.020000 ///< Diferential constant for CV mode 
-    #define     LINEBREAK               { UART_send_char(10); UART_send_char(13); } ///< Send a linebreak to the terminal
     ////////////////////////////////////////////////////////////////////////////////////
     //General definitions
-    #define     WAIT_TIME               5 ///< Time to wait before states, set to 10 minutes = 60
+    #define     WAIT_TIME               5 ///< Time to wait before states, set to 5 seconds as default
     #define     DC_RES_SECS             220 ///< How many seconds the DC resistance process takes
     //Li-Ion definitions
     #define     Li_Ion_CV               4200 ///< Li-Ion constant voltage setting in mV
