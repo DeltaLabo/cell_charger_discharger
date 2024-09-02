@@ -37,7 +37,6 @@ void main(void) /// This function performs the folowing tasks:
                 cc_cv_mode(vavg, basic_configuration.const_voltage, cmode); /// <li> Check if the system shall change to CV mode by calling the #cc_cv_mode function
             }
             SECF = 0; /// <ol> <li> Clear the #SECF flag to restart the 1 second timer
-            //temp_protection(); /// <li> Call the #temp_protection function </ol> </ul> </ul>
         }
 	}
 }

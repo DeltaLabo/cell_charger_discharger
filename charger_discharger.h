@@ -189,7 +189,6 @@
     bool                                start = false;
     bool                                SECF = 1; ///< 1 second flag
     bool                                SRXF = 0; ///< Serial Reception Flag
-    unsigned char                       option = 0; ///< Four different options, look into @link param() @endlink for details
     uint16_t                            capacity; ///< Definition of capacity per cell according to each chemistry
     uint16_t                            i_char; ///< Charging current in mA
     uint16_t                            i_disc; ///< Discharging current in mA
@@ -226,14 +225,11 @@
     //uint16_t                            ad_res; ///< Result of an ADC measurement.
     uint16_t                            v;  ///< Last voltage ADC measurement.
     uint16_t                            i;  ///< Last current ADC measurement.
-    uint16_t                            t;  ///<  Last temperature ADC measurement.
     uint24_t                            vacum = 0; ///< accumulator dor v
     uint24_t                            iacum = 0;
-    uint24_t                            tacum = 0;
     //qavg does not need accumulator
     uint16_t                            vavg = 0;  ///< Last one-second-average of #v . Initialized as 0
     uint16_t                            iavg = 0;  ///< Last one-second-average of #i . Initialized as 0
-    //int16_t                             tavg = 0;  ///< Last one-second-average of #t . Initialized as 0 // NOT IN SERVICE ALEX
     float                               qavg = 0.0;  ///< Integration of #i . Initialized as 0
     uint16_t                            vmax = 0;   ///< Maximum recorded average voltage. 
     float                               pidi;   ///< Integral acumulator of PI compensator
@@ -241,13 +237,10 @@
     float                               ki;  ///< Integral compesator gain
     float                               kd;  ///< Diferential compesator gain
     float                               vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
-    uint16_t                            cvref = 0;  ///< Unscaled voltage setpoint. Initialized as 0
     uint16_t                            iref = 0;  ///< Current setpoint. Initialized as 0
-    uint16_t                            ccref = 0;  ///< Unscaled current setpoint. Initialized as 0
     bool                                cmode = 1;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt>   
     float                               pidt = 0;  ///< Duty cycle
     float                               er = 0; /// < Define er for calculating the error on dc calculus    
-    //char                                clear;  ///< Variable to clear the transmission buffer of UART
     uint16_t                            second = 0; ///< Seconds counter
     uint16_t                            timeout = 0;
 #endif /* CHARGER_DISCHARGER_H */

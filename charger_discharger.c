@@ -320,10 +320,6 @@ void scaling() /// This function performs the folowing tasks:
 {
     log_data.current = (uint16_t) ( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ); /// <ol><li> Scale #iavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor (0.4 V/A). 
     log_data.voltage = (uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 ); /// <li> Scale #vavg according to the 12-bit ADC resolution (4096)
-    // tavg = (uint16_t) ( ( ( (float)tavg * 5000.0 ) / 4096.0 ) + 0.5 );     NOT IN SERVICE ALEX
-    // log_data.temperature = (int16_t) ( ( ( 1866.3 - (float)tavg ) / 1.169 ) + 0.5 ); /// <li> Scale #tavg according to the 12-bit ADC resolution (4096) and the sensitivity of the sensor ( (1866.3 - x)/1.169 )
-    // log_data.temperature = (uint16_t) (dc_res_val);      // WHILE NOT IN SERVICE
-    //log_data.temperature = (uint16_t) (test_configuration.order_of_states[counter_state + 2]);
     qavg += (float)( ( ( (float)iavg * 2.5 * 5000.0 ) / 4096.0 ) + 0.5 ) / 3600.0; /// <li> Perform the discrete integration of #iavg over one second and accumulate in #qavg 
     log_data.capacity = (uint16_t) (qavg);
     if (basic_configuration.version == 2)
@@ -389,18 +385,14 @@ void calculate_avg()
         case COUNTER: /// If #count = #COUNTER
             iacum = (uint24_t) i; /// * Make #iavg zero
             vacum = (uint24_t) v; /// * Make #vavg zero
-            //tacum = (uint24_t) t; /// * Make #tavg zero                          NOT IN SERVICE ALEX
             break;
         case 0: /// If #count = 0
             iavg = ((iacum >> 10) + ((iacum >> 9) & 0x01)); /// * Divide the value stored in #iavg between COUNTER to obtain the average   
             vavg = ((vacum >> 10) + ((vacum >> 9) & 0x01)); /// * This is equivalent to vacum / 1024 = vacum / 2^10 
-            // tavg = ((tacum >> 10) + ((tacum >> 9) & 0x01)); /// * This is equivalent to tacum / 1024 = tacum / 2^10                 NOT IN SERVICE ALEX
             break;
         default: /// If #count is not any of the previous cases then
             iacum += (uint24_t) i; /// * Accumulate #i in #iavg
             vacum += (uint24_t) v; /// * Accumulate #v in #vavg
-            //tacum += (uint24_t) t; /// * Accumulate #t in #tavg                  NOT IN SERVICE ALEX
-            //tavg += dc * 1.953125; // TEST FOR DC Is required to deactivate temperature protection
     }   
 }
 /**@brief This function activate the UART reception interruption 
