@@ -45,64 +45,40 @@
     #include <stdbool.h> // Include bool type
     /** This is the State Machine enum*/
 	enum states { 
-//        STANDBY = 0, ///< "Stand by" state, defined by function @link fSTANDBY() @endlink
-//        IDLE = 1, ///< "Idle" state, defined by function @link fIDLE() @endlink
-//        FAULT = 2, ///< "Fault" state, defined by function @link fFAULT() @endlink
-//        ISDONE = 3, ///< "Is done" state, defined by function @link fISDONE() @endlink
-//        WAIT = 4, ///< "Wait" state, defined by function @link fWAIT() @endlink
-//        PREDISCHARGE = 5, ///< "Predischarge" state, defined by function @link fDISCHARGE() @endlink
-//        CHARGE = 6, ///< "Charge" state, defined by function @link fCHARGE() @endlink
-//        DISCHARGE = 7, ///< "Discharge" state, defined by function @link fDISCHARGE() @endlink
-//        POSTCHARGE = 8, ///< "Postcharge" state, defined by function @link fCHARGE() @endlink
-//        DS_DC_res = 9, ///< "Discharged state DC resistance" state, defined by function @link fDC_res() @endlink
-//        CS_DC_res = 10, ///< "Charged state DC resistance" state, defined by function @link fDC_res() @endlink
-//        PS_DC_res = 11 ///< "Postcharged state DC resistance" state, defined by function @link fDC_res() @endlink
-        IDLE = 0x01,
-        CHARGE = 0x03,
-        PRECHARGE = 0x05,
-        DISCHARGE = 0x07,
-        POSTDISCHARGE = 0x09,
-        DC_res = 0x0B,
-        WAIT = 0x0D
-    };   
+        IDLE = 0x01, ///< "Idle" state, defined by function @link fIDLE() @endlink
+        CHARGE = 0x03, ///< "Charge" state, defined by function @link fCHARGE() @endlink
+        PRECHARGE = 0x05, ///< "Precharge" state, defined by function @link fCHARGE() @endlink
+        DISCHARGE = 0x07, ///< "Discharge" state, defined by function @link fDISCHARGE() @endlink
+        POSTDISCHARGE = 0x09, ///< "Postdischarge" state, defined by function @link fDISCHARGE() @endlink
+        DC_res = 0x0B, ///< "DC resistance" state, defined by function @link fDC_res() @endlink
+        WAIT = 0x0D ///< "Wait" state, defined by function @link fWAIT() @endlink
+    };
     bool command_interpreter(void);
-    void fSTANDBY(void);
     void fIDLE(void);
     void fCHARGE(void);
     void fDISCHARGE(void);
     void fDC_res(void);
     void fWAIT(void);
-    void fISDONE(void);
-    void fFAULT(void);
     
     void fNEXTSTATE(void);
     void fNEXTCELL(void);
     void fNEXTREPETITION(void);
     uint8_t getTime();
     
-    void start_state_machine(void);
     void state_machine(void);
-    void param(void);
     void converter_settings(void);
     void initialize(void);
-//    void pid(uint16_t feedback, uint16_t setpoint, int24_t* acum, uint16_t* duty_cycle);
     void pid(float feedback, float setpoint);
-//    void set_DC(uint16_t* duty_cycle);
     void set_DC();
     uint16_t read_ADC(uint16_t channel);
     void scaling(void);
     void log_control(void);
-    void display_value_u(uint16_t value);
-    void display_value_s(int16_t value);
     void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status);
     void control_loop(void);
     void calculate_avg(void);
     void interrupt_enable(void);
     
-    void interrupt_disable(void);
-    
     void UART_send_char(char bt);
-    char UART_get_char(void);
     uint8_t UART_get_byte(void);
     void UART_send_header(uint8_t start, uint8_t operation, uint8_t code);
     void UART_send_byte(uint8_t byte);

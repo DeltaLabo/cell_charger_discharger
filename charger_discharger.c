@@ -421,16 +421,6 @@ void interrupt_enable()
     TMR1ON = 1;         //turn on timer 
 }
 
-void interrupt_disable()
-{
-    TMR1ON = 0;         //turn off timer  
-    TMR1IF = 0;         //Clear timer1 interrupt flag
-    GIE = 0;            // Disable global interrupts
-    PEIE = 0;           // Disable peripherals interrupts
-    TMR1IE = 0;         // Disable T1 interrupt
-}
-
-
 /**@brief This function send one byte of data to UART
 * @param bt character to be send
 */
@@ -511,19 +501,6 @@ void put_data_into_structure(uint8_t length, uint8_t* data, uint8_t* structure)
     }
 }
 
-/**@brief This function receive one byte of data from UART
-* @return RC1REG reception register
-*/
-char UART_get_char()
-{
-    if(OERR) /// If there is error
-    {
-        CREN = 0; /// * Clear the error
-        CREN = 1; /// * Restart
-    }    
-    while(!RCIF);  /// Hold the program until the reception buffer is free   
-    return RC1REG; /// Receive the value and return it
-}
 /**@brief This function send a string using UART
 * @param st_pt pointer to string to be send
 */
@@ -531,24 +508,6 @@ void UART_send_string(char* st_pt)
 {
     while(*st_pt) /// While there is a byte to send
         UART_send_char(*st_pt++); /// * Send it using #UART_send_char() and then increase the pointer possition
-}
-///**@brief This function convert a number to string and then send it using UART
-//* @param value integer to be send
-//*/
-void display_value_u(uint16_t value)
-{   
-    char buffer[6]; /// * Define @p buffer to used it for store character storage
-    utoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
-    UART_send_string(buffer); /// * Send @p buffer using #UART_send_string()
-}
-///**@brief This function convert a number to string and then send it using UART
-//* @param value integer to be send
-//*/
-void display_value_s(int16_t value)
-{   
-    char buffer[7]; /// * Define @p buffer to used it for store character storage
-    itoa(buffer,value,10);  /// * Convert @p value into a string and store it in @p buffer
-    UART_send_string(buffer); /// * Send @p buffer using #UART_send_string()
 }
 
 /**@brief This function activate the desired relay in the switcher board according to the value
