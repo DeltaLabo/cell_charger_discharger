@@ -46,7 +46,7 @@ void main(void) /// This function performs the folowing tasks:
 void __interrupt() ISR(void) /// This function performs the folowing tasks: 
 {
     if(RCIF)/// <li> Check the @b UART reception interrupt flag, if it is set, the folowing task are executed:
-    {
+    { 
         RCIF = 0;
         if(RC1STAbits.OERR) /// <ol> <li> Check for any errors and clear them
         { 
