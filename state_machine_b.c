@@ -62,7 +62,7 @@ void fIDLE() //@brief This function define the IDLE state of the state machine.
 
 void fCHARGE()
 {    
-    if ( ( ( iavg < basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x01 ) ) || ( ( ( vavg < (vmax - 5) ) || (timeout < second) ) && ( basic_configuration.version == 0x02 ) ) ) /// * If #vavg is below #EOD_voltage
+    if ( ( ( iavg < basic_configuration.end_of_charge ) && ( basic_configuration.version == 0x01 ) ) || ( ( ( ((uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 )) < (vmax - basic_configuration.end_of_charge) ) || (timeout < second) ) && ( basic_configuration.version == 0x02 ) ) ) /// * If #vavg is below #EOD_voltage
     {
         if (second > 5)
         {
@@ -83,7 +83,7 @@ void fCHARGE()
         }
         else if (basic_configuration.version == 2)
         {
-            if (vavg >= basic_configuration.end_of_precharge || qavg >= ( (capacity) / 2 ) || (second >= timeout))
+            if (((uint16_t) ( ( ( (float)vavg * 5000.0 ) / 4096.0 ) + 0.5 )) >= basic_configuration.end_of_precharge || qavg >= ( (capacity) / 2 ) || (second >= timeout))
             {
                 state = WAIT;
                 wait_count = getTime(); /// -# Set #wait_count equal to the time set
@@ -131,20 +131,30 @@ void fDC_res() //can be improved a lot!!
 {
     // POR VERIFICAR
     
-    if (dc_res_count == 202)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
+    if (dc_res_count == 202)  /// * If #dc_res_count is equal to 202=18sec (CHANGE), then:
     {
         iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5) ) * 0.75 + 0.5 );     //0.75 C Discharge            
     }
-    if (dc_res_count == 100)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
+    if (dc_res_count == 100)  /// * If #dc_res_count is equal to 100=120sec (CHANGE), then:
     {
         iref = 0;
     }
-    if (dc_res_count == 60)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
+    if (dc_res_count == 60)  /// * If #dc_res_count is equal to 60=160sec (CHANGE), then:
     {
         iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5) ) * 0.75 + 0.5 );      //0.75 C Charge
-        SET_CHAR();         
+        STOP_CONVERTER();
+        cmode = 1; /// * Start in constant current mode by setting. #cmode
+        pidi = 0; /// * The #integral component of the compensator is set to zero.*/
+        qavg = 0; /// * Average capacity, #q_prom is set to zero.*/
+        vmax = 0; /// * Maximum averaged voltage, #vmax is set to zero.*/
+        pidt = DC_MIN;
+        set_DC();  /// * The #set_DC() function is called
+        Cell_ON(); /// * The #Cell_ON() function is called
+        SET_CHAR();    
+        __delay_ms(10); 
+        conv = 1;
     }
-    if (dc_res_count == 40)  /// * If #dc_res_count is equal to 4 (CHANGE), then:
+    if (dc_res_count == 40)  /// * If #dc_res_count is equal to 40=180sec (CHANGE), then:
     {
         iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5) ) + 0.5 );      //1 C Charge        
     }
@@ -232,12 +242,12 @@ void converter_settings()
             SET_DISC(); /// * The charge/discharge relay is set in discharge position by calling the #SET_DISC() macro
             break;
         case POSTDISCHARGE:
-            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 2 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
+            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 2 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 2 </tt>
             if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 3600 * 1.1);
             SET_DISC();
             break;
         case PRECHARGE:
-            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 2 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 5 </tt>
+            iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000 * 2.5 * 2 ) ) + 0.5 ); /// * The current setpoint, #iref is defined as <tt> capacity / 2 </tt>
             if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 3600 * 1.1);
             SET_CHAR();
             break;
