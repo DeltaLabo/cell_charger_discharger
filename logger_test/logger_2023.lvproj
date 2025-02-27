@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='UTF-8'?>
-<Project Type="Project" LVVersion="19008000">
+<Project Type="Project" LVVersion="21008000">
 	<Item Name="My Computer" Type="My Computer">
 		<Property Name="server.app.propertiesEnabled" Type="Bool">true</Property>
 		<Property Name="server.control.propertiesEnabled" Type="Bool">true</Property>
@@ -80,6 +80,7 @@
 				<Property Name="App_INI_aliasGUID" Type="Str">{97EC8CA3-7345-4344-980B-2A99C6DE58B8}</Property>
 				<Property Name="App_INI_GUID" Type="Str">{B7AC8A23-C56D-424B-969C-5D096CC43652}</Property>
 				<Property Name="App_serverConfig.httpPort" Type="Int">8002</Property>
+				<Property Name="App_serverType" Type="Int">1</Property>
 				<Property Name="App_winsec.description" Type="Str">http://www.ITCR.com</Property>
 				<Property Name="Bld_autoIncrement" Type="Bool">true</Property>
 				<Property Name="Bld_buildCacheID" Type="Str">{5404191A-2356-4F4B-9CF2-F45DB20B93CE}</Property>
@@ -120,6 +121,7 @@
 				<Property Name="App_INI_aliasGUID" Type="Str">{B5F0AC66-5F17-45DD-922E-F24AA80C1924}</Property>
 				<Property Name="App_INI_GUID" Type="Str">{CA3AB3C1-396A-4FF5-BD9C-0DE78E35CA41}</Property>
 				<Property Name="App_serverConfig.httpPort" Type="Int">8002</Property>
+				<Property Name="App_serverType" Type="Int">1</Property>
 				<Property Name="App_winsec.description" Type="Str">http://www.ITCR.com</Property>
 				<Property Name="Bld_autoIncrement" Type="Bool">true</Property>
 				<Property Name="Bld_buildCacheID" Type="Str">{4EF3A5BB-EFDE-44F2-8E36-5D8C343E1A3C}</Property>
