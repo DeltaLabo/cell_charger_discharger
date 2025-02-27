@@ -113,25 +113,14 @@
     #define     STOP_CONVERTER()        { RC3 = 0; RC4 = 0; conv = 0; RC5 = 0; pidt = DC_MIN; set_DC(); Cell_OFF();}
    //It seems that above 0.8 of DC the losses are so high that I don't get anything similar to the transfer function 
     #define     DC_MIN                  50.0  ///< Minimum possible duty cycle, set around @b 0.1 
-    #define     DC_MAX                  300.0  ///< Maximum possible duty cycle, set around @b 0.8
+    #define     DC_MAX                  260.0  ///< Maximum possible duty cycle, set around @b 0.8
     #define     COUNTER                 1024  ///< Counter value, needed to obtained one second between counts.
     ////////////////////////////////////////////////////////////////////////////////////
     //General definitions
-    #define     WAIT_TIME               5 ///< Time to wait before states, set to 5 seconds as default
-    #define     DC_RES_SECS             220 ///< How many seconds the DC resistance process takes
-    //Li-Ion definitions
-    #define     Li_Ion_CV               4200 ///< Li-Ion constant voltage setting in mV
-    #define     Li_Ion_CAP              3250 ///< Li-Ion capacity setting in mAh
-    #define     Li_Ion_EOC_I            100 ///< Li-Ion end-of-charge current in mA
-    #define     Li_Ion_EOD_V            2500 ///< Li_Ion end-of-discharge voltage in mV
-    //Ni-MH definitions
-    #define     Ni_MH_CV                1750 ///< Ni-MH constant voltage setting in mV
-    #define     Ni_MH_CAP               2000 ///< Ni-MH capacity setting in mAh
-    #define     Ni_MH_EOC_DV            10 ///< Ni-MH end-fo-charge voltage drop in mV
-    #define     Ni_MH_EOD_V             1000 ///< Ni-MH end-of-discharge voltage in mV
+    #define     DC_RES_SECS             14 ///< How many seconds the DC resistance process takes
 
-    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_disc_kp; ki = CC_disc_ki; kd = (float) (CC_char_disc_kd); pidi = 0.0;}
-    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_char_kp; ki = CC_char_ki; kd = (float) (CC_char_disc_kd); pidi = 0.0;}
+    #define     SET_DISC()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC3 = 1; __delay_ms(100); RC3 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_disc_kp; ki = CC_disc_ki; kd = 0.0; pidi = 0.0;}
+    #define     SET_CHAR()              { RC3 = 0; RC4 = 0; __delay_ms(100); RC4 = 1; __delay_ms(100); RC4 = 0; __delay_ms(100); RC5 = 1; __delay_ms(100); kp = CC_char_kp; ki = CC_char_ki; kd = 0.0; pidi = 0.0;}
     //Structs
     typedef struct basic_configuration_struct {
         uint8_t version;
@@ -211,13 +200,8 @@
     float                               CC_char_ki = 0.0025;  ///< Integral constant for CC mode 
     float                               CC_disc_kp = 0.006;   ///< Proportional constant for CC mode
     float                               CC_disc_ki = 0.001;   ///< Integral constant for CC mode
-    uint8_t                             CC_char_disc_kd = 0;  ///< Diferential constant for CC mode 
+    //uint8_t                             CC_char_disc_kd = 0;  ///< Diferential constant for CC mode 
     
-                                
-    uint16_t                            EOC_variable; ///< End-of-charge current in mA
-    uint16_t                            EOPC_variable; ///< End-of-precharge variable in mA or mV
-    uint16_t                            EOD_voltage; ///< End-of-dischage voltage in mV
-    uint16_t                            EOPD_capacity; ///< End-of-postdischarge capacity
     bool                                conv = 0; ///< Turn controller ON(1) or OFF(0). Initialized as 0
     uint16_t                            count = COUNTER; ///< Counter that should be cleared every second. Initialized as #COUNTER 
     /**< Every control loop cycle this counter will be decreased. This variable is used to calculate the averages and to trigger
@@ -236,7 +220,7 @@
     float                               kp;  ///< Proportional compesator gain
     float                               ki;  ///< Integral compesator gain
     float                               kd;  ///< Diferential compesator gain
-    float                               vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
+    uint16_t                            vref = 0;  ///< Scaled voltage setpoint. Initialized as 0
     uint16_t                            iref = 0;  ///< Current setpoint. Initialized as 0
     bool                                cmode = 1;  ///< CC / CV selector. CC: <tt> cmode = 1 </tt>. CV: <tt> cmode = 0 </tt>   
     float                               pidt = 0;  ///< Duty cycle

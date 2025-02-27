@@ -19,22 +19,26 @@ from functools import partial
 #                                                              #
 ################################################################
 
-# Initialize pyvisa
-rm = pyvisa.ResourceManager()
-res = rm.list_resources()
-print("Cantidad de instrumentos encontrados:", len(res))
-print(res)
+try:
+    # Initialize pyvisa
+    rm = pyvisa.ResourceManager()
+    res = rm.list_resources()
+    print("Cantidad de instrumentos encontrados:", len(res))
+    print(res)
 
-# Find and initialize instruments 
-for resource in res:
-    if "DM3O252401066" in resource:
-        print("Multimetro DM3038 encontrada")
-        multimeter = rm.open_resource(resource)
-    else:
-        print("No se encontró el multimetro")
+    # Find and initialize instruments 
+    for resource in res:
+        if "DM3O252401066" in resource:
+            print("Multimetro DM3038 encontrada")
+            multimeter = rm.open_resource(resource)
+        else:
+            print("No se encontró el multimetro")
 
-Multimeter = controller.Meter(multimeter)
-Multimeter.remote_sense(True)
+    Multimeter = controller.Meter(multimeter)
+    Multimeter.remote_sense(True)
+
+except:
+    print("No multimeter detected. Mo calibration available")
 
 ################################################################
 #                                                              #
@@ -160,7 +164,7 @@ def eventTest():
         labels_select = ["1st state:", "2st state:", "3st state:", "4st state:", "5st state:",
                   "6st state:", "7st state:", "8st state:", "9st state:", "10st state:"]
         
-        options = ["Not defined", "Charge", "Precharge", "Discharge", "Postdischarge", "DC Resistamce"]
+        options = ["Not defined", "Charge", "Precharge", "Discharge", "Postdischarge", "DC Resistance"]
         
         selectboxes = []
 
@@ -197,10 +201,10 @@ def eventConverter():
         # Añadir widgets de configuración
         # Entry boxes
         labels = ["CVKp (xE-6):", "CVKi (xE-6):", "CVKd (xE-3):", 
-                  "CCKp Charge (xE-6):", "CCKi Discharge (xE-6):"
+                  "CCKp Charge (xE-6):", "CCKi Discharge (xE-6):",
                   "CCKp Charge (xE-6):", "CCKi Discharge (xE-6):"]
         
-        default = [1800, 500, 20, 
+        default = [1800, 500, 50, 
                    3000, 50,
                    6000, 1000]
         
@@ -344,6 +348,8 @@ def clear_data():
 
 def process_serial_data(packet):
     global cell_count, repetition_counter, state, current_state, csv_file_path, calibrating, voltageM, currentM
+
+    vmeas,cmeas=0,0
     header = packet[:1]
     tail = packet[16:17]
     if (header == b'\xdd'):
@@ -381,9 +387,11 @@ def process_serial_data(packet):
             # Preparar los datos para guardar en CSV
             csv_data = [
                 state,
-                data[0],
-                data[1],
-                data[2],
+                data[0], # time
+                data[1], # voltage
+                data[2], # current
+                data[3], # capacity
+                data[5], # duty cicle
                 vmeas,
                 cmeas
             ]
@@ -458,6 +466,7 @@ def apply_basic_config(selectbox, entries, labelSended):
 
     # default = "DD5A 03 11 01 740E D606 D606 AC0D 9001 D606 C409 D606 1E06 77"
     #            DD5A 03 11 01 6810 D606 D606 AC0D 9001 D606 C409 D606 1406 77
+    #            DD5A 03 11 01 6810 D606 D606 AC0D 9001 D606 C409 D606 1406 77
 
     header = "DD"
     operation = "5A"
@@ -493,7 +502,6 @@ def apply_test_config(selectbox, entries, labelSended):
 
     # default = "DD 5A 05 11 02 02 02 0500 0A00 03 07 00 00 00 00 00 00 00 00 3500 77"
     #           "DD 5A 05 11 02 02 02 0500 0A00 03 07 00 00 00 00 00 00 00 00 3500 77"
-    #            DD 5A 05 11 01 01 01 5802 B004 03 00 00 00 00 00 00 00 00 00 2A01 77
 
     header = "DD"
     operation = "5A"
@@ -538,27 +546,29 @@ def apply_test_config(selectbox, entries, labelSended):
     if (len(check) < 4):
         check = check + "00"
 
-    message = header + operation + command + length + message + check + "77"    
+    message = header + operation + command + length + message + check + "77"  
 
     # Se envia el mensaje
     enviar_hex(message)
     recibido = recibir_hex()
 
     # Display del mensaje enviado
-    print(message)
     labelSended.configure(text=message)
 
 def apply_converter_config(entries, labelSended):
     send_values = [e.get() for e in entries]
 
-    # default = "DD A507 0007 00 77"
-    #           "DD 5A 07 0A 0807 F401 1400 B80B 3200 7017 A502 77"
+    # default = "DD A5 07 0007 00 77"
+
+    #           "DD 5A 07 0A -- 0807 F401 1400 B80B 3200 7017 A502 77"
+    #            DD 5A 07 0A -- 0807 F401 1400 B80B 3200 7017 E803 --9003-- 77                   
+    #                           1800  500   20 3000   50 6000 1000
 
     header = "DD"
     operation = "5A"
 
     command = "07"
-    length = "0A"
+    length = "0E"
 
     message = ""
     # message = header + operation + command + lenght
@@ -658,45 +668,87 @@ def clear_graphs():
     canvasVarNormal.draw()
 
 def upgrade_labels():
-    cell_display.configure(state="normal")
-    cell_display.delete(0, "end")
-    cell_display.insert(0, str(cell_count)) 
-    cell_display.configure(state="readonly")
+    if (calibrating):
+        cell_displayCal.configure(state="normal")
+        cell_displayCal.delete(0, "end")
+        cell_displayCal.insert(0, str(cell_count)) 
+        cell_displayCal.configure(state="readonly")
+    
+        rep_displayCal.configure(state="normal")
+        rep_displayCal.delete(0, "end")
+        rep_displayCal.insert(0, str(repetition_counter)) 
+        rep_displayCal.configure(state="readonly")
+    
+        state_displayCal.configure(state="normal")
+        state_displayCal.delete(0, "end")
+        state_displayCal.insert(0, str(state)) 
+        state_displayCal.configure(state="readonly")
+    
+        time_displayCal.configure(state="normal")
+        time_displayCal.delete(0, "end")
+        time_displayCal.insert(0, str(elapsed_time[-1])) 
+        time_displayCal.configure(state="readonly")
+    
+        voltage_displayCal.configure(state="normal")
+        voltage_displayCal.delete(0, "end")
+        voltage_displayCal.insert(0, str(abs(voltage[-1]-voltageM[-1]))) 
+        voltage_displayCal.configure(state="readonly")
+    
+        current_displayCal.configure(state="normal")
+        current_displayCal.delete(0, "end")
+        current_displayCal.insert(0, str(abs(current[-1]-currentM[-1])))
+        current_displayCal.configure(state="readonly")
+    
+        cap_displayCal.configure(state="normal")
+        cap_displayCal.delete(0, "end")
+        cap_displayCal.insert(0, str(capacity[-1])) 
+        cap_displayCal.configure(state="readonly")
+    
+        dc_displayCal.configure(state="normal")
+        dc_displayCal.delete(0, "end")
+        dc_displayCal.insert(0, str(duty_cicle[-1])) 
+        dc_displayCal.configure(state="readonly")
 
-    rep_display.configure(state="normal")
-    rep_display.delete(0, "end")
-    rep_display.insert(0, str(repetition_counter)) 
-    rep_display.configure(state="readonly")
+    else:
+        cell_display.configure(state="normal")
+        cell_display.delete(0, "end")
+        cell_display.insert(0, str(cell_count)) 
+        cell_display.configure(state="readonly")
 
-    state_display.configure(state="normal")
-    state_display.delete(0, "end")
-    state_display.insert(0, str(state)) 
-    state_display.configure(state="readonly")
+        rep_display.configure(state="normal")
+        rep_display.delete(0, "end")
+        rep_display.insert(0, str(repetition_counter)) 
+        rep_display.configure(state="readonly")
 
-    time_display.configure(state="normal")
-    time_display.delete(0, "end")
-    time_display.insert(0, str(elapsed_time[-1])) 
-    time_display.configure(state="readonly")
+        state_display.configure(state="normal")
+        state_display.delete(0, "end")
+        state_display.insert(0, str(state)) 
+        state_display.configure(state="readonly")
 
-    voltage_display.configure(state="normal")
-    voltage_display.delete(0, "end")
-    voltage_display.insert(0, str(voltage[-1])) 
-    voltage_display.configure(state="readonly")
+        time_display.configure(state="normal")
+        time_display.delete(0, "end")
+        time_display.insert(0, str(elapsed_time[-1])) 
+        time_display.configure(state="readonly")
 
-    current_display.configure(state="normal")
-    current_display.delete(0, "end")
-    current_display.insert(0, str(current[-1])) 
-    current_display.configure(state="readonly")
+        voltage_display.configure(state="normal")
+        voltage_display.delete(0, "end")
+        voltage_display.insert(0, str(voltage[-1])) 
+        voltage_display.configure(state="readonly")
 
-    cap_display.configure(state="normal")
-    cap_display.delete(0, "end")
-    cap_display.insert(0, str(capacity[-1])) 
-    cap_display.configure(state="readonly")
+        current_display.configure(state="normal")
+        current_display.delete(0, "end")
+        current_display.insert(0, str(current[-1])) 
+        current_display.configure(state="readonly")
 
-    dc_display.configure(state="normal")
-    dc_display.delete(0, "end")
-    dc_display.insert(0, str(duty_cicle[-1])) 
-    dc_display.configure(state="readonly")
+        cap_display.configure(state="normal")
+        cap_display.delete(0, "end")
+        cap_display.insert(0, str(capacity[-1])) 
+        cap_display.configure(state="readonly")
+
+        dc_display.configure(state="normal")
+        dc_display.delete(0, "end")
+        dc_display.insert(0, str(duty_cicle[-1])) 
+        dc_display.configure(state="readonly")
 
 ################################################################
 #                                                              #
@@ -852,45 +904,45 @@ dataFrameNormal = customtkinter.CTkFrame(master=MainFrameNormal)
 dataFrameNormal.grid(row=0, column=1, padx=10, pady=10)
 
 # Labels Calibration
-cell_label = customtkinter.CTkLabel(dataFrameCalibration, text="Cell counter: ")
-cell_label.grid(row = 1, column = 0, padx = 2, pady = 0, sticky="w")
-cell_display = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
-cell_display.grid(row=2, column=0, padx=10, pady=2)
+cell_labelCal = customtkinter.CTkLabel(dataFrameCalibration, text="Cell counter: ")
+cell_labelCal.grid(row = 1, column = 0, padx = 2, pady = 0, sticky="w")
+cell_displayCal = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
+cell_displayCal.grid(row=2, column=0, padx=10, pady=2)
 
-rep_label = customtkinter.CTkLabel(dataFrameCalibration, text="Repetition counter: ")
-rep_label.grid(row = 3, column = 0, padx = 2, pady = 0, sticky="w")
-rep_display = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
-rep_display.grid(row=4, column=0, padx=10, pady=2)
+rep_labelCal = customtkinter.CTkLabel(dataFrameCalibration, text="Repetition counter: ")
+rep_labelCal.grid(row = 3, column = 0, padx = 2, pady = 0, sticky="w")
+rep_displayCal = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
+rep_displayCal.grid(row=4, column=0, padx=10, pady=2)
 
-state_label = customtkinter.CTkLabel(dataFrameCalibration, text="State: ")
-state_label.grid(row = 5, column = 0, padx = 2, pady = 0, sticky="w")
-state_display = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
-state_display.grid(row=6, column=0, padx=10, pady=2)
+state_labelCal = customtkinter.CTkLabel(dataFrameCalibration, text="State: ")
+state_labelCal.grid(row = 5, column = 0, padx = 2, pady = 0, sticky="w")
+state_displayCal = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
+state_displayCal.grid(row=6, column=0, padx=10, pady=2)
 
-time_label = customtkinter.CTkLabel(dataFrameCalibration, text="Elapsed time(s): ")
-time_label.grid(row = 7, column = 0, padx = 2, pady = 0, sticky="w")
-time_display = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
-time_display.grid(row=8, column=0, padx=10, pady=2)
+time_labelCal = customtkinter.CTkLabel(dataFrameCalibration, text="Elapsed time(s): ")
+time_labelCal.grid(row = 7, column = 0, padx = 2, pady = 0, sticky="w")
+time_displayCal = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
+time_displayCal.grid(row=8, column=0, padx=10, pady=2)
 
-voltage_label = customtkinter.CTkLabel(dataFrameCalibration, text="Voltage: ")
-voltage_label.grid(row = 9, column = 0, padx = 2, pady = 0, sticky="w")
-voltage_display = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
-voltage_display.grid(row=10, column=0, padx=10, pady=2)
+voltage_labelCal = customtkinter.CTkLabel(dataFrameCalibration, text="Voltage Bias: ")
+voltage_labelCal.grid(row = 9, column = 0, padx = 2, pady = 0, sticky="w")
+voltage_displayCal = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
+voltage_displayCal.grid(row=10, column=0, padx=10, pady=2)
 
-current_label = customtkinter.CTkLabel(dataFrameCalibration, text="Current: ")
-current_label.grid(row = 11, column = 0, padx = 2, pady = 0, sticky="w")
-current_display = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
-current_display.grid(row=12, column=0, padx=10, pady=2)
+current_labelCal = customtkinter.CTkLabel(dataFrameCalibration, text="Current Bias: ")
+current_labelCal.grid(row = 11, column = 0, padx = 2, pady = 0, sticky="w")
+current_displayCal = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
+current_displayCal.grid(row=12, column=0, padx=10, pady=2)
 
-cap_label = customtkinter.CTkLabel(dataFrameCalibration, text="Capacity: ")
-cap_label.grid(row = 13, column = 0, padx = 2, pady = 0, sticky="w")
-cap_display = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
-cap_display.grid(row=14, column=0, padx=10, pady=2)
+cap_labelCal = customtkinter.CTkLabel(dataFrameCalibration, text="Capacity: ")
+cap_labelCal.grid(row = 13, column = 0, padx = 2, pady = 0, sticky="w")
+cap_displayCal = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
+cap_displayCal.grid(row=14, column=0, padx=10, pady=2)
 
-dc_label = customtkinter.CTkLabel(dataFrameCalibration, text="Duty cicle: ")
-dc_label.grid(row = 15, column = 0, padx = 2, pady = 0, sticky="w")
-dc_display = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
-dc_display.grid(row=16, column=0, padx=10, pady=2)
+dc_labelCal = customtkinter.CTkLabel(dataFrameCalibration, text="Duty cicle: ")
+dc_labelCal.grid(row = 15, column = 0, padx = 2, pady = 0, sticky="w")
+dc_displayCal = customtkinter.CTkEntry(dataFrameCalibration, justify="left")
+dc_displayCal.grid(row=16, column=0, padx=10, pady=2)
 
 # Labels Normal
 cell_label = customtkinter.CTkLabel(dataFrameNormal, text="Cell counter: ")

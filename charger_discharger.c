@@ -189,14 +189,10 @@ bool command_interpreter()
                         {
                             case 0x03: //BASIC CONFIGURATION
                                 put_data_into_structure(length, (uint8_t*)data, (uint8_t*)basic_configuration_ptr);
-                                vref = ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ; //Scale the voltage reference to be compare with v;
+                                vref = (uint16_t) ( ( (float) basic_configuration.const_voltage * 4096.0 ) / 5000.0 ) + 0.5 ; //Scale the voltage reference to be compare with v;
                                 i_char = (uint16_t) ( ( ( (float) basic_configuration.const_current_char * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
                                 i_disc = (uint16_t) ( ( ( (float) basic_configuration.const_current_disc * 4096.0 ) / (5000.0 * 2.5 ) ) + 0.5 );
                                 capacity = basic_configuration.capacity;
-                                EOC_variable = basic_configuration.end_of_charge;
-                                EOPC_variable = basic_configuration.end_of_precharge;
-                                EOD_voltage = basic_configuration.end_of_discharge;
-                                EOPD_capacity = basic_configuration.end_of_postdischarge;
                                 break;
                             case 0x05: // TEST CONFIGURATION
                                 put_data_into_structure(length, (uint8_t*)data, (uint8_t*)test_configuration_ptr);
