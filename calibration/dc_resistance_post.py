@@ -14,12 +14,12 @@ for filename in os.listdir(directory_path):
         file_path = os.path.join(directory_path, filename)
         
         # Read the data saved
-        data = pd.read_csv(file_path, header=None, names=['timestamp', 'state', 'time', 'v', 'i', 'capacity', 'dt', 'vmeas', 'cmeas'])
+        data = pd.read_csv(file_path, header=None, names=['Time (s)', 'Voltaje (mV)', 'Current (mA)', 'Capacity (mAh)', 'Temp', 'Duty Cicle'])
 
         # Extract voltage, current, and timestamp data
-        voltages = data['v']
-        currents = data['i']
-        timestamps = data['time']
+        voltages = data['Voltaje (mV)']
+        currents = data['Current (mA)']
+        timestamps = data['Time (s)']
 
         # Find the timestamp corresponding to 10 seconds (0.2C pulse)
         # Adjust to your sampling rate and time intervals
