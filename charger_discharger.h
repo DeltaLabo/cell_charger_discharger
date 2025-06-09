@@ -73,7 +73,7 @@
     uint16_t read_ADC(uint16_t channel);
     void scaling(void);
     void log_control(void);
-    void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status);
+    void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage);
     void control_loop(void);
     void calculate_avg(void);
     void interrupt_enable(void);
@@ -191,13 +191,13 @@
     uint8_t                             repetition_counter = 0; ///< Used to move trough repetitions.
     
     // last test with LI_ION gave this constants
-    float                               CV_kp = 0.0018;  ///< Proportional constant for CV mode
-    float                               CV_ki = 0.0005;  ///< Integral constant for CV mode 
-    float                               CV_kd = 0.020; ///< Diferential constant for CV mode 
+    float                               CV_kp = 0.003;  ///< Proportional constant for CV mode
+    float                               CV_ki = 0.00005;  ///< Integral constant for CV mode 
+    float                               CV_kd = 0.005; ///< Diferential constant for CV mode 
     
     // last test with LI_ION gave this constants MAYBE OK ALEX
-    float                               CC_char_kp = 0.0130;  ///< Proportional constant divider for CC mode
-    float                               CC_char_ki = 0.0025;  ///< Integral constant for CC mode 
+    float                               CC_char_kp = 0.003;  ///< Proportional constant divider for CC mode
+    float                               CC_char_ki = 0.00005;  ///< Integral constant for CC mode 
     float                               CC_disc_kp = 0.006;   ///< Proportional constant for CC mode
     float                               CC_disc_ki = 0.001;   ///< Integral constant for CC mode
     //uint8_t                             CC_char_disc_kd = 0;  ///< Diferential constant for CC mode 
@@ -211,6 +211,8 @@
     uint16_t                            i;  ///< Last current ADC measurement.
     uint24_t                            vacum = 0; ///< accumulator dor v
     uint24_t                            iacum = 0;
+    uint16_t                            v1 = 0; ///< Voltage value for calculating dc res
+    uint16_t                            i1 = 0; ///< Current value for calculating dc res
     //qavg does not need accumulator
     uint16_t                            vavg = 0;  ///< Last one-second-average of #v . Initialized as 0
     uint16_t                            iavg = 0;  ///< Last one-second-average of #i . Initialized as 0

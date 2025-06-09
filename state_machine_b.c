@@ -132,6 +132,8 @@ void fDC_res() //can be improved a lot!!
     // POR VERIFICAR
     if (dc_res_count == 4)  /// * If #dc_res_count is equal to 202=18sec (CHANGE), then:
     {
+        v1 = log_data.voltage;
+        i1 = log_data.current;
         iref = (uint16_t) ( ( ( capacity * 4096.0 ) / (5000.0 * 2.5) ) + 0.5 );     //0.75 C Discharge            
     }
     if (!dc_res_count)
@@ -205,7 +207,10 @@ void converter_settings()
     {
         case CHARGE: /// If the current state is @p POSTCHARGE or @p CHARGE
             iref = i_char; /// * The current setpoint, #iref is defined as #i_char
-            if(basic_configuration.version == 0x02) timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 3600 * 1.1); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
+            if (basic_configuration.version == 0x02)
+            {
+                timeout = (uint16_t)(((float)capacity / (float)basic_configuration.const_current_char) * 3600 * 1.1); /// * Charging #timeout is set to 10% more @b only_for}_NIMH
+            }
             SET_CHAR(); /// * The charge/discharge relay is set in charge position by calling the #SET_CHAR() macro
             break;
         case DISCHARGE: /// If the current state is @p PREDISCHARGE or @p DISCHARGE

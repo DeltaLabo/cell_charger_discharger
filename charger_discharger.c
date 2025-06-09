@@ -252,7 +252,7 @@ bool command_interpreter()
 */
 void control_loop()
 {   
-    if(!cmode) /// If #cmode is cleared then
+    if(cmode == 0) /// If #cmode is cleared then
     {
         pid(v, vref);/// * The #pid() function is called with @p feedback = #v and @p setpoint = #vref
     }else /// Else,
@@ -298,12 +298,12 @@ void set_DC()
 * @param referece_voltage voltage setpoint
 * @param CC_mode_status current condition of #cmode variable
 */
-void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage, bool CC_mode_status)
+void cc_cv_mode(uint16_t current_voltage, uint16_t reference_voltage)
 {
 /// If the current voltage is bigger than the CV setpoint and the system is in CC mode, then:
-    if( ( ( (uint16_t) ( ( ( (float)current_voltage * 5000.0 ) / 4096.0 ) + 0.5 ) ) > reference_voltage ) && CC_mode_status )
+    if( (current_voltage > reference_voltage ) && cmode )
     {        
-        pidi = 0;       /// <ol> <li> The integral acummulator is cleared
+        //pidi = 0;       /// <ol> <li> The integral acummulator is cleared
         cmode = 0;      /// <li> The system is set in CV mode by clearing the #cmode variable
         kp = CV_kp;     /// <li> The proportional constant is set to #CV_kp 
         ki = CV_ki;     /// <li> The integral constant is set to #CV_ki
@@ -337,7 +337,21 @@ void log_control()
         log_data.state = state;
         log_data.repetition_counter = repetition_counter;
         log_data.elapsed_time = second;
-        log_data.duty_cycle = (uint16_t) pidt;
+        if (state == DC_res)
+        {
+            if (second >= 12)
+            {
+                log_data.duty_cycle = (uint16_t) (( (float) (v1-log_data.voltage) / (float) (log_data.current-i1)) * 1000);
+            }
+            else
+            {
+                log_data.duty_cycle = 0;
+            }
+        }
+        else
+        {
+            log_data.duty_cycle = (uint16_t) ( ( ( (float)v * 5000.0 ) / 4096.0 ) + 0.5 );
+        }    
         UART_send_byte(0xDD);
         UART_send_some_bytes(sizeof(log_data),(uint8_t*)log_data_ptr);
         UART_send_byte(0x77);
@@ -362,7 +376,7 @@ uint16_t read_ADC(uint16_t channel)
 */
 void timing()
 {
-    if(!count) /// If #count is other than zero, then
+    if(count == 0) /// If #count is zero, then
     {
         SECF = 1;
         count = COUNTER; /// * Make #count equal to #COUNTER
